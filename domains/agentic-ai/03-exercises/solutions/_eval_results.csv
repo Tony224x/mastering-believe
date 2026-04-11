@@ -1,0 +1,5 @@
+id,verdict,final_answer_passed,final_answer_score,final_answer_reason,trajectory_passed,trajectory_reason,metrics_passed,metrics_reason
+revenue-kalira,PASS,True,5,"All expected elements present: ['820', 'euros']",True,"all expected tools called, no forbidden tools",True,within budget
+webhook-api,PASS,True,5,"All expected elements present: ['post', '/webhook', 'signature']",True,"all expected tools called, no forbidden tools",True,within budget
+competitor,PASS,True,5,"All expected elements present: ['artefact', '230']",True,"all expected tools called, no forbidden tools",True,within budget
+kalira-immo,PASS,True,5,"All expected elements present: ['real estate', 'west africa']",True,"all expected tools called, no forbidden tools",True,within budget

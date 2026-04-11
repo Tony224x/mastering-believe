@@ -353,6 +353,74 @@ extraction_tool = {
 
 > **Opinion** : le trick `tool_choice` + faux outil est le moyen le plus fiable d'obtenir du structured output. Ca marche mieux que le JSON mode car le schema est explicite et le LLM est fine-tune pour generer des tool calls valides.
 
+### 5.4 Structured Outputs natifs 2024+ (Pydantic + JSON Schema strict)
+
+Depuis aout 2024, les APIs se sont **specialisees** pour le structured output : tu passes directement une classe Pydantic (ou un `model_json_schema`) et l'API garantit un JSON qui respecte le schema. Plus besoin de regex, de retry sur JSON invalide, de fallback texte.
+
+**Le gain mesure** : 90% de reduction des hallucinations sur les tool arguments, et surtout **zero parsing** — le SDK retourne directement l'objet Pydantic.
+
+#### OpenAI (aout 2024+) — `response_format` strict
+
+```python
+from pydantic import BaseModel
+
+class TicketClassification(BaseModel):
+    priority: str    # "low", "medium", "high", "critical"
+    category: str    # "bug", "feature", "support"
+    summary: str
+
+response = client.chat.completions.parse(   # .parse() au lieu de .create()
+    model="gpt-5.4",
+    messages=[{"role": "user", "content": ticket_text}],
+    response_format=TicketClassification,    # la classe Pydantic directement
+)
+
+result: TicketClassification = response.choices[0].message.parsed
+# result.priority, result.category, result.summary sont garantis present et valides
+```
+
+**Sous le capot** : OpenAI serialise `TicketClassification` en JSON Schema, passe `"strict": true`, et le decodage est contraint au niveau des tokens (CFG — context-free grammar). Pas moyen de generer du JSON invalide.
+
+#### Anthropic — `tool_choice` force + Pydantic
+
+Anthropic n'a pas encore d'equivalent direct de `response_format` mais le pattern `tool_choice={"type": "tool", "name": "..."}` force le LLM a retourner exactement le schema attendu.
+
+```python
+from pydantic import BaseModel
+
+class TicketClassification(BaseModel):
+    priority: str
+    category: str
+    summary: str
+
+response = client.messages.create(
+    model="claude-opus-4-6",
+    max_tokens=1024,
+    tools=[{
+        "name": "classify_ticket",
+        "description": "Classify a support ticket.",
+        "input_schema": TicketClassification.model_json_schema(),
+    }],
+    tool_choice={"type": "tool", "name": "classify_ticket"},  # force l'appel
+    messages=[{"role": "user", "content": ticket_text}],
+)
+
+tool_use = next(b for b in response.content if b.type == "tool_use")
+result = TicketClassification(**tool_use.input)   # parsing direct Pydantic
+```
+
+**Combinaison avec `cache_control`** : pour les systemes avec un long system prompt repete (agents conversationnels), on peut attacher `cache_control` aux blocs de texte stables (system prompt, few-shot examples) pour caching cote serveur — couteux a chaque message sans cache, 10% du prix avec cache.
+
+```python
+system=[{
+    "type": "text",
+    "text": long_system_prompt,
+    "cache_control": {"type": "ephemeral"},   # 5 min TTL
+}],
+```
+
+> **Regle 2026** : des que tu veux un output structure, utilise `response_format` (OpenAI) ou `tool_choice` force (Anthropic) avec une Pydantic BaseModel. Les anciens patterns (JSON mode vanilla + regex fallback) sont obsoletes.
+
 ---
 
 ## 6. Error handling — quand un tool echoue
@@ -566,6 +634,79 @@ async def execute_tools_parallel(tool_calls: list[dict]) -> list[dict]:
 | Collecte de donnees multi-sources | Oui | Sources independantes |
 
 > **Mise en garde** : le parallel tool calling peut surcharger les APIs externes (rate limiting). Implementer un semaphore ou un rate limiter si les tools appellent des services externes.
+
+### 8.4 Async tools : mesurer le gain reel
+
+La difference entre sequentiel et parallele n'est pas theorique — mesurons-la.
+
+```
+Sequential : N tools = N x latence
+  retrieve_internal_docs (5s)
+  -> retrieve_web_search   (5s)
+  -> retrieve_crm_history  (5s)
+  Total : 15s
+
+Parallel   : N tools = max(latences)
+  retrieve_internal_docs  |
+  retrieve_web_search     | tous lances en meme temps
+  retrieve_crm_history    |
+  Total : 5s  (le plus lent gagne)
+```
+
+#### Quand la parallelisation marche
+
+- **Tools independants** : retrieval multi-sources, supervisor qui delegue a N workers specialises, collecte d'informations en parallele (prix d'une action, meteo, news) avant une synthese
+- **Pre-fetch** : lancer plusieurs retrieves speculatifs en parallele, garder ceux qui sont pertinents
+- **Fan-out / fan-in** : le LLM genere K tool calls, on execute les K en parallele, on injecte les K resultats dans un seul tour
+
+#### Quand elle ne marche pas (multi-hop)
+
+- `tool2` depend du resultat de `tool1` (ex: `get_user_id(email)` puis `get_orders(user_id)`) — obligation de sequentialiser
+- Effets de bord ordonnes (ex: `create_record` puis `update_record`)
+- Budgets strict : avec un rate limit cote downstream, paralleliser N appels crash immediatement
+
+#### Pattern Python (asyncio.gather + semaphore)
+
+```python
+import asyncio
+import time
+
+async def run_tool(name, args):
+    # Simuler un tool qui prend 2s
+    await asyncio.sleep(2)
+    return f"result of {name}"
+
+async def execute_sequential(tool_calls):
+    results = []
+    for tc in tool_calls:
+        r = await run_tool(tc["name"], tc["args"])
+        results.append(r)
+    return results
+
+async def execute_parallel(tool_calls, max_concurrent=5):
+    sem = asyncio.Semaphore(max_concurrent)   # rate-limit implicite
+    async def bounded(tc):
+        async with sem:
+            return await run_tool(tc["name"], tc["args"])
+    return await asyncio.gather(*[bounded(tc) for tc in tool_calls])
+
+async def main():
+    calls = [{"name": f"t{i}", "args": {}} for i in range(3)]
+
+    t0 = time.perf_counter()
+    await execute_sequential(calls)
+    print(f"sequential: {time.perf_counter() - t0:.2f}s")   # ~6s
+
+    t0 = time.perf_counter()
+    await execute_parallel(calls)
+    print(f"parallel:   {time.perf_counter() - t0:.2f}s")   # ~2s
+
+asyncio.run(main())
+```
+
+**Dans LangGraph** : meme idee avec l'API `Send` — un supervisor peut dispatcher vers plusieurs nodes `Send("worker", {...})` qui s'executent en parallele, puis converger vers un node d'agregation.
+
+**Retour d'experience Kalira** : sur un agent RAG multi-sources (3 retrievers), passer de sequentiel a parallel asyncio fait passer la latence de 12s a 4s — 3x de gain sans changer la qualite. C'est le plus gros gain de latence pour la plus petite modification de code.
 
 ---
 

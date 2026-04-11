@@ -1,0 +1,522 @@
+# Jour 12 — Multimodalite : ViT, CLIP et LLMs multimodaux
+
+> **Temps estime** : 5h | **Prerequis** : Jours 1-11
+
+---
+
+## 1. Pourquoi la multimodalite ?
+
+Les LLMs classiques sont limites au texte. Mais le monde contient des images, audio, video, code, documents. Un modele **multimodal** peut traiter plusieurs modalites dans un espace partage.
+
+### Applications
+
+- **GPT-4V, Claude 3, Gemini** : comprehension d'images dans un chat
+- **DALL-E, Stable Diffusion, Midjourney** : text-to-image
+- **Whisper** : audio-to-text
+- **CLIP** : similarite image-text pour le retrieval
+- **Flamingo, LLaVA** : assistants visuels
+
+Le principe fondamental : **amener les modalites dans le meme espace vectoriel**, pour qu'un LLM puisse les traiter comme des tokens.
+
+---
+
+## 2. Vision Transformer (ViT) — traiter une image comme du texte
+
+### L'idee de ViT (Dosovitskiy et al., 2020)
+
+Les CNNs (ResNet, VGG) ont domine la vision pendant 10 ans. ViT a montre qu'on pouvait battre les CNNs avec un Transformer standard, a condition d'avoir assez de donnees.
+
+### L'astuce : patches comme tokens
+
+Une image est une grille 2D de pixels. Les Transformers traitent des sequences 1D de tokens. Comment reconcilier ?
+
+**Reponse** : decouper l'image en petits patches et traiter chaque patch comme un token.
+
+```
+Image: 224 x 224 x 3 pixels (RGB)
+
+Patchify avec patch_size = 16:
+  Nombre de patches = (224 / 16) * (224 / 16) = 14 * 14 = 196 patches
+  Taille de chaque patch = 16 * 16 * 3 = 768 pixels aplaties
+
+Apres projection lineaire:
+  Chaque patch devient un vecteur de dimension d_model (ex: 768)
+  
+Sequence d'entree au Transformer: 196 tokens (+ 1 CLS token = 197)
+```
+
+### L'architecture
+
+```
+1. Patchify: image -> 196 patches de (16*16*3 = 768 features)
+2. Linear projection: patches -> embeddings (d_model = 768)
+3. Ajouter un [CLS] token apprenable au debut
+4. Ajouter des positional embeddings 2D (ou 1D)
+5. Transformer standard (12 layers)
+6. Le CLS token final passe par un Linear pour la classification
+```
+
+### Positional embeddings 2D
+
+Pour les images, la position a 2 dimensions (row, col). Deux choix :
+- **1D** : concatener les patches en ligne (row-major) et utiliser des pos embeddings 1D. Simple mais perd la structure 2D.
+- **2D** : apprendre un embedding pour `row` et un pour `col`, puis les additionner.
+
+ViT original utilise 1D (et marche bien). Les modeles modernes utilisent 2D ou RoPE 2D.
+
+### Pourquoi ca marche
+
+Les CNNs encodent des **biais inductifs** (locality, translation equivariance) qui aident avec peu de donnees. Les Transformers n'ont pas ces biais, mais quand on leur donne assez de donnees (JFT-300M), ils les apprennent eux-memes — et capturent aussi des patterns plus globaux que les CNNs.
+
+### Variantes
+
+- **DeiT** : ViT avec distillation, marche sur ImageNet (1.2M images)
+- **Swin Transformer** : ajoute une hierarchie (pyramid structure) comme les CNNs
+- **DINOv2** : self-supervised, apprend des representations sans labels
+
+---
+
+## 3. CLIP — aligner image et texte dans un meme espace
+
+### Le probleme
+
+Si on entraine un classifieur d'images sur ImageNet (1000 classes), il est limite a ces 1000 classes. Comment faire un modele qui comprend n'importe quel concept decrit en texte ?
+
+### CLIP (Radford et al., 2021)
+
+**L'idee** : entrainer simultanement un encoder d'images et un encoder de texte, pour que les embeddings soient alignes quand ils decrivent le meme contenu.
+
+```
+Dataset: 400M paires (image, legende) scrapees du web
+
+Image encoder: ViT -> embedding (512 dim)
+Text encoder:  Transformer -> embedding (512 dim)
+
+Objectif: image_embedding . text_embedding est grand si la legende
+         decrit l'image, petit sinon.
+```
+
+### Contrastive loss — le coeur de CLIP
+
+On prend un batch de N paires `(image_i, text_i)`. On veut que :
+- `image_i . text_i` soit **grand** (la bonne legende de l'image i)
+- `image_i . text_j` (i ≠ j) soit **petit** (les mauvaises legendes)
+
+Mathematiquement, on traite ca comme une classification a N classes :
+
+```
+scores = image_embeddings @ text_embeddings.T  / temperature
+       (shape: (N, N))
+
+Pour chaque ligne i (image i), on veut que la classe correcte soit i.
+loss_image = CrossEntropy(scores, targets=[0, 1, ..., N-1])
+
+De maniere symetrique pour les colonnes (text -> image):
+loss_text = CrossEntropy(scores.T, targets=[0, 1, ..., N-1])
+
+Loss finale: (loss_image + loss_text) / 2
+```
+
+### Interpretation
+
+Dans la matrice de scores `(N, N)`, la diagonale contient les vraies paires. Le modele est entraine a maximiser la diagonale et minimiser tout le reste.
+
+```
+scores = 
+   img_1  img_2  img_3  img_4
+t_1 [ +4    -1    -1    -1  ]   <- ligne 1, on veut col 1 grande
+t_2 [ -1    +4    -1    -1  ]
+t_3 [ -1    -1    +4    -1  ]
+t_4 [ -1    -1    -1    +4  ]
+```
+
+### Temperature
+
+Le parametre `temperature` (entre 0.01 et 0.1) controle la "nettete" du softmax :
+- Petite temperature → softmax tres pique → le modele doit etre tres confiant
+- Grande temperature → softmax doux → plus de tolerance
+
+CLIP apprend la temperature comme un parametre (initialise a 0.07).
+
+### Resultats de CLIP
+
+**Zero-shot classification** : pas besoin de reentrainer pour une nouvelle tache. On compare l'embedding de l'image aux embeddings de toutes les classes en texte :
+
+```
+Classe "dog"   -> text_emb_dog
+Classe "cat"   -> text_emb_cat
+Classe "bird"  -> text_emb_bird
+
+Image d'entree -> img_emb
+
+prediction = argmax(img_emb . [text_emb_dog, text_emb_cat, text_emb_bird])
+```
+
+CLIP atteint 76% sur ImageNet **zero-shot** (sans jamais avoir vu ImageNet), proche du meilleur ResNet-50 supervise.
+
+### Applications de CLIP
+
+- **Retrieval** : trouver l'image qui correspond a une requete texte (Pinterest, Google Lens)
+- **Guidance pour la generation** : Stable Diffusion utilise CLIP pour conditioner la generation sur du texte
+- **Filtre de contenu** : detecter du contenu inapproprie en comparant aux labels texte
+- **Base pour les LLMs multimodaux** : GPT-4V, LLaVA, Claude 3 utilisent tous un encoder style CLIP
+
+---
+
+## 4. Cross-attention entre modalites
+
+### Comment un LLM "voit" une image
+
+Un LLM est un decoder-only sur des tokens texte. Pour qu'il puisse traiter une image, il faut injecter les features visuelles dans le flow de tokens.
+
+### Option 1 : projection en tokens texte (LLaVA)
+
+**Idee** : on encode l'image en N features visuelles (via ViT ou CLIP), puis on les projette dans l'espace des embeddings texte du LLM. Ces features sont traitees comme des "tokens visuels" prefixes au prompt texte.
+
+```
+Image -> ViT (encoder) -> 576 features (24x24 patches en 336x336)
+            |
+            V
+       Linear projection (1024 -> 4096)
+            |
+            V
+       576 "tokens visuels" (ligne avec les embeddings texte)
+
+Prompt final: [VIS_TOK_1, VIS_TOK_2, ..., VIS_TOK_576, "Describe this image:", ...]
+
+LLM decoder-only standard traite tout comme une sequence de tokens.
+```
+
+**Avantages** : simple, marche avec n'importe quel LLM (on ne le modifie pas), le LLM peut utiliser son attention causale standard.
+
+**Desavantages** : les 576 tokens visuels prennent de la place dans le contexte.
+
+### Option 2 : cross-attention dediee (Flamingo)
+
+**Idee** : ajouter des couches de cross-attention entre les couches du LLM. Les queries viennent du LLM (texte), les keys/values viennent de l'encoder visuel.
+
+```
+LLM layer:
+  x = SelfAttention(x)
+  x = x + CrossAttention(query=x, keys=vision_features, values=vision_features)
+  x = FFN(x)
+```
+
+**Avantages** : les features visuelles ne prennent pas de place dans le contexte. On peut gerer de tres longues sequences d'images.
+
+**Desavantages** : il faut modifier l'architecture du LLM. Moins facile a faire avec un LLM pre-entraine.
+
+### Option 3 : encoder-decoder (Gemini)
+
+Gemini, selon les hypotheses (pas confirme), utilise une architecture encoder-decoder ou l'image est encodee par un encoder visuel, puis le decoder texte attent sur les features visuelles via cross-attention.
+
+### Quelle approche a gagne ?
+
+En 2024, les modeles les plus populaires (GPT-4V, Claude 3, LLaVA) utilisent l'**Option 1** (projection en tokens). C'est plus simple, compatible avec n'importe quel LLM existant, et les resultats sont aussi bons.
+
+---
+
+## 5. Comparaison : LLaVA, Flamingo, GPT-4V
+
+### LLaVA (2023)
+
+**Architecture** :
+```
+Image -> CLIP ViT-L/14 -> 576 features
+         ↓
+       Linear (ou MLP) projection
+         ↓
+       576 tokens visuels
+         ↓
+LLaMA/Vicuna decoder
+```
+
+**Training** :
+1. Pretraining de la projection : freeze LLM et ViT, n'entraine que le linear. 600k paires (image, caption)
+2. Instruction tuning : entraine la projection + LLM sur des dialogues (image + question + reponse) generes par GPT-4
+
+**Taille** : 7B ou 13B. **Couts** : un GPU A100, quelques jours.
+
+### Flamingo (DeepMind, 2022)
+
+**Architecture** plus complexe :
+- Encoder visuel : NFNet (pas un ViT, c'est un CNN)
+- "Perceiver Resampler" : compresse les features visuelles en N tokens
+- LLM pre-entraine : Chinchilla 70B fige
+- Cross-attention layers ajoutees entre les couches du LLM
+
+**Point fort** : gere les sequences multi-images et video (interleaved).
+
+### GPT-4V (2023)
+
+Architecture officiellement inconnue. Hypotheses :
+- Probablement un encoder visuel + projection vers les tokens texte
+- Tres gros ViT, probablement entraine end-to-end avec le LLM
+- Possiblement multi-resolution (image divisee en plusieurs patches de differentes tailles)
+
+Capacites demontrees : OCR, description detaillee, raisonnement visuel, comprehension de diagrammes.
+
+---
+
+## 6. Image tokenization — un concept cle
+
+### Pourquoi tokeniser une image ?
+
+Une image en pixels est continue. Si on veut qu'un LLM **genere** une image, il doit produire des tokens discrets. Meme principe que pour le texte.
+
+### Approche 1 : VQ-VAE (discrete tokens)
+
+**VQ-VAE** (Van den Oord et al., 2017) : encoder qui produit un code discret pour chaque patch.
+
+```
+Image -> Encoder CNN -> feature map -> nearest neighbor lookup in codebook
+  -> liste d'indices (tokens discrets)
+```
+
+Le codebook est un ensemble de N vecteurs appris. Chaque patch est remplace par l'indice du vecteur le plus proche.
+
+Avec un codebook de 8192 entrees, on peut tokenizer une image en une sequence d'entiers [0, 8191] — exactement comme des tokens BPE.
+
+### Approche 2 : Continuous features
+
+Pour la comprehension (pas la generation), on n'a pas besoin de tokens discrets. On garde les features continues du ViT. C'est ce que fait LLaVA, GPT-4V.
+
+### Tokens pour la generation
+
+**DALL-E 1, Parti** : utilisent un VQ-VAE pour produire des tokens d'image, puis un Transformer autoregressif sur ces tokens.
+
+**DALL-E 2, Stable Diffusion** : n'utilisent pas de tokens discrets. Ils utilisent une diffusion dans un espace continu (latent space d'un VAE).
+
+---
+
+## 7. Multimodal natif — early fusion (2024-2025)
+
+### Late fusion vs early fusion
+
+Les approches vues jusqu'ici (LLaVA, Flamingo) sont toutes du **late fusion** : un vision encoder pre-entraine separement + un LLM pre-entraine separement + une projection pour les aligner. Chaque modalite vit dans son propre reseau avant d'etre mergee tardivement.
+
+Le **native multimodal** (early fusion) entraine un **seul** transformer qui voit texte, image, audio, video des le depart, dans un meme flux de tokens. Pas de fusion tardive : les modalites sont melangees couche par couche via la self-attention.
+
+```
+Late fusion (LLaVA) :
+  image -> [ViT encoder] -> features -> [Linear proj] ---\
+                                                          > [LLM] -> output
+  texte -> [tokenizer] -> embeddings --------------------/
+
+Early fusion (GPT-4o) :
+  image -> [image tokenizer]    \
+  texte -> [text tokenizer]      > [unified Transformer] -> output
+  audio -> [audio tokenizer]    /
+```
+
+### GPT-4o (OpenAI, mai 2024)
+
+GPT-4o (le "o" = omni) est le premier modele commercial a traiter **texte + image + audio** en end-to-end, avec un seul decoder transformer. L'audio est discretise en tokens (voir 7.1), l'image en patches (comme ViT), le texte en BPE. Tous partagent un vocabulaire etendu.
+
+**Capacites demontrees** :
+- **Audio in/out** : conversation vocale avec latence ~320 ms (contre 2-5s pour la pipeline Whisper + GPT-4 + TTS separee)
+- **Expressivite emotionnelle** : le modele genere de l'audio avec ton, rire, chuchotement
+- **Image out** : en mars 2025, OpenAI a active la generation d'image native dans GPT-4o — le modele genere directement des **tokens image**, pas un prompt texte transmis a DALL-E
+
+**Architecture rumored** : un seul decoder (pas de vision encoder separe), les images sont converties en patches + projection dans l'espace de tokens du LLM directement, et le tout est pre-entraine jointement sur du texte + image + audio.
+
+### Gemini 1.5 / Gemini 2 (Google, 2024-2025)
+
+Gemini est multimodal natif depuis la v1. Gemini 1.5 Pro a introduit le contexte 1M+ tokens (avec une variante 2M). Gemini 2 (2025) ajoute :
+- **Video** native (frame-by-frame avec temporal attention)
+- **Image out** natif (comme GPT-4o)
+- **Long video** : comprendre 2h de video dans le contexte
+
+L'architecture utilise du **hybrid SSM + attention** (rumored, voir Jour 9 section 8) pour tenir le 1M+ context.
+
+### Claude 3.5 Sonnet vision, Claude 4 (Anthropic, 2024-2025)
+
+Claude 3.5 Sonnet (juin 2024) a introduit une vision tres forte chez Anthropic. Claude 4 (2025) continue sur la voie native multimodale mais sans generation d'image (Anthropic se concentre sur text + vision understanding, pas sur la generation multimedia).
+
+### 7.1 Audio tokens
+
+L'audio est continu (signal echantillonne a 16-48 kHz). Pour qu'un transformer le traite comme du texte, il faut le **discretiser**.
+
+**VQ-VAE audio (SoundStream, EnCodec)** :
+1. Un encoder convolutif compresse le signal audio en features
+2. Un **quantizer vectoriel** remplace chaque feature par l'indice du code le plus proche dans un codebook
+3. Le decoder reconstruit l'audio a partir des indices
+
+Resultat : un audio de 10 secondes devient une sequence de ~500 tokens audio (indices dans un codebook de 1024 codes). Le LLM peut les generer comme du texte, puis un decoder les reconverti en audio.
+
+**Utilise par** :
+- GPT-4o (audio in/out)
+- Gemini 2 (audio in/out)
+- AudioLM, MusicLM, VALL-E (Meta, Google)
+
+### 7.2 Video understanding
+
+Comprendre une video demande plus que juste des images individuelles : il faut modeliser le **temps**.
+
+**Approche 2025** : traiter chaque frame (typiquement 1 fps pour une video d'1 minute = 60 frames) comme une image, puis ajouter une **temporal attention** qui relie les frames entre elles.
+
+```
+Video 1 min @ 1 fps :
+  frame_0 -> ViT -> 576 features
+  frame_1 -> ViT -> 576 features
+  ...
+  frame_59 -> ViT -> 576 features
+
+Total : 60 * 576 = 34 560 tokens visuels
+
+LLM : attention sur les 34 560 tokens + prompt texte -> raisonnement temporel
+```
+
+**Gemini 2** peut traiter jusqu'a 2 heures de video dans son contexte 1M. C'est le benchmark actuel pour le video understanding.
+
+**Defis** :
+- Volume : 34k tokens par minute de video saturent vite le contexte
+- Compression : on a besoin d'agregation temporelle (pooling par tranches de 4-8 frames)
+- Temporal reasoning : "qu'est-ce qui se passe juste apres..." necessite que le modele raisonne sur l'ordre
+
+### 7.3 Any-to-any — generation multimodale
+
+La frontiere 2025 : un meme modele qui genere **n'importe quelle modalite depuis n'importe quelle modalite**.
+
+**GPT-4o image generation** (mars 2025) : le modele genere directement des tokens d'image dans sa sortie. Pas de prompt texte transmis a DALL-E 3, la generation est native. Resultat : meilleure coherence entre texte et image (le modele "sait" ce qu'il a dit avant de dessiner).
+
+**Gemini 2 image out** : similaire, native image generation.
+
+**Avantage vs. pipelines separees** :
+- **Coherence** : un modele unique comprend et genere -> pas de desalignement
+- **Latence** : une seule passe, pas d'appel a un modele externe
+- **Controle fin** : "dessine une image exactement comme tu me l'as decrite dans le paragraphe precedent" marche bien
+
+**Architecture** : le decoder a un vocabulaire etendu qui inclut des tokens texte ET des tokens image (via VQ-VAE ou quantization similaire). La softmax finale peut generer l'un ou l'autre selon le contexte.
+
+### Recap : late fusion vs native multimodal
+
+| | Late fusion (LLaVA, Flamingo) | Native multimodal (GPT-4o, Gemini 2) |
+|---|---|---|
+| Architecture | LLM + encoder visuel separe | Un seul transformer pour tout |
+| Training | LLM pre-entraine frozen + projection | End-to-end from scratch (tres couteux) |
+| Modalites | Texte + image | Texte + image + audio + video |
+| Image out | Non (besoin d'un modele externe) | Oui (GPT-4o, Gemini 2) |
+| Cout entrainement | Moderateur | Tres eleve (milliards d'USD) |
+| Accessibilite | Open-source (LLaVA, Qwen-VL) | API seulement (OpenAI, Google) |
+
+**Etat 2026** : les modeles frontier sont tous natifs multimodaux. L'open-source rattrape lentement : Qwen 2.5-VL (Alibaba, 2024) et Llama 4 Multimodal (Meta, 2025) sont les premieres alternatives natives open-source.
+
+---
+
+## 8. Flash Cards — Active Recall
+
+### Q1 : Comment un Vision Transformer (ViT) traite-t-il une image ?
+
+<details>
+<summary>Reponse</summary>
+
+**Le principe** : decouper l'image en petits patches et traiter chaque patch comme un token dans un Transformer standard.
+
+**Etapes** :
+1. **Patchify** : image `224×224×3` → grille de `14×14 = 196` patches de `16×16×3`
+2. **Linear projection** : chaque patch `(16*16*3 = 768)` → embedding `d_model` (ex: 768)
+3. **[CLS] token** : ajouter un token apprenable au debut (pour la classification)
+4. **Positional embeddings** : ajouter des embeddings de position (1D ou 2D)
+5. **Transformer standard** : 12 couches de self-attention + FFN
+6. **Classification** : la representation du [CLS] token final passe par un Linear
+
+**Pourquoi ca marche** : avec assez de donnees (JFT-300M), les Transformers apprennent les biais inductifs que les CNNs ont explicitement (locality, translation equivariance).
+
+</details>
+
+### Q2 : Quel est le principe de la contrastive loss de CLIP ?
+
+<details>
+<summary>Reponse</summary>
+
+**Setup** : batch de N paires `(image_i, text_i)` venant du web. On veut que chaque image soit proche de sa vraie legende, et loin des autres legendes du batch.
+
+**Matrice de similarite** :
+```
+scores[i, j] = image_emb_i . text_emb_j / temperature
+shape: (N, N)
+```
+
+La diagonale `scores[i, i]` contient les vraies paires. Le reste est du negatif.
+
+**Loss** : classification N-classes dans les deux sens.
+```
+loss_image = CrossEntropy(scores, targets=[0, 1, ..., N-1])
+loss_text  = CrossEntropy(scores.T, targets=[0, 1, ..., N-1])
+loss = (loss_image + loss_text) / 2
+```
+
+**Interpretation** : on force la diagonale a avoir les scores les plus eleves dans sa ligne ET sa colonne. C'est une contrainte bidirectionnelle.
+
+**Gain** : permet un **zero-shot classification**. A l'inference, on compare l'image aux embeddings texte de toutes les classes possibles → argmax → prediction, sans fine-tuning.
+
+</details>
+
+### Q3 : Quelle est la difference entre LLaVA et Flamingo dans leur facon d'integrer la vision ?
+
+<details>
+<summary>Reponse</summary>
+
+**LLaVA (projection en tokens)** :
+- Image → ViT → 576 features
+- Projection linaire vers l'espace des embeddings du LLM
+- Les 576 features deviennent des "tokens visuels" prefixes au prompt texte
+- Le LLM traite `[vis_tok_1, ..., vis_tok_576, "Describe:", ...]` avec son attention self classique
+- **Avantage** : simple, marche avec n'importe quel LLM existant sans modification
+- **Desavantage** : 576 tokens visuels prennent de la place dans le contexte
+
+**Flamingo (cross-attention)** :
+- Image → NFNet (CNN) + Perceiver Resampler → features compressees
+- Couches de cross-attention ajoutees ENTRE les couches du LLM
+- Les queries viennent du LLM (texte), keys/values des features visuelles
+- **Avantage** : les features ne prennent pas de place dans le contexte, gere video
+- **Desavantage** : il faut modifier l'architecture du LLM
+
+**Gagnant en 2024** : LLaVA. Plus simple, compatible avec tous les LLMs, resultats similaires. GPT-4V et Claude 3 semblent utiliser une variante.
+
+</details>
+
+### Q4 : Pourquoi les LLMs multimodaux utilisent souvent CLIP comme encoder visuel ?
+
+<details>
+<summary>Reponse</summary>
+
+**3 raisons** :
+
+1. **Features semantiquement riches** : CLIP a ete entraine sur 400M paires image-text. Ses features d'image sont deja alignees avec le langage. Un ViT classique (ImageNet) est bon pour classifier mais moins bon pour "dire ce qu'il y a".
+
+2. **Zero-shot transfer** : CLIP peut deja parler de concepts qu'il n'a jamais vus explicitement. Son encoder est donc un bon point de depart pour un LLM qui doit raisonner sur des images variees.
+
+3. **Open-source et performant** : CLIP ViT-L/14 est un modele publique, bien documente, qui marche bien. Pas besoin de reentrainer un encoder visuel from scratch.
+
+**Variantes** :
+- **OpenCLIP** (LAION) : reproduction open-source entrainee sur LAION-5B
+- **SigLIP** (Google) : CLIP avec une loss pairwise sigmoid au lieu de softmax — plus efficace en batch size
+- **EVA-CLIP** : version scalee par BAAI
+
+LLaVA 1.5 utilise CLIP ViT-L/14 ou OpenCLIP.
+
+</details>
+
+### Q5 : Quelle est la difference entre tokenization continue et discrete pour les images ?
+
+<details>
+<summary>Reponse</summary>
+
+**Continue (features)** : l'encoder visuel produit des vecteurs denses float. Utilises pour la **comprehension** (LLaVA, GPT-4V).
+- Avantage : pas de perte d'information, continu, differentiable
+- Desavantage : ne peut pas etre genere par un LLM standard (qui predit des tokens discrets)
+
+**Discrete (VQ-VAE tokens)** : l'encoder produit une sequence d'entiers (indices dans un codebook appris). Utilises pour la **generation** (DALL-E 1, Parti).
+- Avantage : le LLM peut generer les tokens comme du texte classique (cross-entropy loss, argmax, beam search)
+- Desavantage : perte d'information lors de la quantization, codebook collapse possible
+
+**Exemple** :
+- **LLaVA** : features continues CLIP → 576 vecteurs × 1024 dims
+- **DALL-E 1** : tokens VQ-VAE → 256 entiers dans [0, 8191]
+- **Stable Diffusion** : ni tokens ni features — il utilise la diffusion directement dans l'espace latent continu d'un VAE
+
+En 2024, pour la comprehension, features continues dominent. Pour la generation d'images, la diffusion (Stable Diffusion, DALL-E 3) a supplante les VQ-VAE tokens. Mais en 2024-2025, l'**early fusion** native (GPT-4o, Gemini 2) change la donne — voir section 7.
+
+</details>

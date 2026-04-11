@@ -35,9 +35,15 @@ mastering-believe/
 │       │   ├── 02-medium/
 │       │   ├── 03-hard/
 │       │   └── solutions/
-│       └── 04-projects/     # Capstone mini-projects (real-world application)
+│       ├── 04-projects/     # Capstone mini-projects (real-world application)
+│       └── 05-projets-guides/   # Guided real-world projects in Masa Group context
+│           ├── 01-<project>/
+│           │   ├── README.md    # Contexte, consigne, etapes, criteres
+│           │   └── solution/    # Corrige commente
+│           └── ...
 └── shared/
-    └── templates/           # Templates for new domains
+    ├── templates/           # Templates for new domains
+    └── masa-context.md      # Shared Masa Group context referenced by all 05-projets-guides
 ```
 
 ## Conventions
@@ -76,6 +82,8 @@ When creating content for a domain:
 | System Design | `domains/system-design/` | Diagrammes + Python/infra | Architecture backend & IA, entretiens senior |
 | Neural Networks & LLMs | `domains/neural-networks-llm/` | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
 | Agentic AI | `domains/agentic-ai/` | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
+
+**Projets guides (Masa Group context)** : chaque domaine a un dossier `05-projets-guides/` avec 3 projets appliques au contexte de MASA Group (editeur francais de simulation defense, produit SWORD). Voir `shared/masa-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-interarmes/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation interarmes.
 
 ## Commands
 
