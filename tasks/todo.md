@@ -11,4 +11,8 @@
 - [x] Generer J2 — System Design (Stockage & Databases)
 - [x] Generer J2 — Neural Networks & LLMs (Reseaux denses MLP)
 - [x] Generer J2 — Agentic AI (Tool Use & Function Calling)
-- [ ] Generer J3 pour les 4 domaines
+- [x] Generer J3 — Algorithmie Python (Hash Maps & Sets)
+- [x] Generer J3 — System Design (Caching & CDN)
+- [x] Generer J3 — Neural Networks & LLMs (Embeddings & Representations)
+- [x] Generer J3 — Agentic AI (Memory & State)
+- [ ] Generer J4 pour les 4 domaines
