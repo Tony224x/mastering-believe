@@ -1,0 +1,526 @@
+# Jour 1 — Le neurone & backpropagation
+
+> **Temps estime** : 4h | **Prerequis** : algebre lineaire basique, derivees, notion de chaine de derivation
+
+---
+
+## 1. Du neurone biologique au neurone artificiel
+
+Le neurone biologique recoit des signaux electriques via ses **dendrites**, les integre dans le **corps cellulaire**, et si le signal depasse un seuil, il envoie une impulsion via l'**axone**.
+
+Le neurone artificiel fait exactement la meme chose, en maths :
+
+```
+dendrites        →  inputs ponderes (x_i * w_i)
+corps cellulaire →  somme ponderee + biais (z = Σ w_i * x_i + b)
+seuil d'activation →  fonction d'activation (a = f(z))
+axone            →  output
+```
+
+C'est tout. Le reste est du marketing. Passons aux maths.
+
+---
+
+## 2. Le perceptron : weighted sum + bias + activation
+
+### Formule
+
+```
+z = w1*x1 + w2*x2 + ... + wn*xn + b
+a = f(z)
+```
+
+En notation vectorielle :
+
+```
+z = w^T * x + b
+a = f(z)
+```
+
+Ou :
+- **x** = vecteur d'entrees (features)
+- **w** = vecteur de poids (weights) — ce que le reseau APPREND
+- **b** = biais (bias) — permet de decaler le seuil de decision
+- **f** = fonction d'activation — introduit la non-linearite
+- **a** = activation (output du neurone)
+
+### Exemple numerique pas a pas
+
+Donnees :
+- Inputs : x1 = 0.5, x2 = 0.8
+- Poids : w1 = 0.4, w2 = -0.3
+- Biais : b = 0.1
+- Activation : sigmoid
+
+**Etape 1 — Somme ponderee :**
+
+```
+z = (0.4 * 0.5) + (-0.3 * 0.8) + 0.1
+z = 0.20 + (-0.24) + 0.1
+z = 0.06
+```
+
+**Etape 2 — Activation (sigmoid) :**
+
+```
+sigmoid(z) = 1 / (1 + e^(-z))
+sigmoid(0.06) = 1 / (1 + e^(-0.06))
+             = 1 / (1 + 0.9418)
+             = 1 / 1.9418
+             = 0.5150
+```
+
+Le neurone produit **a = 0.5150**. C'est tout. Un neurone = une multiplication-addition + une non-linearite.
+
+---
+
+## 3. Fonctions d'activation
+
+### Sigmoid
+
+```
+σ(z) = 1 / (1 + e^(-z))
+```
+
+- **Range** : (0, 1)
+- **Derivee** : σ(z) * (1 - σ(z))
+- **Usage** : couche de sortie pour classification binaire
+- **Probleme** : vanishing gradient — quand z est tres grand ou tres petit, la derivee → 0
+
+Exemples :
+```
+σ(-5)  = 0.0067   →  derivee = 0.0067 * 0.9933 = 0.0066 ← quasi-mort
+σ(0)   = 0.5000   →  derivee = 0.5 * 0.5 = 0.25          ← max
+σ(5)   = 0.9933   →  derivee = 0.9933 * 0.0067 = 0.0066 ← quasi-mort
+```
+
+### Tanh
+
+```
+tanh(z) = (e^z - e^(-z)) / (e^z + e^(-z))
+```
+
+- **Range** : (-1, 1)
+- **Derivee** : 1 - tanh(z)^2
+- **Avantage sur sigmoid** : centree en zero → gradients plus equilibres
+- **Probleme** : vanishing gradient aussi (mieux que sigmoid, mais pas suffisant)
+
+### ReLU (Rectified Linear Unit)
+
+```
+ReLU(z) = max(0, z)
+```
+
+- **Range** : [0, +∞)
+- **Derivee** : 0 si z < 0, 1 si z > 0
+- **Pourquoi ReLU domine** :
+  1. **Pas de vanishing gradient** pour z > 0 — derivee = 1, constant
+  2. **Calcul ultra-rapide** — juste un max, pas d'exponentielle
+  3. **Sparsity** — beaucoup de neurones a zero → representation sparse → generalise mieux
+- **Probleme** : "dying ReLU" — si un neurone tombe en zone negative, il ne se reactive jamais
+
+### Pourquoi ReLU domine (le vrai argument)
+
+Avec sigmoid/tanh, pendant la backpropagation, les gradients sont multiplies couche par couche. Si chaque derivee est < 1 (ce qui arrive souvent avec sigmoid), apres N couches :
+
+```
+gradient final = 0.25 * 0.25 * 0.25 * ... (N fois)
+```
+
+Pour N = 10 : 0.25^10 = 0.00000095 → le gradient **disparait**. Les premieres couches n'apprennent plus rien.
+
+Avec ReLU, la derivee est 1 pour les neurones actifs → le gradient passe sans attenuation.
+
+> **Regle pratique** : ReLU pour les couches cachees, sigmoid pour la sortie binaire, softmax pour la sortie multi-classes.
+
+---
+
+## 4. Forward pass — calcul complet a la main
+
+### Architecture du mini-reseau
+
+```
+Input Layer (2)  →  Hidden Layer (2)  →  Output Layer (1)
+
+   x1 ─── w1,w3 ──→ h1 ─── w5 ──→ o1
+          ╲    ╱
+           ╲  ╱
+            ╳
+           ╱  ╲
+          ╱    ╲
+   x2 ─── w2,w4 ──→ h2 ─── w6 ──→ o1
+```
+
+### Parametres initiaux
+
+```
+Inputs :    x1 = 0.5,  x2 = 0.8
+
+Poids hidden layer :
+  w1 = 0.4   (x1 → h1)
+  w2 = 0.3   (x2 → h1)
+  w3 = -0.2  (x1 → h2)
+  w4 = 0.6   (x2 → h2)
+
+Biais hidden :  b_h1 = 0.1,  b_h2 = -0.1
+
+Poids output layer :
+  w5 = 0.5  (h1 → o1)
+  w6 = -0.4 (h2 → o1)
+
+Biais output :  b_o = 0.2
+
+Activation : sigmoid partout
+Target (valeur attendue) : y = 1.0
+```
+
+### Etape 1 — Forward pass couche cachee
+
+**Neurone h1 :**
+```
+z_h1 = w1*x1 + w2*x2 + b_h1
+z_h1 = 0.4*0.5 + 0.3*0.8 + 0.1
+z_h1 = 0.20 + 0.24 + 0.1
+z_h1 = 0.54
+
+a_h1 = sigmoid(0.54) = 1/(1 + e^(-0.54)) = 1/(1 + 0.5827) = 1/1.5827 = 0.6318
+```
+
+**Neurone h2 :**
+```
+z_h2 = w3*x1 + w4*x2 + b_h2
+z_h2 = -0.2*0.5 + 0.6*0.8 + (-0.1)
+z_h2 = -0.10 + 0.48 - 0.1
+z_h2 = 0.28
+
+a_h2 = sigmoid(0.28) = 1/(1 + e^(-0.28)) = 1/(1 + 0.7558) = 1/1.7558 = 0.5695
+```
+
+### Etape 2 — Forward pass couche de sortie
+
+**Neurone o1 :**
+```
+z_o = w5*a_h1 + w6*a_h2 + b_o
+z_o = 0.5*0.6318 + (-0.4)*0.5695 + 0.2
+z_o = 0.3159 + (-0.2278) + 0.2
+z_o = 0.2881
+
+a_o = sigmoid(0.2881) = 1/(1 + e^(-0.2881)) = 1/(1 + 0.7497) = 1/1.7497 = 0.5715
+```
+
+**Prediction du reseau : 0.5715** (on voulait 1.0 → il faut entrainer)
+
+---
+
+## 5. Loss functions : MSE vs Cross-Entropy
+
+### MSE (Mean Squared Error)
+
+```
+L = (1/n) * Σ (y_pred - y_true)^2
+```
+
+Pour un seul exemple :
+```
+L = (a_o - y)^2 = (0.5715 - 1.0)^2 = (-0.4285)^2 = 0.1836
+```
+
+- **Quand l'utiliser** : regression (predire un nombre continu)
+- **Derivee** : ∂L/∂a_o = 2*(a_o - y) = 2*(0.5715 - 1.0) = -0.8570
+
+### Cross-Entropy (Binary)
+
+```
+L = -[y*log(a_o) + (1-y)*log(1-a_o)]
+```
+
+Pour notre exemple (y = 1) :
+```
+L = -[1*log(0.5715) + 0*log(1-0.5715)]
+L = -log(0.5715)
+L = -(-0.5588)
+L = 0.5588
+```
+
+- **Quand l'utiliser** : classification (predire une probabilite)
+- **Derivee** : ∂L/∂a_o = -y/a_o + (1-y)/(1-a_o)
+  - Pour y=1 : ∂L/∂a_o = -1/0.5715 = -1.7498
+
+### Pourquoi Cross-Entropy pour la classification ?
+
+Avec MSE, la derivee depend de la derivee de sigmoid (qui sature). Le gradient est lent quand la prediction est tres fausse — exactement quand on voudrait qu'il soit rapide.
+
+Avec Cross-Entropy combinees a sigmoid, les termes se simplifient :
+```
+∂L/∂z_o = a_o - y
+```
+
+C'est magique : le gradient est **proportionnel a l'erreur**. Plus la prediction est fausse, plus le gradient est fort. Pas de saturation.
+
+> **Regle** : Classification binaire → BCE + sigmoid. Multi-classes → Cross-Entropy + softmax. Regression → MSE.
+
+---
+
+## 6. Backpropagation — la chaine de derivation
+
+### L'intuition
+
+La backpropagation repond a une question simple : **de combien chaque poids a-t-il contribue a l'erreur ?**
+
+On part de la loss, et on remonte le graphe de calcul en appliquant la **chain rule** (regle de derivation en chaine) :
+
+```
+∂L/∂w = ∂L/∂a * ∂a/∂z * ∂z/∂w
+```
+
+C'est comme remonter une riviere : chaque segment multiplie son influence.
+
+### Calcul complet sur notre mini-reseau
+
+On utilise **MSE** : L = (a_o - y)^2
+
+#### Phase 1 — Gradients de la couche de sortie
+
+**Gradient de la loss par rapport a la sortie :**
+```
+∂L/∂a_o = 2*(a_o - y) = 2*(0.5715 - 1.0) = -0.8570
+```
+
+**Gradient a travers la sigmoid de sortie :**
+```
+∂a_o/∂z_o = a_o * (1 - a_o) = 0.5715 * (1 - 0.5715) = 0.5715 * 0.4285 = 0.2449
+```
+
+**Delta de sortie (erreur retropropagee) :**
+```
+δ_o = ∂L/∂a_o * ∂a_o/∂z_o = -0.8570 * 0.2449 = -0.2099
+```
+
+**Gradients des poids de sortie :**
+```
+∂L/∂w5 = δ_o * a_h1 = -0.2099 * 0.6318 = -0.1326
+∂L/∂w6 = δ_o * a_h2 = -0.2099 * 0.5695 = -0.1195
+∂L/∂b_o = δ_o * 1    = -0.2099
+```
+
+#### Phase 2 — Gradients de la couche cachee
+
+On propage l'erreur en arriere vers chaque neurone cache :
+
+**Erreur retropropagee vers h1 :**
+```
+∂L/∂a_h1 = δ_o * w5 = -0.2099 * 0.5 = -0.1050
+```
+
+**Gradient a travers la sigmoid de h1 :**
+```
+∂a_h1/∂z_h1 = a_h1 * (1 - a_h1) = 0.6318 * (1 - 0.6318) = 0.6318 * 0.3682 = 0.2327
+```
+
+**Delta h1 :**
+```
+δ_h1 = -0.1050 * 0.2327 = -0.0244
+```
+
+**Gradients des poids vers h1 :**
+```
+∂L/∂w1 = δ_h1 * x1 = -0.0244 * 0.5 = -0.0122
+∂L/∂w2 = δ_h1 * x2 = -0.0244 * 0.8 = -0.0195
+∂L/∂b_h1 = δ_h1     = -0.0244
+```
+
+**Erreur retropropagee vers h2 :**
+```
+∂L/∂a_h2 = δ_o * w6 = -0.2099 * (-0.4) = 0.0840
+```
+
+**Gradient a travers la sigmoid de h2 :**
+```
+∂a_h2/∂z_h2 = a_h2 * (1 - a_h2) = 0.5695 * 0.4305 = 0.2452
+```
+
+**Delta h2 :**
+```
+δ_h2 = 0.0840 * 0.2452 = 0.0206
+```
+
+**Gradients des poids vers h2 :**
+```
+∂L/∂w3 = δ_h2 * x1 = 0.0206 * 0.5 = 0.0103
+∂L/∂w4 = δ_h2 * x2 = 0.0206 * 0.8 = 0.0165
+∂L/∂b_h2 = δ_h2     = 0.0206
+```
+
+#### Recap des gradients
+
+| Poids | Valeur actuelle | Gradient ∂L/∂w |
+|-------|----------------|-----------------|
+| w1    | 0.4            | -0.0122         |
+| w2    | 0.3            | -0.0195         |
+| w3    | -0.2           | +0.0103         |
+| w4    | 0.6            | +0.0165         |
+| w5    | 0.5            | -0.1326         |
+| w6    | -0.4           | -0.1195         |
+| b_h1  | 0.1            | -0.0244         |
+| b_h2  | -0.1           | +0.0206         |
+| b_o   | 0.2            | -0.2099         |
+
+---
+
+## 7. Gradient descent — mise a jour des poids
+
+### La regle
+
+```
+w_new = w_old - learning_rate * ∂L/∂w
+```
+
+Le signe **moins** est crucial : on va **dans la direction opposee au gradient** pour descendre la loss.
+
+### Application avec learning_rate = 0.5
+
+```
+w1_new = 0.4   - 0.5 * (-0.0122) = 0.4   + 0.0061 = 0.4061
+w2_new = 0.3   - 0.5 * (-0.0195) = 0.3   + 0.0098 = 0.3098
+w3_new = -0.2  - 0.5 * (0.0103)  = -0.2  - 0.0052 = -0.2052
+w4_new = 0.6   - 0.5 * (0.0165)  = 0.6   - 0.0083 = 0.5917
+w5_new = 0.5   - 0.5 * (-0.1326) = 0.5   + 0.0663 = 0.5663
+w6_new = -0.4  - 0.5 * (-0.1195) = -0.4  + 0.0598 = -0.3402
+b_h1_new = 0.1  - 0.5 * (-0.0244) = 0.1  + 0.0122 = 0.1122
+b_h2_new = -0.1 - 0.5 * (0.0206)  = -0.1 - 0.0103 = -0.1103
+b_o_new  = 0.2  - 0.5 * (-0.2099) = 0.2  + 0.1050 = 0.3050
+```
+
+Si on refait le forward pass avec ces nouveaux poids, la prediction sera **plus proche de 1.0**.
+
+### Le learning rate est critique
+
+| LR trop grand (ex: 10) | LR correct (ex: 0.01-0.1) | LR trop petit (ex: 0.00001) |
+|---|---|---|
+| Les poids oscillent violemment | Convergence stable | Convergence extremement lente |
+| La loss AUGMENTE ou explose (NaN) | La loss diminue regulierement | La loss stagne pendant des milliers d'epochs |
+| Le reseau ne converge jamais | Atteint un bon minimum | Peut rester bloque dans un mauvais minimum local |
+
+> **En pratique** : on demarre souvent avec lr=0.01 ou lr=0.001 et on ajuste. Les optimizers modernes (Adam) adaptent le LR automatiquement par parametre.
+
+---
+
+## 8. SGD vs Mini-batch vs Batch
+
+Les trois variantes de gradient descent different par **combien d'exemples on utilise pour calculer le gradient avant de mettre a jour les poids** :
+
+### Batch Gradient Descent
+
+```
+Pour chaque epoch :
+    gradient = moyenne des gradients sur TOUS les exemples
+    w = w - lr * gradient
+```
+
+- **Avantage** : gradient stable, convergence lisse
+- **Inconvenient** : extremement lent si le dataset est grand (il faut tout parcourir avant chaque update)
+- **Memoire** : doit stocker tous les gradients en memoire
+
+### Stochastic Gradient Descent (SGD)
+
+```
+Pour chaque epoch :
+    Pour chaque exemple (un seul) :
+        gradient = gradient sur CET exemple
+        w = w - lr * gradient
+```
+
+- **Avantage** : updates tres frequentes, peut echapper aux minima locaux grace au bruit
+- **Inconvenient** : gradient tres bruite, convergence instable (la loss oscille)
+- **Memoire** : minimale
+
+### Mini-batch Gradient Descent
+
+```
+Pour chaque epoch :
+    Pour chaque batch de B exemples :
+        gradient = moyenne des gradients sur le batch
+        w = w - lr * gradient
+```
+
+- **Avantage** : compromis ideal — gradient assez stable, updates frequentes
+- **Taille typique** : B = 32, 64, 128, 256
+- **Pourquoi ca marche** : les GPUs sont optimises pour les operations par batch (parallelisme)
+
+> **En pratique** : tout le monde utilise mini-batch. Quand on dit "SGD" dans un paper, c'est generalement du mini-batch SGD.
+
+### Comparaison visuelle
+
+```
+                   Loss
+                    │
+Batch:              │ ╲ ╲ ╲ ╲ ╲ ╲ ╲ ╲ ╲ ╲___      (descente lisse)
+                    │
+SGD:                │ ╱╲╱╲╱╲╱╲╱╲ ╱╲ ╱╲__          (zigzag bruite)
+                    │         ╲╱  ╲╱
+Mini-batch:         │ ╲ ╱╲ ╲ ╱╲ ╲ ╲ ╲___           (leger bruit, convergence)
+                    │  ╲╱  ╲╱
+                    └────────────────────── Epochs
+```
+
+---
+
+## 9. Flash Cards — Active Recall
+
+### Q1 : Quelle est la formule d'un neurone artificiel ?
+
+<details>
+<summary>Reponse</summary>
+
+```
+z = w^T * x + b      (somme ponderee + biais)
+a = f(z)              (activation)
+```
+
+Le neurone calcule une combinaison lineaire de ses entrees, ajoute un biais, puis applique une non-linearite.
+
+</details>
+
+### Q2 : Pourquoi ReLU est prefere a sigmoid dans les couches cachees ?
+
+<details>
+<summary>Reponse</summary>
+
+1. **Pas de vanishing gradient** : la derivee de ReLU est 1 pour z > 0 (vs. max 0.25 pour sigmoid)
+2. **Calcul rapide** : max(0, z) vs. exponentielle
+3. **Sparsity** : les neurones a zero creent des representations eparses
+
+Sigmoid sature pour les grandes valeurs de |z|, ce qui tue le gradient dans les couches profondes.
+
+</details>
+
+### Q3 : Qu'est-ce que la backpropagation, en une phrase ?
+
+<details>
+<summary>Reponse</summary>
+
+C'est l'application recursive de la **chain rule** (regle de derivation en chaine) pour calculer le gradient de la loss par rapport a chaque poids, en partant de la sortie et en remontant vers l'entree.
+
+</details>
+
+### Q4 : Pourquoi utiliser Cross-Entropy plutot que MSE pour la classification ?
+
+<details>
+<summary>Reponse</summary>
+
+Avec Cross-Entropy + sigmoid, le gradient simplifie a `a - y` (proportionnel a l'erreur). Avec MSE + sigmoid, le gradient inclut la derivee de sigmoid qui sature → gradient lent quand la prediction est tres fausse, exactement quand on voudrait qu'il soit rapide.
+
+</details>
+
+### Q5 : Quelle est la difference entre Batch, Mini-batch et SGD ?
+
+<details>
+<summary>Reponse</summary>
+
+- **Batch** : gradient calcule sur TOUS les exemples → stable mais lent
+- **SGD** : gradient sur UN exemple → rapide mais bruite
+- **Mini-batch** : gradient sur un petit lot (32-256) → compromis optimal, exploite le parallelisme GPU
+
+En pratique, on utilise toujours mini-batch.
+
+</details>
