@@ -61,6 +61,7 @@ Output : weighted sum of V
 ```
 
 L'attention, c'est exactement ca. Sauf que :
+
 - Les cles et valeurs sont des **vecteurs** (pas des strings)
 - La similarite est un **produit scalaire** (pas une comparaison exacte)
 - Le resultat est une **moyenne ponderee continue** (pas une selection discrete)
@@ -252,6 +253,7 @@ Mask phrase 2 : [1, 1, 0]   (0 = ignorer)
 ### Le probleme avec une seule tete d'attention
 
 Une seule passe d'attention force le modele a compresser toute la relation entre tokens dans un seul jeu de poids. Mais il y a plusieurs "types" de relations qu'on veut capturer :
+
 - Relations syntaxiques (sujet-verbe)
 - Relations semantiques (synonymes)
 - Relations de coreference (pronom → antecedent)
@@ -341,6 +343,7 @@ Cette derniere projection mixe les informations des differentes tetes.
 ### Interpretabilite : ce que les tetes apprennent
 
 Des analyses (Clark et al., 2019 sur BERT) montrent que les tetes se specialisent spontanement :
+
 - Tete 1 : attention a la position precedente (comme un n-gram)
 - Tete 2 : attention aux mots identiques ailleurs dans la phrase
 - Tete 3 : resolution de coreference
@@ -353,14 +356,14 @@ Chaque tete devient un "detecteur" d'un type de relation. Avec 8-16 tetes et 12-
 
 ## 7. Attention vs RNN : la revolution en un tableau
 
-| | RNN / LSTM | Attention / Transformer |
-|---|---|---|
-| Parallelisation | Sequentiel (h_t depend de h_{t-1}) | Tout en parallele |
-| Longueur max effective | ~100-500 tokens | 10 000+ tokens |
-| Gradient entre positions distantes | Passe a travers T etapes | Passe direct (1 etape) |
-| Complexite par couche | O(T * d^2) | O(T^2 * d) |
-| Utilisation GPU | ~1% (rempli-attente) | ~95% (matrices denses) |
-| Interpretabilite | Faible | Bonne (matrice d'attention visualisable) |
+|                                    | RNN / LSTM                         | Attention / Transformer                  |
+| ---------------------------------- | ---------------------------------- | ---------------------------------------- |
+| Parallelisation                    | Sequentiel (h_t depend de h_{t-1}) | Tout en parallele                        |
+| Longueur max effective             | ~100-500 tokens                    | 10 000+ tokens                           |
+| Gradient entre positions distantes | Passe a travers T etapes           | Passe direct (1 etape)                   |
+| Complexite par couche              | O(T * d^2)                         | O(T^2 * d)                               |
+| Utilisation GPU                    | ~1% (rempli-attente)               | ~95% (matrices denses)                   |
+| Interpretabilite                   | Faible                             | Bonne (matrice d'attention visualisable) |
 
 **La seule faiblesse** : `O(T^2)` en memoire. Pour T = 10 000 tokens, la matrice d'attention fait 100M d'entrees. C'est ce que les techniques recentes (Flash Attention, Linear Attention, Sliding Window) cherchent a ameliorer.
 
@@ -393,6 +396,7 @@ Attention(Q, K, V) = softmax(Q @ K^T / sqrt(d_k)) @ V
 **Pourquoi /sqrt(d_k) ?** Si Q et K ont des composantes de moyenne 0 et variance 1, alors `Q · K` a une variance de `d_k`, donc un ecart-type de `sqrt(d_k)`.
 
 Sans scaling, pour `d_k = 512`, les scores auraient un ecart-type de ~22. Le softmax de tels scores serait quasi-one-hot (toute la masse sur un seul token), ce qui :
+
 1. Tue le gradient (softmax sature)
 2. Empeche le modele d'apprendre des patterns graduels
 
@@ -421,10 +425,12 @@ Dans GPT (decoder-only), il n'y a que de la self-attention. Dans BERT (encoder-o
 Le **masking causal** empeche un token a la position `i` de regarder les tokens futurs (`i+1`, `i+2`, ...) pendant l'entrainement. C'est indispensable pour la generation autoregressive (GPT, LLaMA) : si le modele voyait la reponse, il tricherait.
 
 **Implementation** : on construit une matrice triangulaire `M` de forme `(T, T)` avec :
+
 - `M[i][j] = 0` si `j <= i` (autorise)
 - `M[i][j] = -inf` si `j > i` (interdit)
 
 On l'ajoute aux scores AVANT le softmax :
+
 ```
 scores = Q @ K^T / sqrt(d_k) + M
 weights = softmax(scores)
@@ -458,15 +464,10 @@ Cout computationnel : **identique** a une seule tete avec d_model dims, car les 
 ## 9. Key Takeaways
 
 1. **L'attention est un lookup differentiable** : queries, keys, values. Les scores sont des produits scalaires, softmaxed, puis utilises pour ponderer les values.
-
 2. **La formule standard** : `Attention(Q, K, V) = softmax(Q @ K^T / sqrt(d_k)) @ V`. Le `/sqrt(d_k)` empeche le softmax de saturer.
-
 3. **Self-attention** : Q, K, V viennent de la meme sequence. Chaque token integre le contexte de toute la sequence en une etape. C'est ce qui remplace l'etat cache du RNN.
-
 4. **Masking causal** pour la generation autoregressive : matrice triangulaire `-inf` qui empeche de voir le futur.
-
 5. **Multi-head attention** : plusieurs attentions paralleles dans des sous-espaces, permettant aux tetes de se specialiser. Cout computationnel identique a une seule tete de meme taille totale.
-
 6. **Complexite O(T^2)** en memoire. C'est le point faible actuel, que Flash Attention et consorts cherchent a ameliorer.
 
 ---

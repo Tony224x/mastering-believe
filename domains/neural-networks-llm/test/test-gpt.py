@@ -1,3 +1,5 @@
+# %%
+
 """
 Jour 7 — Mini-GPT from scratch (CAPSTONE Week 1)
 =================================================
@@ -20,7 +22,9 @@ import sys
 import io
 import math
 
-if sys.stdout.encoding != 'utf-8':
+# In Jupyter, sys.stdout is an ipykernel OutStream (no .buffer attribute).
+# Only wrap when running as a real script with a buffered stdout.
+if sys.stdout.encoding != 'utf-8' and hasattr(sys.stdout, 'buffer'):
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 
@@ -43,22 +47,52 @@ except ImportError:
 
 
 # ============================================================================
-# PART 1: Corpus (Tiny Shakespeare-style inline text)
+# PART 1: Corpus = texte perso + extrait Wikipedia FR
 # ============================================================================
 
-# Small French corpus — fits entirely in memory, easy to memorize for a tiny model
-CORPUS = """Le chat est noir. Le chat est beau. Le chat mange la souris.
-Le chien court dans le jardin. Le chien aime le chat. Le chien dort.
-Le petit chat regarde par la fenetre. La souris se cache sous la table.
-Le chien et le chat sont amis. La fenetre est ouverte ce matin.
-Le chat saute sur la table. La souris court vite vers le trou.
-Le chien aboie fort. Le chat miaule doucement. Il fait beau dehors.
-Le chat dort sur le canape. Le chien joue avec sa balle. La balle roule.
-Il y a un chat noir et un chat blanc. Les deux chats se regardent.
-Le soleil brille. Le vent souffle. Les feuilles tombent des arbres.
-Le chat noir chasse la souris grise. La souris se cache sous la table.
-Le chien fidele protege la maison. La maison est grande et belle.
-""" * 4  # Repeat to give the model more data to memorize
+# --- Corpus personnalise : Kadiatou Lamarana Sow ---
+CORPUS_PERSO = """Kadiatou Lamarana Sow est belle. Kadiatou sourit avec douceur.
+Lamarana aime lire des livres. Kadiatou prepare le repas du soir.
+Kadiatou Lamarana Sow est intelligente. Elle travaille avec passion.
+Lamarana marche dans le jardin. Kadiatou regarde le ciel etoile.
+Kadiatou et Anthony sont ensemble. Leur amour est grand et sincere.
+Lamarana Sow porte un beau boubou. Kadiatou danse avec elegance.
+Kadiatou cuisine un bon thieboudienne. Le repas est delicieux.
+Lamarana aime la musique. Kadiatou chante une melodie douce.
+Kadiatou Lamarana Sow est courageuse. Elle avance avec confiance.
+Anthony aime Kadiatou. Kadiatou aime Anthony. Ils sont heureux ensemble.
+Lamarana regarde par la fenetre. Le soleil brille sur son visage.
+Kadiatou rit avec joie. Son rire illumine la maison.
+Kadiatou Sow est une femme forte. Elle inspire ceux qui la connaissent.
+Lamarana prepare le the. Kadiatou et Anthony partagent un moment.
+Kadiatou est douce et patiente. Lamarana Sow est pleine de sagesse.
+Anthony et Kadiatou construisent leur avenir. La vie est belle ensemble.
+Kadiatou Lamarana Sow sourit. Le bonheur se lit dans ses yeux.
+""" * 4
+
+# --- Petit dataset Wikipedia FR (telecharge via HuggingFace datasets) ---
+from datasets import load_dataset
+
+print("Chargement d'un extrait Wikipedia FR...")
+wiki_ds = load_dataset('wikimedia/wikipedia', '20231101.fr', split='train', streaming=True)
+wiki_texts = []
+target_chars = 10_000  # ~10K chars = bon ratio avec le corpus perso
+total = 0
+for article in wiki_ds:
+    text = article['text'].replace('\n', ' ').strip()
+    if len(text) > 200:  # skip stubs
+        wiki_texts.append(text)
+        total += len(text)
+    if total >= target_chars:
+        break
+
+CORPUS_WIKI = '\n'.join(wiki_texts)
+print(f"  Wikipedia: {len(CORPUS_WIKI):,} chars from {len(wiki_texts)} articles")
+
+# --- Corpus final : perso + wiki ---
+CORPUS = CORPUS_PERSO + '\n' + CORPUS_WIKI
+print(f"  Corpus total: {len(CORPUS):,} chars")
+
 
 # ============================================================================
 # PART 2: Char-level tokenizer
@@ -327,148 +361,114 @@ def train(model, data, block_size, batch_size, lr, max_iters, eval_interval, dev
     return losses
 
 
-# ============================================================================
-# MAIN
-# ============================================================================
 
-if __name__ == "__main__":
+# %%
 
-    # Prefer CUDA if available, else CPU. The model is tiny enough for CPU.
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(f"Device: {device}")
-    print(f"PyTorch version: {torch.__version__}")
 
-    # Set seed for reproducibility
-    torch.manual_seed(1337)
+# Prefer CUDA if available, else CPU. The model is tiny enough for CPU.
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(f"Device: {device}")
+print(f"PyTorch version: {torch.__version__}")
 
-    # ---- 1. Tokenize the corpus ----
-    print("\n" + "=" * 70)
-    print("Step 1: Tokenize the corpus")
-    print("=" * 70)
+# Set seed for reproducibility
+torch.manual_seed(1337)
 
-    tokenizer = CharTokenizer(CORPUS)
-    print(f"  Corpus length : {len(CORPUS)} chars")
-    print(f"  Vocab size    : {tokenizer.vocab_size}")
-    print(f"  Vocab         : {tokenizer.chars}")
+# ---- 1. Tokenize the corpus ----
+print("\n" + "=" * 70)
+print("Step 1: Tokenize the corpus")
+print("=" * 70)
 
-    # Encode the entire corpus into a tensor
-    data = torch.tensor(tokenizer.encode(CORPUS), dtype=torch.long)
-    print(f"  Data shape    : {tuple(data.shape)}")
-    print(f"  First 60 ids  : {data[:60].tolist()}")
-    print(f"  Decoded back  : {tokenizer.decode(data[:60].tolist())!r}")
+tokenizer = CharTokenizer(CORPUS)
+print(f"  Corpus length : {len(CORPUS)} chars")
+print(f"  Vocab size    : {tokenizer.vocab_size}")
+print(f"  Vocab         : {tokenizer.chars}")
 
-    # ---- 2. Build the model ----
-    print("\n" + "=" * 70)
-    print("Step 2: Build the mini-GPT")
-    print("=" * 70)
+# Encode the entire corpus into a tensor
+data = torch.tensor(tokenizer.encode(CORPUS), dtype=torch.long)
+print(f"  Data shape    : {tuple(data.shape)}")
+print(f"  First 60 ids  : {data[:60].tolist()}")
+print(f"  Decoded back  : {tokenizer.decode(data[:60].tolist())!r}")
 
-    config = dict(
-        vocab_size=tokenizer.vocab_size,
-        n_embed=48,
-        n_head=4,
-        n_layer=2,
-        block_size=32,
-        dropout=0.0,
-    )
-    print(f"  Config: {config}")
+# ---- 2. Build the model ----
+print("\n" + "=" * 70)
+print("Step 2: Build the mini-GPT")
+print("=" * 70)
 
-    model = MiniGPT(**config).to(device)
-    n_params = sum(p.numel() for p in model.parameters())
-    print(f"  Total parameters: {n_params:,}")
+config = dict(
+    vocab_size=tokenizer.vocab_size,
+    n_embed=64,       # larger embedding for richer vocab
+    n_head=4,
+    n_layer=3,        # 3 layers for more capacity
+    block_size=64,    # longer context window
+    dropout=0.1,      # light regularization with more data
+)
+print(f"  Config: {config}")
 
-    # ---- 3. Evaluate loss at initialization ----
-    print("\n" + "=" * 70)
-    print("Step 3: Loss at random initialization")
-    print("=" * 70)
+model = MiniGPT(**config).to(device)
+n_params = sum(p.numel() for p in model.parameters())
+print(f"  Total parameters: {n_params:,}")
 
-    x, y = get_batch(data, config['block_size'], batch_size=16, device=device)
-    _, loss_init = model(x, targets=y)
-    expected = math.log(tokenizer.vocab_size)
-    print(f"  Initial loss : {loss_init.item():.4f}")
-    print(f"  log(vocab)   : {expected:.4f}  (theoretical uniform baseline)")
-    print(f"  -> Should be close: a random model predicts ~1/vocab for every char.")
+# ---- 3. Evaluate loss at initialization ----
+print("\n" + "=" * 70)
+print("Step 3: Loss at random initialization")
+print("=" * 70)
 
-    # ---- 4. Sample from the untrained model ----
-    print("\n" + "=" * 70)
-    print("Step 4: Generate text BEFORE training (random noise expected)")
-    print("=" * 70)
+x, y = get_batch(data, config['block_size'], batch_size=16, device=device)
+_, loss_init = model(x, targets=y)
+expected = math.log(tokenizer.vocab_size)
+print(f"  Initial loss : {loss_init.item():.4f}")
+print(f"  log(vocab)   : {expected:.4f}  (theoretical uniform baseline)")
+print(f"  -> Should be close: a random model predicts ~1/vocab for every char.")
 
-    context = torch.zeros((1, 1), dtype=torch.long, device=device)  # start with char 0
-    out_ids = model.generate(context, max_new_tokens=80, temperature=1.0)[0].tolist()
-    print(f"  {tokenizer.decode(out_ids)!r}")
+# ---- 4. Sample from the untrained model ----
+print("\n" + "=" * 70)
+print("Step 4: Generate text BEFORE training (random noise expected)")
+print("=" * 70)
 
-    # ---- 5. Train ----
-    print("\n" + "=" * 70)
-    print("Step 5: Training loop")
-    print("=" * 70)
+context = torch.zeros((1, 1), dtype=torch.long, device=device)  # start with char 0
+out_ids = model.generate(context, max_new_tokens=80, temperature=1.0)[0].tolist()
+print(f"  {tokenizer.decode(out_ids)!r}")
 
-    losses = train(
-        model=model,
-        data=data,
-        block_size=config['block_size'],
-        batch_size=16,
-        lr=3e-3,
-        max_iters=2000,
-        eval_interval=200,
-        device=device,
-    )
+# ---- 5. Train ----
+print("\n" + "=" * 70)
+print("Step 5: Training loop")
+print("=" * 70)
 
-    print(f"\n  First 50 iters avg loss : {sum(losses[:50])/50:.4f}")
-    print(f"  Last  50 iters avg loss : {sum(losses[-50:])/50:.4f}")
-    print(f"  Improvement             : {sum(losses[:50])/50 - sum(losses[-50:])/50:.4f}")
+losses = train(
+    model=model,
+    data=data,
+    block_size=config['block_size'],
+    batch_size=64,
+    lr=3e-3,
+    max_iters=3000,
+    eval_interval=200,
+    device=device,
+)
 
-    # ---- 6. Generate from the trained model ----
-    print("\n" + "=" * 70)
-    print("Step 6: Generate text AFTER training")
-    print("=" * 70)
+print(f"\n  First 50 iters avg loss : {sum(losses[:50])/50:.4f}")
+print(f"  Last  50 iters avg loss : {sum(losses[-50:])/50:.4f}")
+print(f"  Improvement             : {sum(losses[:50])/50 - sum(losses[-50:])/50:.4f}")
 
-    # Start with the character 'L' (which is common in the corpus)
-    seed_char = 'V'
-    start_ids = torch.tensor(
-        [[tokenizer.stoi.get(seed_char, 0)]],
-        dtype=torch.long,
-        device=device,
-    )
 
-    print("\n--- Greedy generation (deterministic) ---")
-    out = model.generate(start_ids, max_new_tokens=200, greedy=True)[0].tolist()
-    print(f"  {tokenizer.decode(out)!r}")
 
-    print("\n--- Sampling with temperature = 1.0 ---")
-    out = model.generate(start_ids, max_new_tokens=200, temperature=1.0)[0].tolist()
-    print(f"  {tokenizer.decode(out)!r}")
+# %%
 
-    print("\n--- Sampling with temperature = 0.5 (more conservative) ---")
-    out = model.generate(start_ids, max_new_tokens=200, temperature=0.5)[0].tolist()
-    print(f"  {tokenizer.decode(out)!r}")
 
-    print("\n--- Sampling with temperature = 1.5 (more random) ---")
-    out = model.generate(start_ids, max_new_tokens=200, temperature=1.5)[0].tolist()
-    print(f"  {tokenizer.decode(out)!r}")
+# ---- 6. Generate from the trained model ----
+print("" + "=" * 70)
+print("Step 6: Generate text AFTER training")
+print("=" * 70)
 
-    print("\n" + "=" * 70)
-    print("Summary")
-    print("=" * 70)
-    print("""
-  What we built:
-    - A full decoder-only Transformer (GPT architecture)
-    - Char-level tokenizer
-    - Token + positional embeddings
-    - N causal self-attention blocks with FFN + residuals + LayerNorm
-    - Training loop (AdamW, cross-entropy, gradient clipping)
-    - Autoregressive generation (greedy + temperature sampling)
+# Start with a full word as seed (encoded char by char)
+seed_word = 'kadiatou'
+start_ids = torch.tensor(
+    [tokenizer.encode(seed_word)],
+    dtype=torch.long,
+    device=device,
+)
 
-  What it learned:
-    - Character frequencies and common bigrams/trigrams
-    - Common words from the corpus
-    - Some phrase-level structure
+print("--- Sampling with temperature = 1.0 ---")
+out = model.generate(start_ids, max_new_tokens=300, temperature=0.3)[0].tolist()
+print(f"  {tokenizer.decode(out)!r}")
 
-  What it CAN'T do (not enough scale):
-    - Understand meaning
-    - Generalize to unseen sentences
-    - Do any kind of reasoning
-
-  The architecture is IDENTICAL to GPT-3, Claude, LLaMA — they just have
-  1 million to 10 billion times more parameters and training data.
-  End of Week 1 — congratulations!
-""")
+# %%
