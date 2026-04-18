@@ -36,6 +36,23 @@ Comprendre les mecanismes internes des LLMs, du neurone unique jusqu'aux archite
 | J13 | Emergent abilities & reasoning | Chain-of-thought, in-context learning, pourquoi ca emerge, scaling hypothesis | 3h |
 | J14 | **Capstone** | Lire et decortiquer un paper recent + reimplementer le composant cle | 4h |
 
+### Semaine 3 (optionnelle) — Frontiere 2026 & Apply AI Engineering
+
+Cette semaine couvre les sujets qui separent un "AI engineer 2024" d'un **"applied AI engineer 2026"**. Frontiere technique recente (reasoning models, MCP, xgrammar) et patterns produit qui dominent en prod. Chaque lecon a son code standalone runnable sans GPU.
+
+| Jour | Module | Focus | Temps |
+|------|--------|-------|-------|
+| J15 | Test-time compute & reasoning models | o1/o3/R1, GRPO, reasoning vs LLM classique, pattern planner-executor, self-consistency | 5h |
+| J16 | Agentic LLMs en production | Tool use, MCP, computer use, boucle agentique robuste, context rot, human-in-the-loop | 5h |
+| J17 | RAG 2026 avance | Hybrid (BM25+dense+RRF), contextual retrieval, reranker, agentic RAG, GraphRAG, groundedness | 5h |
+| J18 | Context engineering & prompt caching | Cache hit rate, placement des blocs, economie tokens, long-context vs RAG, compaction | 4h |
+| J19 | Production inference serving | vLLM, SGLang, continuous batching, PagedAttention, speculative decoding, FP8, disaggregated | 5h |
+| J20 | Distillation & donnees synthetiques | SLMs specialises, pipeline synthetic data, SFT/DPO, filtrage, contamination, break-even | 4h |
+| J21 | Evals & observability LLM | 5 niveaux d'eval, LLM-as-judge + biais, pairwise, monitoring prod, red teaming, Goodhart | 4h |
+| J22 | Structured outputs & constrained gen | JSON mode, tool calling, FSA-based decoding, xgrammar/llguidance, reasoning-then-structured | 4h |
+
+**Prerequis pour Semaine 3** : avoir fait J1-J13 (la Semaine 2 des LLMs modernes) ou equivalent. Les lecons de frontiere supposent la maitrise des Transformers, attention, pre-training, SFT/RLHF et inference basique.
+
 ## Criteres de reussite
 
 - [ ] Implementer un Transformer from scratch sans regarder de reference
