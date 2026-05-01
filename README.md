@@ -1,6 +1,6 @@
 # Mastering Believe
 
-> Parcours d'apprentissage perso sur les sujets que je veux creuser. Repo public — libre a quiconque de l'utiliser, forker ou contribuer.
+> Parcours d'apprentissage communautaires sur des sujets a creuser en profondeur. Repo public et ouvert — utilisation, fork et contributions bienvenus.
 
 Theorie + (quand pertinent) code applique runnable + exercices progressifs avec solutions. Le format s'adapte au domaine : tech, sciences, langues, sciences humaines, autre. La duree d'un domaine n'est pas figee — quelques jours a plusieurs semaines selon le sujet.
 
@@ -37,7 +37,7 @@ domains/<domain>/
 │   ├── 02-medium/           # Enonces intermediaires
 │   ├── 03-hard/             # Enonces difficiles
 │   ├── solutions/           # Corriges commentes
-│   └── workspace/           # TON espace pour ecrire tes solutions (gitignore)
+│   └── workspace/           # Espace personnel pour ecrire ses solutions (gitignore)
 └── 05-projets-guides/       # Projets reels appliques (contexte logistique automatisee)
 ```
 
@@ -47,24 +47,24 @@ domains/<domain>/
 
 ### Pour suivre un domaine
 
-1. Lis le `README.md` du domaine — tu vois le planning, les prerequis, les criteres de reussite
-2. Pour chaque jour : lis la theorie (`01-theory/0X-...md`), puis fais tourner le code applique (`02-code/0X-...py`)
-3. Fais les exercices (`03-exercises/01-easy/0X-...md`) dans **ton workspace** : `03-exercises/workspace/01-easy/0X-...py`
-4. Compare ta solution avec celle de `03-exercises/solutions/`
-5. A la fin du domaine, fais le capstone
+1. Lire le `README.md` du domaine — planning, prerequis, criteres de reussite
+2. Pour chaque jour : lire la theorie (`01-theory/0X-...md`), puis faire tourner le code applique (`02-code/0X-...py`)
+3. Faire les exercices (`03-exercises/01-easy/0X-...md`) dans le **workspace** : `03-exercises/workspace/01-easy/0X-...py`
+4. Comparer la solution avec celle de `03-exercises/solutions/`
+5. A la fin du domaine, faire le capstone
 
 ### Pour les exercices
 
-Le dossier `domains/<domain>/03-exercises/workspace/` est **ignore par git**. Tu peux y mettre tes solutions, tes notes, tes notebooks — rien ne sera commit. Aucun risque de polluer le repo si tu fork.
+Le dossier `domains/<domain>/03-exercises/workspace/` est **ignore par git** : solutions, notes, notebooks peuvent y etre stockes sans risque de polluer le repo en cas de fork.
 
 ```bash
 # Exemple : faire le premier exercice d'algorithmie
 cat domains/algorithmie-python/03-exercises/01-easy/01-two-sum.md
-# Code ta solution
+# Coder la solution
 $EDITOR domains/algorithmie-python/03-exercises/workspace/01-easy/01-two-sum.py
-# Execute
+# Executer
 python domains/algorithmie-python/03-exercises/workspace/01-easy/01-two-sum.py
-# Compare avec la correction
+# Comparer avec la correction
 diff domains/algorithmie-python/03-exercises/workspace/01-easy/01-two-sum.py \
      domains/algorithmie-python/03-exercises/solutions/01-two-sum.py
 ```
@@ -77,7 +77,7 @@ Python 3.11+ recommande.
 git clone <ce-repo>
 cd mastering-believe
 
-# Selon le domaine que tu attaques :
+# Selon le domaine aborde :
 pip install torch                       # Neural Networks & LLMs
 pip install langgraph langchain         # Agentic AI
 # Algorithmie & System Design : stdlib seulement
@@ -105,7 +105,7 @@ Le repo embarque un skill Claude Code (dans `.claude/skills/mastering-domain-cre
 7. **Pass 2 verification** — 3 subagents en parallele : facts-checker, code-runner, pedagogy-reviewer
 8. **Capstone & cloture** — verifie capstone, met a jour `CLAUDE.md` + `tasks/todo.md`, commit final
 
-**Comment l'invoquer** : dans Claude Code, tape `/mastering-domain-creator` ou demande "ajoute un domaine sur X". Le skill ne se declenche que dans ce repo. Cross-platform (Windows / Linux / macOS).
+**Comment l'invoquer** : dans Claude Code, taper `/mastering-domain-creator` ou demander "ajoute un domaine sur X". Le skill ne se declenche que dans ce repo. Cross-platform (Windows / Linux / macOS).
 
 ## License
 
@@ -113,4 +113,4 @@ MIT — voir [LICENSE](./LICENSE).
 
 ## Contributions
 
-Repo personnel publie en lecture publique. Issues et PRs bienvenues pour corriger des erreurs ou ajouter des exercices, mais le scope reste celui d'un parcours personnel.
+Repo public et communautaire. Issues et PRs bienvenues pour corriger des erreurs, ajouter des exercices, proposer un nouveau domaine ou ameliorer un existant.

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Purpose
 
-**Mastering Believe** is a personal learning repository, **public and open to anyone** who wants to use, fork, or contribute. Goal: structure deep dives on chosen topics using evidence-based learning techniques (deliberate practice, spaced repetition, interleaving, active recall, Feynman technique).
+**Mastering Believe** is a community learning repository, **public and open to anyone** who wants to use, fork, or contribute. Goal: structure deep dives on chosen topics using evidence-based learning techniques (deliberate practice, spaced repetition, interleaving, active recall, Feynman technique).
 
 Scope is **not limited to AI/backend or to a 2-week format**: a domain can cover anything (tech, sciences, languages, humanities, etc.) and span any duration that fits the topic — from a few days to several weeks.
 
