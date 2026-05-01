@@ -37,6 +37,7 @@ mastering-believe/
 │       │   ├── 02-medium/
 │       │   ├── 03-hard/
 │       │   └── solutions/
+│       ├── 04-projects/     # Mini-projets / capstones libres lies au domaine
 │       └── 05-projets-guides/   # Guided real-world projects in LogiSim context
 │           ├── 01-<project>/
 │           │   ├── README.md    # Contexte, consigne, etapes, criteres
@@ -65,7 +66,7 @@ When creating content for a domain:
 3. **Spaced repetition hooks** — end each theory module with 3-5 flash-card-style Q&A
 4. **Deliberate practice** — exercises must target specific weaknesses, not repeat strengths
 5. **Progressive overload** — each level must feel slightly beyond current comfort zone
-6. **Real-world capstone** — every domain ends with a project that could ship or be shown in portfolio. Convention : le capstone vit dans `02-code/<dernier-jour>.py` (pas de dossier `04-projects/` dedie)
+6. **Real-world capstone** — every domain ends with a project that could ship or be shown in portfolio. Le capstone "fil-rouge" du planning vit dans `02-code/<dernier-jour>.py` ; `04-projects/` accueille des mini-projets libres ou capstones supplementaires
 
 ## Creating a New Domain
 

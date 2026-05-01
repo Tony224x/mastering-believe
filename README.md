@@ -38,6 +38,7 @@ domains/<domain>/
 │   ├── 03-hard/             # Enonces difficiles
 │   ├── solutions/           # Corriges commentes
 │   └── workspace/           # Espace personnel pour ecrire ses solutions (gitignore)
+├── 04-projects/             # Mini-projets / capstones libres lies au domaine
 └── 05-projets-guides/       # Projets reels appliques (contexte logistique automatisee)
 ```
 
