@@ -92,6 +92,21 @@ Les exemples sont concus pour tourner **standalone**, sans frais d'API obligatoi
 - **Code** : runnable standalone, chaque ligne non-evidente expliquee (le **why**, pas le what)
 - **Exercices** : chaque enonce a `## Objectif`, `## Consigne`, `## Criteres de reussite`
 
+## Skill Claude Code : `mastering-domain-creator`
+
+Le repo embarque un skill Claude Code (dans `.claude/skills/mastering-domain-creator/`) qui automatise la creation d'un nouveau domaine en respectant la convention ci-dessus. Pipeline 7 phases avec gates :
+
+1. **Discovery** — interview utilisateur en 2 vagues (scope, niveau, stack, capstone, contraintes, mode full/lite, N jours)
+2. **Sourced research** — subagents en parallele cherchent 3-5 sources tier-1 par axe → `REFERENCES.md`
+3. **Plan + challenge** — plan N jours soumis a un subagent adverse avant validation utilisateur
+4. **Bootstrap** — squelette + `PLAN.md` fige (contrat pour Phase 4)
+5. **Creation parallele** — 1 subagent par jour, ecrit theorie + code + 3 niveaux d'exercices + solutions, anti-collision sur les fichiers transverses
+6. **Pass 1 verification** — relecture sourcee toi-meme (citations, Q&A, concrete-before-abstract)
+7. **Pass 2 verification** — 3 subagents en parallele : facts-checker, code-runner, pedagogy-reviewer
+8. **Capstone & cloture** — verifie capstone, met a jour `CLAUDE.md` + `tasks/todo.md`, commit final
+
+**Comment l'invoquer** : dans Claude Code, tape `/mastering-domain-creator` ou demande "ajoute un domaine sur X". Le skill ne se declenche que dans ce repo. Cross-platform (Windows / Linux / macOS).
+
 ## License
 
 MIT — voir [LICENSE](./LICENSE).
