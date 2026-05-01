@@ -9,26 +9,6 @@ Pipeline pour creer un nouveau domaine de maitrise accelere (theorie + code + ex
 
 **7 phases avec gates explicites. Ne pas sauter de phase.** Si une gate echoue, on boucle au lieu de pousser.
 
-## Detection d'environnement
-
-Toutes les commandes shell de ce skill doivent fonctionner sur **Windows (PowerShell)** ET **Linux/macOS (bash)**. Detecte au demarrage :
-
-```python
-# Detection
-import platform, sys
-IS_WINDOWS = platform.system() == "Windows"
-PYTHON = sys.executable  # absolu, evite python vs python3 vs py
-```
-
-Ou en shell :
-- Bash dispo via le tool `Bash` sur les 3 OS → privilegier `Bash` pour les commandes simples (`ls`, `find`, `python`).
-- Pour les commandes specifiques OS, utiliser le tool natif : `PowerShell` sur Windows, `Bash` sinon.
-- `tree` n'est pas portable → utiliser le tool `Glob` pour verifier l'arborescence.
-- `python -m py_compile <fichier>` est portable et fiable → c'est le test de compilation par defaut.
-- `python <fichier>` lance un script ; si le script importe `torch`/`langgraph`, il peut echouer faute de deps — voir Phase 6 pour la gestion.
-
-**Pas de hardcode `/dev/null`, `python3`, `tree -L 3`, ou path absolus Linux.** A la place : noms relatifs, `Glob`, `Bash` portable.
-
 ## Parametre N (nombre de jours)
 
 Par defaut **N=14** mais peut etre fixe a 7, 10, 14, 21 selon Phase 0. Toutes les references "J1..J14", "14 jours", "14 modules" doivent etre lues comme "J1..JN". Le SKILL substitue N une fois fixe en Phase 0.
@@ -216,7 +196,6 @@ Consolide dans `REVIEW-pass2.md`. Applique les fixes.
 - **Sources generiques** ("the official docs") → en Phase 1 on veut des URLs precises avec `pourquoi`.
 - **Une seule passe de verif** → Phase 5 (toi) attrape les hallus structurelles, Phase 6 (subagents) attrape les bugs d'execution. Les deux sont necessaires.
 - **Cherrypicker les sources qui confirment** → le subagent Phase 2 doit pouvoir descendre frontalement le plan.
-- **Hardcoder commandes Linux** (`tree -L 3`, `python3`, `/dev/null`) → casse sur Windows. Utiliser `Glob`, `python -m py_compile`, et le tool natif PowerShell pour les bouts OS-specific.
 
 ## Resume "checklist" (utilisable comme TaskCreate)
 
