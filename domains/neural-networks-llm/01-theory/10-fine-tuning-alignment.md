@@ -1,0 +1,554 @@
+# Jour 10 — Fine-tuning & Alignment : du pre-training au modele utile
+
+> **Temps estime** : 5h | **Prerequis** : Jours 1-9
+
+---
+
+## 1. Le probleme du pre-training "pur"
+
+Un LLM pre-entraine (ex: GPT-3 base, LLaMA base) sait **completer du texte** mais pas **suivre des instructions**. Il a appris la distribution du web, pas le comportement "assistant utile".
+
+### Exemple revelateur
+
+Prompt a un modele base (non fine-tune) :
+```
+Q: Comment faire une omelette ?
+A:
+```
+
+Le modele base peut repondre :
+```
+Q: Comment faire une omelette ?
+A: Comment faire une omelette ?
+B: Comment faire une omelette ?
+C: Comment faire une omelette ?
+D: Comment faire une omelette ?
+```
+
+Ou :
+```
+Q: Comment faire une omelette ?
+A: Cette question est tres frequente sur les forums de cuisine...
+```
+
+Le modele "continue" le texte comme il le ferait sur une page web : il peut produire un QCM, un article, une conversation, un forum. Rien ne lui dit qu'il doit **repondre utilement**.
+
+### L'objectif de l'alignment
+
+Transformer le modele base en assistant qui :
+1. **Suit les instructions** (instruction following)
+2. **Est utile** (helpful)
+3. **Est honnete** (honest — n'hallucine pas, dit "je ne sais pas" quand approprie)
+4. **Est inoffensif** (harmless — refuse les requetes dangereuses)
+
+Cette triade est souvent appelee "HHH" (Helpful, Honest, Harmless).
+
+### Les 3 etapes du pipeline d'alignment moderne
+
+```
+1. SFT (Supervised Fine-Tuning)
+   Sur un dataset (instruction, reponse ideale) — quelques dizaines a milliers d'exemples
+
+2. Preference learning (RLHF, DPO, ou variantes)
+   Sur un dataset (prompt, chosen_response, rejected_response)
+
+3. Safety tuning (optional)
+   Red teaming, refus de requetes dangereuses, Constitutional AI
+```
+
+Chaque etape raffine le comportement du modele. SFT apprend le format de reponse, preference learning ajuste le style et la qualite.
+
+---
+
+## 2. SFT — Supervised Fine-Tuning
+
+### Le principe
+
+On a un dataset `{(prompt_i, response_i)}_{i=1..N}` de reponses de haute qualite ecrites par des humains ou generees par un modele plus puissant.
+
+Format typique (avec tokens speciaux) :
+```
+<|user|>Comment faire une omelette ?<|assistant|>Casser 3 oeufs dans un bol, 
+ajouter sel et poivre, battre a la fourchette. Faire fondre une noix de beurre 
+dans une poele chaude, verser les oeufs, laisser prendre, plier en deux, servir.<|end|>
+```
+
+### La loss SFT
+
+C'est **exactement** une loss de language modeling (CLM) :
+
+```
+L_SFT = -Σ_{i ∈ response} log P(token_i | context_<i)
+```
+
+**Subtilite importante** : on calcule la loss **seulement sur les tokens de la reponse**, pas sur le prompt. Le modele est entraine a generer la reponse idealement, pas a memoriser le prompt.
+
+```
+tokens: [<|user|>, Comment, faire, ..., ?, <|assistant|>, Casser, 3, oeufs, ...]
+loss:     ignore,  ignore, ignore, ..., ignore, compute, compute, compute, compute, ...
+```
+
+C'est souvent implemente en mettant a -100 les labels des tokens du prompt (PyTorch ignore ces positions dans CrossEntropyLoss).
+
+### Datasets SFT importants
+
+- **Alpaca** (2023) : 52k exemples generes par GPT-3.5 sur des prompts Self-Instruct. Le modele Stanford Alpaca est un LLaMA-7B fine-tune dessus. Point historique : ca a montre qu'on peut faire un "assistant decent" avec un petit budget.
+- **Dolly** (Databricks, 2023) : 15k exemples ecrits par des humains (employes Databricks).
+- **OpenAssistant** : crowdsourcing multilingue.
+- **UltraChat** : 1.5M conversations multi-tours generees par GPT-3.5/4.
+- **LIMA** : 1000 exemples soigneusement selectionnes. Le paper "Less Is More for Alignment" montre que la qualite > la quantite en SFT.
+
+### Quand SFT suffit-il ?
+
+Si tu as des donnees de tres haute qualite (LIMA ~1000 exemples, UltraChat millions) et que tu n'as pas besoin de peaufiner des comportements subtils, **SFT seul peut suffire**. C'est le choix de beaucoup de modeles open-source (Vicuna, Alpaca, Dolly).
+
+Les limitations apparaissent quand :
+- On veut que le modele choisisse entre plusieurs bonnes reponses (quelle est la MEILLEURE ?)
+- On veut ajuster le style, le ton, la longueur de reponse
+- On veut reduire les hallucinations sans changer le contenu
+
+C'est la que la preference learning devient necessaire.
+
+---
+
+## 3. RLHF — Reinforcement Learning from Human Feedback
+
+RLHF (Christiano et al., 2017 ; adapte a LLMs par OpenAI 2022) est la methode qui a rendu ChatGPT possible. Elle est en 3 etapes :
+
+### Etape 1 — SFT (deja vu)
+
+Fine-tune le modele base sur des demonstrations de haute qualite.
+
+### Etape 2 — Reward model (RM)
+
+On entraine un modele (initialise a partir du SFT model) a predire quelle reponse les humains prefereraient.
+
+**Dataset** : `{(prompt, response_A, response_B, preference)}`
+
+Format : un humain voit le prompt et deux reponses possibles, et indique laquelle il prefere.
+
+**Architecture** : on ajoute une tete de scoring (une seule valeur scalaire) sur le dernier hidden state du modele. Le reward est un nombre reel.
+
+**Loss** (Bradley-Terry) :
+```
+L_RM = -log σ(r(prompt, chosen) - r(prompt, rejected))
+
+σ = sigmoid
+r = reward model
+```
+
+Intuition : on veut que `r(chosen) > r(rejected)` avec une bonne marge. C'est une perte de classification binaire sur le rang des deux reponses.
+
+### Etape 3 — PPO (Proximal Policy Optimization)
+
+On utilise le reward model pour fine-tuner le LLM avec du RL :
+
+```
+1. Le LLM (policy) genere une reponse pour un prompt
+2. Le reward model score la reponse
+3. On utilise le gradient policy pour maximiser le reward
+4. KL penalty vs le SFT model pour eviter la derive
+```
+
+Loss (simplifiee) :
+```
+L_PPO = -E_{x,y~π_θ} [r(x, y) - β * KL(π_θ || π_SFT)]
+
+π_θ : modele en cours d'entrainement
+π_SFT : modele SFT fige (reference)
+β : coefficient de KL penalty
+```
+
+**Pourquoi la KL penalty ?** Sans elle, le modele exploiterait les failles du reward model et produirait du texte bizarre qui score haut mais n'a aucun sens. La KL penalty force le modele a rester proche du SFT model.
+
+### Les 3 gros problemes de RLHF
+
+1. **Complexite** : 4 modeles en RAM (policy, reference, reward, value). Implementation tres difficile.
+2. **Instabilite** : PPO est notoirement hyper-sensible aux hyperparameters. Difficile de reproduire.
+3. **Reward hacking** : le modele apprend a tromper le reward model (generer des reponses qui scorent haut sans etre bonnes).
+
+C'est pour ces raisons que DPO a eu tant de succes.
+
+---
+
+## 4. DPO — Direct Preference Optimization
+
+DPO (Rafailov et al., 2023) elimine le reward model ET le RL. On optimise directement le LLM sur les preferences humaines avec une loss supervisee.
+
+### L'insight theorique
+
+Rafailov et al. demontrent mathematiquement que la solution optimale de RLHF peut etre reformulee comme une loss directe sur le LLM. La relation cle :
+
+```
+r*(x, y) = β * log(π*(y|x) / π_ref(y|x)) + C(x)
+
+ou:
+  r*   : reward optimal
+  π*   : policy optimale (le LLM qu'on veut obtenir)
+  π_ref : reference policy (le SFT model)
+  C(x) : constante dependant du prompt (partition function)
+  β    : coefficient de KL penalty
+```
+
+En injectant cette expression dans la loss de Bradley-Terry du reward model, la constante `C(x)` s'annule (elle est identique pour chosen et rejected), et on obtient :
+
+### La loss DPO
+
+```
+L_DPO(π_θ, π_ref) = -E_{(x, y_w, y_l)~D} [
+    log σ(
+      β * log(π_θ(y_w|x) / π_ref(y_w|x))
+      - β * log(π_θ(y_l|x) / π_ref(y_l|x))
+    )
+]
+
+y_w : winning (chosen) response
+y_l : losing (rejected) response
+```
+
+### Interpretation
+
+Pour chaque paire (chosen, rejected) :
+1. Calculer le log-ratio `log(π_θ / π_ref)` pour chosen et rejected
+2. Prendre la difference
+3. Passer au sigmoid (classification binaire)
+4. Optimiser le log
+
+Le modele est entraine a **augmenter la probabilite relative** de la chosen par rapport a la rejected, toujours en reference a la policy d'origine (SFT model).
+
+### Avantages de DPO
+
+1. **Pas de reward model** : un modele de moins a entrainer et a garder en memoire
+2. **Pas de RL** : on fait de la simple backprop sur une loss classique. PyTorch standard.
+3. **Plus stable** : beaucoup moins d'hyperparameters a tuner
+4. **Souvent meilleur** : les papers recents (Zephyr, Tulu, Starling) montrent que DPO egale ou bat RLHF
+
+### Limites
+
+- DPO peut degrader la performance sur des taches non couvertes par les preferences (oubli catastrophique)
+- Sensible a la qualite des preferences
+- Tendance a produire des reponses plus longues (biais vers les tokens que le modele sait bien predire)
+
+DPO est devenu le standard dans la communaute open-source post-2023. Mistral, LLaMA 3 chat, Zephyr, tous utilisent DPO ou des variantes (IPO, KTO, ORPO, SimPO).
+
+---
+
+## 4 bis. Alignment 2025 : GRPO, IPO, KTO, SimPO et RLVR
+
+DPO a simplifie RLHF en 2023. Mais 2024-2025 a vu exploser les variantes : chacune attaque une faiblesse precise de DPO et du RLHF classique. Il faut les connaitre car elles portent les modeles SOTA 2025 (DeepSeek R1, o1, Llama 4 Instruct).
+
+### GRPO — Group Relative Policy Optimization (DeepSeek, 2024-2025)
+
+**Motivation** : PPO a un defaut couteux — il faut un **value model** (critique) qui estime la valeur attendue de chaque etat, en plus du policy model et du reward model. Pour un LLM de 70B+, charger 4 modeles en RAM est prohibitif.
+
+**Idee GRPO** : au lieu d'un critique qui estime la valeur absolue, on normalise par rapport a un **groupe** de reponses echantillonnees pour le meme prompt.
+
+```
+Pour un prompt x :
+  1. Sample N reponses y_1, ..., y_N avec la policy actuelle
+  2. Calculer les rewards r_1, ..., r_N (via reward model ou verifier)
+  3. Normaliser : A_i = (r_i - mean(r)) / std(r)      # avantage relatif au groupe
+  4. Gradient policy : maximiser sum_i A_i * log pi(y_i | x)
+     + KL penalty vs reference model
+```
+
+Pas de value model. Le "baseline" pour le calcul de l'avantage est la moyenne du groupe, pas une estimation apprise.
+
+**Exemple concret (math reasoning)** : prompt = "Quel est le resultat de 37 * 42 ?". On echantillonne 16 reponses. Certaines arrivent a 1554 (correct), d'autres pas. Reward = 1 si correct, 0 sinon. Mean = 0.3, std = 0.46. Les reponses correctes ont A = (1 - 0.3) / 0.46 = +1.52, les fausses A = -0.65. On remonte le gradient pour pousser la policy vers les reponses "au-dessus de la moyenne du groupe".
+
+**Avantages** :
+- Pas de value model (economie memoire majeure)
+- Plus stable que PPO (normalisation automatique par le groupe)
+- Scale bien avec N (plus d'echantillons = meilleure estimation de l'avantage)
+
+**Utilise par** : DeepSeek R1 (janvier 2025) pour apprendre a reasoning via RL pur. GRPO + verifiable rewards (voir RLVR ci-dessous) = recette R1.
+
+### IPO — Identity Preference Optimization (Azar et al., 2024)
+
+**Probleme de DPO** : la loss peut pousser la policy a l'infini sur une preference, surajustant sur quelques exemples bruites.
+
+**IPO** : remplace le sigmoid de DPO par une fonction identite, en bornant la probabilite cible a une constante (ex: tau = 0.1). Empeche le modele de "surenthousiasmer" sur une preference.
+
+```
+L_IPO = E[ (log(pi_theta(y_w) / pi_ref(y_w)) - log(pi_theta(y_l) / pi_ref(y_l)) - tau)^2 ]
+```
+
+Resultat : plus robuste au bruit dans les preferences, moins d'overfitting. Utilise dans HuggingFace TRL comme alternative DPO.
+
+### KTO — Kahneman-Tversky Optimization (Ethayarajh et al., 2024)
+
+**Probleme** : collecter des paires `(chosen, rejected)` pour DPO est couteux. On a souvent juste un label binaire "cette reponse est bonne / mauvaise" (thumbs up/down sur ChatGPT).
+
+**Idee KTO** : s'inspire de la theorie prospective de Kahneman-Tversky. Au lieu de paires, on utilise des labels `desirable` ou `undesirable`. La loss est asymetrique : on evite les undesirable plus fort qu'on privilegie les desirable (loss aversion).
+
+**Avantage** : dataset 2x plus simple a collecter (un label par reponse, pas une paire). Atteint des resultats DPO-equivalents en pratique sur Zephyr et Starling.
+
+### SimPO — Simple Preference Optimization (Meng et al., 2024)
+
+**Probleme DPO** : il faut garder un `pi_ref` (reference model) en memoire pendant tout l'entrainement, ce qui double le cout memoire.
+
+**Idee SimPO** : supprime completement le reference model. Le reward implicite est la log-probabilite moyennee par la longueur de la reponse.
+
+```
+r_simpo(x, y) = (1 / |y|) * log pi_theta(y | x) - gamma   # length-normalized
+L_SimPO = -log sigma(beta * (r_simpo(y_w) - r_simpo(y_l)))
+```
+
+**Avantages** :
+- Pas de reference model (economie memoire 50%)
+- Normalisation par la longueur (operation le biais DPO vers les reponses longues)
+- Performances equivalentes ou superieures a DPO sur AlpacaEval 2.0
+
+Utilise dans plusieurs modeles Llama 3 / Qwen 2.5 community fine-tunes.
+
+### RLVR — Reinforcement Learning with Verifiable Rewards
+
+**Concept cle 2024-2025** : pour les taches de type math, code, science, on n'a pas besoin d'un reward model subjectif. On a un **verifier deterministe** : la reponse math est correcte ou non, le code passe les tests ou non.
+
+```
+Reward = 1 si la reponse est verifiee correcte (test suite passe, math correct)
+       = 0 sinon
+```
+
+C'est un signal **tres propre** qu'on peut utiliser avec PPO ou GRPO, sans reward hacking possible (pas de reward model a tromper).
+
+**Pourquoi c'est revolutionnaire** :
+- Plus besoin de preferences humaines pour le reasoning
+- Le modele apprend a resoudre des problemes dont on connait la bonne reponse
+- Pas de limite superieure : plus le modele est entraine, plus il resout de problemes
+
+**Modeles l'utilisant** :
+- **OpenAI o1** (sept 2024), **o3** (dec 2024) : RLVR sur math, code, science (details non publics mais confirme par les papers techniques)
+- **DeepSeek R1** (jan 2025) : open-source, GRPO + RLVR sur 800k problemes math/code. Le papier R1-Zero montre que le reasoning **emerge sans SFT**, directement du RL sur des recompenses verifiables
+- **Llama 4 Reasoning** (Meta, 2025) : utilise des variantes RLVR
+
+**Difference avec RLHF classique** : RLHF utilise un reward **appris** (subjectif, aproxime par des humains), vulnerable au reward hacking. RLVR utilise un reward **deterministe** (test suite, calculator, verifier formel), incorruptible.
+
+### Recap en tableau
+
+| Methode | Besoin preferences | Reference model | Value model | Speciale | Annee |
+|---|---|---|---|---|---|
+| RLHF/PPO | Oui (paires) | Oui | Oui | Instable | 2022 |
+| DPO | Oui (paires) | Oui | Non | Length bias | 2023 |
+| IPO | Oui (paires) | Oui | Non | Anti-overfit | 2024 |
+| KTO | Non (binaire) | Oui | Non | Simple data | 2024 |
+| SimPO | Oui (paires) | **Non** | Non | Length-norm | 2024 |
+| GRPO | Rewards groupe | Oui | **Non** | Scalable | 2024 |
+| RLVR | Verifier auto | Oui | Variable | Pour math/code | 2024 |
+
+**Pour la pratique 2025-2026** : DPO reste le baseline grand public. SimPO gagne en faveur pour sa simplicite. GRPO + RLVR domine pour le reasoning (R1, o1). Les modeles frontier combinent souvent plusieurs etapes (SFT -> DPO -> GRPO+RLVR).
+
+---
+
+## 5. Constitutional AI (Anthropic)
+
+Constitutional AI (Bai et al., 2022) cherche a remplacer les humains dans la boucle par un modele qui utilise une "constitution" (liste de principes).
+
+### L'idee
+
+Au lieu d'avoir des humains qui annotent les preferences, on a :
+1. Un modele qui genere une reponse
+2. Un autre modele qui critique cette reponse selon une constitution (ex: "est-elle helpful ? est-elle harmful ?")
+3. Le modele revise sa reponse en fonction de la critique
+
+Le dataset de preferences est alors **auto-genere** par les modeles eux-memes.
+
+### La constitution
+
+Exemple de principes utilises par Anthropic :
+- "Choose the response that is most helpful, honest, and harmless."
+- "Which response provides accurate information without being preachy or overly cautious?"
+- "Which response is more thoughtful about its assumptions?"
+
+### Avantage
+
+Plus scalable que RLHF avec des humains. Permet d'ajuster finement le comportement en modifiant la constitution sans re-annoter.
+
+Claude est entraine avec Constitutional AI. C'est pour ca que Claude a un style et une voix tres particuliers (reflection explicite, nuances, refus poli).
+
+---
+
+## 6. LoRA — Low-Rank Adaptation pour le fine-tuning efficace
+
+### Le probleme du full fine-tuning
+
+Fine-tuner un LLM complet (7B, 70B) est couteux :
+- Il faut garder en memoire le modele, les gradients, et les etats d'optimizer (Adam = 2x les params en plus)
+- Un LLaMA 70B en fp16 : 140 GB de poids + 140 GB de gradients + 280 GB d'Adam = 560 GB
+- Il faut stocker et deployer une copie complete du modele fine-tune
+
+### L'idee de LoRA (Hu et al., 2021)
+
+Observation : quand on fine-tune un LLM, la mise a jour `ΔW` a un **rang intrinseque bas**. On peut l'approximer par le produit de deux matrices bien plus petites.
+
+```
+W_finetuned = W + ΔW
+            = W + B @ A
+
+avec:
+  W : (d_out, d_in) — poids originaux (frozen)
+  A : (r, d_in) — rang r << min(d_out, d_in)
+  B : (d_out, r) — rang r
+  ΔW = B @ A — "mise a jour" approximee de rang r
+```
+
+Pendant l'entrainement :
+- `W` est **gele** (pas de gradient, pas de memoire pour les gradients et l'optimizer)
+- Seuls `A` et `B` sont entraines
+- Le forward pass calcule `W @ x + B @ (A @ x)`
+
+### Compression massive
+
+Pour `d_in = d_out = 4096` et `r = 8` :
+```
+Full fine-tuning : 4096 * 4096 = 16 777 216 params (16.7M)
+LoRA (r=8)       : 4096 * 8 + 8 * 4096 = 65 536 params (65k)
+
+Ratio de compression : 256x
+```
+
+Pour un LLaMA 7B complet :
+- Full FT : ~7B params entrainables
+- LoRA r=16 sur Q, K, V, O : ~20M params (350x moins)
+
+### Implementation typique
+
+```python
+class LoRALinear(nn.Module):
+    def __init__(self, linear, r=8, alpha=16):
+        self.linear = linear  # frozen
+        self.A = nn.Parameter(torch.randn(r, linear.in_features) * 0.01)
+        self.B = nn.Parameter(torch.zeros(linear.out_features, r))  # init zero!
+        self.scale = alpha / r
+
+    def forward(self, x):
+        return self.linear(x) + (x @ self.A.T @ self.B.T) * self.scale
+```
+
+**Subtilite** : `B` est initialise a zero. Au debut de l'entrainement, `B @ A = 0`, donc le modele LoRA se comporte exactement comme le modele original. C'est seulement progressivement que la mise a jour diverge.
+
+### Avantages
+
+1. **Memoire** : 100-1000x moins de memoire GPU. Un LoRA sur LLaMA 7B tient sur une GPU 24 GB.
+2. **Stockage** : les poids LoRA font 20-100 MB au lieu de 14 GB. On peut stocker des centaines d'adaptateurs.
+3. **Deploiement** : on garde le modele de base en memoire et on swap juste les adaptateurs (A, B) selon le user/tache.
+4. **Performance** : atteint typiquement 95-99% des performances du full fine-tuning.
+
+### Variantes
+
+- **QLoRA** : LoRA + quantization 4-bit du modele de base. Permet de fine-tuner LLaMA 65B sur une seule GPU 48 GB.
+- **LoRA+** : apprend A et B avec des learning rates differents
+- **DoRA** : separe magnitude et direction de la mise a jour
+
+LoRA est devenu le standard pour le fine-tuning en pratique. Tous les services qui proposent du fine-tuning (OpenAI, Anthropic, HuggingFace) utilisent LoRA ou une variante.
+
+---
+
+## 7. Flash Cards — Active Recall
+
+### Q1 : Qu'est-ce que la difference entre un modele base et un modele fine-tune pour instructions ?
+
+<details>
+<summary>Reponse</summary>
+
+**Modele base** : entraine uniquement avec CLM (predire le prochain token) sur du texte web. Il sait **completer du texte** mais pas **repondre a des questions**. Si on lui donne une question, il peut la reformuler, generer un QCM, ou produire un forum — pas forcement une reponse utile.
+
+**Modele fine-tune** : a subi (1) SFT sur des exemples (instruction, reponse) + (2) preference learning (RLHF ou DPO) pour ajuster le style et la qualite. Il a appris le format "assistant" et le comportement "helpful, honest, harmless".
+
+ChatGPT = GPT-3 + SFT + RLHF. LLaMA 3 Chat = LLaMA 3 base + SFT + DPO.
+
+</details>
+
+### Q2 : Ecris la loss DPO et explique ses composants.
+
+<details>
+<summary>Reponse</summary>
+
+```
+L_DPO = -E [log σ(β * (log(π_θ(y_w|x) / π_ref(y_w|x))
+                       - log(π_θ(y_l|x) / π_ref(y_l|x))))]
+```
+
+- **π_θ** : le modele qu'on entraine (commence = π_ref au debut)
+- **π_ref** : le modele de reference (fige, = SFT model)
+- **y_w** : "winning" response (choisie par l'humain)
+- **y_l** : "losing" response (rejetee)
+- **β** : coefficient de KL penalty (typiquement 0.1 a 0.5)
+- **σ** : sigmoid
+
+**Interpretation** : on veut que le ratio `log(π_θ/π_ref)` soit plus grand pour y_w que pour y_l. La difference est passee au sigmoid (classification binaire chosen vs rejected).
+
+**Avantage sur RLHF** : pas de reward model, pas de RL, juste du backprop sur une loss classique. Plus stable et plus simple a implementer.
+
+</details>
+
+### Q3 : Quelle est l'idee de LoRA et quelle est la compression typique ?
+
+<details>
+<summary>Reponse</summary>
+
+**L'idee** : quand on fine-tune un LLM, la mise a jour des poids `ΔW` a un **rang intrinseque bas**. On peut donc l'approximer comme le produit de deux matrices plus petites :
+
+```
+ΔW = B @ A    avec A : (r, d_in) et B : (d_out, r)
+```
+
+On fige `W` (pas de gradient) et on entraine seulement `A` et `B`.
+
+**Compression** : pour `d=4096` et `r=8`, on passe de 16.7M params a 65k params → **256x** de compression.
+
+**Init** : `B` est initialise a zero, donc au debut le modele LoRA = modele original.
+
+**Avantages** :
+1. 100-1000x moins de memoire GPU
+2. Poids LoRA = 20-100 MB au lieu de 14 GB pour LLaMA 7B
+3. On peut stocker et swap des centaines d'adaptateurs sur le meme modele de base
+4. Performance a ~95-99% du full fine-tuning
+
+</details>
+
+### Q4 : Pourquoi DPO a-t-il remplace RLHF en pratique ?
+
+<details>
+<summary>Reponse</summary>
+
+**3 raisons principales** :
+
+1. **Plus simple a implementer** : DPO est juste une loss de classification binaire sur les preferences. PyTorch standard. RLHF demande 4 modeles simultanes (policy, reference, reward, value) + PPO.
+
+2. **Plus stable** : PPO est notoirement sensible aux hyperparameters. DPO a beaucoup moins de leviers et converge plus facilement.
+
+3. **Pas de reward hacking** : en RLHF, le modele peut apprendre a exploiter le reward model (generer du texte bizarre qui score haut). En DPO, il n'y a pas de reward model a exploiter — la loss est directement sur les preferences.
+
+**Bonus** : les benchmarks recents (Zephyr, Tulu, Starling) montrent que DPO egale ou bat RLHF en pratique. Mistral-7B-Instruct et Zephyr ont popularise DPO dans l'open-source.
+
+**Limites de DPO** : peut causer de l'oubli catastrophique sur les taches non couvertes par les preferences. Tendance a produire des reponses plus longues (biais de sampling).
+
+</details>
+
+### Q5 : Quels sont les 3 roles du pipeline SFT → RM → PPO dans RLHF ?
+
+<details>
+<summary>Reponse</summary>
+
+1. **SFT (Supervised Fine-Tuning)**
+   - Input : dataset `(prompt, ideal_response)`
+   - Output : modele qui suit le format "instruction → reponse"
+   - Loss : CLM sur les tokens de la reponse uniquement
+   - Role : apprendre le FORMAT (style assistant, longueur, structure)
+
+2. **RM (Reward Model)**
+   - Input : dataset `(prompt, chosen, rejected)` de preferences humaines
+   - Output : modele qui predit un score scalaire "a quel point cette reponse est bonne"
+   - Loss : Bradley-Terry sur les paires (max `r(chosen) - r(rejected)`)
+   - Role : capturer les preferences humaines en un seul nombre scorable
+
+3. **PPO (Proximal Policy Optimization)**
+   - Input : le LLM SFT + le reward model
+   - Output : modele fine-tune qui maximise le reward tout en restant proche du SFT
+   - Loss : `-r(x,y) + β * KL(π_θ || π_SFT)`
+   - Role : optimiser directement pour le reward learned avec une regularisation vs le SFT
+
+Le resultat final : ChatGPT (2022), les premiers Claude et GPT-4 (2023). DPO a remplace cette pipeline dans beaucoup de cas des 2023, et en 2025 c'est GRPO + RLVR qui domine pour les modeles reasoning (o1, R1).
+
+</details>

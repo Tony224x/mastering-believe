@@ -1,0 +1,426 @@
+# Jour 4 — Sequence Modeling : RNN, LSTM, GRU
+
+> **Temps estime** : 5h | **Prerequis** : Jour 3 (Embeddings), Jour 2 (MLP, backprop)
+
+---
+
+## 1. Pourquoi le sequentiel change tout
+
+### Ce qu'un MLP ne peut pas faire
+
+Un MLP classique a deux limitations fatales pour le traitement de sequences :
+
+1. **Taille d'entree fixe** : un MLP veut un vecteur de dimension connue d'avance. Mais une phrase peut avoir 3 mots ou 300 mots.
+2. **Pas de memoire** : chaque entree est traitee independamment. Le mot "banque" dans "banque du fleuve" et "banque centrale" donne le meme resultat.
+
+**Exemple concret** : traduction francais → anglais.
+
+```
+"Je mange une pomme"           → "I eat an apple"
+"Je mange une grosse pomme"    → "I eat a big apple"
+```
+
+La sortie depend :
+- De l'ORDRE des mots (pas juste du sac de mots)
+- De la LONGUEUR variable de la sequence
+- Du CONTEXTE accumule (je = sujet qui fait l'action du verbe)
+
+Il faut une architecture qui **maintient un etat cache** et le met a jour mot apres mot. C'est l'idee du reseau recurrent (RNN).
+
+### Domaines ou l'ordre est crucial
+
+| Domaine | Exemple | Pourquoi l'ordre compte |
+|---|---|---|
+| Texte | "chat mange souris" vs "souris mange chat" | Sujet/objet inverses |
+| Audio | Phonemes dans le temps | "ma" + "ri" = "marie", pas "rima" |
+| Series temporelles | Cours de bourse | Tendance, saisonnalite |
+| Video | Frames d'une action | "lancer" vs "rattraper" = ordre inverse |
+| ADN | Sequence de bases A,C,G,T | Mutations ponctuelles changent tout |
+
+---
+
+## 2. Le RNN vanilla : formule et intuition
+
+### La formule fondamentale
+
+A chaque pas de temps `t`, le RNN prend :
+- Une entree `x_t` (le mot ou le vecteur courant)
+- L'etat cache precedent `h_{t-1}` (le resume du passe)
+
+Et produit :
+- Un nouvel etat cache `h_t`
+- Optionnellement, une sortie `y_t`
+
+```
+h_t = tanh(W_xh @ x_t + W_hh @ h_{t-1} + b_h)
+y_t = W_hy @ h_t + b_y
+```
+
+**Les 3 matrices de poids** (les memes a CHAQUE pas de temps — c'est ca la recurrence) :
+- `W_xh` : (d_hidden, d_input) — comment l'entree influence l'etat
+- `W_hh` : (d_hidden, d_hidden) — comment l'etat precedent se propage
+- `W_hy` : (d_output, d_hidden) — comment l'etat produit la sortie
+
+### Visualisation : le RNN deroule dans le temps
+
+```
+  x_1          x_2          x_3          x_4
+   |            |            |            |
+   v            v            v            v
+  [RNN]  -->  [RNN]  -->  [RNN]  -->  [RNN]  -->  h_4
+   |            |            |            |
+   v            v            v            v
+  y_1          y_2          y_3          y_4
+```
+
+**Point cle** : c'est le MEME bloc RNN (les memes W) applique a chaque pas. On partage les parametres dans le temps, comme une convolution partage les filtres dans l'espace.
+
+### Analogie : le lecteur qui prend des notes
+
+Imagine un lecteur qui lit une phrase mot apres mot et prend des notes sur un carnet (l'etat cache). A chaque mot :
+1. Il regarde le mot courant (`x_t`)
+2. Il regarde ses notes (`h_{t-1}`)
+3. Il reecrit ses notes (`h_t`)
+
+A la fin, ses notes resument toute la phrase. Le probleme : son carnet est de taille fixe. Les premieres notes risquent d'etre effacees par les nouvelles.
+
+---
+
+## 3. Le forward pass etape par etape
+
+Prenons une mini-sequence : `x_1, x_2, x_3` (3 pas de temps).
+
+```
+Initialisation : h_0 = 0 (ou appris)
+
+Pas 1 :
+  h_1 = tanh(W_xh @ x_1 + W_hh @ h_0 + b_h)
+  y_1 = W_hy @ h_1 + b_y
+
+Pas 2 :
+  h_2 = tanh(W_xh @ x_2 + W_hh @ h_1 + b_h)
+  y_2 = W_hy @ h_2 + b_y
+
+Pas 3 :
+  h_3 = tanh(W_xh @ x_3 + W_hh @ h_2 + b_h)
+  y_3 = W_hy @ h_3 + b_y
+```
+
+A la fin, `h_3` contient une representation de toute la sequence (compresse dans un vecteur de taille fixe).
+
+### Tanh : pourquoi cette activation ?
+
+Le RNN utilise `tanh` (et non ReLU) pour deux raisons :
+1. **Borne (-1, 1)** : l'etat cache ne peut pas exploser en amplitude a travers les pas
+2. **Centre sur 0** : les gradients restent symetriques positif/negatif
+
+ReLU serait desastreux dans un RNN car il n'a pas de borne superieure → l'etat `h_t` exploserait apres quelques pas.
+
+---
+
+## 4. Backpropagation Through Time (BPTT)
+
+### L'idee
+
+Pour entrainer un RNN, on "deplie" le graphe dans le temps et on applique backprop comme pour un reseau tres profond.
+
+```
+Loss L = L_1 + L_2 + L_3   (somme sur tous les pas de temps)
+
+Pour mettre a jour W_hh, il faut calculer :
+  dL/dW_hh = dL_1/dW_hh + dL_2/dW_hh + dL_3/dW_hh
+```
+
+Mais `dL_3/dW_hh` depend de toute la chaine de `h_1 → h_2 → h_3`. Le gradient doit remonter a travers le temps.
+
+### La formule qui fait mal : la chaine des derivees
+
+```
+dL_3/dh_0 = dL_3/dh_3 * dh_3/dh_2 * dh_2/dh_1 * dh_1/dh_0
+```
+
+Chaque terme `dh_t/dh_{t-1}` contient la meme matrice `W_hh` :
+
+```
+dh_t/dh_{t-1} = diag(1 - tanh^2(...)) @ W_hh
+```
+
+Pour une sequence de longueur T, on multiplie T fois (environ) `W_hh` entre elle-meme. C'est de la que viennent tous les problemes.
+
+---
+
+## 5. Vanishing et Exploding Gradients : le drame des RNNs
+
+### Le phenomene mathematique
+
+Soit `lambda` la plus grande valeur propre de `W_hh`. Apres T multiplications :
+
+```
+||dh_T/dh_1|| ≈ lambda^T
+```
+
+Deux scenarios catastrophiques :
+
+**Exploding gradient** : si `lambda > 1`
+```
+T=10,  lambda=1.5  →  57.7
+T=50,  lambda=1.5  →  6.4 * 10^8
+T=100, lambda=1.5  →  4.1 * 10^17   (NaN !)
+```
+
+Le gradient explose. Les poids sont mis a jour avec des valeurs enormes. Le training devient instable.
+
+**Vanishing gradient** : si `lambda < 1`
+```
+T=10,  lambda=0.5  →  0.001
+T=50,  lambda=0.5  →  8.9 * 10^-16
+T=100, lambda=0.5  →  7.9 * 10^-31   (= 0 en float32)
+```
+
+Le gradient disparait. Les poids ne sont plus mis a jour. Le RNN ne peut pas apprendre les dependances longues.
+
+### Consequence pratique
+
+Un RNN vanilla ne peut capturer que des dependances tres courtes (5-10 pas de temps maximum). Au-dela, l'information est soit noyee (vanishing) soit chaotique (exploding).
+
+**Exemple** :
+```
+"Le chat que j'ai adopte l'annee derniere et qui a traverse la France est noir."
+                                                                           ^ 
+                              Le RNN a oublie "chat" quand il voit "noir"
+```
+
+### Solutions partielles (et pourquoi elles ne suffisent pas)
+
+1. **Gradient clipping** : si `||grad|| > seuil`, on le ramene. Previent l'exploding mais pas le vanishing.
+2. **Initialisation orthogonale de W_hh** : garde les valeurs propres proches de 1. Aide mais ne resout pas.
+3. **ReLU a la place de tanh** : experimentalement pire (explose plus facilement).
+
+Il faut une architecture differente : les **gates**.
+
+---
+
+## 6. LSTM : Long Short-Term Memory (1997)
+
+### L'idee geniale : un cell state separe
+
+Le LSTM (Hochreiter & Schmidhuber) introduit un **etat de cellule** `c_t` qui coule a travers le temps avec peu de modifications :
+
+```
+c_t = f_t * c_{t-1} + i_t * c~_t
+```
+
+Les multiplications sont elementwise. La cle : `c_{t-1}` est MULTIPLIE par `f_t` (forget gate), pas transforme par une matrice `W`. Si `f_t ≈ 1`, le gradient circule sans explosion ni vanishing.
+
+### Les 4 gates
+
+Un LSTM a 4 vecteurs calcules a chaque pas :
+
+```
+f_t = sigmoid(W_f @ [h_{t-1}, x_t] + b_f)    # Forget gate
+i_t = sigmoid(W_i @ [h_{t-1}, x_t] + b_i)    # Input gate
+o_t = sigmoid(W_o @ [h_{t-1}, x_t] + b_o)    # Output gate
+c~_t = tanh(W_c @ [h_{t-1}, x_t] + b_c)      # Candidate cell state
+```
+
+Puis la mise a jour :
+
+```
+c_t = f_t * c_{t-1} + i_t * c~_t   # New cell state
+h_t = o_t * tanh(c_t)              # New hidden state (exposed to the world)
+```
+
+### Intuition de chaque gate
+
+| Gate | Role | Metaphore |
+|---|---|---|
+| `f_t` (forget) | Quoi oublier de `c_{t-1}` | "J'efface cette ligne de mes notes" |
+| `i_t` (input) | Quoi ajouter de `c~_t` | "J'ajoute cette nouvelle info" |
+| `c~_t` (candidate) | Le contenu a ajouter | "Voici ce que je veux ecrire" |
+| `o_t` (output) | Quoi exposer en sortie | "Je montre ceci pour le prochain pas" |
+
+### Pourquoi ca marche : le "constant error carousel"
+
+Quand `f_t = 1` et `i_t = 0`, on a `c_t = c_{t-1}`. Le gradient passe a travers cette operation sans etre multiplie par une matrice de poids. Il se propage de maniere quasi-identique sur des centaines de pas.
+
+```
+c_1 ——→ c_2 ——→ c_3 ——→ ... ——→ c_100
+ |       |       |              |
+ * f_2   * f_3   * f_4          * f_100
+```
+
+Si les `f_t` restent proches de 1, le gradient ne vanish pas.
+
+### Cout
+
+Un LSTM a ~4x plus de parametres qu'un RNN vanilla (4 gates au lieu d'une transformation). C'est le prix de la stabilite.
+
+---
+
+## 7. GRU : Gated Recurrent Unit (2014)
+
+### La simplification de Cho et al.
+
+Le GRU fusionne forget et input gates en un seul "update gate" et supprime le cell state separe. Resultat : 3 gates au lieu de 4, ~25% moins de parametres.
+
+```
+z_t = sigmoid(W_z @ [h_{t-1}, x_t])       # Update gate
+r_t = sigmoid(W_r @ [h_{t-1}, x_t])       # Reset gate
+h~_t = tanh(W_h @ [r_t * h_{t-1}, x_t])   # Candidate
+h_t = (1 - z_t) * h_{t-1} + z_t * h~_t    # Final hidden
+```
+
+### Intuition
+
+- `z_t` (update) : combien garder de l'ancien vs combien prendre du nouveau
+- `r_t` (reset) : combien "oublier" avant de calculer le candidat
+
+### LSTM vs GRU : lequel choisir ?
+
+| | LSTM | GRU |
+|---|---|---|
+| Parametres | 4 gates | 3 gates (-25%) |
+| Performance | Legerement meilleur sur long contexte | Legerement meilleur sur petits datasets |
+| Vitesse | Plus lent | Plus rapide |
+| Stabilite | Tres bonne | Tres bonne |
+
+**En pratique** : les differences sont marginales. GRU est souvent prefere pour sa simplicite. Mais les deux ont ete largement remplaces par les **Transformers** a partir de 2018.
+
+---
+
+## 8. Pourquoi les RNNs ont echoue a scaler
+
+### Probleme 1 : pas de parallelisation
+
+Pour calculer `h_t`, il faut avoir calcule `h_{t-1}`. Le calcul est **intrinsequement sequentiel**.
+
+```
+Transformer : 1000 tokens → 1000 calculs EN PARALLELE
+LSTM        : 1000 tokens → 1000 calculs SEQUENTIELS
+```
+
+Les GPU sont faits pour paralleliser. Un LSTM n'utilise que ~1% de leur capacite. Un Transformer sature le GPU.
+
+### Probleme 2 : le long contexte reste dur
+
+Meme avec LSTM/GRU, apprendre une dependance a 500+ pas reste difficile. Le gradient vanish moins, mais l'information dans `c_t` se dilue quand meme.
+
+### Probleme 3 : pas d'acces direct au passe
+
+Pour acceder au mot n=3 quand on traite n=1000, l'info doit traverser 997 pas intermediaires. Chaque pas peut la modifier. C'est comme jouer a "telephone arabe" sur 1000 personnes.
+
+**Le Transformer** resout tous ces problemes d'un coup : attention directe entre TOUS les tokens, calcul parallele, et gradient direct entre n'importe quels deux positions. On le voit demain.
+
+### Cas ou les RNNs sont encore utiles aujourd'hui
+
+- **Streaming temps-reel** : TTS, scanning vocale avec latence faible (pas besoin de voir le futur)
+- **Petits datasets** : moins de parametres, moins de overfitting
+- **Embarque** : taille memoire limitee (un LSTM peut tenir en 100KB)
+- **Series temporelles tres structurees** : IoT, meteo, finance (ou l'attention est overkill)
+
+---
+
+## 9. Flash Cards — Active Recall
+
+### Q1 : Ecris la formule du RNN vanilla. Pourquoi utilise-t-on tanh et pas ReLU ?
+
+<details>
+<summary>Reponse</summary>
+
+```
+h_t = tanh(W_xh @ x_t + W_hh @ h_{t-1} + b_h)
+y_t = W_hy @ h_t + b_y
+```
+
+`tanh` parce que :
+1. Il est borne dans (-1, 1), ce qui empeche l'etat cache d'exploser au fil des pas
+2. Il est centre sur 0, gradients symetriques
+
+ReLU serait catastrophique : non borne → `h_t` exploserait apres quelques pas, car `W_hh` est applique de facon recurrente.
+
+</details>
+
+### Q2 : Qu'est-ce que le vanishing gradient dans un RNN ? A partir de quelle longueur de sequence devient-il un probleme ?
+
+<details>
+<summary>Reponse</summary>
+
+Le gradient doit remonter a travers `T` pas de temps en multipliant `W_hh` entre elle-meme. Si la plus grande valeur propre `lambda < 1`, alors `lambda^T → 0` rapidement.
+
+Consequence : les couches proches du debut de la sequence ne recoivent presque aucun gradient → elles n'apprennent pas les dependances longues.
+
+Devient un probleme au-dela de **10-20 pas de temps** en pratique. Au-dela de 50 pas, un RNN vanilla est incapable d'apprendre.
+
+Solutions : gradient clipping (pour exploding), LSTM/GRU (pour vanishing).
+
+</details>
+
+### Q3 : Quel est le role des 4 gates du LSTM ? Pourquoi un "cell state" separe ?
+
+<details>
+<summary>Reponse</summary>
+
+- **Forget gate (f_t)** : quoi effacer du cell state precedent
+- **Input gate (i_t)** : quoi ajouter au cell state
+- **Candidate (c~_t)** : le contenu a ajouter
+- **Output gate (o_t)** : quoi exposer comme hidden state
+
+Le cell state `c_t = f_t * c_{t-1} + i_t * c~_t` utilise des multiplications elementwise et une addition. Contrairement au RNN ou on multiplie par `W_hh` a chaque pas, ici quand `f_t ≈ 1`, `c_{t-1}` passe a travers sans modification.
+
+C'est le "constant error carousel" : le gradient peut se propager sur des centaines de pas sans vanish.
+
+</details>
+
+### Q4 : Quelle est la difference principale entre LSTM et GRU ? Lequel choisir ?
+
+<details>
+<summary>Reponse</summary>
+
+Le GRU fusionne forget et input gates en un seul "update gate" et supprime le cell state separe (pas de `c_t`, juste `h_t`).
+
+Consequences :
+- GRU : 3 gates, ~25% moins de parametres, plus rapide
+- LSTM : 4 gates, legerement meilleur sur sequences tres longues
+
+En pratique les performances sont quasi-identiques. GRU par defaut pour sa simplicite et sa vitesse. LSTM si on a besoin de plus de capacite.
+
+Les deux ont ete largement supplantes par les Transformers a partir de 2018.
+
+</details>
+
+### Q5 : Pourquoi les RNNs ont echoue a scaler, et qu'est-ce que les Transformers ont change ?
+
+<details>
+<summary>Reponse</summary>
+
+Les RNNs ont 3 problemes :
+1. **Pas de parallelisation** : calcul sequentiel obligatoire (h_t depend de h_{t-1}). Les GPU sont sous-utilises.
+2. **Long contexte dur** : meme LSTM/GRU dilue l'info sur 500+ pas.
+3. **Pas d'acces direct au passe** : le mot n=1 doit traverser 999 pas pour influencer n=1000.
+
+Les Transformers resolvent les 3 d'un coup avec l'**attention** :
+1. Tous les tokens sont traites en parallele (pas de recurrence)
+2. L'attention permet a n'importe quel token d'acceder directement a n'importe quel autre
+3. Le gradient voyage directement entre positions distantes (pas de chaine de multiplications)
+
+Resultat : 100x plus rapide a entrainer, et capable de dependances de 10 000+ tokens.
+
+</details>
+
+---
+
+## 10. Key Takeaways
+
+1. **Un RNN partage les memes poids `W_xh`, `W_hh`, `W_hy` a chaque pas de temps**. C'est ca la recurrence. Comme une convolution partage ses filtres dans l'espace, un RNN partage ses poids dans le temps.
+
+2. **Vanishing/exploding gradients** : en multipliant `W_hh` T fois, `lambda^T` explose ou disparait. Limite concrete : ~20 pas de temps pour un RNN vanilla.
+
+3. **LSTM et GRU introduisent des gates** pour controler le flux d'information. Le cell state `c_t` du LSTM est additif → le gradient passe sans vanish.
+
+4. **Les RNNs sont intrinsequement sequentiels** : impossible a paralleliser sur GPU. C'est pourquoi ils ont ete remplaces par les Transformers (qu'on voit aux jours 5-7).
+
+5. **Quand utiliser un RNN aujourd'hui** : streaming temps-reel, petits datasets, series temporelles tres structurees, embarque avec peu de memoire.
+
+---
+
+**Prochain jour** : J5 — Attention mechanism, l'innovation qui a rendu les Transformers possibles.

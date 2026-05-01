@@ -1,0 +1,82 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.hypothesis/
+
+# --- Virtualenvs ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# --- Environnement ---
+.env
+.env.*
+!.env.example
+
+# --- Artefacts generes par les exemples (figures, traces, evals) ---
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+*.npy
+*.pt
+*.pth
+*.ckpt
+*_traces.jsonl
+*_eval_results.csv
+
+# --- Donnees / dossiers de demo runtime ---
+.demo_checkpoints/
+.demo_checkpoints_unit/
+
+# --- Espace de travail personnel des exercices (les users y mettent leurs solutions) ---
+domains/*/03-exercises/workspace/**
+!domains/*/03-exercises/workspace/
+!domains/*/03-exercises/workspace/README.md
+!domains/*/03-exercises/workspace/01-easy/
+!domains/*/03-exercises/workspace/02-medium/
+!domains/*/03-exercises/workspace/03-hard/
+!domains/*/03-exercises/workspace/**/.gitkeep
+shared/templates/03-exercises/workspace/**
+!shared/templates/03-exercises/workspace/
+!shared/templates/03-exercises/workspace/README.md
+
+# --- Suivi prive (notes de dev, lessons internes) ---
+tasks/todo.md
+tasks/lessons.md
+tasks/lessons/
+
+# --- Outils internes ---
+.code-review-graph/
+
+# --- IDE / editeurs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini

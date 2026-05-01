@@ -1,0 +1,445 @@
+# J10 — MCP (Model Context Protocol) : le USB des LLMs
+
+> **Temps estime** : 3h | **Prerequis** : J1-J9
+> **Objectif** : comprendre ce qu'est MCP, pourquoi c'est important, comment construire un serveur MCP, et comment s'en servir dans un agent.
+
+---
+
+## 1. Le probleme que MCP resout
+
+Avant MCP, chaque framework LLM (LangChain, LlamaIndex, CrewAI, Claude Desktop, Cursor, ChatGPT plugins, etc.) avait **sa propre maniere** de brancher des outils et des sources de donnees. Resultat :
+
+- Un connecteur GitHub ecrit pour LangChain ne marche pas dans Claude Desktop
+- Un outil "search internal docs" doit etre reecrit pour chaque client
+- Chaque integration est un one-off, avec sa propre API, sa propre auth, son propre format
+
+C'est comme si chaque appareil electrique avait sa propre prise avant l'USB. Tu ecrivais un driver par combinaison (client x serveur).
+
+**MCP (Model Context Protocol)** propose un **standard unique** : un serveur MCP expose des **resources, tools, prompts**, et n'importe quel client MCP peut les consommer. Ecrit une fois, utilise partout.
+
+> **Analogie** : MCP est au LLM ce que USB est au materiel. Un standard qui permet a N clients de parler a M serveurs sans reecrire les pilotes.
+
+### Les joueurs
+
+- **Anthropic** a publie MCP en fin 2024 (novembre)
+- Adoption rapide : **Claude Desktop**, **Cursor**, **Zed**, **Continue**, etc.
+- Specs ouvertes : https://modelcontextprotocol.io
+- SDKs officiels : Python, TypeScript, Java, C#, Rust, Kotlin
+
+---
+
+## 2. Architecture : clients, servers, hosts
+
+MCP definit trois roles :
+
+```
+┌────────────────────┐             ┌────────────────────┐
+│     HOST (app)     │             │   SERVER (outil)    │
+│  - Claude Desktop  │  ←────────→ │  - GitHub          │
+│  - Cursor          │   protocol  │  - Slack           │
+│  - Custom agent    │             │  - Filesystem      │
+└────────────────────┘             │  - Internal DB     │
+                                   └────────────────────┘
+```
+
+- **Host** : l'application utilisateur (Claude Desktop, IDE, agent custom). Le host embarque un ou plusieurs **clients** MCP.
+- **Client** : le composant dans le host qui parle a UN serveur via le protocole. Un host peut avoir N clients pour N serveurs.
+- **Server** : un process (local ou distant) qui expose des capacites (tools, resources, prompts) via le protocole MCP.
+
+**Important** : un serveur MCP est **tres souvent local**. Tu lances un process en background sur ton laptop (ex: serveur filesystem) et le host le consulte via stdio ou HTTP local. Pour les entreprises, il peut etre distant (HTTP + auth).
+
+---
+
+## 3. Les 3 primitives exposees par un serveur
+
+Un serveur MCP peut exposer trois types de capacites :
+
+### 3.1 Resources — des donnees accessibles
+
+Une **resource** est une donnee identifiee par un URI, que le client peut lire.
+
+```
+file:///workspace/main.py
+postgres://localhost/users/42
+notion://page/abc123
+```
+
+**Caracteristiques** :
+- **Lecture seulement** (la plupart du temps)
+- **Inertes** : ne declenchent pas d'action — elles sont consommees
+- Le client les passe dans le contexte du LLM
+
+**Exemple** : un serveur MCP qui expose `file:///README.md` permet au LLM de lire ce fichier sans que le host ait besoin d'y acceder directement. Le serveur fait le travail de lecture et retourne le contenu.
+
+### 3.2 Tools — des actions invocables
+
+Un **tool** est une fonction que le LLM peut appeler avec des arguments. Le serveur execute la fonction et renvoie un resultat.
+
+```python
+# Cote serveur MCP
+@server.tool("search_docs")
+def search_docs(query: str, top_k: int = 5) -> list[str]:
+    """Search internal documentation."""
+    return [...]
+```
+
+**Caracteristiques** :
+- **Declenche une action** (modification, calcul, query)
+- Peut avoir des **effets de bord** (ecrire un fichier, appeler une API, etc.)
+- Le LLM decide quand l'appeler (comme pour le tool use classique)
+
+**Exemple** : un tool `create_issue(title, body)` sur un serveur GitHub permet au LLM de creer des issues quand il le juge necessaire.
+
+### 3.3 Prompts — des templates reutilisables
+
+Un **prompt** est un template de prompt avec des parametres, exposable au host.
+
+```python
+@server.prompt("review_code")
+def review_code_prompt(file_path: str) -> list[dict]:
+    return [
+        {"role": "system", "content": "You are a senior code reviewer."},
+        {"role": "user", "content": f"Review {file_path} for bugs and style."},
+    ]
+```
+
+**Caracteristiques** :
+- Template avec variables
+- Peut etre invoque par l'utilisateur du host (ex: slash command dans Claude Desktop)
+- Utile pour standardiser des flows communs
+
+**Difference clef** : un tool est appele par le LLM (autonome), un prompt est invoque par l'utilisateur (explicite).
+
+---
+
+## 4. Le protocole : JSON-RPC sur stdio (ou HTTP/SSE)
+
+MCP utilise **JSON-RPC 2.0** comme protocole de transport. Les messages sont des JSON structurees selon ce standard.
+
+### Transports supportes
+
+| Transport | Usage | Quand l'utiliser |
+|-----------|-------|------------------|
+| **stdio** | Le serveur est un process enfant. Le host lui ecrit sur stdin, lit sur stdout | Serveurs locaux (defaut). Rapide, pas de reseau, zero config |
+| **HTTP + SSE** | Le serveur est un endpoint HTTP. Server-sent events pour les notifications | Serveurs distants, partages entre utilisateurs, auth requise |
+
+### Un message JSON-RPC minimal
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/list"
+}
+```
+
+Le serveur repond :
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tools": [
+      {"name": "search_docs", "description": "...", "inputSchema": {...}}
+    ]
+  }
+}
+```
+
+### Les methodes principales
+
+| Methode | Qui l'appelle | Effet |
+|---------|---------------|-------|
+| `initialize` | Client (au demarrage) | Negociation des capacites, versions |
+| `tools/list` | Client | Liste les tools exposes |
+| `tools/call` | Client | Invoque un tool avec des arguments |
+| `resources/list` | Client | Liste les resources disponibles |
+| `resources/read` | Client | Lit le contenu d'une resource |
+| `prompts/list` | Client | Liste les prompts exposes |
+| `prompts/get` | Client | Recupere un prompt instancie avec des parametres |
+
+**Il y a aussi des notifications** (messages sans `id`, pas de reponse attendue) pour signaler des evenements (ex: nouvelles resources disponibles).
+
+---
+
+## 5. Cycle de vie d'une connexion MCP
+
+```
+1. Host lance le serveur (subprocess)
+       │
+       ▼
+2. Client envoie "initialize" avec sa version et ses capacites
+       │
+       ▼
+3. Serveur repond avec ses capacites (tools? resources? prompts?)
+       │
+       ▼
+4. Client envoie "initialized" (ack)
+       │
+       ▼
+5. Echange libre :
+     - tools/list -> serveur repond
+     - tools/call (search_docs, {"query": "foo"}) -> serveur execute, repond
+     - resources/read -> serveur lit, repond
+     - ...
+       │
+       ▼
+6. Shutdown : client envoie "shutdown", serveur termine proprement
+```
+
+**Point important** : le client **decouvre** dynamiquement les capacites du serveur au demarrage. Le host ne sait pas a l'avance quels tools existent — il les liste a chaque session.
+
+---
+
+## 6. Construire un serveur MCP — les grandes lignes
+
+Avec le SDK officiel Python (`pip install mcp`) :
+
+```python
+from mcp.server.fastmcp import FastMCP
+
+server = FastMCP("my-server")
+
+@server.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b
+
+@server.resource("file:///notes.txt")
+def get_notes() -> str:
+    return "My notes content..."
+
+@server.prompt()
+def summarize_prompt(topic: str) -> str:
+    return f"Summarize everything you know about {topic}"
+
+if __name__ == "__main__":
+    server.run()  # stdio transport by default
+```
+
+Tres simple. Le SDK gere le protocole JSON-RPC, la serialisation, le routage. Tu decris juste les tools/resources/prompts en Python.
+
+### Sans SDK — l'essentiel en main
+
+Tu peux aussi ecrire un serveur MCP a la main. Il faut juste :
+1. Lire des messages JSON-RPC sur stdin
+2. Dispatcher selon `method`
+3. Repondre sur stdout au format JSON-RPC
+4. Gerer `initialize`, `tools/list`, `tools/call` au minimum
+
+Utile pour comprendre comment ca marche sous le capot. C'est ce qu'on va faire dans le code.
+
+---
+
+## 7. Connecter Claude Desktop a ton serveur
+
+Pour ajouter un serveur MCP a Claude Desktop :
+
+1. Ouvrir le fichier de config : `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) ou `%APPDATA%/Claude/claude_desktop_config.json` (Windows)
+2. Ajouter l'entree :
+
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "python",
+      "args": ["/absolute/path/to/my_server.py"]
+    }
+  }
+}
+```
+
+3. Redemarrer Claude Desktop
+4. Tes tools apparaissent dans l'interface (icone paperclip)
+
+Le host lance ton script Python comme process enfant et parle avec via stdio. Aucune autre config.
+
+Pour les serveurs distants, on utilise `transport: "sse"` avec un URL.
+
+---
+
+## 8. Security model
+
+C'est la grosse question de MCP : un serveur peut lire des fichiers, appeler des APIs, faire des actions. Qui valide quoi ?
+
+### 8.1 Trust boundaries
+
+- **Host** : l'utilisateur approuve l'installation d'un serveur. Il lui fait confiance.
+- **Server** : expose des capacites. Le host decide ce qu'il partage avec le LLM.
+- **LLM** : peut appeler des tools. Mais le host peut **intercepter** et demander confirmation a l'utilisateur.
+
+### 8.2 Approbation humaine
+
+Les clients comme Claude Desktop implementent une **couche d'approbation** : quand le LLM veut appeler un tool, l'utilisateur voit une popup "Autoriser l'appel a `create_issue(...)` ?" et doit approuver.
+
+Cela transforme le modele de confiance : meme si un serveur MCP est compromis, l'utilisateur reste le gardien.
+
+### 8.3 Risques connus
+
+- **Prompt injection** : un serveur malveillant peut retourner des resources qui contiennent des instructions cachees. Le LLM peut les suivre.
+- **Tool abuse** : un tool mal ecrit peut etre exploite pour exfiltrer des donnees.
+- **Confused deputy** : le LLM appelle un tool avec des arguments issus de contenu externe (ex: un email), contenu qui contient des instructions malicieuses.
+
+### 8.4 Best practices
+
+- Tres explicite sur ce que chaque tool fait dans sa description
+- Confirmation humaine pour les actions destructives
+- Principe du moindre privilege : ne pas exposer plus que necessaire
+- Loguer chaque appel de tool
+- Sandbox : le serveur tourne avec des droits limites (pas root, pas d'acces reseau arbitraire)
+
+---
+
+## 9. MCP vs alternatives
+
+| Approche | Avantage | Limite |
+|----------|----------|--------|
+| **MCP** | Standard, portable, multi-client | Necessite un serveur (overhead pour un tool trivial) |
+| **Tool use natif** (LangChain tools, function calling) | Simple, in-process | Pas portable entre frameworks |
+| **Plugins proprietaires** (ChatGPT plugins, Cursor extensions) | Integration profonde dans un client | Verrouillage sur un ecosysteme |
+| **API REST classique** | Universel | Le LLM doit connaitre l'API, pas de discovery auto |
+
+**Quand utiliser MCP** : quand tu veux exposer la **meme** capacite a plusieurs clients (Claude Desktop + Cursor + ton agent custom), ou quand tu veux partager un serveur entre plusieurs utilisateurs (enterprise).
+
+**Quand PAS utiliser MCP** : pour un agent interne qui a 3 tools hardcoded et qui ne sera jamais expose ailleurs, utiliser directement le tool calling est plus simple.
+
+---
+
+## 10. MCP spec 2025-11 (nouvelles features)
+
+La specification MCP a ete revisee plusieurs fois depuis sa sortie fin 2024. La **version 2025-11** introduit des fonctionnalites importantes qui elargissent les cas d'usage et durcissent la securite.
+
+### Elicitation — le serveur peut demander des inputs a l'utilisateur
+
+Avant : un serveur expose des tools et recoit des arguments. Si un tool a besoin d'un input interactif (ex: "quel schema DB utiliser ?"), il fallait le passer en amont.
+
+Avec **elicitation** : le serveur peut **demander dynamiquement** des inputs a l'utilisateur via le client, sous forme de formulaires structures.
+
+```
+User invoque un tool query_db()
+  ↓
+Server : "J'ai besoin de savoir sur quelle DB tu veux requeter"
+         [elicit input : {schema: enum[public, analytics, staging]}]
+  ↓
+Client : affiche un dropdown a l'utilisateur
+  ↓
+User : choisit "analytics"
+  ↓
+Server : execute la query sur la bonne DB
+```
+
+**Cas d'usage** : confirmation d'action destructive, selection d'un parametre dynamique, disambiguation quand le tool a plusieurs interpretations possibles.
+
+### Sampling — le serveur peut demander au LLM hote de generer du texte
+
+**Inversion inedite** : normalement le client (host) appelle le serveur. Avec **sampling**, le serveur peut demander au client **d'invoquer son LLM hote** pour generer du texte.
+
+**Cas d'usage** : un serveur MCP qui fait de la recherche documentaire peut demander au LLM hote de "reformuler cette query" ou "resumer ces 3 chunks" — sans avoir besoin de son propre LLM. Le serveur devient un orchestrateur qui **emprunte** le LLM du client pour ses sous-taches.
+
+```
+Server : j'ai besoin de resumer 5 documents pour cette requete
+  ↓
+Server appelle client.sample("Resume ces docs : ...")
+  ↓
+Client utilise son LLM hote (claude-opus-4-6) pour generer le resume
+  ↓
+Server recoit le resume, continue son traitement
+```
+
+**Interet** : pas besoin de stocker une cle API LLM sur le serveur, pas de cout additionnel (le cout est celui du client), et le serveur beneficie du meme modele que le client.
+
+### Resources subscribing — event-driven au lieu de polling
+
+Avant : si le client veut etre notifie des changements d'une resource, il doit poller periodiquement (`resources/read` toutes les X secondes).
+
+**Avec subscribing** : le client peut s'abonner a une resource, et le serveur **push une notification** quand elle change.
+
+```
+Client : resources/subscribe("file:///notes.txt")
+Server : ack
+  ...
+(le fichier est modifie)
+Server : notifications/resources/updated {uri: "file:///notes.txt"}
+Client : resources/read pour recuperer la nouvelle version
+```
+
+**Cas d'usage** : dashboards live, monitoring de fichiers, synchronisation avec des bases de donnees, notifications en temps reel.
+
+### OAuth 2.1 — standard d'authentification pour les serveurs distants
+
+Les serveurs MCP distants (HTTP) supportent maintenant **OAuth 2.1** comme standard d'authentification. Avant, chaque serveur avait sa propre approche ad-hoc (API keys, basic auth). Maintenant :
+
+- Discovery automatique du flow OAuth via les metadata du serveur
+- PKCE obligatoire (defense contre les interceptions)
+- Refresh tokens supportes
+- Scopes par tool/resource (granularite fine)
+
+C'est **indispensable** pour les serveurs d'entreprise qui exposent des donnees sensibles (DB production, CRM, email).
+
+### Streamable HTTP — le remplacement de SSE
+
+Le transport `HTTP + SSE` (Server-Sent Events) de la v1 avait des limites : connexions longues qui coupent, difficulte a gerer les retries, pas de multiplexing.
+
+**Streamable HTTP** remplace SSE : HTTP chunked transfer avec un protocole de framing robuste, reconnexion automatique, support des retries avec idempotence. Beaucoup plus stable pour les serveurs distants qui servent du traffic temps reel.
+
+### MCP est devenu le standard de facto
+
+**Adoption massive en 2025** :
+- **Claude Desktop** (Anthropic) — natif depuis le debut
+- **Cursor** — integre MCP pour les outils de code
+- **Windsurf** (ex-Codeium) — supporte MCP
+- **Zed** — editeur de code avec MCP natif
+- **Goose** (Block) — agent CLI open-source MCP-first
+- **Continue** — extension VSCode/JetBrains avec MCP
+- Des centaines de serveurs open-source : postgres, github, slack, notion, linear, jira, ...
+
+En 2026, MCP est au paysage agentique ce que LSP (Language Server Protocol) est aux editeurs de code : **le standard d'interoperabilite**. Si tu construis un tool LLM aujourd'hui, expose-le via MCP — c'est le moyen le plus simple de le rendre utilisable par n'importe quel client.
+
+---
+
+## 11. Ecosysteme : les serveurs deja existants
+
+Il existe deja une bibliotheque de serveurs MCP open-source : https://github.com/modelcontextprotocol/servers
+
+Quelques exemples :
+- **filesystem** : lecture/ecriture de fichiers
+- **github** : repos, issues, PRs
+- **slack** : messages, channels
+- **postgres** : requetes SQL read-only
+- **google-drive**, **notion**, **memory**, **time**, **fetch**, **puppeteer**, **brave-search**, etc.
+
+Installer un serveur = installer un package npm/pip + ajouter 3 lignes dans la config Claude Desktop. Ta config grandit, tes capacites aussi.
+
+---
+
+## 12. Flash Cards — Test de comprehension
+
+**Q1 : Quel probleme MCP resout-il, et pourquoi "standardiser" est-il important ?**
+> R : Avant MCP, chaque framework LLM avait sa propre maniere de brancher des outils et des sources de donnees : un connecteur GitHub ecrit pour LangChain ne marchait pas dans Claude Desktop. MCP standardise ce qu'est un serveur et son API (resources, tools, prompts via JSON-RPC), permettant d'ecrire un serveur **une fois** et de le consommer depuis n'importe quel client compatible.
+
+**Q2 : Quelles sont les 3 primitives exposees par un serveur MCP et a quoi sert chacune ?**
+> R : (1) **Resources** : des donnees lisibles identifiees par URI (file://, postgres://, etc.), passives, consommees par le LLM. (2) **Tools** : des fonctions executables par le LLM, declenchant des actions avec potentiellement des effets de bord. (3) **Prompts** : des templates de prompt parametrables, invoquables par l'utilisateur du host (slash commands).
+
+**Q3 : Quelle est la difference entre un **tool** et un **prompt** dans MCP ?**
+> R : Un **tool** est appele automatiquement par le LLM quand il juge que c'est necessaire (autonomie). Un **prompt** est invoque explicitement par l'utilisateur du host (ex: via un slash command). Les tools sont de l'outillage, les prompts sont des raccourcis de workflow.
+
+**Q4 : Quels sont les 2 transports principaux de MCP et quand utiliser l'un ou l'autre ?**
+> R : **stdio** pour les serveurs locaux (defaut) : le host lance le serveur comme subprocess, ils communiquent via stdin/stdout. Simple, rapide, zero config reseau. **HTTP + SSE** pour les serveurs distants, partages entre utilisateurs, necessitant auth et ouverture reseau.
+
+**Q5 : Quels sont les principaux risques de securite de MCP et comment s'en proteger ?**
+> R : **Prompt injection** (un serveur malveillant retourne des resources avec instructions cachees), **tool abuse** (mauvais tool exploitable), **confused deputy** (LLM appelle un tool avec arguments issus de contenu externe malicieux). Protections : approbation humaine des actions destructives, descriptions explicites, principe du moindre privilege, logs, sandbox process, et validation des arguments cote serveur.
+
+---
+
+## Points cles a retenir
+
+- MCP standardise la maniere dont un LLM consomme des **tools, resources, prompts** d'un serveur externe
+- Analogie : MCP est au LLM ce que USB est au materiel — un standard qui permet a N clients de parler a M serveurs
+- Architecture : host (app) embarque des clients qui parlent a des serveurs via JSON-RPC (stdio ou HTTP/SSE)
+- 3 primitives : **resources** (donnees lisibles), **tools** (actions invocables par le LLM), **prompts** (templates invocables par l'utilisateur)
+- Transports : **stdio** pour local (defaut), **HTTP+SSE** pour distant
+- SDKs officiels en Python, TS, Java, C#, Rust, Kotlin — FastMCP permet un serveur en ~20 lignes
+- Connecter Claude Desktop : ajouter 3 lignes dans `claude_desktop_config.json`
+- Securite : approbation humaine sur les actions, sandbox, moindre privilege, validation des arguments
+- Utiliser MCP quand tu veux exposer la meme capacite a plusieurs clients ou la partager entre utilisateurs ; pour un agent interne simple, le tool calling direct suffit

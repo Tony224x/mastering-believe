@@ -1,0 +1,481 @@
+# Jour 8 — Pre-training & Tokenization : la matiere premiere des LLMs
+
+> **Temps estime** : 5h | **Prerequis** : Jours 1-7 (backprop, MLP, embeddings, attention, transformers)
+
+---
+
+## 1. Tokenization : pourquoi c'est le talon d'Achille des LLMs
+
+### Le probleme fondamental
+
+Un LLM ne voit pas du texte. Il voit des **entiers**. La tokenization est l'etape qui transforme `"Le chat mange"` en `[382, 4123, 9871]`.
+
+La maniere dont tu decoupes le texte a un impact enorme sur :
+- La **taille du vocabulaire** (V) — plus V est grand, plus la matrice d'embedding est grosse
+- La **longueur des sequences** — plus elles sont longues, plus l'attention coute cher (O(n²))
+- La **capacite de generalisation** — les tokens doivent capturer des unites semantiquement utiles
+- Le **multilinguisme** — un tokenizer entraine sur de l'anglais massacre le chinois
+
+### Les trois approches naives et leurs limites
+
+**Approche 1 — Character-level**
+```
+"chat" → ['c', 'h', 'a', 't'] → [99, 104, 97, 116]
+```
+- V tout petit (~100 caracteres ASCII + Unicode limite)
+- Sequences tres longues → attention coute cher
+- Le modele doit apprendre lui-meme que "cha" et "tio" existent
+
+**Approche 2 — Word-level**
+```
+"Le chat mange" → ["Le", "chat", "mange"] → [1, 2, 3]
+```
+- V explose (> 500 000 mots en francais avec conjugaisons)
+- Un mot inconnu (OOV) = token `<UNK>` = perte totale d'information
+- "chat" et "chats" sont deux tokens independants (morphologie perdue)
+
+**Approche 3 — Subword (BPE, WordPiece, SentencePiece)**
+```
+"mangerons" → ["mang", "erons"] → [512, 2048]
+```
+- V raisonnable (30k-128k)
+- Pas d'OOV : un mot inconnu se decompose toujours en sous-tokens connus
+- La morphologie est en partie capturee
+
+C'est l'approche dominante pour tous les LLMs modernes.
+
+---
+
+## 2. BPE (Byte Pair Encoding) : l'algorithme qui a tout change
+
+### Origine : compression de donnees
+
+BPE a ete invente en 1994 par Philip Gage pour la compression. L'idee : remplacer les paires de caracteres les plus frequentes par un nouveau symbole non utilise.
+
+Sennrich et al. (2016) l'ont adapte pour la tokenization en NLP. GPT-2, GPT-3, GPT-4 utilisent tous des variantes de BPE.
+
+### L'algorithme d'entrainement — pas a pas
+
+**Input** : un corpus de texte + un nombre de merges cible (ex: 50 000)
+
+**Etape 1 — Initialisation**
+- Decouper le texte en caracteres individuels (ou bytes pour GPT-4)
+- Separer les mots par un marqueur special (espace, ou `_`, ou `Ġ` pour GPT-2)
+
+```
+Corpus : "low low low lower newer newer"
+
+Vocabulaire initial : {l, o, w, e, r, n, _}
+Representation : l o w _ l o w _ l o w _ l o w e r _ n e w e r _ n e w e r _
+```
+
+**Etape 2 — Compter toutes les paires adjacentes**
+
+```
+Paire    Count
+(l, o)   4      ← "lo" apparait 4 fois (low x3 + lower x1)
+(o, w)   4
+(w, _)   3      ← fin de "low" sans suffixe
+(w, e)   1      ← "lower" seulement
+(e, r)   3      ← "lower" + "newer" x2
+(r, _)   3
+(n, e)   2
+(e, w)   2
+```
+
+**Etape 3 — Merger la paire la plus frequente**
+
+La paire `(l, o)` a le count max. On la fusionne en un nouveau token `lo`.
+
+```
+Apres merge :
+  l o w → lo w         (les 3 "low")
+  l o w e r → lo w e r (le "lower")
+
+Vocabulaire : {l, o, w, e, r, n, _, lo}
+```
+
+**Etape 4 — Repeter**
+
+On recompte les paires et on fusionne encore la plus frequente :
+
+```
+Iteration 2 : (o, w) n'existe plus, mais (lo, w) existe → merge
+Iteration 3 : (n, e) × 2 et (e, w) × 2 → on choisit une des deux
+...
+```
+
+On arrete quand :
+- On a atteint le nombre de merges cible (ex: 50 000)
+- OU il n'y a plus de paires a fusionner (rare)
+
+### Le vocabulaire final = tokens initiaux + tous les merges
+
+```
+V = {caracteres de base} ∪ {tous les tokens crees par les merges}
+```
+
+Pour GPT-2 : 256 bytes de base + ~50 000 merges = 50 257 tokens.
+
+### Tokenizer inference — comment tokeniser un nouveau mot ?
+
+Une fois les merges appris, on applique exactement les memes merges dans le meme ordre.
+
+```
+Mot : "lowest"
+
+Etape 0 : l o w e s t
+Etape 1 : applique merge (l, o) → lo w e s t
+Etape 2 : applique merge (lo, w) → low e s t
+Etape 3 : applique merge (e, s) → low es t
+Etape 4 : applique merge (es, t) → low est
+         (si (low, est) n'a jamais ete merge)
+
+Tokens finaux : ["low", "est"]
+```
+
+La tokenization est **greedy** : on applique les merges dans l'ordre d'apprentissage. C'est pour ca que le meme texte est toujours tokenise de la meme maniere (deterministe).
+
+### Byte-level BPE (GPT-2, GPT-4)
+
+Probleme : BPE naif sur Unicode gere mal les caracteres rares (emoji, langues asiatiques).
+
+**Solution de GPT-2** : travailler au niveau des BYTES (0-255), pas des caracteres.
+
+```
+"hello" en UTF-8 bytes : [104, 101, 108, 108, 111]
+"Bonjour" en UTF-8 bytes : [66, 111, 110, 106, 111, 117, 114]
+"你好" en UTF-8 bytes : [228, 189, 160, 229, 165, 189]
+```
+
+Avantage : aucune limite sur les caracteres possibles. Desavantage : les sequences dans d'autres langues sont 2-4x plus longues qu'en anglais.
+
+---
+
+## 3. WordPiece (BERT) et SentencePiece (T5, LLaMA)
+
+### WordPiece — variante de BPE utilisee par BERT
+
+**Difference avec BPE** : au lieu de merger la paire la plus **frequente**, on merge celle qui maximise la **vraisemblance** du corpus sous un modele de langue unigramme.
+
+```
+Score(A, B) = count(AB) / (count(A) * count(B))
+
+On merge la paire avec le score max.
+```
+
+Intuition : on prefere merger des paires qui co-occurrent MIEUX que ce que predirait le hasard. C'est une heuristique plus informee que la frequence brute.
+
+**Marqueur** : les sous-mots qui ne commencent pas un mot sont prefixes par `##`.
+
+```
+"tokenization" → ["token", "##ization"]
+```
+
+### SentencePiece — tokenizer language-agnostic
+
+Probleme des precedents : ils supposent qu'on sait separer les mots par des espaces. Faux pour le chinois, japonais, thai.
+
+**SentencePiece** (Google, 2018) : traite le texte brut comme une sequence de caracteres Unicode, SANS pre-segmentation. Les espaces deviennent des caracteres normaux (`▁`, U+2581).
+
+```
+Input : "Le chat mange"
+Normalise : "▁Le▁chat▁mange"
+Tokens : ["▁Le", "▁chat", "▁mange"]
+```
+
+**Avantages** :
+- Fonctionne sur toutes les langues sans regle speciale
+- Reversible : on peut toujours reconstruire le texte original exactement
+- Supporte BPE ET l'algorithme Unigram
+
+Utilise par : T5, LLaMA, Mistral, Gemma.
+
+### Comparaison
+
+| | BPE | WordPiece | SentencePiece |
+|---|---|---|---|
+| Critere de merge | Frequence | Likelihood | BPE ou Unigram |
+| Pre-tokenization | Oui (espaces) | Oui (espaces) | Non (raw text) |
+| Marqueur | Aucun / `Ġ` | `##` | `▁` |
+| Utilise par | GPT-2, GPT-3, GPT-4, RoBERTa | BERT, DistilBERT | T5, LLaMA, Mistral |
+
+---
+
+## 4. Objectifs de pre-training : CLM, MLM, Span corruption
+
+Apres la tokenization, comment entrainer le modele sur les tokens ? Trois grandes familles.
+
+### 4.1 Causal Language Modeling (CLM) — GPT
+
+Predire le token suivant, sachant tous les tokens precedents.
+
+```
+Input  : [Le, chat, mange, du]
+Target : [chat, mange, du, poisson]
+
+A chaque position i, le modele predit le token i+1 sans voir les tokens >i.
+```
+
+**Masque d'attention** : triangulaire inferieur (causal mask). La position i ne peut attendre que les positions ≤ i.
+
+```
+    Le  chat  mange  du
+Le  [1   0    0     0 ]
+cha [1   1    0     0 ]
+man [1   1    1     0 ]
+du  [1   1    1     1 ]
+```
+
+**Loss** : cross-entropy somme sur TOUTES les positions.
+```
+L = -Σ_i log P(token_{i+1} | token_{≤i})
+```
+
+**Avantages** : chaque position contribue a la loss → signal dense. Compatible avec la generation autoregressive native.
+
+**Desavantages** : le modele ne peut pas "regarder" vers la droite pendant l'entrainement → moins optimal pour des taches de comprehension comme la classification.
+
+### 4.2 Masked Language Modeling (MLM) — BERT
+
+Remplacer 15% des tokens par `[MASK]`, et demander au modele de les predire en voyant toute la phrase (bidirectionnel).
+
+```
+Input  : [Le, chat, [MASK], du, poisson]
+Target : manger (a la position masquee)
+
+Le modele voit "Le chat ___ du poisson" et doit deviner "mange".
+```
+
+**Regle du 15% de BERT** : sur les 15% selectionnes :
+- 80% deviennent `[MASK]`
+- 10% deviennent un token aleatoire
+- 10% restent inchanges (pour forcer le modele a predire meme sans marqueur)
+
+**Loss** : cross-entropy seulement sur les positions masquees.
+```
+L = -Σ_{i ∈ masked} log P(token_i | tous les autres tokens)
+```
+
+**Avantages** : attention bidirectionnelle → meilleures representations pour la classification, NER, Q&A extractif.
+
+**Desavantages** : signal de loss sparse (seulement 15% des tokens contribuent). Discrepance train/inference (le token `[MASK]` n'existe pas en inference). Pas adapte a la generation.
+
+### 4.3 Span corruption — T5
+
+Generalisation elegante du MLM : masquer des **spans** contigus (groupes de tokens), et demander au modele de les reconstruire en format encoder-decoder.
+
+```
+Original : [Le, chat, mange, du, poisson, frais]
+
+Apres masking de spans :
+Encoder input  : [Le, <X>, du, <Y>]
+Decoder target : [<X>, chat, mange, <Y>, poisson, frais, <Z>]
+
+<X>, <Y>, <Z> sont des "sentinel tokens" qui marquent les spans masques.
+```
+
+**Avantages** : combine la flexibilite du MLM avec la generation du decoder. Chaque prediction voit les autres predictions (contrairement au MLM ou chaque mask est predit en isolation).
+
+**Utilise par** : T5, UL2, Flan-T5.
+
+### Comparaison des trois objectifs
+
+| | CLM (GPT) | MLM (BERT) | Span corruption (T5) |
+|---|---|---|---|
+| Architecture | Decoder-only | Encoder-only | Encoder-decoder |
+| Attention | Causale | Bidirectionnelle | Bi dans encoder, causale dans decoder |
+| Loss density | 100% tokens | 15% tokens | ~15% de spans |
+| Force | Generation | Comprehension | Les deux |
+| Exemples | GPT-3, LLaMA, Mistral | BERT, RoBERTa | T5, Flan-T5 |
+
+**Gagnant en 2024** : CLM decoder-only. Pourquoi ? Parce que :
+1. Le signal de loss est dense (100% des tokens)
+2. Le zero-shot / few-shot via prompting fonctionne mieux
+3. L'architecture est plus simple (pas de cross-attention)
+4. Les benchmarks de comprehension ont finalement cede face aux scaling laws
+
+---
+
+## 5. Scaling laws : combien de donnees, combien de parametres ?
+
+### Kaplan et al. (2020) — les premieres lois
+
+OpenAI a mesure empiriquement comment la loss du modele decroit en fonction de :
+- `N` : nombre de parametres
+- `D` : nombre de tokens d'entrainement
+- `C` : compute total (FLOPs)
+
+Resultat : la loss suit une loi de puissance :
+```
+L(N) = (N_c / N)^α_N
+L(D) = (D_c / D)^α_D
+```
+
+avec α_N ≈ 0.076 et α_D ≈ 0.095.
+
+**Conclusion de Kaplan** : privilegier le nombre de parametres. Pour un budget compute fixe, faire un gros modele sur moins de donnees.
+
+GPT-3 (2020) a ete construit selon cette regle : 175B de parametres, 300B de tokens. Ratio ~1.7 tokens/param.
+
+### Chinchilla (Hoffmann et al., 2022) — la correction
+
+DeepMind a refait l'experience plus proprement, avec plus de runs, et a trouve :
+
+**Pour un compute optimal, il faut entrainer sur environ 20 tokens par parametre.**
+
+```
+GPT-3 : 175B params, 300B tokens → 1.7 tokens/param → SOUS-ENTRAINE
+Chinchilla : 70B params, 1.4T tokens → 20 tokens/param → OPTIMAL
+```
+
+Resultat : Chinchilla (70B) bat GPT-3 (175B) sur la plupart des benchmarks, avec 2.5x moins de parametres mais 4.7x plus de donnees.
+
+**La loi Chinchilla** :
+```
+N_opt ∝ C^0.5
+D_opt ∝ C^0.5
+```
+
+Quand le compute double, il faut doubler N ET doubler D (√2 × √2 = 2). L'ancienne regle de Kaplan (privilegier N) etait fausse.
+
+### LLaMA (2023) — on pousse encore plus loin
+
+Meta a pousse la logique : et si on entrainait un petit modele sur **beaucoup plus** de tokens que l'optimum Chinchilla ?
+
+```
+LLaMA-7B  : 7B params × 1T tokens = 143 tokens/param (vs 20 optimal)
+LLaMA-65B : 65B params × 1.4T tokens = 22 tokens/param
+
+LLaMA-2-7B : 2T tokens → 285 tokens/param
+LLaMA-3-8B : 15T tokens → 1875 tokens/param !!
+```
+
+**Pourquoi ?** Parce que l'optimum Chinchilla minimise la loss pour un **budget de training** donne. Mais en production, ce qui compte c'est le **budget d'inference**. Un petit modele bien entraine coute beaucoup moins cher a servir qu'un gros modele.
+
+### Data quality > quantity
+
+Scaling laws classiques supposent que tous les tokens sont de qualite egale. Faux.
+
+**Innovations 2023-2024** :
+- **Filtrage agressif** : garder seulement 10% du Common Crawl de haute qualite (FineWeb, RefinedWeb)
+- **Deduplication** : les duplicates empoisonnent l'entrainement
+- **Curriculum** : mettre les donnees de meilleure qualite a la fin
+- **Synthetic data** : generer des donnees de meilleure qualite que le web (Phi-2, Phi-3)
+
+Phi-2 (2.7B) bat LLaMA-2-13B sur plusieurs benchmarks avec 20x moins de parametres, grace a des donnees synthetiques de tres haute qualite ("textbook quality").
+
+**Le mantra** : 1 token de haute qualite > 10 tokens de faible qualite.
+
+---
+
+## 6. Le pipeline complet de pre-training
+
+```
+1. Collecte : crawler le web, livres, code, Wikipedia, reddit
+   → 100 TB de texte brut
+
+2. Filtrage : supprimer duplicates, spam, toxic content, low quality
+   → 10-20 TB de texte
+
+3. Deduplication : near-duplicate removal avec MinHash LSH
+   → 5-10 TB
+
+4. Tokenization : BPE ou SentencePiece
+   → ~2T-15T tokens
+
+5. Melange : mixing data sources (web + code + books + math)
+   → proportions calculees
+
+6. Entrainement : CLM sur H100s pour des semaines
+   → perte de 2.5 → 1.8 en cross-entropy
+
+7. Evaluation : benchmarks (MMLU, HellaSwag, HumanEval, ...)
+   → comparer aux modeles existants
+```
+
+Cout typique d'un LLaMA-3-70B : ~10M USD de compute, 1M USD de donnees.
+
+---
+
+## 7. Flash Cards — Active Recall
+
+### Q1 : Explique l'algorithme BPE en 4 etapes.
+
+<details>
+<summary>Reponse</summary>
+
+1. **Initialisation** : decouper le texte en caracteres (ou bytes), separer les mots par un marqueur.
+2. **Compter** : compter toutes les paires de tokens adjacents dans le corpus.
+3. **Merger** : creer un nouveau token en fusionnant la paire la plus frequente. L'ajouter au vocabulaire.
+4. **Repeter** : jusqu'a atteindre le nombre de merges cible (ex: 50 000).
+
+Inference : on applique les merges dans l'ordre d'apprentissage sur tout nouveau texte (greedy).
+
+</details>
+
+### Q2 : Quelle est la difference entre CLM, MLM et span corruption ?
+
+<details>
+<summary>Reponse</summary>
+
+- **CLM (GPT)** : predire le token suivant sachant les precedents. Attention causale. Loss sur 100% des tokens. Bon pour la generation.
+- **MLM (BERT)** : masquer 15% des tokens et les predire avec attention bidirectionnelle. Loss sur 15% seulement. Bon pour la comprehension.
+- **Span corruption (T5)** : masquer des spans contigus, generer les spans manquants via encoder-decoder. Combine les deux approches.
+
+En 2024, CLM decoder-only a gagne car le signal dense + le few-shot via prompting battent les autres approches.
+
+</details>
+
+### Q3 : Quelle est la loi Chinchilla et pourquoi etait-elle une correction importante ?
+
+<details>
+<summary>Reponse</summary>
+
+**Loi Chinchilla (2022)** : pour un budget compute optimal, il faut environ **20 tokens par parametre**.
+
+C'etait une correction de Kaplan et al. (2020) qui disaient qu'il fallait privilegier les parametres sur les donnees. GPT-3 a ete entraine selon Kaplan (1.7 tokens/param) et etait donc **sous-entraine**.
+
+Chinchilla (70B params, 1.4T tokens) a battu GPT-3 (175B params, 300B tokens) avec 2.5x moins de parametres.
+
+Formule : N_opt ∝ C^0.5, D_opt ∝ C^0.5 (quand le compute double, N et D doivent doubler ensemble).
+
+LLaMA 3 est alle encore plus loin (1875 tokens/param sur le 8B) car en production, ce qui compte c'est le cout d'inference.
+
+</details>
+
+### Q4 : Pourquoi GPT-4 utilise-t-il byte-level BPE au lieu de character-level BPE ?
+
+<details>
+<summary>Reponse</summary>
+
+**Character-level BPE** suppose qu'on sait enumerer tous les caracteres Unicode, ce qui est :
+- Ingerable (150 000+ code points Unicode)
+- Fragile avec les emojis et les langues rares
+
+**Byte-level BPE** travaille sur les 256 bytes UTF-8, qui couvrent TOUT le Unicode sans exception :
+- Vocabulaire de base fixe a 256
+- Aucun OOV possible (meme pour les caracteres jamais vus)
+- Robuste au bruit
+
+Desavantage : les langues non-latines sont 2-4x plus longues en tokens (le chinois prend 3 bytes par caractere en UTF-8).
+
+</details>
+
+### Q5 : Pourquoi la qualite des donnees compte-t-elle plus que la quantite ?
+
+<details>
+<summary>Reponse</summary>
+
+Les scaling laws classiques supposent des tokens de qualite egale. En pratique :
+- Le Common Crawl brut contient 90% de spam, duplicates, pages sans valeur
+- Un token de haute qualite (Wikipedia, livre, paper) apporte plus de signal qu'un token de faible qualite (spam SEO)
+- Les duplicates creent du memorization au lieu de generalisation
+
+**Preuve par l'experience** : Phi-2 (2.7B) bat LLaMA-2-13B grace a des donnees synthetiques "textbook quality" generees par GPT-3.5. 20x moins de parametres, meilleurs resultats.
+
+**Le pipeline gagnant** : filtrage agressif (garder 10% du crawl) + dedup + curriculum (qualite croissante) + synthetic data.
+
+</details>
+</content>
+</invoke>

@@ -1,0 +1,432 @@
+# J12 — Production & Observabilite : agents qui tournent, survivent, et se debuggent
+
+> **Temps estime** : 3h | **Prerequis** : J1-J11
+> **Objectif** : savoir comment tracer, monitorer, recuperer et budgeter un agent en production.
+
+---
+
+## 1. Un agent en dev vs un agent en prod
+
+Un agent qui marche sur ton laptop est une chose. Un agent qui tourne en prod avec des milliers de requetes par jour, qui facture a l'utilisateur, qui doit repondre en moins de 3 secondes, qui ne doit jamais crasher — c'est **tres different**.
+
+### Ce qui casse d'abord
+
+Les problemes que tu ne vois jamais en dev mais qui arrivent TOUJOURS en prod :
+
+| Probleme | Symptome | Impact |
+|----------|----------|--------|
+| **Timeouts sur API LLM** | La requete prend 30s au lieu de 3s | Latence degradee, timeouts |
+| **Rate limits** | 429 de l'API | Requetes qui echouent, frustration user |
+| **Tokens qui explosent** | Un user envoie un prompt monstrueux | Cout x100, context window depassee |
+| **Hallucinations dans les tool calls** | L'agent invente un nom de tool qui n'existe pas | Erreur silencieuse |
+| **Boucles infinies** | L'agent refait 50 fois la meme etape | Cout explose |
+| **Outils qui tombent** | L'API externe renvoie 503 | L'agent crashe |
+| **Prompt qui derive** | Apres 20 messages, l'agent repond n'importe quoi | Qualite degrade |
+| **Donnees sensibles loguees** | Credentials, PII dans les logs | RGPD, fuite |
+
+**Implication** : production = tracing + recovery + budgets + guardrails. Dans cet ordre.
+
+---
+
+## 2. Tracing — voir ce qui se passe
+
+### 2.1 Pourquoi tracer
+
+Un agent fait des dizaines d'operations par requete (appels LLM, tools, memoires, etc.). Sans tracing, quand quelque chose casse en prod tu as :
+- Un log "erreur"
+- Rien pour savoir **quelle etape** a casse
+- Rien pour savoir **pourquoi**
+- Rien pour **rejouer** le cas
+
+Avec tracing :
+- La liste des spans (chaque operation) avec input/output/duree/cout
+- Les liens entre les spans (qui a appele qui)
+- Les erreurs attachees aux spans precis
+- Tout accessible dans une UI
+
+### 2.2 Concepts fondamentaux
+
+| Concept | Definition |
+|---------|------------|
+| **Trace** | L'ensemble des operations pour UNE requete utilisateur |
+| **Span** | UNE operation dans le trace (appel LLM, call d'outil, etape du graphe) |
+| **Session** | Un groupe de traces lies a un meme user / conversation |
+| **Score** | Une metrique attachee a un trace ou un span (cost, latency, quality) |
+| **Metadata** | Les infos additionnelles (model name, user_id, version, tags) |
+
+Un trace typique d'un agent :
+
+```
+Trace agent_run (latence: 8.3s, cost: $0.04)
+├── span: plan (LLM call, 1.2s, $0.003)
+├── span: retrieve_docs (tool, 0.8s)
+├── span: generate_answer (LLM call, 5.1s, $0.03)
+│   ├── span: prompt_assembly (0.01s)
+│   └── span: api_call (5.08s, 2345 tokens)
+└── span: format_output (0.02s)
+```
+
+### 2.3 OpenTelemetry comme standard
+
+OpenTelemetry (OTel) est le **standard industrie** pour le tracing distribue. Il marche partout (services, Lambda, containers, LLM apps).
+
+La plupart des outils LLM-specific (Langfuse, LangSmith) s'integrent avec OTel ou proposent leurs propres wrappers.
+
+**Pragmatique** : si tu fais un agent simple, commence avec un outil LLM-specific (plus de features "natives" pour les LLM). Si tu as deja une stack OTel, integre-toi la-dedans.
+
+### 2.4 Outils de tracing LLM
+
+| Outil | Modele | Forces | Limites |
+|-------|--------|--------|---------|
+| **Langfuse** | Open-source + self-host | Multi-framework, scoring, datasets | UI en dev |
+| **LangSmith** | SaaS Anthropic / LangChain | Integration native LangChain | Pricing |
+| **Helicone** | SaaS proxy HTTP | Installation en 1 ligne (change l'URL) | Moins de features d'eval |
+| **Arize Phoenix** | Open-source + hosted | Focus eval et ML observability | Courbe d'apprentissage |
+| **LangWatch** | SaaS europeen | Conformite EU | Moins connu |
+
+**Recommandation** : commence par **Langfuse self-host** (docker compose up) si tu veux du libre, **LangSmith** si tu es deja dans l'ecosysteme LangChain.
+
+### 2.5 Instrumenter ton agent — niveau minimal
+
+Une bonne regle : chaque appel LLM et chaque call d'outil doit etre un span. Chaque requete utilisateur doit etre un trace avec au moins :
+- `user_id`
+- `session_id`
+- `task`
+- `final_answer`
+- `duration_ms`
+- `total_tokens`
+- `total_cost_usd`
+
+Meme sans outil externe, tu peux ecrire ca dans un fichier JSONL. Tu gagnes 80% de la valeur du tracing pour 5% de l'effort.
+
+---
+
+## 3. Cost tracking — ne pas exploser la facture
+
+### 3.1 Pourquoi c'est critique
+
+Un agent fait plusieurs appels LLM par requete. Chaque appel peut etre long. Un utilisateur peut envoyer un prompt monstrueux. Une boucle peut tourner 100 fois. **Sans budget, tu peux recevoir une facture 100x ta projection**.
+
+### 3.2 Comment compter
+
+Les providers LLM te donnent le nombre de tokens d'input/output dans la reponse. Tu multiplies par le tarif.
+
+```python
+# Exemple : Claude Opus 4.6
+INPUT_COST_PER_1K = 0.015     # $/1K input tokens
+OUTPUT_COST_PER_1K = 0.075    # $/1K output tokens
+
+def compute_cost(input_tokens: int, output_tokens: int) -> float:
+    return (
+        input_tokens / 1000 * INPUT_COST_PER_1K
+        + output_tokens / 1000 * OUTPUT_COST_PER_1K
+    )
+```
+
+**A inclure dans le cost tracking** :
+- Modele utilise (les prix varient beaucoup)
+- Input tokens, output tokens separes
+- Tool calls (souvent gratuits mais le tool lui-meme peut avoir un cout)
+- Embedding calls (moins cher mais important en volume)
+
+### 3.3 Budget enforcement
+
+Tu definis un budget max par requete. Avant chaque appel LLM, tu verifies.
+
+```python
+class BudgetTracker:
+    def __init__(self, max_cost_usd: float):
+        self.max_cost_usd = max_cost_usd
+        self.current_cost = 0.0
+
+    def check(self) -> None:
+        if self.current_cost > self.max_cost_usd:
+            raise BudgetExceeded(f"Budget {self.max_cost_usd}$ exhausted")
+
+    def add(self, input_tokens: int, output_tokens: int, model: str) -> None:
+        cost = compute_cost_for_model(model, input_tokens, output_tokens)
+        self.current_cost += cost
+        self.check()
+```
+
+**Types de budgets** :
+- **Par requete** : 1 requete ne peut pas depasser X$
+- **Par utilisateur par jour** : 1 user ne peut pas depasser Y$/jour
+- **Global par jour** : le systeme ne peut pas depasser Z$/jour (circuit breaker)
+
+### 3.4 Prompt caching — reduire le cout de 50-90%
+
+Anthropic et OpenAI proposent du **prompt caching** : si ton prompt contient un preambule qui se repete (system prompt long, exemples few-shot), tu peux le marquer comme "cacheable". Les appels suivants qui reutilisent le meme preambule paient 10x moins cher.
+
+```python
+# Pseudo-code anthropic
+messages = [
+    {
+        "role": "system",
+        "content": [
+            {
+                "type": "text",
+                "text": long_system_prompt,
+                "cache_control": {"type": "ephemeral"},
+            }
+        ],
+    },
+    {"role": "user", "content": user_query},
+]
+```
+
+**Quand ca marche** : long system prompt (> 1024 tokens), frequence d'usage elevee (le cache expire en 5 min par defaut).
+
+#### Les 3 niveaux de cache — quand chacun est rentable
+
+| Niveau | TTL | Cas d'usage | Rentable a partir de |
+|--------|-----|-------------|---------------------|
+| **Ephemeral** (5 min) | 5 min | Conversations rapides, bursts de requetes | 2-3 messages dans la fenetre |
+| **Session** | 5-60 min | Agent conversationnel multi-tour, system prompt stable | 3-4 messages |
+| **Cascading** (tool-based) | 5 min | Agents multi-tools, chaque tool ajoute au contexte | Des le 2e tool call |
+
+**1. Ephemeral cache** : attacher `cache_control` a un bloc. Marche pour les bursts. Pas rentable si les requetes sont espacees > 5 min.
+
+**2. Session cache** : tu attaches le cache au **system prompt** une fois en debut de session. Toutes les requetes suivantes beneficient du meme preambule cache. Devient rentable a partir du **3e message** (les 2 premiers amortissent le cout d'ecriture du cache, puis c'est du pur gain).
+
+**3. Cascading caches** : pattern cle pour les agents multi-tools. Chaque tool call ajoute ses resultats au contexte. A chaque tool call suivant, tout le contexte precedent (system prompt + historique + tool results accumules) beneficie du cache.
+
+```
+Turn 1 : system + user                         → ecrit le cache initial
+Turn 2 : system + user + tool1_result          → cache du turn 1 reutilise + nouveau bloc
+Turn 3 : system + user + tool1 + tool2_result  → cache du turn 2 reutilise + nouveau bloc
+Turn 4 : system + user + tool1 + tool2 + tool3 → cache du turn 3 reutilise + ...
+```
+
+**Economie** : sur un agent qui fait 5 tool calls, 4/5 des tokens de contexte sont reutilises = **80% de reduction du cout** sur le contexte non-neuf.
+
+#### Impact cost et pricing 2026
+
+| Provider | Reduction sur tokens caches | Break-even |
+|----------|---------------------------|------------|
+| **Anthropic** | 90% (tokens caches = 10% du prix normal) | 5 reutilisations |
+| **OpenAI** | 50% (tokens caches = 50% du prix normal) | 2 reutilisations |
+
+**Regle** : chez Anthropic, il faut reutiliser le cache **au moins 5 fois** pour que l'ecriture initiale soit amortie. Chez OpenAI, 2 suffisent. Planifier la strategie de cache selon le provider.
+
+#### Observability 2026 — Arize Phoenix, Langfuse, Helicone
+
+L'ecosysteme observability LLM a evolue. Paysage 2026 :
+
+- **Arize Phoenix** — devenu **standard de facto** en production 2025-2026. Open-source, eval natif integre, anomaly detection, tres bon pour l'observability ML/LLM. Premier choix pour les equipes qui veulent du self-hosted puissant.
+- **Langfuse** — reference open-source / startup. Excellent tracing, datasets versionnes, scoring. Plus simple a installer que Phoenix, bon compromis fonctionnalites/friction.
+- **Helicone** — proxy HTTP, installation en une ligne (changer l'URL du SDK). Moins de features d'eval mais zero integration cote code. Bon pour commencer vite.
+- **LangSmith** — incontournable si ton stack est deja LangChain/LangGraph. Integration native, datasets, eval, prompt management.
+
+**Recommandation terrain** : Langfuse en demarrage (friction minimale), Arize Phoenix quand on passe a l'echelle production avec eval heavy. LangSmith si on est deja dans l'ecosysteme LangChain.
+
+---
+
+## 4. Latency monitoring — rester reactif
+
+### 4.1 Mesurer quoi
+
+- **End-to-end latency** : du moment ou l'utilisateur envoie la requete au moment ou il recoit la reponse
+- **Time to first token** (TTFT) : combien de temps avant que le LLM commence a streamer ? Important pour l'UX
+- **Latence par etape** : ou est-ce que tu perds du temps ?
+
+### 4.2 Causes frequentes de latence
+
+| Cause | Ordre de grandeur | Fix |
+|-------|-------------------|-----|
+| Appel LLM long (Claude Opus) | 5-15s | Passer a un modele plus rapide (Sonnet, Haiku) pour les taches simples |
+| Plusieurs appels sequentiels | N x 5s | Paralleliser quand possible |
+| Outils externes lents | Variable | Cache, timeout, async |
+| Trop de retries | Multiplie la latence par N | Limiter les retries |
+| Context window tres grand | Plus c'est long plus c'est lent | Summary memory, chunking |
+
+### 4.3 Streaming pour l'UX
+
+Sans streaming : l'utilisateur attend 10s, puis la reponse apparait d'un coup.
+Avec streaming : l'utilisateur voit le texte apparaitre progressivement apres 500ms.
+
+La latence totale est identique, mais **l'UX percue est 10x meilleure**. Si ton agent est user-facing, streamer est quasi obligatoire.
+
+### 4.4 SLA et alertes
+
+Definis un SLA (Service Level Agreement) : par exemple "95% des requetes en moins de 5s". Mets des alertes si tu devies.
+
+Outils : Grafana + Prometheus, Datadog, Honeycomb, n'importe quel APM.
+
+---
+
+## 5. Error recovery — ne pas crasher
+
+### 5.1 Retry avec backoff
+
+L'API LLM te renvoie un 429 (rate limit) ou un 500. Retry avec **backoff exponentiel** :
+
+```python
+def with_retry(fn, max_attempts=3):
+    for attempt in range(max_attempts):
+        try:
+            return fn()
+        except TransientError:
+            if attempt == max_attempts - 1:
+                raise
+            time.sleep(2 ** attempt)  # 1s, 2s, 4s
+```
+
+**Important** :
+- Retry **uniquement** sur les erreurs transitoires (429, 500, 502, 503, timeout). Pas sur les 400/404.
+- Limite stricte (3-5 retries max) pour eviter les avalanches
+- Avec backoff (pas de retry immediat, tu charges encore plus l'API)
+- Avec jitter (randomisation) pour eviter que tous les clients retry en meme temps
+
+### 5.2 Fallback chains
+
+Si le modele primaire echoue, passe a un secondaire.
+
+```python
+class FallbackChain:
+    def __init__(self, primary, secondary):
+        self.primary = primary
+        self.secondary = secondary
+
+    def __call__(self, prompt):
+        try:
+            return self.primary(prompt)
+        except Exception:
+            return self.secondary(prompt)
+```
+
+**Cas d'usage** :
+- Primaire : Claude Opus (qualite max, cher)
+- Secondaire : GPT-5.4 Mini (moins cher, plus rapide)
+- Tertiaire : reponse template "Desole, service temporairement indisponible"
+
+Les fallback chains te permettent de **jamais echouer**.
+
+### 5.3 Graceful degradation
+
+Si l'outil de search external est down, ne pas crasher. Remplacer par une reponse "Je n'ai pas acces a la recherche en ce moment, voici ce que je sais avec ma memoire".
+
+L'agent degrade **la qualite** plutot que de **casser**.
+
+### 5.4 Circuit breaker
+
+Si une dependance externe renvoie des erreurs repetees, arrete d'essayer pour un certain temps. Laisse-la recuperer.
+
+```python
+class CircuitBreaker:
+    def __init__(self, failure_threshold=5, reset_time=60):
+        self.failures = 0
+        self.threshold = failure_threshold
+        self.reset_time = reset_time
+        self.opened_at = None
+
+    def call(self, fn):
+        if self.opened_at and time.time() - self.opened_at < self.reset_time:
+            raise CircuitOpen("breaker is open")
+        try:
+            result = fn()
+            self.failures = 0
+            return result
+        except Exception:
+            self.failures += 1
+            if self.failures >= self.threshold:
+                self.opened_at = time.time()
+            raise
+```
+
+---
+
+## 6. Guardrails — empecher le pire
+
+Au dela du tracing et de la recuperation, il faut des garde-fous automatiques.
+
+### 6.1 Input guardrails
+
+Avant de donner l'input au LLM :
+- **Longueur max** : rejeter un prompt > N tokens
+- **Content filtering** : detecter prompt injection, jailbreak, contenu illegal
+- **PII detection** : avertir / masquer si des credentials, emails, ssn sont dans le prompt
+- **Rate limiting per user** : max N requetes/minute par user
+
+### 6.2 Output guardrails
+
+Avant de renvoyer la reponse a l'utilisateur :
+- **Longueur max** : couper si trop long
+- **Content filtering** : scanner le texte genere (toxicite, PII)
+- **Schema validation** : si on attend du JSON, valider
+- **Hallucination detection** : LLM-as-judge en ligne
+
+### 6.3 Tool guardrails
+
+- **Whitelist** : seul certains tools sont appelables
+- **Argument validation** : valider les args (schema Pydantic)
+- **HITL (Human in the loop)** : demander approbation pour les actions destructives (`send_email`, `delete_record`, etc.)
+- **Sandbox** : le tool tourne avec des droits limites
+
+---
+
+## 7. Deployment patterns
+
+### 7.1 Options
+
+| Pattern | Quand l'utiliser | Pros | Cons |
+|---------|------------------|------|------|
+| **Serveur HTTP classique** (FastAPI) | La majorite des cas | Simple, familier | Stateless -> besoin de state external |
+| **Queue worker** (Celery, ARQ, BullMQ) | Taches longues (> 30s) | Pas de timeout HTTP | Plus complexe |
+| **Streaming SSE/WebSocket** | Agents user-facing temps reel | Bon UX streaming | Plus complexe a deployer |
+| **Serverless** (Lambda, Cloud Run) | Traffic variable | Auto-scale, paye a l'usage | Cold starts problematiques pour les LLM |
+| **Edge functions** (Vercel) | Agents rapides et simples | Proximite user | Limites memoire / CPU |
+
+**Pragmatique** : FastAPI + ARQ pour les taches longues + Langfuse pour le tracing = stack solide qui couvre 95% des cas.
+
+### 7.2 Versioning
+
+Tes prompts sont du code. Versionne-les.
+
+- Git pour le code Python
+- Les prompts importants dans des fichiers `.txt` ou dans un prompt manager (LangSmith, Langfuse, PromptLayer)
+- Tagger chaque release d'agent avec un version number
+- Le tracing doit loguer la version utilisee pour chaque trace
+
+### 7.3 Canary et rollback
+
+Quand tu deploies une nouvelle version :
+- **Canary** : envoie 5% du traffic vers la nouvelle version, 95% vers l'ancienne
+- Monitor les metriques (taux d'erreur, pass rate, latence)
+- Si tout va bien, rampe a 50% puis 100%
+- Si regression, rollback automatique
+
+---
+
+## 8. Flash Cards — Test de comprehension
+
+**Q1 : Quelles sont les 4 grandes categories de problemes qu'on doit gerer en production d'un agent ?**
+> R : (1) **Tracing/Observabilite** pour savoir ce qui se passe (spans, traces, metadata, cost, latency). (2) **Error recovery** (retry avec backoff, fallback chains, circuit breakers, graceful degradation) pour ne jamais crasher. (3) **Budgets** (cost ceiling par requete, par user, global) pour ne pas exploser la facture. (4) **Guardrails** (input, output, tool) pour empecher les comportements dangereux et les prompt injections.
+
+**Q2 : Qu'est-ce qu'un span et un trace, et quelle est la difference ?**
+> R : Un **trace** represente l'ensemble des operations pour UNE requete utilisateur (par exemple, tout ce qu'un agent fait pour repondre a "Analyse ce rapport"). Un **span** est UNE operation a l'interieur d'un trace (un appel LLM, un call de tool, une etape du graphe). Un trace contient plusieurs spans, souvent hierarchises (parent/child). Ensemble ils permettent de visualiser exactement ou le temps et le cout sont depenses.
+
+**Q3 : Comment fonctionne le retry avec backoff exponentiel et pourquoi pas un retry immediat ?**
+> R : A chaque echec, on attend un temps qui double (1s, 2s, 4s, 8s...) avant de retenter. Avec jitter (randomisation) pour eviter les synchronisations. Pas de retry immediat car (1) ca surcharge le service qui est deja en difficulte, (2) ca cree des "thundering herds" si plusieurs clients retry en meme temps, (3) la cause est souvent transitoire et passera rapidement si on attend. Limite stricte a 3-5 retries pour eviter les avalanches.
+
+**Q4 : Qu'est-ce qu'un fallback chain et comment le construit-on ?**
+> R : Un fallback chain est une liste ordonnee de strategies de reponse a essayer en cas d'echec de la precedente. Exemple : primaire = Claude Opus (qualite max), secondaire = GPT-5.4 Mini (moins cher, plus rapide), tertiaire = reponse template "Desole, service indisponible". A chaque niveau, si ca echoue, on descend. Le but est de **jamais renvoyer une erreur brute** au user — on degrade la qualite plutot que de casser.
+
+**Q5 : Comment le prompt caching reduit-il les couts et quand est-il pertinent ?**
+> R : Si ton prompt contient un preambule long qui se repete (system prompt, few-shot examples), tu marques cette partie comme cacheable. Les appels suivants qui reutilisent ce meme preambule paient 10x moins cher sur les tokens caches. Pertinent quand : le system prompt fait > 1024 tokens (seuil minimum) ET la frequence d'usage est elevee dans la fenetre de cache (5 min par defaut chez Anthropic). Peut reduire le cout de 50-90% sur les systemes conversationnels avec long contexte.
+
+---
+
+## Points cles a retenir
+
+- Un agent en prod = tracing + recovery + budgets + guardrails
+- **Tracing** : chaque requete est un trace, chaque operation est un span, chaque span a input/output/duration/cost
+- Outils : Langfuse (open-source), LangSmith (LangChain), Helicone (proxy), Arize Phoenix
+- **Cost tracking** : compter input/output tokens * tarif modele, maintenir un budget par requete/user/global
+- **Prompt caching** reduit les couts de 50-90% sur les long prompts repetes
+- **Error recovery** : retry avec backoff exponentiel + jitter, fallback chains, circuit breakers, graceful degradation
+- **Guardrails** : input (rate limit, longueur, PII), output (schema, toxicite), tool (whitelist, HITL, sandbox)
+- **Streaming** : latence totale identique mais UX percue 10x meilleure — obligatoire pour user-facing
+- Deploiement : FastAPI + queue (ARQ/Celery) pour les taches longues + tracing = stack robuste
+- Versionne tes prompts comme du code, canary + rollback pour les releases
+- Sans tracing, tu ne peux rien debugger en prod — c'est le premier investissement

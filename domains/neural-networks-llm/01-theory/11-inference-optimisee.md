@@ -1,0 +1,545 @@
+# Jour 11 — Inference optimisee : comment servir un LLM en production
+
+> **Temps estime** : 5h | **Prerequis** : Jours 1-10
+
+---
+
+## 1. Le probleme economique de l'inference
+
+L'entrainement d'un LLM coute cher une fois (10M USD pour LLaMA 3 70B). L'inference coute cher **chaque requete**, chaque jour, pour toujours.
+
+### Ordre de grandeur
+
+Pour GPT-4 en production :
+- Cout du training : environ 100M USD (une fois)
+- Cout de l'inference : plusieurs millions par jour (hallucinations continues)
+
+C'est pour ca que l'optimisation d'inference est devenue **plus importante** que l'optimisation du training. Chaque 1% de gain en inference vaut des millions.
+
+### Les deux phases de l'inference
+
+```
+1. PREFILL : traiter le prompt d'un coup (compute-bound)
+   - Attention sur toute la sequence : O(n²)
+   - Parfait pour les GPUs (bien parallelisable)
+
+2. DECODE : generer token par token (memory-bound)
+   - Un seul token nouveau a la fois
+   - Re-passer par tous les layers pour un seul token
+   - Bottleneck : la bande passante memoire, pas le compute
+```
+
+Le decode est souvent 100x plus lent que le prefill rapporte au nombre de tokens. C'est lui qu'il faut optimiser en priorite.
+
+---
+
+## 2. KV cache — l'optimisation #1
+
+### Le probleme sans cache
+
+En generation autoregressive, pour generer le token `t+1`, on doit :
+1. Calculer les queries, keys, values pour TOUTE la sequence jusqu'a `t+1`
+2. Faire l'attention de `q[t+1]` contre tous les `k[0..t+1]`
+3. Output du token
+
+Naivement, a chaque nouveau token, on recalcule toutes les keys et values des tokens precedents. C'est `O(n²)` en compute **par token genere**, soit `O(n³)` pour toute la sequence.
+
+### L'idee du KV cache
+
+Les keys et values des tokens precedents sont **invariantes** : elles ne dependent que des tokens `<= t`. On peut les calculer une fois et les re-utiliser.
+
+```
+Avec cache:
+  Generation du token t+1:
+    1. q_{t+1}, k_{t+1}, v_{t+1} = Attention_proj(h_{t+1})
+    2. Append k_{t+1} et v_{t+1} au cache
+    3. attention = softmax(q_{t+1} @ K_cache.T) @ V_cache
+    
+  Compute par token: O(n) au lieu de O(n²)
+  Compute total: O(n²) au lieu de O(n³)
+```
+
+### La taille du cache
+
+```
+KV_cache_size = 2 * n_layers * n_kv_heads * head_dim * seq_len * batch * bytes_per_elem
+(facteur 2 pour K et V)
+```
+
+Pour LLaMA 2 7B (MHA) avec seq=4096 batch=1 : 2 GB. Pour LLaMA 2 70B sans GQA : 10+ GB juste pour le cache.
+
+### Pourquoi le cache domine l'inference
+
+Sur une GPU H100 :
+- Bande passante memoire : 3 TB/s
+- Compute : 3000 TFLOPS
+
+En decode, chaque token demande :
+- Lire tout le KV cache depuis la VRAM : 2 GB a 3 TB/s = 0.66 ms
+- Calculer l'attention : ~2M FLOPS a 3000 TFLOPS = 0.6 µs
+
+Le temps est domine a 99% par la lecture du cache, pas par le compute. C'est pour ca qu'on parle de **memory-bound** decode.
+
+### Consequences
+
+1. La taille du cache determine la vitesse de generation
+2. Reduire le cache (GQA, MQA, quantization) est la voie royale pour accelerer
+3. Les architectures multi-query (Mistral, LLaMA 3) sont des choix forces par l'inference, pas par la qualite
+
+---
+
+## 3. Speculative decoding — generer plusieurs tokens par pass
+
+### L'idee
+
+Les modeles genrent ~1 token par pass. Et si on pouvait generer plusieurs tokens par pass en "pariant" sur la suite ?
+
+**Setup** :
+- Un petit "draft model" rapide (ex: LLaMA 1B) qui devine les N prochains tokens
+- Un "target model" gros (ex: LLaMA 70B) qui verifie la prediction du draft
+
+```
+Etape 1: draft model genere 4 tokens "Je pense donc je"
+Etape 2: target model fait UN seul forward pass sur les 4 tokens
+         -> compare les distributions, accepte ou rejette chaque token
+Etape 3: si tous acceptes, on a gagne 4 tokens pour le prix d'un
+         si rejet au token k, on repart du token k-1
+```
+
+### Pourquoi ca marche
+
+Le target model est **memory-bound**. Un forward pass sur 4 tokens n'est pas 4x plus lent qu'un pass sur 1 token : c'est ~1.1x plus lent. Les 3 tokens supplementaires sont presque gratuits.
+
+Le draft model doit etre suffisamment aligne avec le target pour que le taux d'acceptation soit eleve (typiquement 70-90%).
+
+### Gain en pratique
+
+- Draft acceptance rate 80% → speedup de ~2x
+- Draft acceptance rate 90% → speedup de ~3x
+- Certains setups atteignent 3-5x de speedup
+
+Utilise par : GPT-4 Turbo, Claude, Gemini, et tous les grands providers.
+
+### Variantes
+
+- **Medusa** : le target model lui-meme predit plusieurs tokens avec des tetes multiples (pas besoin de draft separe)
+- **EAGLE** : apprend un petit draft qui re-utilise les hidden states du target
+- **Lookahead decoding** : decode par paquets de N tokens en parallele sans draft model
+
+---
+
+## 4. Quantization — reduire les bits
+
+### L'idee
+
+Les poids d'un LLM sont en fp16 (2 bytes) ou bf16. On peut les convertir en int8 (1 byte) ou int4 (0.5 byte) avec peu de perte de qualite.
+
+```
+LLaMA 7B en fp16  : 14 GB
+LLaMA 7B en int8  :  7 GB
+LLaMA 7B en int4  :  3.5 GB
+```
+
+Un modele int4 tient sur une RTX 4090 (24 GB) au lieu de necessiter un A100.
+
+### Post-training quantization (PTQ)
+
+On quantize apres le training, sans re-entrainer. C'est la methode la plus simple.
+
+**Naive int8** : map [-max, +max] a [-128, +127]. Simple mais perte de qualite sur les outliers.
+
+**GPTQ** (Frantar et al., 2022) : utilise l'information des gradients sur un petit dataset de calibration pour mieux quantizer. Perte < 1% sur LLaMA-7B.
+
+**AWQ** (Lin et al., 2023) : observe que certains "activations saillantes" sont plus importantes. Scale ces canaux-la avant quantization.
+
+**GGUF** (llama.cpp) : format conteneur pour poids quantizes int4/int5/int8 + metadata. C'est ce qui permet de faire tourner des LLMs sur laptop.
+
+### Quantization-aware training (QAT)
+
+On entraine directement avec les poids quantizes. Plus couteux mais meilleure qualite. Utilise par BitNet, LLMs a 1-bit (oui, 1 bit par poids).
+
+### Accuracy/speed tradeoff
+
+| Bits | Size | Speed | Quality |
+|---|---|---|---|
+| fp16 | 100% | 100% | 100% |
+| int8 | 50% | 150% | 99.5% |
+| int4 (GPTQ) | 25% | 200% | 98% |
+| int4 (AWQ) | 25% | 220% | 98.5% |
+| int2 | 12.5% | 300% | 85% (degradation visible) |
+
+Int4 est le sweet spot en 2024. La plupart des deployments grand public (llama.cpp, ollama) utilisent int4.
+
+---
+
+## 5. Flash Attention — tiling pour la memoire IO
+
+### Le probleme de l'attention standard
+
+L'attention calcule une matrice `scores = Q @ K^T` de taille `(n, n)`. Pour n=4096, c'est 16M valeurs par head. Cette matrice est **ecrite en VRAM** puis **re-lue pour le softmax** puis **re-lue pour la multiplication par V**.
+
+```
+Passes de lecture/ecriture de la matrice (n, n) :
+1. Calcul scores: ecriture
+2. Softmax: lecture + ecriture
+3. Multiplication V: lecture
+
+Total: 4 passes sur une matrice de 16M elements
+```
+
+Comme l'attention est memory-bound, ces lectures/ecritures dominent le temps.
+
+### L'idee de Flash Attention (Dao et al., 2022)
+
+Au lieu de materialiser la matrice `(n, n)` en VRAM, on la calcule **par tiles** (blocs) qui tiennent dans la SRAM (cache rapide de la GPU).
+
+```
+Pour chaque tile de queries Q_i:
+  Pour chaque tile de keys K_j:
+    Charger Q_i et K_j dans la SRAM (rapide)
+    Calculer le produit scalaire local
+    Mettre a jour les accumulateurs de softmax de maniere incrementale
+    
+Le softmax global est calcule "en streaming" sans jamais stocker la matrice complete.
+```
+
+### L'astuce du softmax online
+
+Le softmax est normalement `exp(x) / sum(exp(x))`. Il necessite de voir toutes les valeurs avant de normaliser.
+
+Flash Attention utilise un **softmax online** qui maintient le max courant et la somme courante. Quand un nouveau tile arrive, on re-scale les accumulateurs precedents pour tenir compte du nouveau max.
+
+```
+m_new = max(m_old, max(tile))
+s_new = s_old * exp(m_old - m_new) + sum(exp(tile - m_new))
+```
+
+### Resultat
+
+- **Memoire** : O(n) au lieu de O(n²). On ne stocke jamais la matrice d'attention complete.
+- **Compute** : identique (meme nombre de FLOPs)
+- **Speed** : 2-4x plus rapide en pratique grace a la reduction d'IO memoire
+
+Utilise partout en 2024 : PyTorch `torch.nn.functional.scaled_dot_product_attention` integre Flash Attention 2.
+
+---
+
+## 6. Batching et continous batching
+
+### Static batching — le probleme
+
+Si on groupe 8 requetes dans un batch, toutes les requetes doivent **attendre** la plus longue. Si une requete fait 1000 tokens et une autre en fait 10, la seconde est bloquee.
+
+```
+Requete A: 100 tokens
+Requete B: 500 tokens
+Requete C: 50 tokens
+
+Batch fixe: toutes attendent B (500 tokens)
+Utilisation: (100 + 500 + 50) / (3 * 500) = 43%
+```
+
+### Continuous batching — la solution
+
+On injecte de nouvelles requetes dans le batch des qu'une ancienne termine. Le batch est **dynamique**.
+
+```
+Step 1: [A, B, C] en generation
+Step 150: A termine -> remplacer par D
+Step 250: C termine -> remplacer par E
+Step 500: B termine -> remplacer par F
+```
+
+### vLLM — l'implementation de reference
+
+vLLM (Kwon et al., 2023) a popularise le continuous batching avec une optimisation majeure : **PagedAttention**.
+
+Idee : gerer le KV cache comme la memoire virtuelle d'un OS — par pages de 16 tokens. On peut partager des pages entre requetes (ex: meme system prompt) et allouer/liberer dynamiquement.
+
+Throughput vLLM vs naive : **24x** plus de tokens par seconde sur une meme GPU.
+
+### Prefill caching
+
+Si plusieurs requetes commencent par le meme system prompt, on peut **cacher le KV cache du prefill** et le re-utiliser. Anthropic, OpenAI offrent maintenant ca comme feature (prompt caching pour diviser les couts par 10). Voir section 7 dediee.
+
+---
+
+## 7. Long context strategies — de 2k a 1M+ tokens
+
+### Le probleme de l'extrapolation
+
+Un modele entraine avec RoPE sur seq_len = 4096 a du mal a generaliser a 100k tokens. Les angles de rotation extrapoles n'ont jamais ete vus pendant le training -> les queries/keys tombent dans des regions bizarres de l'espace d'attention, et la qualite s'effondre.
+
+### NTK-aware RoPE scaling
+
+**Idee** (b-lolu et al., 2023) : au lieu d'etirer lineairement la base de RoPE (ce qui rapproche toutes les positions et perd la resolution fine), on utilise une interpolation non-lineaire qui preserve les hautes frequences (relations courtes) et compresse les basses frequences (relations longues).
+
+```
+theta_j_new = theta_j * (seq_target / seq_trained) ^ (2j / (d - 2))
+```
+
+**Gain** : peut doubler ou tripler le context length sans re-training, avec une perte de perplexite minimale. Gratuit a l'inference.
+
+### YaRN — Yet another RoPE extensioN (Peng et al., 2023)
+
+**YaRN** va plus loin : applique des facteurs d'interpolation differents selon la frequence (haute, mid, basse) et ajoute une correction temperature sur l'attention pour compenser la "dilution" du softmax sur les longues sequences.
+
+**Resultat** : YaRN permet de passer de 4k a **128k** ou **1M** tokens sur Llama 2/3 avec seulement 400 steps de fine-tuning. C'est la methode utilisee par la plupart des long-context SOTA open-source.
+
+### Position Interpolation (Chen et al., 2023)
+
+**Idee plus simple** : divisiser la position par le ratio `seq_target / seq_trained`. Trivial mais moins performant que YaRN.
+
+### Realite 2025
+
+Les modeles frontier vont bien au-dela de 128k :
+- **Gemini 2** (Google, 2025) : 1M tokens natif (utilise des techniques proprietaires, probablement YaRN + hybrid SSM)
+- **Claude 4** (Anthropic, 2025) : 200k a 1M selon les tiers
+- **Llama 4** (Meta, 2025) : 1M tokens annonces
+- **GPT-5** (OpenAI, 2025) : 400k a 1M selon les variants
+
+**Trade-off** : plus le contexte est long, plus le KV cache grossit (memoire) et plus l'attention est lente (compute). Les strategies long-context combinent : YaRN + GQA/MLA + FlashAttention + hybrid SSM + prefix caching.
+
+---
+
+## 8. Prefix caching — reutiliser le KV cache entre requetes
+
+### Distinction : KV cache vs prefix cache
+
+Le KV cache **classique** (vu section 2) vit dans UNE requete : il evite de recalculer les K/V des tokens deja generes. Des que la requete finit, le cache est jete.
+
+Le **prefix cache** est inter-requete : si plusieurs requetes commencent par le meme prefixe (system prompt, few-shot examples, RAG context), on cache les K/V du prefixe une fois et on les reutilise a chaque requete suivante.
+
+### Exemple : un chatbot avec system prompt
+
+```
+Requete 1 : [system 2000 tokens] + [user "Hello"]
+Requete 2 : [system 2000 tokens] + [user "What is 2+2?"]
+Requete 3 : [system 2000 tokens] + [user "Tell me a story"]
+```
+
+Sans prefix cache : on prefill les 2000 tokens du system a chaque requete -> 3 * 2000 = 6000 tokens de prefill gaspilles.
+
+Avec prefix cache : on prefill une seule fois et on reutilise le KV cache. Gain : **90% de cost reduction** sur les 2000 tokens repetes.
+
+### Implementations en production 2025
+
+- **Anthropic** : `cache_control` explicite dans l'API (l'utilisateur marque les sections cachables). Reduction 90% cost, 85% latency sur tokens caches. TTL 5 min (ou 1h en premium).
+- **OpenAI** : automatique depuis oct 2024. Toute requete > 1024 tokens bascule en cache automatiquement. 50% cost reduction sur tokens caches.
+- **vLLM** : prefix caching via **PagedAttention + hash des pages**. Si une page (16 tokens) a deja ete vue, on la reutilise. Gain enorme sur du RAG avec document stable.
+- **SGLang** : prefix caching + radix tree pour gerer plusieurs prefixes en arbre (partage de system prompt + different user prompts).
+
+### Cas d'usage ideal
+
+- **Chatbots avec long system prompt** (Claude, GPT avec instructions)
+- **RAG avec context stable** (top-k documents reutilises sur plusieurs questions)
+- **Few-shot learning** (meme exemples, different query)
+- **Agents** qui rappellent le meme tool-description a chaque step
+
+Pour les applications agent-based a forte charge, le prefix caching seul peut diviser la facture par 10.
+
+---
+
+## 9. FP4 quantization et Blackwell
+
+### Au-dela de int4
+
+Jusqu'en 2024, int4 (GPTQ, AWQ) etait le sweet spot memoire/qualite. Mais en 2025, NVIDIA a sorti la generation **Blackwell (B200, GB200)** qui supporte **FP4 natif** en hardware.
+
+**Difference int4 vs FP4** :
+- **int4** : 16 valeurs entieres uniformement espacees entre -max et +max
+- **FP4** : 16 valeurs en representation **flottante** (1 bit signe, 2 bits exposant, 1 bit mantisse). Densite variable : plus de precision pres de 0, moins aux extremes
+
+FP4 est mieux adapte aux **distributions des poids d'un LLM** (gaussiennes centrees sur 0). Les outliers sont naturellement mieux representes.
+
+### Performance Blackwell
+
+- **FP4** : 2x les flops de FP8 -> 20 PFLOPS par B200
+- **Memoire** : 0.5 byte par poids (identique a int4)
+- **Accuracy** : perte < 1% sur Llama 3 70B et DeepSeek V3 comparativement a FP16, pour peu qu'on utilise un bon scheme de calibration (par block avec outliers separes)
+
+En production 2025, les deployments frontier (OpenAI, Anthropic, DeepMind) sont probablement en FP4 sur B200.
+
+### BitNet b1.58 — jusqu'a 1.58 bit
+
+**BitNet b1.58** (Microsoft, 2024) pousse l'extreme : chaque poids prend l'une des 3 valeurs `{-1, 0, +1}`. Cela fait log2(3) = 1.58 bits par poids.
+
+**Surprise** : sur des modeles > 7B, BitNet b1.58 atteint la parite avec les modeles FP16 a training egal. La multiplication matricielle devient une addition/soustraction (les +1/-1/0 transforment `W @ x` en somme de sous-vecteurs de x). Potentiel d'acceleration enorme sur hardware custom.
+
+**Limite** : necessite un **training from scratch** en binary-aware (quantization-aware training), on ne peut pas convertir un LLM FP16 existant. Adoption limitee en 2025 mais c'est la voie pour les accelerateurs edge.
+
+---
+
+## 10. Int8 / Int4 KV cache quantization
+
+### Quantizer les poids ne suffit plus
+
+Section 4 a vu la quantization des **poids** (fp16 -> int8/int4). Mais pour les contextes longs (64k+ tokens), c'est le **KV cache** qui domine la memoire, pas les poids.
+
+```
+Llama 3 70B sur 128k tokens :
+  Poids FP16       : 140 GB
+  KV cache FP16    : 40+ GB   <- plus que les poids pour certains batchs
+```
+
+### L'idee : quantizer le cache lui-meme
+
+On stocke les K et V en **int8** ou **int4** (voire FP8), avec un scale par block (128 tokens) pour eviter les pertes.
+
+```
+K_fp16 -> K_int8 (scale per 128 tokens)
+V_fp16 -> V_int8
+
+Lors de l'attention :
+  dequantize on-the-fly, puis calculer softmax(Q @ K^T) @ V
+```
+
+### Gain en pratique
+
+- **int8 KV cache** : memoire divisee par 2, perte de qualite < 0.5%
+- **int4 KV cache** : memoire divisee par 4, perte de qualite ~1-2% (plus sensible que pour les poids)
+- **FP8 KV cache** : standard sur Hopper/Blackwell, equivalent a FP16 pour la qualite
+
+### Support production
+
+- **vLLM** : support natif int8 KV cache depuis 2024, FP8 KV cache en 2025 sur H100/B200
+- **TensorRT-LLM** : FP8 KV cache avec scale dynamique
+- **TGI** (HuggingFace) : int8 KV cache optionnel
+- **SGLang** : prefix caching + KV cache quantization
+
+**Regle d'or 2025** : pour un modele 70B+ sur long context, combiner quantization des poids (int4/FP4) ET du KV cache (int8/FP8) est obligatoire pour tenir en memoire.
+
+---
+
+## 11. Vue d'ensemble : stack d'optimisation moderne
+
+Voici l'ensemble des optimisations utilisees par un serveur d'inference moderne (vLLM, TensorRT-LLM, TGI) :
+
+```
+Architecture level:
+  ✓ GQA (reduce KV cache)
+  ✓ SwiGLU (more expressive FFN)
+  ✓ RoPE (relative position)
+
+Compute level:
+  ✓ Flash Attention 2 (memory-efficient attention)
+  ✓ Fused kernels (RMSNorm + linear, GELU + linear)
+  ✓ Triton / CUDA graphs
+
+Memory level:
+  ✓ KV cache (100x speedup decode)
+  ✓ PagedAttention (no fragmentation)
+  ✓ Quantization int4/int8 (4x memory reduction)
+
+Batching level:
+  ✓ Continuous batching (4-6x throughput)
+  ✓ Speculative decoding (2-3x latency reduction)
+  ✓ Prefill caching (10x cost reduction on repeated prompts)
+```
+
+Chaque optimisation contribue, et leur combinaison permet de servir un LLaMA 70B a 50+ tokens/sec pour ~1 cent par 1000 tokens.
+
+---
+
+## 12. Flash Cards — Active Recall
+
+### Q1 : Pourquoi la phase decode est memory-bound alors que le prefill est compute-bound ?
+
+<details>
+<summary>Reponse</summary>
+
+**Prefill** : on traite TOUT le prompt d'un coup (ex: 1000 tokens). L'attention est O(n²) sur ces 1000 tokens → beaucoup de compute. C'est bien parallelisable → les GPUs sont satures en calcul → **compute-bound**.
+
+**Decode** : on genere UN seul token par pass. Il faut quand meme relire TOUT le KV cache pour faire l'attention. Le compute est minuscule (un seul `q` contre tous les `k`), mais la lecture du cache depuis la VRAM est enorme.
+
+```
+Per token decode:
+  Compute: ~2M FLOPS (qu'une H100 fait en 0.6 µs)
+  Memory : lire 2 GB de cache a 3 TB/s = 0.66 ms (1000x plus lent!)
+```
+
+Donc le decode est **memory-bound** : le temps est determine par la bande passante memoire, pas par le compute. C'est pour ca qu'on optimise le cache (GQA, quantization) et pas le compute.
+
+</details>
+
+### Q2 : Comment fonctionne le speculative decoding et pourquoi ca marche ?
+
+<details>
+<summary>Reponse</summary>
+
+**Setup** : deux modeles, un petit "draft" rapide et un gros "target" lent.
+
+**Algorithme** :
+1. Le draft genere N tokens rapidement (ex: 4 tokens avec LLaMA 1B)
+2. Le target fait UN seul forward pass sur les 4 tokens proposes
+3. Le target compare ses distributions aux tokens du draft, accepte ou rejette chaque token
+4. Si tous acceptes : on a gagne 4 tokens pour le prix d'un pass
+5. Si rejet au token k : on redemarre du token k-1 avec la prediction du target
+
+**Pourquoi ca marche** : le target est memory-bound. Un forward pass sur 4 tokens n'est **pas** 4x plus lent qu'un pass sur 1 token — c'est seulement ~1.1x plus lent. Les 3 tokens supplementaires sont presque gratuits.
+
+**Gain** : avec un taux d'acceptation de 80%, on obtient ~2x de speedup. A 90%, ~3x. C'est utilise par GPT-4 Turbo, Claude, Gemini.
+
+</details>
+
+### Q3 : Quelle est l'idee cle de Flash Attention ?
+
+<details>
+<summary>Reponse</summary>
+
+**Le probleme** : l'attention standard materialise une matrice `(n, n)` en VRAM. Pour n=4096, c'est 16M valeurs qui sont ecrites puis relues plusieurs fois pour softmax et multiplication par V. L'attention est memory-bound → ces IO memoire dominent.
+
+**L'idee** : calculer l'attention par **tiles** qui tiennent dans la SRAM (cache rapide de la GPU). On ne materialise jamais la matrice complete `(n, n)`.
+
+**L'astuce** : un **softmax online** qui maintient le max courant et la somme courante. Quand un nouveau tile arrive, on re-scale les accumulateurs precedents. C'est mathematiquement equivalent au softmax classique.
+
+**Resultat** :
+- Memoire : O(n) au lieu de O(n²)
+- Compute : identique (meme FLOPs)
+- Speed : 2-4x plus rapide grace a la reduction d'IO memoire
+
+Utilise partout en 2024, integre dans PyTorch (`torch.nn.functional.scaled_dot_product_attention`).
+
+</details>
+
+### Q4 : Explique le tradeoff int8 vs int4 quantization.
+
+<details>
+<summary>Reponse</summary>
+
+**fp16** : 2 bytes par poids. Qualite 100%. Baseline.
+
+**int8** :
+- 1 byte par poids (50% de reduction)
+- Perte de qualite : ~0.5% sur les benchmarks
+- Methode : map [-max, +max] a [-128, +127] par block
+- Speed : ~1.5x (memory-bound win)
+
+**int4** :
+- 0.5 byte par poids (75% de reduction)
+- Perte de qualite : ~2% (GPTQ) ou ~1.5% (AWQ)
+- Methode : GPTQ utilise l'info des gradients sur un calibration set, AWQ scale les activations saillantes
+- Speed : ~2x
+
+**Sweet spot en 2024** : int4. Permet de faire tourner LLaMA 7B sur un laptop (3.5 GB) avec une perte de qualite acceptable. llama.cpp et ollama utilisent int4 par defaut.
+
+**int2** : degradation visible, pas utilise en production.
+
+</details>
+
+### Q5 : Qu'est-ce que le continuous batching et pourquoi c'est plus efficace que le static batching ?
+
+<details>
+<summary>Reponse</summary>
+
+**Static batching** : on groupe N requetes dans un batch fixe. Toutes les requetes attendent que la plus longue termine. Si une requete fait 1000 tokens et une autre 10, la seconde est bloquee 99% du temps → utilisation GPU faible.
+
+**Continuous batching** : le batch est **dynamique**. Des qu'une requete termine, on injecte une nouvelle requete a sa place. La GPU est toujours occupee.
+
+**Gain** : ~4-6x de throughput.
+
+**PagedAttention (vLLM)** : optimisation supplementaire qui gere le KV cache comme la memoire virtuelle d'un OS — par pages de 16 tokens. Permet de partager des pages entre requetes (ex: meme system prompt) et d'eviter la fragmentation memoire.
+
+**Throughput vLLM vs naive** : 24x de gain. C'est l'implementation de reference pour servir des LLMs en production open-source.
+
+</details>
