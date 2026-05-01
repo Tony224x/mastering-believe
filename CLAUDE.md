@@ -4,11 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Purpose
 
-**Mastering Believe** is a personal accelerated mastery system. Goal: reach world-class level in targeted domains in < 2 weeks per topic, using evidence-based learning techniques (deliberate practice, spaced repetition, interleaving, active recall, Feynman technique).
+**Mastering Believe** is a personal learning repository, **public and open to anyone** who wants to use, fork, or contribute. Goal: structure deep dives on chosen topics using evidence-based learning techniques (deliberate practice, spaced repetition, interleaving, active recall, Feynman technique).
+
+Scope is **not limited to AI/backend or to a 2-week format**: a domain can cover anything (tech, sciences, languages, humanities, etc.) and span any duration that fits the topic — from a few days to several weeks.
 
 Each domain is a self-contained module composed of:
 1. **Cours theorique** — structured theory (Markdown), progressive, concise, no fluff
-2. **Code applique** — real, runnable, heavily commented code examples illustrating each concept
+2. **Code applique** *(when relevant)* — real, runnable, heavily commented examples
 3. **Exercices** — graded exercises (easy → hard → real-world challenge) with solutions
 
 ## Architecture
@@ -51,9 +53,10 @@ mastering-believe/
 - **Language**: French for theory/explanations, English for code/comments when the domain is tech
 - **Numbering**: All folders and files are numbered (`01-`, `02-`, ...) to enforce learning order
 - **Theory files**: Markdown with clear headings, key takeaways boxed, mnemonics highlighted
-- **Code files**: Must be runnable standalone. Every non-obvious line has a comment explaining WHY, not WHAT
+- **Code files** (when the domain has code): runnable standalone. Every non-obvious line has a comment explaining WHY, not WHAT
 - **Exercises**: Each exercise file starts with `## Objectif`, `## Consigne`, `## Criteres de reussite`
 - **Solutions**: Separate folder, never mixed with exercise files
+- **Public repo**: contenu lisible par tous, pas d'info perso/sensible dans les fichiers commites
 
 ## Learning Methodology Rules
 
@@ -68,10 +71,10 @@ When creating content for a domain:
 ## Creating a New Domain
 
 1. Copy `shared/templates/` structure into `domains/<domain-name>/`
-2. Write `README.md` with: scope, prerequisites, 2-week schedule, success criteria
-3. Build theory → code → exercises in order, numbering consistently
+2. Write `README.md` with: scope, prerequisites, schedule (durée libre — quelques jours à plusieurs semaines selon le sujet), success criteria
+3. Build theory → (code if applicable) → exercises in order, numbering consistently
 4. Each theory module should take 30-60 min to study
-5. Each code example should take 15-30 min to read and run
+5. Each code example (if any) should take 15-30 min to read and run
 6. Exercises: minimum 3 easy, 3 medium, 2 hard, 1 capstone project
 
 ## Domains actifs

@@ -1,8 +1,8 @@
 # Mastering Believe
 
-> Parcours d'apprentissage perso, structure en plans de ~2 semaines, sur les sujets que je veux creuser.
+> Parcours d'apprentissage perso sur les sujets que je veux creuser. Repo public — libre a quiconque de l'utiliser, forker ou contribuer.
 
-Theorie + (quand pertinent) code applique runnable + exercices progressifs avec solutions. Le format s'adapte au domaine : tech, sciences, langues, sciences humaines, autre.
+Theorie + (quand pertinent) code applique runnable + exercices progressifs avec solutions. Le format s'adapte au domaine : tech, sciences, langues, sciences humaines, autre. La duree d'un domaine n'est pas figee — quelques jours a plusieurs semaines selon le sujet.
 
 ## Philosophie
 
@@ -23,13 +23,13 @@ Chaque domaine est concu autour de techniques d'apprentissage prouvees :
 | [Neural Networks & LLMs](./domains/neural-networks-llm/) | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
 | [Agentic AI](./domains/agentic-ai/) | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
 
-Chaque domaine contient ~14 jours de contenu (3-5h/jour) et un capstone.
+Les domaines actuels sont organises sur ~14 jours (3-5h/jour) avec un capstone, mais ce format reste indicatif — un nouveau domaine peut etre plus court ou plus long selon le sujet.
 
 ## Structure d'un domaine
 
 ```
 domains/<domain>/
-├── README.md                # Scope, planning 2 semaines, criteres de reussite
+├── README.md                # Scope, planning (duree libre), criteres de reussite
 ├── 01-theory/               # Theorie progressive (Markdown)
 ├── 02-code/                 # Exemples runnable, commentes ligne a ligne
 ├── 03-exercises/
