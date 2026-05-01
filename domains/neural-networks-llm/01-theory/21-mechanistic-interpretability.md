@@ -1,0 +1,302 @@
+# Jour 21 — Mechanistic interpretability : ouvrir la boite noire
+
+> **Temps estime** : 5h | **Prerequis** : J5-J6 (attention, transformer), J9 (LLMs modernes)
+
+---
+
+## 1. Pourquoi mech interp : trois raisons concretes en 2026
+
+Un LLM a 70B+ parametres est un objet **opaque par construction**. Il fonctionne, mais on ne sait pas *pourquoi* il choisit un token plutot qu'un autre. La **mechanistic interpretability** (mech interp) est l'effort de comprendre ce qui se passe a l'interieur, au niveau des neurones, des attention heads et des circuits. C'est de la "neuroscience computationnelle" appliquee aux transformers.
+
+Trois cas d'usage concrets qui justifient l'investissement :
+
+1. **Alignment & safety** — Auditer un modele avant deploiement pour detecter des comportements caches : sycophancy, deception, jailbreak triggers. Anthropic a publie en 2024 *Sleeper Agents* : un modele entraine a coder de maniere malveillante quand l'annee est 2024 garde ce comportement apres safety training. Seule mech interp peut le detecter en regardant les features actives.
+2. **Debug** — Quand un modele produit une mauvaise reponse, mech interp permet d'identifier *quelle* couche/head a porte l'erreur. C'est l'equivalent d'un debugger pour les reseaux.
+3. **Bias detection** — Trouver les neurones/features qui encodent des stereotypes implicites (genre, race, profession) sans avoir a faire des milliers de tests comportementaux.
+
+**Le pari de mech interp** : si on comprend les circuits, on peut les *editer* (model editing, ROME, MEMIT) et les *steerer* (representation engineering, Anthropic's "Golden Gate Claude" en 2024).
+
+> **Insight cle** : un transformer entraine n'est pas un sac de poids aleatoires. Les chercheurs ont decouvert qu'il developpe des structures algoritmiques reproductibles entre runs (induction heads, IOI circuit, modular addition circuits). Ces structures sont *trouvables*.
+
+---
+
+## 2. Probing : la technique la plus simple, le baseline obligatoire
+
+**Probing** = entrainer un classifier lineaire sur les activations d'une couche pour voir si une certaine information est *lineairement decodable*.
+
+Si je prends les hidden states de la couche L pour 10 000 phrases et que j'entraine un linear probe a predire "le sujet est-il singulier ou pluriel", l'accuracy du probe me dit si l'info de nombre grammatical est presente a cette couche.
+
+```
+Phrase --> Transformer (frozen) --> hidden state h_L --> Linear(h_L) --> classe
+                                                          ^^^^^^^^
+                                                          probe entraine
+```
+
+### Ce que probing a revele (Tenney et al. 2019, BERT-ology)
+
+- **POS tagging** : decodable des les premieres couches (1-3)
+- **Syntax (parsing)** : couches intermediaires (4-7)
+- **Semantique / coreference** : couches profondes (8-12)
+- **Task-specific knowledge** : derniere couche
+
+C'est devenu un meme : **"BERT rediscovers the NLP pipeline"**. La hierarchie classique POS->syntaxe->semantique emerge spontanement.
+
+### Limites de probing
+
+- **Correlation != causalite** : si le probe trouve l'info, le modele ne l'utilise pas forcement pour sa prediction. Pour la causalite, il faut activation patching (section 4).
+- **Probe trop puissant** : un probe MLP non-lineaire trouve toujours quelque chose. Toujours utiliser **un probe lineaire** pour des conclusions interpretables.
+- **Selectivity** : il faut comparer a un *control task* (ex : labels aleatoires). Si le probe atteint 90% sur la vraie tache et 85% sur la control, c'est suspect (Hewitt & Liang 2019).
+
+---
+
+## 3. Logit lens : "ce que le modele pense" a chaque layer
+
+Idee de nostalgebraist (2020), devenue centrale en mech interp.
+
+Dans un transformer decoder, la *unembedding matrix* `W_U` projette le residual stream final (dim `d_model`) vers les logits des tokens (dim `vocab`). Le **logit lens** consiste a projeter le residual stream **a chaque couche intermediaire**, pas seulement a la fin :
+
+```
+Pour chaque layer L:
+    logits_L = LayerNorm(residual_L) @ W_U
+    next_token_distrib_L = softmax(logits_L)
+```
+
+On obtient pour chaque layer la distribution sur le vocabulaire **comme si on s'arretait la**.
+
+### Ce qu'on observe
+
+- **Couches 1-N/3** : distribution proche de l'uniforme ou copie le token courant
+- **Couches N/3 - 2N/3** : commence a piquer sur les tokens semantiquement plausibles
+- **Dernieres couches** : pique sur le bon token
+
+C'est un outil de **debug puissant** : si le bon token apparait deja en couche 8 sur 32 mais disparait en couche 20, on sait qu'il y a un *suppression circuit* qui le tue.
+
+### Variantes 2024-2026
+
+- **Tuned lens** (Belrose et al. 2023) : entraine un *learned linear translator par couche* (transformation affine apprise specifique a chaque couche, pas un simple probe) pour mieux decoder. Plus precis que logit lens, surtout pour les premieres couches.
+- **Future lens** : projeter sur les tokens *futurs* pour detecter le planning multi-step.
+- **Prism** (Chughtai 2024) : decompose les logits par contribution de chaque attention head/MLP.
+- **Patchscopes** (Ghandeharioun et al. 2024) : generalisation moderne du logit lens. Au lieu de projeter directement le hidden state vers le vocab via `W_U`, on *patch* l'activation cible dans un *autre* prompt (souvent une instruction "explique ce concept") et on laisse le modele "verbaliser" son contenu. Unifie logit lens, tuned lens, et plusieurs methodes d'inspection sous un meme framework.
+
+---
+
+## 4. Activation patching : le test causal
+
+Probing dit "l'info est la". Activation patching dit **"cette activation cause-t-elle la prediction ?"**. C'est la difference entre correlation et causalite.
+
+### Le protocole (Vig et al. 2020, Meng et al. 2022 ROME)
+
+```
+1. Run "clean" : prompt = "The Eiffel Tower is in" -> "Paris" (top-1)
+2. Run "corrupted" : prompt = "The Colosseum is in" -> "Rome"
+3. Pour chaque (layer L, position P, composant C) :
+       a. Re-run le prompt corrupted
+       b. Mais a (L, P, C), remplacer l'activation par celle du run clean
+       c. Mesurer combien la sortie revient vers "Paris"
+4. La carte des % de recovery = carte causale du circuit
+```
+
+Si patcher la position 3 du layer 15 fait passer la sortie de "Rome" a "Paris" a 80%, alors **cette activation porte causalement l'info "Eiffel Tower"**.
+
+> **Direction du patching** : le protocole ci-dessus (clean -> corrupted) est appele *denoising* ou **causal mediation analysis** (Vig 2020, Meng 2022). On injecte de l'information "saine" dans un run corrompu et on mesure la recuperation. La direction inverse, *noising* (corrupted -> clean), existe aussi et a ete formalisee par Heimersheim & Nanda (2024) : on injecte une activation corrompue dans un run clean et on mesure la perte de performance. Les deux directions ne sont pas symetriques et donnent des cartes causales differentes ; le choix depend de la question (quelles activations *suffisent* vs quelles activations *sont necessaires*).
+
+### Resultat phare : ROME (Meng 2022)
+
+Sur GPT-2/GPT-J, l'info factuelle *"The Eiffel Tower is in Paris"* est portee par les **MLP des couches early-mid (3-8)**, a la position du sujet. Concretement, on peut **editer** ce souvenir : changer 1 layer pour faire dire au modele "The Eiffel Tower is in Rome" partout, sans casser le reste. C'est l'origine du model editing.
+
+### IOI (Indirect Object Identification) — Wang et al. 2022
+
+Le premier *circuit complet* identifie dans GPT-2 small. Tache : "When John and Mary went to the store, John gave a drink to ___". Le bon token est "Mary". Les chercheurs ont identifie **26 attention heads** organises en 7 classes (name movers, S-inhibition heads, duplicate token heads, etc.) qui implementent l'algorithme. C'est le premier "schematic" complet d'un comportement LLM.
+
+---
+
+## 5. Circuits & induction heads : le fondamental d'in-context learning
+
+Un **circuit** = un sous-graphe du modele (ensemble de heads/MLPs et leurs connexions via residual stream) qui implemente un comportement specifique.
+
+### Induction heads (Olsson et al. 2022, Anthropic)
+
+LE circuit le plus important decouvert a ce jour. Il explique pourquoi les transformers font de l'**in-context learning**.
+
+Un induction head fait ceci : etant donne une sequence `... [A][B] ... [A] ___`, il predit `[B]`. Autrement dit, **"j'ai deja vu A suivi de B, je copie B"**.
+
+Mecanique en 2 layers :
+
+```
+Layer 1 : "previous token head"
+   - L'attention head L1.h regarde le token a la position t-1
+   - Elle ecrit dans le residual stream a la position t : "le token precedent etait [X]"
+
+Layer 2 : "induction head"
+   - L'attention head L2.h cherche dans le passe les positions ou le residual contient "le token precedent etait [token_courant]"
+   - Quand elle trouve la position t', elle copie le token a la position t'+1 dans le current residual
+   - Resultat : on predit le token qui suivait la derniere occurrence du token courant
+```
+
+C'est **l'algorithme d'in-context copy** implemente par 2 attention layers. Olsson a montre :
+
+- Apparait *brutalement* pendant le training (phase transition)
+- Coincide *exactement* avec l'apparition de l'in-context learning
+- Present dans tous les transformers de taille suffisante (>= ~2 layers)
+- Generalise au-dela de la copie : completion de patterns, raisonnement few-shot
+
+**Implication** : l'in-context learning n'est pas magique, c'est un circuit specifique. Le scaling l'amplifie mais ne le change pas qualitativement.
+
+### Autres circuits identifies (2022-2026)
+
+| Circuit | Tache | Reference |
+|---|---|---|
+| IOI | Indirect object id. | Wang 2022 |
+| Modular addition | Grokking sur (a+b)%p | Nanda 2023 |
+| Greater-than | Comparer annees | Hanna 2023 |
+| Function vectors | Few-shot tasks | Todd 2024 |
+| Refusal direction | Safety / jailbreak | Arditi 2024 |
+
+Le pattern : **a chaque comportement non-trivial correspond un circuit identifiable**. Le grand defi reste : on a fait ca sur GPT-2 small (124M). A 70B, on a 1000x plus de heads.
+
+---
+
+## 6. Superposition : un neurone, plusieurs features
+
+C'est le **probleme #1** qui rend mech interp si difficile a l'echelle.
+
+### Le probleme empirique
+
+Quand on regarde un neurone individuel dans GPT-2 ou Llama, on observe qu'il s'active sur **plusieurs concepts non-relies** : un meme neurone code "Python code" + "Donald Trump" + "le mot 'banana'". On appelle ca **polysemy** (un neurone, plusieurs senses).
+
+C'est contre-intuitif : on s'attendrait a un neurone par feature (mono-semantique). Pourquoi le modele fait-il ca ?
+
+### Toy Models of Superposition (Elhage et al., Anthropic 2022)
+
+Demonstration formelle. On entraine un autoencoder a `n_hidden` unites cachees pour reconstruire `n_features` features, avec `n_features > n_hidden`. Les features sont **sparses** (la plupart du temps zero).
+
+Resultat : le modele apprend a representer les `n_features` features dans `n_hidden` dimensions en les **superposant non-orthogonalement**. Geometrie : antipodal pairs, polygones reguliers, simplexes.
+
+```
+n_hidden = 2, n_features = 5, sparsity = 0.9
+=> Le modele place les 5 features comme les 5 sommets d'un pentagone
+   dans l'espace 2D. Chaque feature est superposee avec ses voisines
+   mais reste recuperable parce qu'elle n'est presque jamais active
+   en meme temps (sparsity).
+```
+
+**Insight** : la superposition est un **phenomene rationnel**. Quand les features sont sparses, on peut en stocker plus que de dimensions, au prix d'un peu d'interference.
+
+### Consequence pour mech interp
+
+Regarder un neurone individuel = regarder une combinaison lineaire de plusieurs features. C'est pourquoi l'interpretation au niveau neurone est trompeuse. Il faut decomposer les activations dans une base ou les features sont **mono-semantiques**. -> SAEs.
+
+---
+
+## 7. Sparse autoencoders (SAEs) : la grosse vague 2024-2025
+
+Idee : si les features sont superposees dans `d_model` dimensions, projetons-les dans un espace **plus grand** (`d_sae = 8 * d_model` ou plus) ou elles redeviennent **mono-semantiques** et **sparses**.
+
+### L'architecture
+
+```
+hidden_state (d_model)
+       |
+       v
+   Encoder W_enc (d_model -> d_sae)
+       |
+       v
+   ReLU + L1 penalty (force sparsity)
+       |
+       v
+   sparse features f (d_sae)
+       |
+       v
+   Decoder W_dec (d_sae -> d_model)
+       |
+       v
+   reconstructed hidden state
+```
+
+Loss = `||h - h_reconstructed||^2 + lambda * ||f||_1`. La penalite L1 force la plupart des features a etre zero pour un input donne (typiquement 20-100 features actives sur des millions).
+
+### Resultats Anthropic 2023-2024 (Bricken, Templeton et al.)
+
+- **Bricken et al. (oct 2023) "Towards Monosemanticity"** : SAE sur un 1-layer transformer revele des features clean ("Arabic script", "DNA sequences", "base64"). Premiere demonstration que les SAEs marchent.
+- **Templeton et al. (mai 2024) "Scaling Monosemanticity"** : SAE jusqu'a 34M features sur **Claude 3 Sonnet**. Ils trouvent des features pour des concepts abstraits : *"Golden Gate Bridge"*, *"insecure code"*, *"sycophancy"*, *"deception"*, *"backdoor in code"*.
+- **Steering "Golden Gate Claude"** : on *clamp* la feature "Golden Gate Bridge" a environ **10x la valeur d'activation maximale observee** sur le dataset (pas une simple amplification x10 du signal courant). Le modele parle alors du pont a chaque tour, peu importe la question.
+
+### SAEs en parallele : EleutherAI/indep et OpenAI
+
+- **Cunningham, Ewart, Riggs et al. (2023) "Sparse Autoencoders Find Highly Interpretable Features in Language Models"** (EleutherAI / collaboration independante, ICLR 2024) : travail parallele a Anthropic, valide l'approche SAE sur Pythia. **Pas Anthropic, pas OpenAI.** A souvent ete co-cite avec Bricken comme la "double decouverte" qui a lance la vague SAE 2023-2024.
+- **Gao et al. (OpenAI, 2024) "Scaling and Evaluating Sparse Autoencoders"** : SAE de 16M features sur GPT-4. Introduit notamment les **TopK SAEs** comme alternative au L1, qui evite le shrinkage et stabilise le training. C'est *ce papier* (et non Templeton ou Cunningham) qui represente la contribution OpenAI a l'echelle frontier.
+
+### Limites des SAEs (2025-2026)
+
+- **Reconstruction loss residuelle** : meme un bon SAE perd 10-30% de la performance du modele si on le branche en place. Toutes les features ne sont pas captees.
+- **Feature splitting** : a `d_sae` plus grand, une feature mono se *split* en sous-features (ex: "Trump speaking" -> "Trump speaking angrily", "Trump speaking on trade"). Ou s'arreter ?
+- **Dead features** : 30-90% des features SAE ne s'activent jamais en pratique. Inefficace.
+- **Cout** : entrainer un SAE sur Claude 3 Sonnet coute ~10% du training original. Pas trivial.
+- **2025 evolution** : *Gated SAEs* (DeepMind) et *TopK SAEs* (OpenAI) reduisent le cout et evitent le shrinkage L1.
+
+---
+
+## 8. Limites de mech interp en 2026
+
+Etat de l'art honnete :
+
+1. **Scalabilite** : on comprend bien GPT-2 small (124M, 12 layers). Sur GPT-4 / Claude 4.5 (~10^12 params), on a des features SAE mais **pas de circuits complets verifies**. Le passage a l'echelle reste un probleme ouvert.
+2. **Polysemy residuelle** : meme dans les SAEs, certaines features restent polysemantiques. La mono-semanticite parfaite est un ideal mathematique, pas une realite empirique.
+3. **Compositionnalite** : on identifie des features statiques, mais comment elles **se composent** pour faire un raisonnement multi-step n'est pas modelise. L'IOI circuit est une exception, pas la regle.
+4. **Dynamic vs static** : les circuits identifies sont *par instance*. La meme tache peut activer des circuits differents selon le prompt. Pas de "function" fixe dans le modele.
+5. **Faithful explanations** : meme avec mech interp, expliquer *pourquoi* le modele a refuse une requete reste difficile. Les explications post-hoc peuvent etre fausses (cf J15 sur faithfulness du CoT).
+6. **Gap RL/SFT vs base** : la plupart des resultats mech interp viennent de *base models*. Les RLHF/RLAIF/reasoning models modifient les circuits de maniere encore mal comprise (Anthropic 2025 a publie sur les *refusal directions* mais c'est tout).
+
+> **Realisme** : mech interp en 2026 = la genetique en 1955. On a sequence quelques genes (circuits), on a un microscope (SAEs), mais on est loin de pouvoir lire un genome (un LLM frontier) end-to-end.
+
+---
+
+## 9. Idees fausses repandues
+
+**"Un neurone = un concept"** -> Non. Polysemy + superposition. Un neurone code typiquement 5-100 features.
+
+**"Si l'attention head regarde le token X, c'est que X cause la prediction"** -> Pas necessairement. Activation patching est requis pour la causalite.
+
+**"Logit lens donne 'ce que le modele pense' a chaque layer"** -> Approximation. La distribution intermediaire n'est pas un *belief* utilise par le modele, c'est une projection arbitraire vers le vocab.
+
+**"Mech interp resout l'alignment"** -> Non. Mech interp est un outil de diagnostic. Le probleme d'alignment est plus large (specification, robustesse, deploiement).
+
+**"Les SAEs trouvent toutes les features"** -> Non. 10-30% de la performance reste non-decomposee. Et le feature splitting montre qu'il n'y a pas de "vraies" features absolues.
+
+**"On peut auditer GPT-4 ligne a ligne avec mech interp"** -> Pas en 2026. On peut chercher des features specifiques (deception, backdoor) avec un SAE, mais pas faire un audit complet.
+
+**"Si je modifie un poids, je modifie un comportement"** -> Souvent oui (ROME), mais avec des effets de bord. L'editing precis sans regression est encore un probleme ouvert.
+
+---
+
+## Key takeaways (flashcards)
+
+**Q1** — Quelle est la difference entre probing et activation patching ?
+> Probing montre qu'une info est *presente* (correlation) dans les activations. Activation patching montre qu'elle est *causalement utilisee* pour la prediction (substitution + mesure de l'effet).
+
+**Q2** — Qu'est-ce qu'un induction head et pourquoi est-il fondamental ?
+> Un circuit a 2 layers (previous-token head + induction head) qui implemente "j'ai deja vu A suivi de B, donc apres A je predis B". C'est le mecanisme algorithmique de l'in-context learning, et il apparait par phase transition pendant le training.
+
+**Q3** — Pourquoi les neurones d'un LLM sont-ils polysemantiques ?
+> Superposition. Quand les features sont sparses, le modele les compresse dans un nombre de dimensions inferieur en acceptant un peu d'interference. C'est mathematiquement optimal sous sparsity.
+
+**Q4** — Quel est l'apport principal des SAEs ?
+> Decomposer les activations dans un espace plus large ou les features redeviennent mono-semantiques et sparses, ce qui permet de nommer/visualiser/steerer chaque feature individuellement.
+
+**Q5** — Pourquoi mech interp ne resout-elle pas l'alignment a 2026 ?
+> Scalabilite limitee (circuits verifies sur GPT-2 small, pas sur frontier), polysemy residuelle dans les SAEs, manque de comprehension de la composition, et gap entre base models et models RLHF/reasoning. C'est un outil de diagnostic, pas une solution complete.
+
+---
+
+## Sources
+
+- Olsson, C. et al. (2022) — *In-context Learning and Induction Heads*. Anthropic / Transformer Circuits. https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html
+- Elhage, N. et al. (2022) — *Toy Models of Superposition*. Anthropic. https://transformer-circuits.pub/2022/toy_model/index.html
+- Bricken, T. et al. (2023) — *Towards Monosemanticity: Decomposing Language Models With Dictionary Learning*. Anthropic. https://transformer-circuits.pub/2023/monosemantic-features/index.html
+- Templeton, A. et al. (2024) — *Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet*. Anthropic. https://transformer-circuits.pub/2024/scaling-monosemanticity/
+- Meng, K. et al. (2022) — *Locating and Editing Factual Associations in GPT* (ROME). NeurIPS 2022. https://arxiv.org/abs/2202.05262
+- Cunningham, H., Ewart, A., Riggs, L., et al. (2023) — *Sparse Autoencoders Find Highly Interpretable Features in Language Models*. ICLR 2024. https://arxiv.org/abs/2309.08600
+- Wang, K. et al. (2022) — *Interpretability in the Wild: a Circuit for IOI in GPT-2 small*. https://arxiv.org/abs/2211.00593
+- Gao, L. et al. (OpenAI, 2024) — *Scaling and Evaluating Sparse Autoencoders*. https://arxiv.org/abs/2406.04093
+- Belrose et al. (2023) — *Eliciting Latent Predictions from Transformers with the Tuned Lens*. https://arxiv.org/abs/2303.08112
+- Ghandeharioun et al. (2024) — *Patchscopes: A Unifying Framework for Inspecting Hidden Representations of Language Models*. https://arxiv.org/abs/2401.06102

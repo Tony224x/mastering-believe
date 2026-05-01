@@ -36,20 +36,20 @@ Comprendre les mecanismes internes des LLMs, du neurone unique jusqu'aux archite
 | J13 | Emergent abilities & reasoning | Chain-of-thought, in-context learning, pourquoi ca emerge, scaling hypothesis | 3h |
 | J14 | **Capstone** | Lire et decortiquer un paper recent + reimplementer le composant cle | 4h |
 
-### Semaine 3 (optionnelle) — Frontiere 2026 & Apply AI Engineering
+### Semaine 3 (optionnelle) — Frontiere NN 2026
 
-Cette semaine couvre les sujets qui separent un "AI engineer 2024" d'un **"applied AI engineer 2026"**. Frontiere technique recente (reasoning models, MCP, xgrammar) et patterns produit qui dominent en prod. Chaque lecon a son code standalone runnable sans GPU.
+Cette semaine reste **strictement sur les reseaux de neurones** : architectures, training, mecanique interne. Pas d'agentique, pas de RAG, pas de serving — ces sujets sont couverts dans les domaines `agentic-ai` et `system-design`. Ici on creuse les blocs neuronaux qui definissent l'etat de l'art en 2026. Chaque lecon a son code standalone runnable sans GPU.
 
 | Jour | Module | Focus | Temps |
 |------|--------|-------|-------|
-| J15 | Test-time compute & reasoning models | o1/o3/R1, GRPO, reasoning vs LLM classique, pattern planner-executor, self-consistency | 5h |
-| J16 | Agentic LLMs en production | Tool use, MCP, computer use, boucle agentique robuste, context rot, human-in-the-loop | 5h |
-| J17 | RAG 2026 avance | Hybrid (BM25+dense+RRF), contextual retrieval, reranker, agentic RAG, GraphRAG, groundedness | 5h |
-| J18 | Context engineering & prompt caching | Cache hit rate, placement des blocs, economie tokens, long-context vs RAG, compaction | 4h |
-| J19 | Production inference serving | vLLM, SGLang, continuous batching, PagedAttention, speculative decoding, FP8, disaggregated | 5h |
+| J15 | Test-time compute & reasoning models | o1/o3/R1, GRPO, reasoning vs LLM classique, training pour reasoning, self-consistency | 5h |
+| J16 | Mixture of Experts (MoE) | Mixtral, DeepSeek-V3, sparse routing, top-k gating, load balancing, expert parallelism | 5h |
+| J17 | State Space Models | Mamba, S6, RWKV, alternative a l'attention, complexite lineaire, hybrides Transformer-Mamba | 5h |
+| J18 | Long context & attention scaling | Flash Attention 2/3, RoPE scaling, YaRN, ring attention, sliding window, attention sinks | 5h |
+| J19 | Quantization deep dive | INT8/INT4, GPTQ, AWQ, QLoRA, calibration, GGUF, perplexity vs vitesse | 5h |
 | J20 | Distillation & donnees synthetiques | SLMs specialises, pipeline synthetic data, SFT/DPO, filtrage, contamination, break-even | 4h |
-| J21 | Evals & observability LLM | 5 niveaux d'eval, LLM-as-judge + biais, pairwise, monitoring prod, red teaming, Goodhart | 4h |
-| J22 | Structured outputs & constrained gen | JSON mode, tool calling, FSA-based decoding, xgrammar/llguidance, reasoning-then-structured | 4h |
+| J21 | Mechanistic interpretability | Circuits, sparse autoencoders (SAEs), probing, induction heads, superposition | 5h |
+| J22 | Vision-language models | ViT, CLIP, LLaVA, SigLIP, cross-attention vs token concat, image tokenization | 5h |
 
 **Prerequis pour Semaine 3** : avoir fait J1-J13 (la Semaine 2 des LLMs modernes) ou equivalent. Les lecons de frontiere supposent la maitrise des Transformers, attention, pre-training, SFT/RLHF et inference basique.
 
