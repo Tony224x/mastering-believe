@@ -1,8 +1,8 @@
 # Mastering Believe
 
-> Systeme d'apprentissage accelere — atteindre un niveau world-class dans un domaine technique en moins de 2 semaines.
+> Parcours d'apprentissage perso, structure en plans de ~2 semaines, sur les sujets que je veux creuser.
 
-Theorie + code applique runnable + exercices progressifs avec solutions, sur des domaines cles de l'ingenierie IA et backend moderne.
+Theorie + (quand pertinent) code applique runnable + exercices progressifs avec solutions. Le format s'adapte au domaine : tech, sciences, langues, sciences humaines, autre.
 
 ## Philosophie
 
