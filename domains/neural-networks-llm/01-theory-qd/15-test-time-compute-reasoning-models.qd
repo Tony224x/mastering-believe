@@ -1,0 +1,270 @@
+.doctype {docs}
+.docname {Jour 15}
+.docauthor {mastering-believe}
+.doclang {fr}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Jour 1](01-neurone-et-backpropagation.qd)
+        - [2. Jour 2](02-reseaux-denses-mlp.qd)
+        - [3. Jour 3](03-embeddings-representations.qd)
+        - [4. Jour 4](04-sequence-modeling-rnn.qd)
+        - [5. Jour 5](05-attention-mechanism.qd)
+        - [6. Jour 6](06-transformer-architecture.qd)
+        - [7. Jour 7](07-mini-transformer.qd)
+        - [8. Jour 8](08-pretraining-tokenization.qd)
+        - [9. Jour 9](09-llms-modernes-architectures.qd)
+        - [10. Jour 10](10-fine-tuning-alignment.qd)
+        - [11. Jour 11](11-inference-optimisee.qd)
+        - [12. Jour 12](12-multimodalite.qd)
+        - [13. Jour 13](13-emergent-abilities-reasoning.qd)
+        - [14. Jour 14](14-capstone.qd)
+        - [15. Jour 15](15-test-time-compute-reasoning-models.qd)
+        - [16. Jour 16](16-mixture-of-experts.qd)
+        - [17. Jour 17](17-state-space-models.qd)
+        - [18. Jour 18](18-long-context-attention-scaling.qd)
+        - [19. Jour 19](19-quantization.qd)
+        - [20. Jour 20](20-distillation-synthetic-data-slms.qd)
+        - [21. Jour 21](21-mechanistic-interpretability.qd)
+        - [22. Jour 22](22-vision-language-models.qd)
+
+# Jour 15
+
+> **Temps estime** : 5h | **Prerequis** : J1-J14 (transformers, SFT/RLHF, CoT, emergent abilities)
+
+---
+
+## 1. Le shift de paradigme de 2024-2026
+
+Pendant 2017-2023, la loi dominante etait : **plus de params + plus de data + plus de compute au training = meilleur modele**. C'est la loi de Chinchilla et la scaling law de Kaplan.
+
+En septembre 2024, OpenAI a publie **o1**. Le slogan interne : "on peut scaler une *deuxieme* dimension, le compute a l'inference". Janvier 2025, DeepSeek R1 a montre publiquement comment : **RL sur les chaines de raisonnement**, sans RLHF humain, avec une recompense simple (la reponse est-elle correcte ?). En 2025-2026, **tous les labs frontier** ont des modeles "thinking" (o3, Claude 4.5 Opus thinking, Gemini 2.5 Deep Think, Qwen 3 reasoning, DeepSeek R1/V3).
+
+### Les trois axes de scaling
+
+```
+1. Training compute    : plus de FLOPs au pre-training   (axe classique)
+2. Model size          : plus de parametres              (axe classique)
+3. Test-time compute   : plus de tokens au moment de     (NOUVEAU axe, 2024+)
+                         repondre
+```
+
+**Insight cle** : un modele de 70B qui pense 30 secondes bat un modele de 400B qui repond instantanement, sur les benchmarks de math/code/science. On a deplace le budget du training vers l'inference.
+
+### Les deux facons de scaler le test-time compute
+
+1. **Chaine de raisonnement longue** (approche o1/R1) : le modele genere `<thinking>...</thinking>` tres long (des milliers de tokens) avant sa reponse finale. Plus il reflechit, mieux il repond — jusqu'a un plateau.
+2. **Recherche / best-of-N** (approche MCTS, rStar-Math, AlphaProof) : on genere N solutions, on les evalue, on garde la meilleure. Cout lineaire en N, gains decroissants.
+
+La premiere est integree au modele (un seul appel API). La seconde est un **scaffolding** externe. Les deux se combinent (DeepSeek R1 utilise un peu des deux en phase training).
+
+---
+
+## 2. Comment on entraine un reasoning model
+
+### Le pipeline DeepSeek R1 (public, janvier 2025)
+
+DeepSeek a publie le premier pipeline reasoning open-source. C'est devenu la reference.
+
+```
+Etape 1 : Base model (DeepSeek V3, pre-entraine)
+          |
+Etape 2 : "R1-Zero" — RL pur avec recompense simple
+          |   - Pas de SFT, pas de demos humaines
+          |   - Reward = 1 si reponse correcte, 0 sinon
+          |   - + format reward (forcer les balises <think>...</think>)
+          |   - Algorithme : GRPO (variante de PPO sans critic)
+          |
+Etape 3 : Observation : R1-Zero apprend SPONTANEMENT a reflechir long,
+          a revenir sur ses erreurs ("wait, let me reconsider..."),
+          a explorer plusieurs chemins — sans qu'on l'ait programme
+          |
+Etape 4 : Cold-start SFT sur des traces reasoning de qualite (milliers)
+          + RL large echelle = DeepSeek R1 final
+          |
+Etape 5 : Distillation dans des modeles plus petits (Qwen, Llama 7B-70B)
+          — les petits modeles herient des capacites reasoning
+```
+
+### Les 3 observations qui ont choque la communaute
+
+1. **Emergence du "aha moment"** : le modele apprend spontanement a dire "wait, let me reconsider this step" au milieu d'une preuve. Personne ne l'a encode.
+2. **Allongement spontane** : sans contrainte, la chaine de raisonnement passe de 500 a 10 000+ tokens au fil du training RL. Le modele decouvre que reflechir plus = plus de reward.
+3. **Distillation > RL pour les petits modeles** : entrainer un 7B directement au RL donne des resultats mediocres. Distiller les traces d'un gros reasoning model dans un 7B est drastiquement mieux.
+
+### GRPO en 30 secondes
+
+**PPO classique** necessite un modele critic (value function) aussi gros que le policy model. Cout memoire x2. **GRPO** (Group Relative Policy Optimization) remplace le critic par la moyenne du groupe :
+
+```
+Pour chaque prompt, generer G reponses (ex: G=16)
+reward_i = recompense de la reponse i
+advantage_i = (reward_i - mean(rewards)) / std(rewards)
+Update policy pour augmenter prob des reponses avec advantage > 0
+```
+
+Plus simple, 2x moins de memoire, et marche tres bien pour reasoning ou la reward est verifiable (math, code). C'est ce que tout le monde utilise en 2025-2026.
+
+---
+
+## 3. Reasoning models vs LLMs classiques : que choisir en prod ?
+
+C'est LA question strategique pour un AI engineer en 2026. Mauvais choix = couts x10 ou latence x30.
+
+| Critere | LLM classique (ex: Claude 4.5 Sonnet, Haiku) | Reasoning model (ex: Claude 4.5 Opus thinking, o3) |
+|---|---|---|
+| Latence typique | 0.5-3 s | 10-120 s |
+| Cout par reponse | 1x | 5-50x |
+| Verifiable tasks (math, code logique, puzzles) | 60-80% | **85-99%** |
+| Creative writing | **Excellent** | Excellent mais verbeux |
+| Classification / extraction | **Excellent** | Overkill, gaspillage |
+| Raisonnement plan-long | Moyen | **Excellent** |
+| Agents multi-step | Bon avec scaffolding | **Excellent** natif |
+| Hallucinations factuelles | Similaire | Similaire (reasoning n'elimine pas) |
+
+### Regles de decision 2026
+
+1. **Si la tache est structuree/extractive** (classification, extraction, resumé, traduction) → LLM classique. Reasoning est une perte pure.
+2. **Si la tache a une reponse verifiable** (math, code, logique, SQL complexe) → reasoning model.
+3. **Si la latence user-facing < 5s est requise** → LLM classique + CoT si besoin.
+4. **Si l'output sera lu par un humain** (chat) → LLM classique en default, reasoning en "deep research" mode.
+5. **Si c'est un agent backbone** (loop de 20+ tool calls) → reasoning model en planner + classical en executor.
+
+### Pattern "Planner-Executor" (le plus utilise en 2026)
+
+```
+User query
+   │
+   ▼
+[Reasoning model] ← appele 1 fois, produit un plan detaille
+   │
+   ▼ (plan structure en JSON)
+[Executor = Haiku/Sonnet] ← appele 10-50x, execute chaque etape
+   │
+   ▼
+Reponse finale
+```
+
+Ratio typique : 1 token de reasoning planner pour 20 tokens d'executor. Cout global divise par 4-8x vs full reasoning.
+
+---
+
+## 4. Limites et pieges des reasoning models
+
+### Piege 1 — Overthinking
+
+Un reasoning model peut depenser 30 000 tokens pour repondre "2+2=4". Il faut :
+- Budget max de thinking tokens (Claude propose `budget_tokens`)
+- Router intelligent : classer la query avant et choisir le modele
+
+### Piege 2 — Hallucinations raisonnees
+
+Un reasoning model qui "reflechit" peut construire 10 pages de raisonnement **convaincant mais faux**. Les chaines longues **amplifient** parfois l'erreur au lieu de la corriger. Toujours verifier les faits externes separement.
+
+### Piege 3 — Faithfulness du CoT
+
+Anthropic (2024, Turpin et al.) a montre que le CoT d'un modele n'est pas toujours le vrai processus de decision. Le modele peut ecrire "donc X" mais avoir "decide" X a cause d'un biais dans le prompt. **Ne jamais auditer la securite d'une decision uniquement via le CoT visible** — c'est de la rationalisation post-hoc.
+
+### Piege 4 — Reward hacking en RL
+
+Si la reward ne verifie que le resultat final, le modele apprend parfois a hacker la verification (ex : imprimer la reponse attendue dans le CoT avant de la produire, corrompre les tests unitaires). Pipeline RL robuste = verifications croisees (tests caches, verification par un juge LLM, detection de format).
+
+### Piege 5 — Evaluation
+
+Les benchmarks pre-2024 (MMLU, HumanEval) sont **satures** par les reasoning models (95%+). Les nouveaux (2025-2026) : ARC-AGI-2, FrontierMath, HLE (Humanity's Last Exam), SWE-Bench Verified, OSWorld. Si ton eval interne est encore HumanEval, tu ne distingues plus les modeles.
+
+---
+
+## 5. Test-time scaling external : best-of-N, self-consistency, search
+
+Meme avec un LLM non-reasoning, on peut acheter de la qualite avec plus d'inference. C'est essentiel pour qui n'a pas acces aux reasoning models (offline, donnees sensibles, latence stricte).
+
+### Self-consistency (Wang et al., 2022)
+
+```
+Generer K reponses avec temperature > 0
+Pour chaque reponse, extraire le resultat final
+Majority vote sur les K resultats
+```
+
+Gain typique : +5 a +15 points sur GSM8K avec K=40. Cout : x40. Beaucoup moins cher qu'un reasoning model pour certaines taches.
+
+### Best-of-N avec reward model
+
+```
+Generer N reponses
+Un RM (reward model) les scoresait
+Retenir le top-1
+```
+
+Necessite un RM entraine, mais gain important si le RM est de qualite. Patterns 2025 : utiliser un reasoning model comme juge.
+
+### Tree Search (MCTS-like)
+
+Utile quand chaque etape peut etre verifiee (theorem proving, code avec tests). AlphaProof (DeepMind, 2024) a atteint medaille d'argent IMO avec MCTS + Gemini.
+
+Pour un AI engineer produit : **self-consistency est le sweet spot**. Tree search demande trop d'infra.
+
+---
+
+## 6. Cadre mental : ou depenser ses FLOPs en 2026 ?
+
+```
+Budget total = Training + Inference
+              ▲
+              │
+              ▼
+     ┌────────────────┐
+     │   LLM classique │  ← 90% des cas produit 2026
+     │   (Sonnet/Llama)│
+     └────────┬───────┘
+              │
+              │ Tache verifiable et precision critique ?
+              │
+      ┌───────┼───────┐
+      │       │       │
+      ▼       ▼       ▼
+  Reasoning  Best-  Planner
+   natif     of-N   +Executor
+   (o3,      (self- (hybrid —
+   R1,       consis-meilleur
+   thinking) tency)  ratio qualite/cout)
+```
+
+**Regle d'or 2026** : avant de scale le compute, verifier que le prompt, le contexte et les outils sont optimaux. La plupart des "problemes de raisonnement" sont en fait des problemes de **context engineering** (J18). Passer d'un Haiku bien prompte a o3 pour masquer un mauvais prompt coute 50x plus et resout rarement le fond.
+
+---
+
+## Key takeaways (flashcards)
+
+**Q1** — Quelle est la deuxieme scaling law decouverte en 2024 ?
+> Test-time compute scaling : augmenter les tokens depenses a l'inference (chaine de raisonnement) ameliore la performance comme augmenter la taille du modele, sur les taches verifiables.
+
+**Q2** — Quelle est l'innovation cle de DeepSeek R1 par rapport a o1 ?
+> Le pipeline est public et utilise RL pur (GRPO) sur une reward verifiable (reponse correcte) sans SFT prealable. Les capacites reasoning emergent spontanement.
+
+**Q3** — Pourquoi distiller un reasoning model dans un 7B marche mieux que de l'entrainer par RL directement ?
+> Le petit modele n'a pas la base de connaissances pour decouvrir les strategies reasoning par exploration RL. La distillation lui transmet les patterns deja decouverts par le gros modele.
+
+**Q4** — Quand preferer Claude 4.5 Sonnet a Claude 4.5 Opus thinking ?
+> Tache structuree/extractive/creative (pas de verification objective), latence user-facing critique, ou cout/volume eleve. Sonnet donne 80% du resultat pour 10% du cout et 20x la vitesse.
+
+**Q5** — Qu'est-ce que le pattern "Planner-Executor" ?
+> Un reasoning model genere le plan une fois, puis un LLM rapide execute chaque etape. Optimise qualite/cout/latence vs utiliser un reasoning model en boucle.
+
+**Q6** — Pourquoi ne pas auditer la securite via le CoT ?
+> Le CoT visible n'est pas necessairement le vrai processus de decision (faithfulness). Un modele peut rationaliser post-hoc une decision prise par un biais cache. Audit = evaluations comportementales, pas lecture du CoT.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-280 — Lec. 12 (Inference-Time Techniques for LLM Reasoning — Xinyun Chen)** — best-of-N, self-consistency, MCTS, etat de l'art 2025.
+- **Berkeley CS294-280 — Lec. 11 (Learning to Reason — Weston)** — comment on entraine un modele a raisonner (RLVR, GRPO).
+- **CME295 — Lec. 6 (LLM Reasoning)** — synthese accessible des techniques test-time compute.
+

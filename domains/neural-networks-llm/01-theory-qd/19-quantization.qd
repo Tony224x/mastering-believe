@@ -1,0 +1,358 @@
+.doctype {docs}
+.docname {Jour 19}
+.docauthor {mastering-believe}
+.doclang {fr}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Jour 1](01-neurone-et-backpropagation.qd)
+        - [2. Jour 2](02-reseaux-denses-mlp.qd)
+        - [3. Jour 3](03-embeddings-representations.qd)
+        - [4. Jour 4](04-sequence-modeling-rnn.qd)
+        - [5. Jour 5](05-attention-mechanism.qd)
+        - [6. Jour 6](06-transformer-architecture.qd)
+        - [7. Jour 7](07-mini-transformer.qd)
+        - [8. Jour 8](08-pretraining-tokenization.qd)
+        - [9. Jour 9](09-llms-modernes-architectures.qd)
+        - [10. Jour 10](10-fine-tuning-alignment.qd)
+        - [11. Jour 11](11-inference-optimisee.qd)
+        - [12. Jour 12](12-multimodalite.qd)
+        - [13. Jour 13](13-emergent-abilities-reasoning.qd)
+        - [14. Jour 14](14-capstone.qd)
+        - [15. Jour 15](15-test-time-compute-reasoning-models.qd)
+        - [16. Jour 16](16-mixture-of-experts.qd)
+        - [17. Jour 17](17-state-space-models.qd)
+        - [18. Jour 18](18-long-context-attention-scaling.qd)
+        - [19. Jour 19](19-quantization.qd)
+        - [20. Jour 20](20-distillation-synthetic-data-slms.qd)
+        - [21. Jour 21](21-mechanistic-interpretability.qd)
+        - [22. Jour 22](22-vision-language-models.qd)
+
+# Jour 19
+
+> **Temps estime** : 5h | **Prerequis** : J2 (MLP, weights), J6 (transformer)
+
+---
+
+## 1. Pourquoi quantizer
+
+Un LLM moderne, c'est essentiellement une grosse pile de matrices de poids. Llama 3 70B = 70 milliards de parametres. En FP16 (2 octets par poid), ca fait **140 GB** rien que pour les poids. Plus le KV cache, plus les activations, plus le workspace. Tu n'as pas un GPU avec 200 GB de VRAM dans ton sac.
+
+| Format | Bits/poid | Llama 3 70B | Llama 3 8B | DeepSeek V3 671B |
+|---|---|---|---|---|
+| FP32 | 32 | 280 GB | 32 GB | 2.7 TB |
+| FP16 / BF16 | 16 | 140 GB | 16 GB | 1.3 TB |
+| FP8 | 8 | 70 GB | 8 GB | 670 GB |
+| INT8 | 8 | 70 GB | 8 GB | 670 GB |
+| INT4 | 4 | **~40 GB** | **~4.5 GB** | ~370 GB |
+| INT2 | 2 | ~20 GB | ~2.5 GB | ~190 GB |
+
+**Trois raisons concretes** de quantizer :
+
+1. **VRAM** : tu fais rentrer un 70B dans une A100 80GB (impossible en FP16) ou dans deux RTX 4090.
+2. **Bande passante memoire** : la plupart des GPU sont memory-bound a l'inference (pas compute-bound). Lire 4 bits au lieu de 16 bits = 4x plus de tokens/sec. C'est la VRAIE raison pour laquelle on quantize en serving moderne.
+3. **Throughput batch** : memory-bound -> plus de requetes en parallele tiennent en VRAM.
+
+Idee fausse : "quantizer = perdre 50% de qualite". Faux. Bien fait, INT8 est quasi-lossless, INT4 perd ~1pt de perplexite, et un modele 70B en INT4 reste meilleur qu'un 13B en FP16.
+
+---
+
+## 2. La math : symmetric vs asymmetric
+
+Quantizer = mapper un float (range continu) vers un entier sur N bits (range fini : [-128, 127] pour INT8 signed, ou [0, 255] pour INT8 unsigned). Tout le jeu est de choisir le **scale** (et eventuellement le **zero-point**) pour minimiser l'erreur.
+
+### Quantization symmetric
+
+On suppose la distribution centree sur 0 (souvent vrai pour les poids d'un LLM bien entraine).
+
+```
+scale = max(|x|) / 127           # pour INT8 signed
+q     = round(x / scale)         # quantize
+x_hat = q * scale                 # dequantize
+```
+
+Un seul parametre (`scale`). Simple, rapide, hardware-friendly. Mais si la distribution est skewed (ex: activations apres ReLU, toutes >= 0), tu gaspilles la moitie de la plage entiere.
+
+### Quantization asymmetric
+
+On ajoute un offset (`zero_point`) pour mapper le `min` reel au minimum entier et le `max` reel au maximum entier. Ici on utilise la convention **non-signee** [0, 255] (utilisee notamment par PyTorch quint8, ONNX et le code de ce module). La convention signee [-128, 127] existe aussi (TensorRT, certains kernels GPU) — la math est la meme a un offset constant pres.
+
+```
+scale      = (max(x) - min(x)) / 255       # 256 valeurs INT8 non-signe
+zero_point = round(-min(x) / scale)        # zero_point dans [0, 255]
+q          = clip(round(x / scale + zero_point), 0, 255)
+x_hat      = (q - zero_point) * scale
+```
+
+Deux parametres mais zero gaspillage de plage. C'est ce qu'on utilise pour les **activations** (souvent skewed, post-ReLU/SiLU). Pour les poids, symmetric suffit en general.
+
+### Cout du dequantize au runtime
+
+Le calcul `Wx` devient `(q_W * scale_W) * x` (ou variations). Le multiply par scale est en FP16 et reste tres rapide. La vraie astuce : sur du hardware moderne (Hopper, Blackwell), il y a des kernels qui font la matmul **directement** en INT4/INT8 puis dequantize le resultat. Zero overhead vs FP16 sur le chemin critique.
+
+---
+
+## 3. Granularite : per-tensor / per-channel / per-group / per-token
+
+Un seul scale pour toute une matrice 4096x4096, c'est brutal : si une seule colonne a des valeurs 100x plus grandes que la moyenne, **toutes les autres colonnes** sont ecrasees vers 0 par le rounding.
+
+| Granularite | Scales par matrice (4096x4096) | Erreur typique | Overhead memoire |
+|---|---|---|---|
+| Per-tensor | 1 | Eleve si outliers | Negligeable |
+| Per-channel (per-row) | 4096 | Moyen | 0.05% |
+| Per-group (g=128) | 4096 * (4096/128) = 131k | **Faible** | ~3% (FP16 scales) |
+| Per-token (activations) | varie (1 par token) | Faible | a calculer en live |
+
+**Per-group g=128** est le sweet spot pour les poids en INT4 (utilise par GPTQ, AWQ, NF4). On decoupe chaque ligne en blocs de 128 elements et on stocke un scale par bloc. Cout reel : ~3% en FP16 sur INT4 group-128 (1 scale FP16 = 16 bits pour 128 poids INT4 = 512 bits, soit 16/512 = 3.125%). En **double quantization** (QLoRA), on quantize les scales eux-memes en FP8 avec une seconde couche de blocs de 256, ce qui descend l'overhead a ~0.5-0.8 bit/poids effectif.
+
+Pour les activations, on utilise **per-token** dynamique : a chaque forward pass, calculer le scale de l'activation a la volee, par token.
+
+---
+
+## 4. PTQ : GPTQ et AWQ
+
+**Post-Training Quantization (PTQ)** = quantizer un modele deja entraine, sans le re-entrainer. Beaucoup moins cher que QAT. Deux familles dominantes en 2024-2026.
+
+### Calibration : pourquoi un dataset
+
+Le naif : prendre `max(|W|)` global. Probleme : un seul outlier (par exemple un weight = 50 quand 99% sont dans [-2, 2]) ecrase la quantization de tout le tenseur. Il faut un **dataset de calibration** (typiquement 128-512 sequences de C4 ou Wikipedia) pour mesurer les **vraies** statistiques d'activation et choisir des scales qui ne gaspillent pas la plage sur des outliers rares.
+
+Sans calibration, INT8 perd souvent 5-10pts de perplexite. Avec calibration, <1pt.
+
+### GPTQ (Frantar et al., 2022)
+
+GPTQ derive de **OBQ (Optimal Brain Quantizer, Frantar 2022)** — lui-meme une descendance d'OBS (Optimal Brain Surgeon). L'idee : pour chaque colonne, on quantize, puis on **compense l'erreur** sur les colonnes restantes en utilisant l'inverse de la Hessienne (calculee sur la calibration).
+
+La Hessienne du probleme de reconstruction quadratique `||W X - W_q X||^2` (X = activations calib, shape `n_calib x d_in`) est :
+
+```
+H = 2 X^T X    # shape (d_in, d_in), Hessienne du MSE de reconstruction
+```
+
+```
+Pour chaque couche lineaire W:
+  H = 2 X^T X   # X = activations calib
+  Pour chaque colonne j (ordre gauche-droite, ou permute via act-order):
+    quantize la colonne j
+    propager l'erreur de quantization vers les colonnes j+1, ..., n
+    en utilisant H^-1
+```
+
+**Greedy column-wise**, complexite O(d^3), une fois par couche, totalement parallelisable entre couches. L'option `act-order` (alias `desc_act`) reorganise l'ordre des colonnes par importance d'activation decroissante, ce qui ameliore la precision sur les modeles fortement non-uniformes (Llama). Resultat : INT4 quasi-lossless sur Llama-2 70B (perte <1pt perplexite C4).
+
+### AWQ (Lin et al., 2023)
+
+AWQ (Activation-aware Weight Quantization) part d'une autre observation : **toutes les colonnes de poids ne sont pas egales**. Certaines sont multipliees par des activations grandes -> elles ont un impact disproportionne sur la sortie. Si on les quantize naivement, on casse le modele.
+
+Mecanisme : AWQ **scale les canaux d'entree** du poids `W` par un facteur `s` choisi par grid search pour minimiser l'erreur de sortie ; le scale inverse `1/s` est absorbe dans la couche precedente (LayerNorm gain ou poids amont). Tout le tenseur est ensuite quantize en INT4 normalement.
+
+```
+1. Mesurer la magnitude moyenne |x_j| de chaque canal d'activation (calib)
+2. Choisir un scale s par canal via grid search (s ~ |x_j|^alpha, alpha ∈ [0,1])
+   pour minimiser ||W x - Q(W * diag(s)) (diag(1/s) x)||^2
+3. Absorber 1/s dans la couche precedente, multiplier W par diag(s),
+   puis quantizer le tout en INT4 par groupe.
+```
+
+**Difference-cle vs LLM.int8()** : AWQ ne garde **PAS** 1% des poids en FP16. Tout le tenseur reste en INT4 — la protection vient du re-scaling, pas d'un mixed-precision split. C'est ce qui rend AWQ deployable avec un kernel INT4 pur et tres rapide.
+
+Plus rapide a calibrer que GPTQ (pas de Hessienne a inverser), perte de precision similaire, et les kernels INT4 d'inference (AWQ kernels, Marlin) sont tres rapides. **Standard de facto** pour deployer en INT4 en 2025-2026 cote serving.
+
+### Comparaison rapide
+
+| Methode | Idee | Cout calibration | Perte INT4 | Vitesse inference |
+|---|---|---|---|---|
+| RTN (round-to-nearest) | Naif | 0 | 5-15 pts | Rapide |
+| GPTQ | Compense erreur via Hessienne | Moyen | ~1 pt | Rapide |
+| AWQ | Protege canaux importants | Faible | ~1 pt | **Tres rapide** |
+
+---
+
+## 5. QAT et QLoRA
+
+### Quantization-Aware Training (QAT)
+
+On entraine (ou fine-tune) le modele en simulant la quantization dans le forward (`x_hat = quantize(x)`) tout en gardant les gradients en FP32. Le modele apprend a etre robuste au rounding error. Plus precis que PTQ, surtout en INT2/INT3, mais coute aussi cher qu'un training. Rare en pratique pour les LLM frontier (trop cher).
+
+### QLoRA (Dettmers et al., 2023)
+
+L'innovation qui a permis a tout le monde de fine-tuner un 70B sur **un seul GPU 24GB**. Trois ingredients :
+
+1. **NF4 (NormalFloat 4-bit)**. INT4 lineaire repartit ses 16 niveaux uniformement entre -1 et 1. Mais les poids d'un LLM sont **gaussiens**, pas uniformes. NF4 utilise les **quantiles** d'une normale standard comme niveaux. La version Dettmers/QLoRA est **asymetrique** : 8 niveaux negatifs + 7 niveaux positifs + le 0 exact (pour preserver le sparse zero des poids). Le code de ce module en construit une version *symetrique* (16 quantiles en miroir) pour la pedagogie — le principe est identique. Resultat : meme nombre de bits, distribution mieux respectee, ~30% d'erreur en moins.
+2. **Double quantization**. Tu as 1 scale FP32 par groupe de 64 poids. Ce sont des millions de scales. On les quantize a leur tour en FP8 (8-bit float), avec une seconde couche de blocs de 256 scales (et un scale FP32 par bloc-de-blocs). Gain : ~0.373 bit/poids economises selon le QLoRA paper.
+3. **Paged optimizers**. Les states de l'optimizer (Adam : moments m et v) sont sur CPU paged et migrent vers GPU a la demande, pour eviter les OOM lors de pics memoire (gradient accumulation, batch large).
+
+LoRA par-dessus : on ne touche pas aux poids quantizes. On ajoute des adapters LoRA en FP16 (matrices low-rank A, B) qui sont les seuls a etre entraines. Empreinte memoire fine-tuning d'un 65B = ~40 GB total. Demystification complete du fine-tuning grand modele.
+
+---
+
+## 6. Outliers : pourquoi ils cassent INT8 naif
+
+Dettmers et al. (LLM.int8(), 2022) ont publie **la** decouverte clef : on observe empiriquement une **phase transition autour de 6.7B parametres** ou les modeles transformers developpent des **features outliers** systematiques — quelques dimensions d'activation (sur des milliers) avec des magnitudes 20-100x au-dessus de la moyenne. Ces dimensions sont **critiques** : les zeroer detruit le modele. Nuance importante : les modeles plus petits (<6.7B) ont aussi des outliers, juste moins systematiques et moins concentres sur les memes dimensions tout au long de la profondeur — le seuil 6.7B marque le moment ou ces outliers deviennent persistants couche par couche.
+
+Probleme avec INT8 naif : si une seule activation a magnitude 80 et les autres ~3, le scale = 80/127 = 0.63. Tous les ~3 sont mappes vers q = round(3/0.63) = 5, puis dequantize a 5*0.63 = 3.15. La precision relative sur 99.9% des activations est detruite.
+
+### Solution 1 : LLM.int8() — decomposition mixte
+
+```
+Identifier les colonnes outliers (magnitude > seuil)
+Calculer ces colonnes en FP16 (precision pleine)
+Calculer les autres colonnes en INT8
+Sommer les deux contributions
+```
+
+Coute un peu plus cher mais preserve la qualite. Implemente dans `bitsandbytes`.
+
+### Solution 2 : SmoothQuant — migration des outliers
+
+Observation : si les outliers sont dans les **activations** mais pas dans les **poids**, on peut "deplacer" la difficulte d'un cote a l'autre :
+
+```
+Y = X @ W
+  = (X / s) @ (s * W)            # s est un scale per-channel
+```
+
+On choisit `s` tel que `X / s` n'a plus d'outliers (au prix de poids `s * W` un peu plus grands). Le scale est absorbe dans la couche precedente (LayerNorm), zero overhead runtime.
+
+Resultat : INT8 sur tout (poids + activations) sans degradation, kernel ultra-simple, vitesse maximale. C'est la base de plein de schemas de quantization moderne (FP8 inclus).
+
+---
+
+## 7. GGUF / k-quants : l'ecosysteme llama.cpp
+
+GGUF (successeur de GGML) = format de fichier de Georgi Gerganov pour `llama.cpp`. C'est le standard de la quantization grand-public (LM Studio, Ollama, Jan, Open WebUI). Tout le monde sert ses modeles locaux en GGUF.
+
+### Les k-quants
+
+Les "k-quants" sont les schemas modernes de llama.cpp. Idee : per-group quantization avec scales et minimas variables, optimises bloc par bloc.
+
+| Format | Bits/poid effectif | Perte vs FP16 | Usage |
+|---|---|---|---|
+| Q2_K | ~2.5 | Important | Compression extreme |
+| Q3_K_M | ~3.5 | Notable | RAM tres limitee |
+| **Q4_K_M** | ~4.85 | **<1 pt perplexite** | **Defaut grand public** |
+| Q5_K_M | ~5.5 | Tres faible | Qualite > taille |
+| Q6_K | ~6.5625 | Negligeable | Quasi-lossless |
+| Q8_0 | 8 | Lossless | Reference |
+
+Le suffixe `_K` = k-quants (vs anciens `_0`, `_1`). `_M` (medium) = compromis equilibre, `_S` (small) = encore plus comprime, `_L` (large) = quelques tenseurs en plus haute precision.
+
+**Heuristique 2026** : Q4_K_M par defaut. Q5_K_M si tu as la RAM. Q6_K si tu fais du benchmark serieux. Q2/Q3 seulement en derniere extremite.
+
+### Importance matrix (imatrix)
+
+Innovation 2024 : llama.cpp permet de calibrer la quantization avec une matrice d'importance derivee d'un dataset. Equivalent grand-public de l'idee GPTQ — utilise les activations pour ponderer l'erreur de quantization (les colonnes/poids vus avec de grosses activations recoivent plus de bits ou un meilleur rounding). Quand tu vois "Q4_K_M imatrix" sur HuggingFace, c'est cette variante, et elle bat la version sans imatrix de 0.5-1pt sur les benchmarks.
+
+---
+
+## 8. La courbe perplexite vs taille
+
+C'est **la** figure que tu dois avoir en tete. Pour un 7B/13B/70B, l'allure typique :
+
+```
+Perplexity
+   ▲
+   │
+   │ FP16  Q8     Q6  Q5_K_M  Q4_K_M
+   │  *────*──────*────*──────*
+   │                              \
+   │                               * Q3_K_M
+   │                                 \
+   │                                  \
+   │                                   * Q2_K
+   │                                     \
+   │                                      *  Q2 sans calibration
+   │
+   └──────────────────────────────────────────► bits/weight
+        16   8    6    5      4       3     2.5
+```
+
+Plateau de FP16 a Q5/Q4. **Coude** entre Q4 et Q3. Cliff a Q2.
+
+Conclusion pratique : **Q4 est le point sweet**. En dessous, la qualite chute non-lineairement. Au-dessus, gain marginal pour cout VRAM lineaire.
+
+**Effet taille** : plus le modele est grand, plus il **encaisse** la quantization. Un 70B en Q4 perd ~0.5 pt. Un 7B en Q4 peut perdre 1.5 pt. Les redondances internes des gros modeles absorbent le rounding error.
+
+---
+
+## 9. Quand INT4 reste safe, quand ca casse
+
+### Safe (perte negligeable)
+
+- Inference text generale (chat, summarization, translation)
+- Modeles 30B+ (les redondances aident)
+- Tasks ou la temperature > 0 masque les petites erreurs
+- Avec calibration (GPTQ/AWQ/imatrix)
+
+### Risque (verifier sur ta task)
+
+- Code (sensibilite aux details, syntaxe stricte) : tester sur HumanEval avant deploiement
+- Math / reasoning : un seul token errone casse la chaine
+- Long context (>32k) : les erreurs s'accumulent dans le KV cache
+- Modeles fine-tunes specialises (le fine-tuning a deja consomme de la "marge" du modele)
+- Tasks avec sortie structuree (JSON strict, function calling)
+
+### A eviter
+
+- INT2/INT3 sur modele <30B
+- Quantizer un modele deja distille (qui a deja perdu de la marge)
+- Combiner quantization agressive + LoRA serving sans tester
+- Utiliser INT8 naif (sans SmoothQuant ou LLM.int8) sur un modele >7B
+
+---
+
+## 10. Idees fausses repandues
+
+| Idee fausse | Verite |
+|---|---|
+| "Quantizer divise la qualite par 2" | Q4 bien fait perd ~1pt perplexite, soit ~3-5% relative |
+| "FP8 c'est juste INT8 renomme" | FP8 a un exponent + mantissa, gere mieux la dynamique |
+| "Plus de bits = toujours mieux" | A taille modele egale, oui. Mais 70B Q4 > 13B FP16 a memoire egale |
+| "QLoRA c'est juste LoRA en 4 bits" | Non, c'est NF4 + double quant + paged optimizers |
+| "On peut quantizer apres sans calibration" | Pour les poids, OK. Pour les activations, jamais |
+| "GGUF est plus lent que vLLM" | Sur GPU, oui. Sur CPU/M-series Apple, GGUF domine |
+| "INT4 = INT4" | NF4 vs INT4 lineaire : 30% d'erreur en moins. Q4_K_M vs Q4_0 : meme ecart |
+
+---
+
+## Key takeaways (flashcards)
+
+**Q1** — Pourquoi la quantization accelere-t-elle l'inference, alors qu'il faut quand meme dequantizer ?
+> Parce qu'on est memory-bound : lire 4 bits au lieu de 16 bits depuis la VRAM est 4x plus rapide, et la dequantization est gratuite (kernel fuse) ou faite directement dans des unites matricielles INT4.
+
+**Q2** — Pourquoi un dataset de calibration est crucial ?
+> Il permet de mesurer les vraies statistiques d'activation et de choisir des scales qui ne gaspillent pas la plage entiere sur des outliers rares. Sans calibration, INT8 perd 5-10pts de perplexite ; avec, moins de 1pt.
+
+**Q3** — Quelle est la difference entre GPTQ et AWQ ?
+> GPTQ quantize colonne par colonne et compense l'erreur sur les colonnes suivantes via la Hessienne (approche OBS). AWQ identifie les ~1% de canaux d'activation a forte magnitude et protege les colonnes de poids correspondantes via un re-scaling pre-quantization. AWQ est plus rapide a calibrer, GPTQ legerement plus precis.
+
+**Q4** — Pourquoi un seul outlier casse-t-il INT8 naif ?
+> Le scale est calcule sur le max absolu : un outlier 100x plus grand ecrase tous les autres elements vers q=0 ou q=±1, detruisant la precision relative sur 99% des donnees. Solutions : LLM.int8() (decomposition mixte INT8 + FP16) ou SmoothQuant (migrer les outliers des activations vers les poids).
+
+**Q5** — Pourquoi NF4 bat INT4 lineaire pour les poids LLM ?
+> Les poids d'un LLM bien entraine suivent une distribution gaussienne. INT4 lineaire repartit ses 16 niveaux uniformement, ce qui gaspille de la resolution dans les queues vides et en manque au centre dense. NF4 utilise les quantiles de la normale standard : plus de resolution la ou les valeurs se concentrent. Gain ~30% d'erreur en moins, meme nombre de bits.
+
+---
+
+## Sources
+
+- Dettmers et al. (2022) — *LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale*. https://arxiv.org/abs/2208.07339
+- Frantar, Ashkboos, Hoefler, Alistarh (2022) — *GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers*. https://arxiv.org/abs/2210.17323
+- Frantar & Alistarh (2022) — *Optimal Brain Compression* (fondement OBQ pour GPTQ). https://arxiv.org/abs/2208.11580
+- Lin et al. (2023) — *AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration*. https://arxiv.org/abs/2306.00978
+- Dettmers, Pagnoni, Holtzman, Zettlemoyer (2023) — *QLoRA: Efficient Finetuning of Quantized LLMs*. https://arxiv.org/abs/2305.14314
+- Xiao, Lin, Seznec, Wu, Demouth, Han (2022) — *SmoothQuant: Accurate and Efficient Post-Training Quantization for LLMs*. https://arxiv.org/abs/2211.10438
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **MIT 6.5940 — Lec. 5-6 (Quantization Part I & II)** — fondations quantization (linear, NF4, GPTQ, AWQ).
+- **CMU 11-711 (Welleck) — Lec. 14 (Quantization — Tim Dettmers guest)** — par l'auteur de LLM.int8/QLoRA, perspective recherche.
+- **CMU 11-711 (Neubig) — Lec. 11 (Distillation, Quantization, Pruning)** — vue d'ensemble compression LLM.
+

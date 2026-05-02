@@ -1,0 +1,68 @@
+.doctype {docs}
+.docname {Mastering Believe — Reseaux de Neurones & LLMs}
+.docauthor {mastering-believe}
+.doclang {fr}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Jour 1](01-neurone-et-backpropagation.qd)
+        - [2. Jour 2](02-reseaux-denses-mlp.qd)
+        - [3. Jour 3](03-embeddings-representations.qd)
+        - [4. Jour 4](04-sequence-modeling-rnn.qd)
+        - [5. Jour 5](05-attention-mechanism.qd)
+        - [6. Jour 6](06-transformer-architecture.qd)
+        - [7. Jour 7](07-mini-transformer.qd)
+        - [8. Jour 8](08-pretraining-tokenization.qd)
+        - [9. Jour 9](09-llms-modernes-architectures.qd)
+        - [10. Jour 10](10-fine-tuning-alignment.qd)
+        - [11. Jour 11](11-inference-optimisee.qd)
+        - [12. Jour 12](12-multimodalite.qd)
+        - [13. Jour 13](13-emergent-abilities-reasoning.qd)
+        - [14. Jour 14](14-capstone.qd)
+        - [15. Jour 15](15-test-time-compute-reasoning-models.qd)
+        - [16. Jour 16](16-mixture-of-experts.qd)
+        - [17. Jour 17](17-state-space-models.qd)
+        - [18. Jour 18](18-long-context-attention-scaling.qd)
+        - [19. Jour 19](19-quantization.qd)
+        - [20. Jour 20](20-distillation-synthetic-data-slms.qd)
+        - [21. Jour 21](21-mechanistic-interpretability.qd)
+        - [22. Jour 22](22-vision-language-models.qd)
+
+# Mastering Believe — Reseaux de Neurones & LLMs
+
+Cours communautaire d'apprentissage accelere — theorie, code applique,
+exercices progressifs.
+
+## Plan du module
+
+1. [Jour 1](01-neurone-et-backpropagation.qd)
+2. [Jour 2](02-reseaux-denses-mlp.qd)
+3. [Jour 3](03-embeddings-representations.qd)
+4. [Jour 4](04-sequence-modeling-rnn.qd)
+5. [Jour 5](05-attention-mechanism.qd)
+6. [Jour 6](06-transformer-architecture.qd)
+7. [Jour 7](07-mini-transformer.qd)
+8. [Jour 8](08-pretraining-tokenization.qd)
+9. [Jour 9](09-llms-modernes-architectures.qd)
+10. [Jour 10](10-fine-tuning-alignment.qd)
+11. [Jour 11](11-inference-optimisee.qd)
+12. [Jour 12](12-multimodalite.qd)
+13. [Jour 13](13-emergent-abilities-reasoning.qd)
+14. [Jour 14](14-capstone.qd)
+15. [Jour 15](15-test-time-compute-reasoning-models.qd)
+16. [Jour 16](16-mixture-of-experts.qd)
+17. [Jour 17](17-state-space-models.qd)
+18. [Jour 18](18-long-context-attention-scaling.qd)
+19. [Jour 19](19-quantization.qd)
+20. [Jour 20](20-distillation-synthetic-data-slms.qd)
+21. [Jour 21](21-mechanistic-interpretability.qd)
+22. [Jour 22](22-vision-language-models.qd)
+
+## Approche pedagogique
+
+- **Pareto-first** : 20% qui donne 80% du resultat en premier
+- **Concret avant abstrait** : exemple, puis principe
+- **Spaced repetition** : flash-cards en fin de chapitre
+- **Capstone reel** : projet ship-able a la fin du module
