@@ -520,3 +520,13 @@ LLaVA 1.5 utilise CLIP ViT-L/14 ou OpenCLIP.
 En 2024, pour la comprehension, features continues dominent. Pour la generation d'images, la diffusion (Stable Diffusion, DALL-E 3) a supplante les VQ-VAE tokens. Mais en 2024-2025, l'**early fusion** native (GPT-4o, Gemini 2) change la donne — voir section 7.
 
 </details>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS231N — Lec. 16 (Vision and Language)** — du captioning a CLIP, fondamentaux multimodaux.
+- **CMU 11-711 (Welleck) — Lec. 20 (Multimodal Modeling I), Lec. 22 (Multimodal Modeling II)** — etat de l'art 2025 sur l'integration vision/texte/audio.

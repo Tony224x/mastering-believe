@@ -312,3 +312,14 @@ Conclusion pratique : **Q4 est le point sweet**. En dessous, la qualite chute no
 - Lin et al. (2023) — *AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration*. https://arxiv.org/abs/2306.00978
 - Dettmers, Pagnoni, Holtzman, Zettlemoyer (2023) — *QLoRA: Efficient Finetuning of Quantized LLMs*. https://arxiv.org/abs/2305.14314
 - Xiao, Lin, Seznec, Wu, Demouth, Han (2022) — *SmoothQuant: Accurate and Efficient Post-Training Quantization for LLMs*. https://arxiv.org/abs/2211.10438
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **MIT 6.5940 — Lec. 5-6 (Quantization Part I & II)** — fondations quantization (linear, NF4, GPTQ, AWQ).
+- **CMU 11-711 (Welleck) — Lec. 14 (Quantization — Tim Dettmers guest)** — par l'auteur de LLM.int8/QLoRA, perspective recherche.
+- **CMU 11-711 (Neubig) — Lec. 11 (Distillation, Quantization, Pruning)** — vue d'ensemble compression LLM.

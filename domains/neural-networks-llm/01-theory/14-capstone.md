@@ -365,5 +365,13 @@ On compare chaque version a la methode complete pour voir ce qui compte.
 **Ce qu'on garde fidele** : architecture exacte, tous les composants du paper, generation autoregressive reelle.
 
 </details>
-</content>
-</invoke>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS336 — entier** — cours pivot pour build un LLM from scratch, complete naturellement le capstone.
+- **CMU 11-711 (Welleck) — Lec. 6 (Pretraining), Lec. 9 (Fine-tuning)** — pour pousser le capstone au-dela d'une simple reimplem.

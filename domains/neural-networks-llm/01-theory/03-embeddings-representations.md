@@ -635,3 +635,12 @@ L'embedding final est la somme de :
 Le gradient ne met a jour que les lignes correspondant aux tokens du batch (mise a jour sparse). La matrice E represente typiquement 5-15% des parametres du modele.
 
 </details>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **CMU 11-711 (Neubig, Fa24) — Lec. 2 (Representing Words)** — du one-hot aux embeddings denses, intuitions Word2Vec / GloVe.

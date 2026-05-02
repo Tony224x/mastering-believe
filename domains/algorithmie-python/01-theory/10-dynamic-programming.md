@@ -414,3 +414,14 @@ Toujours verifier : tu retournes le cas final, pas le cas de base.
 4. **6 patterns classiques** : linear, knapsack, coin change, LCS, LIS, zone
 5. **Pieges** : mauvais sens d'iteration en 1D, confusion subsequence/substring
 6. **Signaux** : "how many ways", "min/max to do X", "longest subsequence", "partition"
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur la programmation dynamique :
+
+- **MIT 6.006 — Introduction to Algorithms** (Erik Demaine, MIT OCW Spring 2020) — Lec. 19-22 (DP I-IV : memoization, subproblems, parent pointers, guessing). La pedagogie Demaine sur la DP est **la** reference mondiale, a regarder en priorite. https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 14 (Dynamic Programming) : rod cutting, matrix chain, LCS, optimal BST avec analyse formelle. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **NeetCode — 1-D DP / 2-D DP roadmap** — 23 problemes structures par dimension (Climbing Stairs, House Robber, LIS, Coin Change, Edit Distance, LCS, 0/1 Knapsack). https://neetcode.io/roadmap
+- **Stanford Algorithms Specialization** (Tim Roughgarden, Coursera) — Course 3 (Greedy Algorithms, MSTs, Dynamic Programming) : weighted independent set, knapsack, sequence alignment, optimal BST avec preuves. https://www.coursera.org/specializations/algorithms

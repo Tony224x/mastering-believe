@@ -603,3 +603,13 @@ Metadata utiles :
 - Checkpointing = filet de securite : reprendre apres crash, debugger, brancher des scenarios alternatifs
 - Vector stores + metadata filtering = memoire long-terme performante et pertinente
 - La working memory (scratchpad) est le secret des agents performants — extraire et structurer les infos cles plutot que de tout noyer dans le context window
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-280 (Sp25) — Lec. 10 (Reasoning, Memory & Planning of Language Agents, Yu Su)** — taxonomie complete de la memoire dans les agents.
+- **CMU 11-711 (Welleck, Sp25) — Lec. 13 (Agents)** — patterns de state management appliques aux agents NLP.

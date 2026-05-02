@@ -473,3 +473,15 @@ Cout computationnel : **identique** a une seule tete avec d_model dims, car les 
 ---
 
 **Prochain jour** : J6 — le bloc Transformer complet (attention + FFN + LayerNorm + residuals + positional encoding).
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS25 V2 — Karpathy (Introduction to Transformers)** — la conference de reference pour l'intuition self-attention.
+- **CMU 11-711 (Neubig, Fa24) — Lec. 4 (Attention & Transformers)** — derivation pas-a-pas Q/K/V et multi-head.
+- **CMU 11-711 (Welleck, Sp25) — Lec. 5 (Attention & Transformers)** — version 2025, focus sur l'usage moderne.
+- **Stanford CS231N — Lec. 8 (Attention & Transformers)** — angle vision + masking causal.

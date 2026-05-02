@@ -357,3 +357,14 @@ def process(arr):
 4. **Connaitre les couts des operations Python** (le piege `in list` tombe en entretien)
 5. **Toujours annoncer temps ET espace** en entretien
 6. **Trade-off espace/temps** : la plupart des optimisations utilisent une structure auxiliaire
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur l'analyse de complexite :
+
+- **MIT 6.006 — Introduction to Algorithms** (Erik Demaine & Srini Devadas, MIT OCW Spring 2020) — Lec. 1 (Algorithmic Thinking, Peak Finding) introduit l'analyse asymptotique sur un probleme concret. https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/
+- **CLRS — Introduction to Algorithms** (Cormen, Leiserson, Rivest, Stein, 4th ed, MIT Press 2022) — Ch 2-3 : analyse, notation asymptotique (O, Theta, Omega), recurrences. La reference academique. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **The Algorithm Design Manual** (Steven Skiena, 3rd ed 2020) — Ch 1-2 : pedagogie tres accessible avec war stories sur l'impact concret de la complexite. https://www.algorist.com/
+- **NeetCode — Big-O notation** (roadmap structuree) — videos courtes pour calibrer le pattern matching en entretien. https://neetcode.io/roadmap

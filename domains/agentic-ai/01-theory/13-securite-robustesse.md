@@ -447,3 +447,14 @@ Si une case n'est pas cochee, tu as un risque identifie a traiter avant producti
 - **Rate limiting et budget** par user pour bloquer les DoS et abuse
 - **Auditing** : logger tout pour pouvoir reconstituer une attaque reussie
 - **Safe by default** : commence par bloquer, automatise au fur et a mesure que tu prouves que c'est safe
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Harvard CS 2881R — Lec. 3 (Robustness), Lec. 8 (Scheming)** — vue academique sur la robustesse adversariale et le scheming des modeles.
+- **Berkeley CS294-196 (Fa25) — Lec. 1 (Agentic AI Safety & Security, Dawn Song)** — tour d'horizon recent des menaces et defenses pour agents.
+- **Berkeley CS294-280 (Sp25) — Lec. 1 (Towards Safe & Secure Agentic AI, Dawn Song)** — approfondissement sur les patterns de securite agentique.

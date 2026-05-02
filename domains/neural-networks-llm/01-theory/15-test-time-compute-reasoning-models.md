@@ -224,3 +224,14 @@ Budget total = Training + Inference
 
 **Q6** — Pourquoi ne pas auditer la securite via le CoT ?
 > Le CoT visible n'est pas necessairement le vrai processus de decision (faithfulness). Un modele peut rationaliser post-hoc une decision prise par un biais cache. Audit = evaluations comportementales, pas lecture du CoT.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-280 — Lec. 12 (Inference-Time Techniques for LLM Reasoning — Xinyun Chen)** — best-of-N, self-consistency, MCTS, etat de l'art 2025.
+- **Berkeley CS294-280 — Lec. 11 (Learning to Reason — Weston)** — comment on entraine un modele a raisonner (RLVR, GRPO).
+- **CME295 — Lec. 6 (LLM Reasoning)** — synthese accessible des techniques test-time compute.

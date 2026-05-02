@@ -635,3 +635,14 @@ Le probleme porte sur un array/string contigu ?
 4. **Brute force d'abord** : toujours presenter la solution naive, puis optimiser avec le pattern
 5. **Decision tree** : apprendre les signaux de l'enonce pour choisir le bon pattern en < 30 secondes
 6. **String en Python** : immutable ! Utiliser list + join, jamais += dans une boucle
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur les patterns arrays/strings :
+
+- **NeetCode — Arrays & Hashing roadmap** (Navi, ex-Google) — section dediee avec videos commentees sur Two Pointers, Sliding Window, Prefix Sum. La meilleure ressource visuelle pour ces patterns. https://neetcode.io/roadmap
+- **Cracking the Coding Interview** (Gayle Laakmann McDowell, 6th ed) — Ch 1 : 9 problemes arrays/strings types entretien avec solutions detaillees. https://www.crackingthecodinginterview.com/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 32 (String Matching) pour les fondements theoriques sur la manipulation de chaines. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **Elements of Programming Interviews in Python** (Aziz, Lee, Prakash) — chapitres "Arrays" et "Strings" : 60+ problemes denses, version Python.

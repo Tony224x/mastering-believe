@@ -439,3 +439,12 @@ Commence simple : 2-3 nodes. Si tu te retrouves avec 12 nodes et 25 edges dans t
 - Interrupts = human-in-the-loop : pause avant/apres un node, attend validation
 - Pattern minimal : agent + tools + conditional edge. C'est le squelette de 90% des agents
 - Anti-patterns : oublier les reducers, muter le state dans les nodes, conditional edges avec mauvais mapping
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **LangGraph official docs** (LangChain) — concepts, API reference, tutoriels et how-to officiels. https://langchain-ai.github.io/langgraph/
+- **LangChain Academy — "Introduction to LangGraph"** — MOOC gratuit (55 lecons, 6h) : StateGraph, ReAct, memory, human-in-the-loop. https://academy.langchain.com/courses/intro-to-langgraph

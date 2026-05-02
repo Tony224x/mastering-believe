@@ -477,3 +477,15 @@ Donc FFN/bloc ≈ 2M et Attention/bloc ≈ 1M → FFN represente 2/3 des paramet
 ---
 
 **Prochain jour** : J7 — on assemble tout ca pour construire un mini-GPT qui genere du texte.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS336 — Lec. 1-3 (Tokenization, PyTorch, Architectures)** — bloc Transformer construit a la main.
+- **Stanford CS25 V6 — Lec. 3 (Overview of Transformers)** — etat de l'art 2025 sur les variantes d'architectures.
+- **CMU 11-711 (Neubig) — Lec. 4 (Attention & Transformers)** — perspective NLP classique.
+- **CMU 11-711 (Welleck) — Lec. 5 (Attention & Transformers)** — version 2025 actualisee.

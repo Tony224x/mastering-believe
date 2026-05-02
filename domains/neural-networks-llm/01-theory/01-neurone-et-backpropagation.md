@@ -524,3 +524,14 @@ Avec Cross-Entropy + sigmoid, le gradient simplifie a `a - y` (proportionnel a l
 En pratique, on utilise toujours mini-batch.
 
 </details>
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant les fondations neurone / backprop / optimisation (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS230 — Lec. 1 (Introduction to Deep Learning), Lec. 2 (Supervised Learning)** — Andrew Ng, on-ramp DL.
+- **Stanford CS231N — Lec. 3 (Regularization & Optimization), Lec. 4 (Neural Networks & Backpropagation)** — backprop expliqué pas-à-pas.
+- **MIT 6.S191 — Lecture "Introduction to Deep Learning"** (édition 2024 ou 2025) — refresher dense.
+

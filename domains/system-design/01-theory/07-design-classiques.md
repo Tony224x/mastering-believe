@@ -390,3 +390,14 @@ Partition par `conversation_id` (1 partition par chat 1-to-1 ou par groupe). Tri
 6. **Sharding par entite logique** : user_id pour Twitter, conversation_id pour chat, short_code pour URL.
 7. **Cache est toujours present** dans les designs read-heavy. 90%+ du trafic doit etre absorbe avant la DB.
 8. **En entretien, parler des tradeoffs est plus important que d'avoir la "bonne" reponse**. Il n'y a jamais UNE reponse en system design, seulement des choix justifies.
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **System Design Interview Vol 1** (Alex Xu, ByteByteGo 2020) — 16 designs reference avec 188 diagrammes : URL shortener, Twitter timeline, chat system, web crawler. Le livre etalon des entretiens FAANG. https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
+- **System Design Interview Vol 2** (Alex Xu & Sahn Lam, ByteByteGo 2022) — sequel : payment system, Google Drive, YouTube, search autocomplete, distributed message queue. Plus avance sur les tradeoffs. https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119
+- **The System Design Primer** (Donne Martin, GitHub, 200K+ stars) — repo communautaire couvrant scalabilite, CAP, replication, sharding, plus questions d'entretien resolues. Inclut Anki decks. https://github.com/donnemartin/system-design-primer
+- **Designing Data-Intensive Applications** (Martin Kleppmann, O'Reilly 2017) — Part III (Derived Data) explique les architectures lambda/kappa qui sous-tendent Twitter, Netflix, search engines. https://dataintensive.net/

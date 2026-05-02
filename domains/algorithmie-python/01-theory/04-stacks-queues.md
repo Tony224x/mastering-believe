@@ -527,3 +527,14 @@ print(int(-7 / 2))   # -3  (truncation toward zero — ce qu'on veut)
 5. **BFS** : marque visited a l'enqueue, pas au dequeue
 6. **Matching de paires** → stack ; **parcours par niveau** → queue
 7. **Pieges** : division tronquee en RPN, indices vs valeurs en monotonic stack, visited mal place
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur les piles et files :
+
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 10 (Elementary Data Structures) : implementation rigoureuse de stacks, queues, deques avec invariants. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **Princeton Algorithms Part 1** (Sedgewick & Wayne, Coursera, gratuit) — Week 2 (Stacks and Queues) : implementations linked-list et resizing array, analyse amortie. https://www.coursera.org/learn/algorithms-part1
+- **NeetCode — Stack roadmap** — 7 problemes phares (Valid Parentheses, Min Stack, Daily Temperatures, Largest Rectangle) avec patterns monotonic stack. https://neetcode.io/roadmap
+- **Algorithms 4th ed companion site** (Sedgewick & Wayne) — Ch 1.3 : code Java reference + exercices pour stacks/queues. https://algs4.cs.princeton.edu/

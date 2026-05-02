@@ -472,3 +472,14 @@ Certains problemes ont des grilles en escalier (jagged). Toujours verifier les b
 5. **Dijkstra** : heap + relaxation, UNIQUEMENT poids positifs
 6. **Union-Find** : path compression + union by rank = O(1) amorti
 7. **Les grilles 2D sont des graphes** : chaque cellule a 4 voisins, applique DFS/BFS
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur les graphes :
+
+- **MIT 6.006 — Introduction to Algorithms** (Erik Demaine & Srini Devadas, MIT OCW Spring 2020) — Lec. 10-15 (Breadth-First Search, Depth-First Search, Topological Sort, Weighted Shortest Paths, Dijkstra, Bellman-Ford, DAG) : la sequence pedagogique de reference. https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 22-25 : BFS, DFS, MST, shortest paths, all-pairs avec preuves de correction completes. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **Stanford Algorithms Specialization** (Tim Roughgarden, Coursera) — Course 2 (Graph Search, Shortest Paths, Data Structures) : Dijkstra, Kosaraju, Union-Find avec analyse mathematique. https://www.coursera.org/specializations/algorithms
+- **NeetCode — Graphs roadmap** + **Advanced Graphs** — 13 + 6 problemes (Number of Islands, Clone Graph, Course Schedule, Pacific Atlantic, Network Delay, Min Cost to Connect Points). https://neetcode.io/roadmap

@@ -543,3 +543,14 @@ Utilise partout en 2024, integre dans PyTorch (`torch.nn.functional.scaled_dot_p
 **Throughput vLLM vs naive** : 24x de gain. C'est l'implementation de reference pour servir des LLMs en production open-source.
 
 </details>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS336 — Lec. 10 (Inference)** — KV cache, batching, quantization vus from scratch.
+- **MIT 6.5940 — Lec. 12 (Transformer & LLM)** — TinyML/efficient AI, optimisations bas niveau.
+- **CMU 11-711 (Welleck) — Lec. 17 (Advanced Inference Strategies), Lec. 18 (Efficient Inference)** — speculative decoding, continuous batching, PagedAttention.

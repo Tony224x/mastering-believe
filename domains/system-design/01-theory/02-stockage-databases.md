@@ -570,3 +570,14 @@ Le choix de la partition key est **la decision la plus importante** du sharding.
 **Q** : Quelle est la difference entre replication et sharding ? Peut-on les combiner ?
 
 **R** : La **replication** duplique les memes donnees sur plusieurs noeuds (pour la disponibilite et la lecture). Le **sharding** distribue des donnees differentes sur differents noeuds (pour le scaling). On les combine presque toujours en production : chaque shard a ses propres replicas. Exemple : 4 shards * 3 replicas = 12 noeuds au total. Chaque shard contient 1/4 des donnees, et chaque donnee est presente sur 3 noeuds pour la disponibilite.
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **Designing Data-Intensive Applications** (Martin Kleppmann, O'Reilly 2017) — Ch 2-3 (Data Models, Storage Engines), Ch 5 (Replication), Ch 6 (Partitioning), Ch 7 (Transactions) couvrent l'integralite du chapitre. https://dataintensive.net/
+- **CMU 15-445 — Database Systems** (Andy Pavlo, CMU) — cours universitaire reference sur les SGBD : storage, indexes, concurrency control, recovery. Playlist YouTube officielle. https://www.youtube.com/playlist?list=PLSE8ODhjZXjYDBpQnSymaectKjxCy6BYq
+- **Database Internals** (Alex Petrov, O'Reilly 2019) — deep-dive sur B-Trees, LSM-Trees, WAL, paxos/raft. Le complement technique de DDIA. https://www.oreilly.com/library/view/database-internals/9781492040330/
+- **CMU 15-721 — Advanced Database Systems** (Andy Pavlo, CMU) — cours avance sur les systemes en memoire, columnar, distributed. Playlist YouTube Spring 2019. https://www.youtube.com/playlist?list=PLSE8ODhjZXja7K1hjZ01UTVDnGQdx5v5U

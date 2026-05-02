@@ -402,3 +402,12 @@ Le time-travel est un superpouvoir, mais il peut aussi etre utilise pour **reecr
 - Time-travel = inspecter ou re-executer depuis n'importe quel point passe
 - Branching = forker l'execution en modifiant un past state — git branch pour agents
 - Anti-patterns : sur-partage de state entre subgraphs, sur-parallelisation, MemorySaver en prod, time-travel sans audit
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **LangGraph how-to guides** (LangChain) — recettes officielles pour subgraphs, multi-agent (supervisor, swarm), persistence, streaming, time-travel. https://langchain-ai.github.io/langgraph/
+- **DeepLearning.AI — "AI Agents in LangGraph"** (Harrison Chase + Rotem Weiss) — short course pratique : agents from scratch, persistence, human-in-the-loop, search agent. https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/

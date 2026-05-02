@@ -437,3 +437,14 @@ Python utilise une representation en complement a deux infinie. Si tu travailles
 4. **Tries** : O(L) par op, indispensable pour prefix queries et word search II
 5. **Trie + DFS** : combinaison puissante pour rechercher plusieurs mots dans une grille
 6. **Ces sujets sont situationnels** mais incontournables quand ils apparaissent
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur bits, heaps et tries :
+
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 6 (Heapsort) pour la theorie complete des binary heaps + analyse de heapify en O(n) ; Ch 12 et appendice pour les tries via radix trees. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **NeetCode — Heap / Priority Queue + Tries + Bit Manipulation roadmaps** — 7 + 3 + 7 problemes phares (K Closest Points, Find Median Data Stream, Implement Trie, Word Search II, Single Number, Counting Bits, Reverse Bits). https://neetcode.io/roadmap
+- **Cracking the Coding Interview** (Gayle Laakmann McDowell, 6th ed) — Ch 5 (Bit Manipulation) : XOR tricks, bit tricks (`n & (n-1)`), masks. La meilleure intro pratique au sujet. https://www.crackingthecodinginterview.com/
+- **Princeton Algorithms Part 1** (Sedgewick & Wayne, Coursera, gratuit) — Week 4 (Priority Queues) : implementation binary heap pas a pas + applications (heapsort, top-K). https://www.coursera.org/learn/algorithms-part1

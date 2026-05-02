@@ -246,3 +246,14 @@ Repondre honnetement a ces questions apres le sprint. L'objectif est d'identifie
 5. **Teste TOUJOURS** les edge cases : vide, taille 1, extreme
 6. **Sprint = diagnostic** : fais-le honnetement, ton score n'a pas d'importance — ce qui compte c'est l'analyse post-sprint
 7. **Patterns cles a memoriser** : two pointers, sliding window, hash map, stack/queue, linked list, binary search
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques pour consolider les patterns :
+
+- **NeetCode 150 roadmap** (Navi) — la liste de problemes par patterns est exactement calibree pour ce sprint. Faire les sections deja vues (Arrays & Hashing, Two Pointers, Sliding Window, Stack, Linked List, Binary Search) cote a cote. https://neetcode.io/roadmap
+- **Cracking the Coding Interview** (Gayle Laakmann McDowell, 6th ed) — la methodologie BUDS (Bottlenecks, Unnecessary work, Duplicated work, Smaller cases) explicite le processus d'optimisation pas a pas. https://www.crackingthecodinginterview.com/
+- **LeetCode — Top Interview 150** — liste curatee directement par LeetCode des 150 problemes les plus frequents en entretien, parfait complement au NeetCode 150. https://leetcode.com/studyplan/top-interview-150/
+- **Elements of Programming Interviews in Python** (Aziz, Lee, Prakash) — chaque chapitre se termine par des "bootcamp problems" qui sont d'excellents exercices de consolidation rapide.

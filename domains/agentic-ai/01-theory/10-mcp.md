@@ -443,3 +443,14 @@ Installer un serveur = installer un package npm/pip + ajouter 3 lignes dans la c
 - Connecter Claude Desktop : ajouter 3 lignes dans `claude_desktop_config.json`
 - Securite : approbation humaine sur les actions, sandbox, moindre privilege, validation des arguments
 - Utiliser MCP quand tu veux exposer la meme capacite a plusieurs clients ou la partager entre utilisateurs ; pour un agent interne simple, le tool calling direct suffit
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **MCP official site** (Anthropic) — specification, concepts, guides de developpement client/serveur. https://modelcontextprotocol.io/
+- **Anthropic — "Introducing the Model Context Protocol"** — annonce officielle (nov. 2024), motivations et vision. https://www.anthropic.com/news/model-context-protocol
+- **Repo officiel MCP** (GitHub org) — SDKs (Python, TS, Java, etc.), specification, serveurs de reference (filesystem, github, postgres...). https://github.com/modelcontextprotocol
+- **DeepLearning.AI — "MCP: Build Rich-Context AI Apps with Anthropic"** (Elie Schoppik, Anthropic) — short course pratique pour construire serveurs et clients MCP. https://www.deeplearning.ai/short-courses/mcp-build-rich-context-ai-apps-with-anthropic/

@@ -307,3 +307,12 @@ Contexte typique > 128k tokens ET throughput critique ?
 - Dao, Gu (2024) — *Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality* (Mamba-2). https://arxiv.org/abs/2405.21060
 - Lieber et al., AI21 (2024) — *Jamba: A Hybrid Transformer-Mamba Language Model*. https://arxiv.org/abs/2403.19887
 - Peng et al. (2023) — *RWKV: Reinventing RNNs for the Transformer Era*. https://arxiv.org/abs/2305.13048
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS25 V6 — Lec. 1 (Tradeoffs of State Space Models and Transformers)** — comparatif rigoureux SSM vs attention, par les auteurs Mamba.

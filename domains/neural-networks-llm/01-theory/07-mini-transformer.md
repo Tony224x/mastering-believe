@@ -350,3 +350,13 @@ Si tu es fluent sur ces 7 points, tu as la base pour lire le code de nanoGPT, co
 - Un mini-GPT complet qui genere du texte
 
 La semaine 2 : pretraining, fine-tuning, RLHF, tokenization avancee, scaling laws.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS336 — Lec. 1-3 (Tokenization, PyTorch, Architectures)** — build complet from scratch en PyTorch.
+- **Stanford CS25 V2 — Karpathy (Introduction to Transformers)** — intuition self-attention pour debugger ton implementation.

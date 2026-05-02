@@ -656,3 +656,14 @@ def get_user(user_id: str):
 **Q** : Quand utiliserais-tu LFU au lieu de LRU comme eviction policy ?
 
 **R** : **LFU quand certaines cles ont une popularite stable dans le temps.** Exemple : un e-commerce ou la page d'accueil, les top 100 produits, et la config globale sont accedees en permanence. LRU pourrait evincer ces cles si un pic temporaire de trafic sur d'autres cles remplit le cache. LFU protege les cles a haute frequence. **Inconvenient** : LFU est "lent a oublier" — une cle historiquement populaire mais devenue inutile reste en cache. Solution : LFU avec decay (Redis `volatile-lfu` ou `allkeys-lfu` utilise un compteur logarithmique avec decroissance temporelle).
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **Designing Data-Intensive Applications** (Martin Kleppmann, O'Reilly 2017) — Ch 6 (Partitioning) couvre la repartition cle-valeur ; Ch 11 aborde les caches en aval des streams. https://dataintensive.net/
+- **System Design Interview Vol 1** (Alex Xu, ByteByteGo 2020) — Ch 1-2 (back-of-envelope, scaling) integrent caching pattern et CDN comme briques structurantes. https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
+- **Redis Documentation** (Redis Inc., officiel) — sections "Eviction policies", "Redis Cluster", "Persistence" sont la reference operationnelle pour configurer un cache distribue. https://redis.io/docs/latest/
+- **CMU 15-721 — Advanced Database Systems** (Andy Pavlo, CMU) — lecture "Buffer Pool" explique comment un buffer pool DBMS fait du caching avec LRU-K et clock-sweep. https://www.youtube.com/playlist?list=PLSE8ODhjZXja7K1hjZ01UTVDnGQdx5v5U

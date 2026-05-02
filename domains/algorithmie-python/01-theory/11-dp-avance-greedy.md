@@ -380,3 +380,14 @@ State machine DP : il faut retourner le max des etats finaux, pas seulement le d
 5. **Interval scheduling** : trier par **end**, pas par start
 6. **Jump Game / Gas Station** : greedy one-pass en O(n), a connaitre par coeur
 7. **Le piege** : les problemes gloutons qui ressemblent a du DP — savoir les reconnaitre
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur DP avance et greedy :
+
+- **MIT 6.046J — Design and Analysis of Algorithms** (Demaine, Devadas, Lynch, MIT OCW Spring 2015) — chapitres DP (Bellman-Ford comme DP, all-pairs, Viterbi) et greedy avec preuves d'exchange argument formelles. La suite logique de 6.006. https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 15 (Greedy Algorithms) : activity selection, Huffman codes, matroids — la theorie mathematique du greedy. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **The Algorithm Design Manual** (Skiena, 3rd ed 2020) — Ch 8 (Dynamic Programming) : approche tres pratique avec war stories sur quand DP marche vs quand greedy suffit. https://www.algorist.com/
+- **Stanford Algorithms Specialization** (Tim Roughgarden, Coursera) — Course 3 : la decomposition pedagogique entre greedy (interval scheduling, MST) et DP avancee (sequence alignment, optimal BST). https://www.coursera.org/specializations/algorithms

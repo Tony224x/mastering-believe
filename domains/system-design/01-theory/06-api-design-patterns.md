@@ -447,3 +447,14 @@ Netflix a plusieurs clients (iOS, Android, TV, web). Chaque client a un BFF (Bac
 7. **API Gateway centralise l'infra** (auth, rate limit, routing), pas la logique metier.
 8. **OpenAPI obligatoire** : doc interactive, codegen, validation, contract testing.
 9. **En entretien** : parler d'idempotency, de pagination cursor, d'API versioning strategy, et de backward compatibility.
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **Google API Design Guide** (Google Cloud, officiel) — guide utilise en interne chez Google depuis 2014 : resource-oriented design, naming, standard methods, errors, versioning. La reference REST/gRPC. https://cloud.google.com/apis/design
+- **gRPC Documentation** (gRPC.io, officiel) — concepts (services, RPC types, streaming), generation de stubs, deadlines, interceptors. Couvre 12+ langages. https://grpc.io/docs/
+- **System Design Interview Vol 2** (Alex Xu, ByteByteGo 2022) — chapitres dedies a "Design a payment system" et "Distributed message queue" detaillent idempotency keys et retries cote API. https://www.amazon.com/System-Design-Interview-Volume-Insiders/dp/1736049119
+- **Designing Data-Intensive Applications** (Martin Kleppmann, O'Reilly 2017) — Ch 4 (Encoding and Evolution) traite schema evolution, backward/forward compatibility, Avro/Protobuf — fondations du versioning d'API. https://dataintensive.net/

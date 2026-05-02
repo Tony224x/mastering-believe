@@ -430,3 +430,13 @@ Quand tu deploies une nouvelle version :
 - Deploiement : FastAPI + queue (ARQ/Celery) pour les taches longues + tracing = stack robuste
 - Versionne tes prompts comme du code, canary + rollback pour les releases
 - Sans tracing, tu ne peux rien debugger en prod — c'est le premier investissement
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours terrain sur la mise en prod et l'observabilite d'agents.
+- **Berkeley CS294-196 (Fa25) — Lec. 10 (Evolution of System Designs, Yangqing Jia)** — patterns d'infra LLM en production.

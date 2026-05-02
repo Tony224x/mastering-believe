@@ -72,6 +72,7 @@ docs/plans/
 
 # --- Outils internes ---
 .code-review-graph/
+.playwright-mcp/
 
 # --- Quarkdown build output (HTML/PDF/slides genere depuis les .qd) ---
 quarkdown/output/

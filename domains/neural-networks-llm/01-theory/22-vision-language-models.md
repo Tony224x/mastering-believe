@@ -368,3 +368,13 @@ Aussi pour preserver les capacites. Si on fine-tune trop le LLM dans LLaVA, on d
 - Alayrac et al. (2022) — *Flamingo: a Visual Language Model for Few-Shot Learning*. https://arxiv.org/abs/2204.14198
 - Adept (2023) — *Fuyu-8B: A Multimodal Architecture for AI Agents*. https://www.adept.ai/blog/fuyu-8b
 - Li et al. (2023) — *BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models*. https://arxiv.org/abs/2301.12597
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS231N — Lec. 16 (Vision and Language)** — fondamentaux ViT, CLIP, captioning.
+- **CMU 11-711 (Welleck) — Lec. 20 (Multimodal Modeling I), Lec. 22 (Multimodal Modeling II)** — VLM modernes (LLaVA, Flamingo, Fuyu, fusion native) en 2025.

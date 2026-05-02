@@ -331,3 +331,13 @@ Ces exercices te forcent a **penser comme un builder** : refactorer un systeme r
 - Canary tokens dans les system prompts pour detecter les leaks
 - Le systeme doit etre modulaire : on peut remplacer un agent sans casser les autres
 - Tu es capable de shipper un agent en prod — ce n'est plus un exercice, c'est le niveau senior
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours production qui informent un capstone realiste.
+- **Berkeley CS294-196 (Fa25) — Lec. 8 (Training Agentic Models, Weizhu Chen)** — vue Microsoft sur l'entrainement et l'evaluation d'agents complets.

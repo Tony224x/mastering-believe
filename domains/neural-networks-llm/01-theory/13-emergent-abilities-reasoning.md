@@ -543,3 +543,14 @@ Cout : une reponse o3 high-compute peut couter **plusieurs milliers de dollars**
 **Relation avec CoT** : c'est du CoT systematique et massif, internalise, combine avec verification et parfois search. Recette R1 : base model + SFT court + GRPO + RLVR a grande echelle.
 
 </details>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-280 — Lec. 11 (Learning to Reason — Weston), Lec. 12 (Inference-Time Techniques — Chen)** — vision research la plus actuelle sur reasoning.
+- **Berkeley CS294-196 (Fa24) — Lec. 12 (LLM Reasoning — Denny Zhou)** — CoT et reasoning par le lead Google DeepMind.
+- **CME295 — Lec. 6 (LLM Reasoning)** — synthese pedagogique des techniques de raisonnement.

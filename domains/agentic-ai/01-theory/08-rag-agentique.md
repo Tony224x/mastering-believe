@@ -508,3 +508,13 @@ LLM answer generation
 - Les chunks doivent faire 300-800 tokens avec overlap de 50-100 tokens
 - Metadata filtering avant similarity search = performance + pertinence
 - Budget strict sur les appels LLM pour eviter l'explosion du cout
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **CMU 11-711 (Neubig, Fa24) — Lec. 10 (Retrieval and RAG)** — fondations academiques du RAG, dense vs sparse, evaluation.
+- **Berkeley CS294-196 (Fa24) — Lec. 8 (Compound AI & DSPy, Khattab)** — pipelines de retrieval optimisables et auto-tunes.

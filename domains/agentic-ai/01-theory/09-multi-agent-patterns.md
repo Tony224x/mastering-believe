@@ -560,3 +560,13 @@ Tu construis un nouvel agent :
 - Pieges principaux : boucles infinies (swarm), explosion du cout, perte de contexte entre agents, style incoherent en sortie
 - Budget strict sur les appels LLM et les iterations — le multi-agent amplifie les couts
 - LangGraph pour apprendre en profondeur, CrewAI/Agents SDK pour aller vite en prod
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-196 (Fa25) — Lec. 3 (Multi-Agent Systems in Era of LLMs, Vinyals)** — vue DeepMind sur les systemes multi-agents.
+- **Berkeley CS294-196 (Fa25) — Lec. 7 (Multi-Agent AI, Noam Brown)** — perspective game theory et coordination par l'auteur de Cicero/Pluribus.

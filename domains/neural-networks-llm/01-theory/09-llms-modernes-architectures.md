@@ -635,3 +635,14 @@ Utilise par : DeepSeek V2, V3, R1. C'est une des innovations architecturales maj
 **Intuition** : Mamba excelle pour compresser le passe ancien (resume), l'attention excelle pour rappeler exactement un token precis (retrieval). Les hybrides combinent les deux forces.
 
 </details>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS336 — Lec. 3 (Architectures), Lec. 4 (MoE)** — variantes modernes (LLaMA, GQA, RoPE, MoE) en detail.
+- **CMU 11-711 (Neubig) — Lec. 14 (Ensembling & MoE)** — tour d'horizon des architectures sparses.
+- **CMU 11-711 (Welleck) — Lec. 6 (Pretraining)** — choix d'architecture vu sous l'angle pretraining 2025.

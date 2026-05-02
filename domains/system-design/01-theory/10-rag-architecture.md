@@ -336,3 +336,13 @@ R: Recall@k (la bonne reponse est-elle dans les top-k ?) et MRR (1/position_du_p
 - Reranker cross-encoder = 15-30% de gain gratuit. A toujours tester.
 - Le chunking est la decision la plus sous-estimee. Investis du temps dessus.
 - Toujours citer les sources. Toujours creer un gold set d'evaluation des le debut.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **CMU 11-711 (Neubig) Fa24 — Lec. 10 (Retrieval and RAG)** — fondations academiques du RAG, retrieval dense vs sparse, evaluation.
+- **Berkeley CS294-196 Fa24 — Lec. 8 (Compound AI & DSPy — Khattab)** — RAG comme systeme compose, optimisation programmatique des pipelines.

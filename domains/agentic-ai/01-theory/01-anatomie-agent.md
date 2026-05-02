@@ -345,3 +345,14 @@ Apres beaucoup d'etapes, le contexte deborde.
 - 4 composants : LLM (cerveau), Tools (bras), Memory (memoire), Planning (strategie)
 - La majorite des cas d'usage ne necessitent PAS un agent — utiliser le decision framework
 - Toujours mettre des guardrails : max iterations, budget, timeout, sandbox
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-196 (Fa24) — Lec. 11 (LLM Agents: History & Overview, Shunyu Yao)** — vue d'ensemble fondatrice par l'auteur de ReAct.
+- **CMU 11-711 (Welleck, Sp25) — Lec. 13 (Agents)** — perspective NLP 2025 sur l'anatomie d'un agent.
+- **CME295 — Lec. 7 (Agentic LLMs)** — synthese compacte des composants d'un agent.

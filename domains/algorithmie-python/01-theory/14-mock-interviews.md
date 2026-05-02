@@ -295,3 +295,15 @@ Pas besoin de maitriser la distribuee, mais savoir "comment tu pivotes" est ce q
 4. **Le time management est critique** : 45 min, c'est court
 5. **Les pieges** : commencer a coder trop tot, coder en silence, s'entete, ignorer les hints
 6. **Apres 2 semaines de theorie et d'exos**, seul l'entrainement en conditions reelles te fera passer le cap
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques pour les mock interviews :
+
+- **Cracking the Coding Interview** (Gayle Laakmann McDowell, 6th ed) — la bible : methodologie complete (les 7 etapes, BUDS), 189 problemes corriges classes par theme, conseils sur la negociation et le comportemental. Indispensable. https://www.crackingthecodinginterview.com/
+- **Elements of Programming Interviews in Python** (Aziz, Lee, Prakash) — alternative plus dense, 250+ problemes en Python avec une rigueur algorithmique superieure a CTCI. Parfait pour le second pass.
+- **NeetCode — All-time roadmap + NeetCode 150** (Navi, ex-Google) — pratique chronometree avec videos de solution. La plateforme integre un mode "interview simulation". https://neetcode.io/roadmap
+- **LeetCode — Top Interview 150** — liste curatee directement par LeetCode des 150 problemes les plus frequents en entretien (FAANG, scale-ups). https://leetcode.com/studyplan/top-interview-150/
+- **Pramp / interviewing.io** — plateformes de mock interviews peer-to-peer ou avec senior engineers anonymes. Indispensables pour s'habituer a parler en codant.

@@ -258,3 +258,13 @@ La majorite des equipes **sautent l'etape 3** et vont directement a distiller. R
 
 **Q6** — Quels sont les 3 principaux pieges de la distillation ?
 > (1) Data contamination (ton eval est dans le teacher), (2) mode collapse (perte de diversite), (3) forgetting (ecrase les capacites generales si pas de data mix).
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **MIT 6.5940 — Lec. 9 (Knowledge Distillation)** — fondations theoriques distillation et soft targets.
+- **CMU 11-711 (Neubig) — Lec. 11 (Distillation, Quantization, Pruning)** — distillation moderne pour LLM/SLM.

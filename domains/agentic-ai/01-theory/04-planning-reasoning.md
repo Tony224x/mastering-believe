@@ -504,3 +504,15 @@ Le planning n'est pas toujours beneficiaire. Il peut :
 - Reflexion : auto-critique en loop, utile SI le critere est fiable (idealement externe)
 - Task decomposition : chaque sous-tache doit etre verifiable, concrete, et composable
 - Pas de planning pour les taches courtes — overhead inutile
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-196 (Fa24) — Lec. 12 (LLM Reasoning, Denny Zhou)** — vue Google DeepMind sur le reasoning, CoT et self-consistency.
+- **Berkeley CS294-280 (Sp25) — Lec. 11 (Learning to Reason, Weston)** — comment on apprend le reasoning aux modeles.
+- **Berkeley CS294-280 (Sp25) — Lec. 12 (Inference-Time Techniques, Chen)** — techniques au moment de l'inference (ToT, search, reflexion).
+- **CME295 — Lec. 6 (LLM Reasoning)** — synthese compacte des patterns de raisonnement.

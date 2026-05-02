@@ -485,3 +485,14 @@ def reverse(head):
 5. **Merge** = dummy head + tail pointer + `or` pour attacher le reste
 6. **Floyd's algorithm** = detection de cycle en O(n) temps, O(1) espace
 7. **Eviter les listes en production, mais les maitriser en entretien** — c'est un test de rigueur sur les pointeurs
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur les listes chainees :
+
+- **NeetCode — Linked List roadmap** — 11 problemes phares (Reverse, Merge Two Sorted, Reorder, Detect Cycle, LRU Cache) avec videos qui mettent en scene les pointeurs. https://neetcode.io/roadmap
+- **Cracking the Coding Interview** (Gayle Laakmann McDowell, 6th ed) — Ch 2 : 8 problemes types entretien sur les linked lists avec discussion fast/slow runner et dummy node. https://www.crackingthecodinginterview.com/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 10.2 : implementation rigoureuse des doubly linked lists avec sentinelles, base pour comprendre OrderedDict / LRU. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **MIT 6.006 — Introduction to Algorithms** (Erik Demaine, MIT OCW Spring 2020) — Lec. 2 (Data Structures, Dynamic Arrays) : compare arrays vs linked lists en amortise. https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/

@@ -552,3 +552,15 @@ On fige `W` (pas de gradient) et on entraine seulement `A` et `B`.
 Le resultat final : ChatGPT (2022), les premiers Claude et GPT-4 (2023). DPO a remplace cette pipeline dans beaucoup de cas des 2023, et en 2025 c'est GRPO + RLVR qui domine pour les modeles reasoning (o1, R1).
 
 </details>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS329H — toute la serie** — RLHF, DPO et apprentissage par preferences, cours dedie.
+- **Stanford CS336 — Lec. 15-17 (Alignment SFT/RLHF/RL)** — pipeline alignment de bout en bout.
+- **CMU 11-711 (Welleck, Sp25) — Lec. 9 (Fine-tuning), Lec. 10 (RL), Lec. 19 (Advanced Post-Training)** — couverture moderne SFT + RL + post-training avance.
+- **Harvard CS 2881R — Lec. 2 (Modern LLM training & safety training)** — focus safety training d'un point de vue 2025.

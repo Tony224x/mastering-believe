@@ -470,3 +470,14 @@ sorted(arr, key=cmp_to_key(lambda a, b: -1 if a < b else 1 if a > b else 0))
 6. **Rotated search** : au moins une moitie est triee a chaque step
 7. **Staircase search** sur matrice 2D : O(m+n), partir d'un coin strategique
 8. **Binary search on answer** : pattern meta pour optimisation (Koko, ship capacity)
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur tri et recherche :
+
+- **MIT 6.006 — Introduction to Algorithms** (Erik Demaine & Srini Devadas, MIT OCW Spring 2020) — Lec. 3-7 couvrent insertion sort, merge sort, heap sort, quicksort et linear-time sorts (counting, radix). Derivation pedagogique de chaque borne. https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 6-9 : la reference complete sur sorting (heap sort, quicksort, lower bounds Omega(n log n), counting/radix/bucket). https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **Princeton Algorithms Part 1** (Sedgewick & Wayne, Coursera, gratuit) — Weeks 3-5 (Mergesort, Quicksort, Priority Queues) : visualisations exceptionnelles + analyse empirique. https://www.coursera.org/learn/algorithms-part1
+- **NeetCode — Binary Search roadmap** — 7 problemes phares (Search Rotated, Find Min, Koko, Median of Two Sorted Arrays) couvrant les 4 variantes du binary search. https://neetcode.io/roadmap

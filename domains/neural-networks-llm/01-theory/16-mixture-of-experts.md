@@ -335,3 +335,13 @@ Faux. Les modeles edge/on-device (Phi-4, Gemma 3, les variantes 3B-8B) restent *
 - Jiang et al. / Mistral AI (2024) — *Mixtral of Experts*. https://arxiv.org/abs/2401.04088
 - DeepSeek-AI (2024) — *DeepSeekMoE: Towards Ultimate Expert Specialization*. https://arxiv.org/abs/2401.06066
 - DeepSeek-AI (2024) — *DeepSeek-V3 Technical Report*. https://arxiv.org/abs/2412.19437
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS336 — Lec. 4 (Mixture of Experts)** — derivation complete du routing, load balancing, training MoE.
+- **CMU 11-711 (Neubig) — Lec. 14 (Ensembling & Mixture of Experts)** — perspective NLP sur les architectures sparses.

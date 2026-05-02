@@ -300,3 +300,15 @@ R: Latence (p50/p99), tokens in/out, cost per request, fallback rate, cache hit 
 - Drift detection avec PSI / KL est cheap et devrait tourner en continu.
 - A/B tests : definir la metrique primary AVANT, attendre 2-4 semaines, surveiller les guardrails.
 - CI/CD : ton modele doit etre une unite de deploiement comme du code. Feature flags + canary = standard.
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **Google SRE Book** (Beyer et al., O'Reilly, libre en ligne) — Ch 4 (SLOs), Ch 6 (Monitoring Distributed Systems), Ch 10 (Practical Alerting). La doctrine fondatrice de l'observability moderne. https://sre.google/sre-book/table-of-contents/
+- **The Site Reliability Workbook** (Beyer et al., O'Reilly, libre en ligne) — chapitres pratiques sur SLO engineering, alerting on SLOs, postmortems, eliminating toil. Le complement applique du SRE Book. https://sre.google/workbook/table-of-contents/
+- **Designing Machine Learning Systems** (Chip Huyen, O'Reilly 2022) — Ch 8 (Data Distribution Shifts and Monitoring), Ch 9 (Continual Learning), Ch 10 (Infrastructure and Tooling) couvrent drift, canary, shadow deployment, feature stores. https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/
+- **OpenTelemetry Documentation** (CNCF, officiel) — standard vendor-neutral pour traces/metrics/logs adopte par 90+ vendors. Concepts, instrumentation, collector, semantic conventions. https://opentelemetry.io/docs/
+- **dmls-book companion** (Chip Huyen, GitHub) — resumes, slides, references curees du livre Designing Machine Learning Systems. https://github.com/chiphuyen/dmls-book

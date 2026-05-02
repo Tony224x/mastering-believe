@@ -287,3 +287,13 @@ R: Quand le domaine est homogene, le contexte court, la latence critique et que 
 - Le supervisor pattern est le multi-agent le plus utilise. Hierarchical pour les workflows complexes seulement.
 - Memoire : short-term dans le contexte avec summarization, long-term dans un store externe (vector + relational).
 - Observability est non negociable. Les agents sans tracing = impossibilite de debugger = projet mort.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Berkeley CS294-196 Fa25 — Lec. 10 (Evolution of System Designs — Yangqing Jia)** — retour d'experience sur l'evolution des architectures de systemes IA en production.
+- **Berkeley CS294-196 Fa25 — Lec. 4 (Practical Lessons from Deploying — Bavor / Sierra)** — lecons concretes du deploiement d'agents en prod chez Sierra.

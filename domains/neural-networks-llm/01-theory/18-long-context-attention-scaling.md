@@ -324,3 +324,13 @@ Les chiffres "contexte effectif" ci-dessous sont des **estimations communautaire
 - Liu, Zaharia, Abbeel (2023) — *Ring Attention with Blockwise Transformers*. https://arxiv.org/abs/2310.01889
 - Beltagy, Peters, Cohan (2020) — *Longformer: The Long-Document Transformer*. https://arxiv.org/abs/2004.05150
 - Liu et al. (2023) — *Lost in the Middle: How Language Models Use Long Contexts*. https://arxiv.org/abs/2307.03172
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **CMU 11-711 (Neubig) — Lec. 13 (Long Sequence Models), Lec. 23 (MagicPIG & Factor — Long Context)** — etat de l'art pre/post 2024 sur le long contexte.
+- **CMU 11-711 (Welleck) — Lec. 16 (Long-Context Models)** — techniques 2025 (RoPE scaling, sliding window, attention sinks).

@@ -268,3 +268,15 @@ R: Queue depth + p99 latency. Jamais le CPU seul. GPU utilization > 80% soutenu 
 - KV cache est la ressource critique des LLMs. Toute optimisation memoire (int8 KV, sharing) paye double.
 - Quantization n'est plus optionnelle : int8 est quasi gratuit, int4 est le standard pour les open-source en prod.
 - Autoscaling : metrics = queue depth + p99 latency. Cold start est l'anomalie principal.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **MIT 6.5940 — Lec. 12 (Transformer & LLM)** — pivot pour comprendre les couts d'inference d'un LLM (KV cache, attention).
+- **Stanford CS336 — Lec. 10 (Inference)** — perspective build-from-scratch sur l'inference, batching, paged attention.
+- **CMU 11-711 (Welleck) Sp25 — Lec. 17 (Advanced Inference Strategies)** — speculative decoding, beam search, sampling avance.
+- **CMU 11-711 (Welleck) Sp25 — Lec. 18 (Efficient Inference)** — quantization, distillation, optimisations memoire.

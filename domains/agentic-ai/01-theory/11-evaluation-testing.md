@@ -409,3 +409,15 @@ Plusieurs frameworks dedies a l'evaluation LLM/agent ont emerge en 2024-2025 et 
 - Pipeline d'eval type : tests unitaires (dev) -> regression (CI) -> eval etendue (nightly) -> monitoring (prod)
 - Outils : pytest + LLM-as-judge pour commencer, Langfuse/LangSmith/Braintrust pour la prod
 - Commence petit : 20-50 cas de test suffisent pour attraper 80% des regressions
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **CME295 — Lec. 8 (LLM Evaluation)** — vue d'ensemble compacte des methodes d'eval.
+- **Berkeley CS294-196 (Fa25) — Lec. 6 (Predictable Noise in LLM Benchmarks, Sida Wang)** — comprendre la variance des benchmarks pour eviter les conclusions hatives.
+- **CMU 11-711 (Welleck, Sp25) — Lec. 11 (Benchmarking and Evaluation), Lec. 12 (Experimental Design)** — methodologie rigoureuse d'evaluation.
+- **CMU 11-711 (Neubig, Fa24) — Lec. 17 (Evaluation and Multimodal)** — eval automatique et metriques modernes.

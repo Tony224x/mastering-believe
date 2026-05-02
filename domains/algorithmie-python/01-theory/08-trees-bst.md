@@ -454,3 +454,14 @@ Comme pour les dicts, ne pas muter l'arbre pendant qu'on le parcourt.
 5. **LCA** : recursion simple retournant root, left, ou right selon la position
 6. **Serialize** : pre-order avec markers `#` pour les None
 7. **Complexites** : O(n) temps pour tout parcours complet, O(h) espace recursion
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur les arbres et BST :
+
+- **MIT 6.006 — Introduction to Algorithms** (Erik Demaine, MIT OCW Spring 2020) — Lec. 5-7 (Binary Trees, BST, AVL) : derivation pedagogique des invariants BST et de l'auto-balancement. https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 12 (Binary Search Trees) et Ch 13 (Red-Black Trees) : l'analyse formelle complete avec preuves de hauteur O(log n). https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **NeetCode — Trees roadmap** — 15 problemes phares (Invert, Max Depth, Same Tree, Subtree, LCA, Validate BST, Serialize) avec template recursif Python. https://neetcode.io/roadmap
+- **Princeton Algorithms Part 1** (Sedgewick & Wayne, Coursera, gratuit) — Week 5 (Balanced Search Trees) : 2-3 trees + red-black BSTs avec visualisations. https://www.coursera.org/learn/algorithms-part1

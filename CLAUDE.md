@@ -89,6 +89,7 @@ When creating content for a domain:
 | System Design | `domains/system-design/` | Diagrammes + Python/infra | Architecture backend & IA, entretiens senior |
 | Neural Networks & LLMs | `domains/neural-networks-llm/` | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
 | Agentic AI | `domains/agentic-ai/` | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
+| Robotics & AI | `domains/robotics-ai/` | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies), capstone Diffusion Policy 28j |
 
 **Projets guides (contexte logistique automatisee)** : chaque domaine a un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
 

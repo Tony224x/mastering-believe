@@ -799,3 +799,14 @@ asyncio.run(main())
 - Les outils echouent — retourne des erreurs actionnables, pas des crashes
 - Securite : least privilege, input validation, output sanitization, human-in-the-loop pour les actions destructives
 - Parallel tool calls = gain de latence, mais attention au rate limiting des APIs externes
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **CMU 11-711 (Neubig, Fa24) — Lec. 15 (Tool Use and LLM Agent Basics)** — fondations academiques du function calling.
+- **Berkeley CS294-196 (Fa24) — Lec. 7 (Agents for Software Development, Neubig)** — tool use applique au code.
+- **Berkeley CS294-196 (Fa24) — Lec. 8 (Compound AI & DSPy, Khattab)** — composer des outils dans des pipelines optimisables.

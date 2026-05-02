@@ -477,5 +477,14 @@ Les scaling laws classiques supposent des tokens de qualite egale. En pratique :
 **Le pipeline gagnant** : filtrage agressif (garder 10% du crawl) + dedup + curriculum (qualite croissante) + synthetic data.
 
 </details>
-</content>
-</invoke>
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS336 — Lec. 1 (Tokenization), Lec. 13-14 (Data)** — pipeline pretraining bout-en-bout, focus tokenizer + qualite data.
+- **CMU 11-711 (Neubig) — Lec. 5 (Pre-training)** — vision NLP du pretraining, objectifs et data.
+- **CMU 11-711 (Welleck) — Lec. 6 (Pretraining)** — perspective 2025, scaling et data curation modernes.

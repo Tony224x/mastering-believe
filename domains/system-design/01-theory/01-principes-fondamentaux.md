@@ -314,3 +314,14 @@ En entretien, on te demande : "Combien de serveurs pour supporter 1M d'utilisate
 **Q** : Pourquoi eventual consistency est-elle plus performante que strong consistency ?
 
 **R** : En eventual consistency, une ecriture est confirmee des qu'UN seul noeud l'a enregistree (pas besoin d'attendre la replication). Les lectures ne bloquent pas pour verifier la version. Resultat : latence d'ecriture et de lecture beaucoup plus faibles, mais les donnees peuvent etre temporairement incoherentes entre noeuds.
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **MIT 6.824 — Distributed Systems** (Robert Morris, MIT) — cours de reference sur les systemes distribues. Lecture 1 (Introduction) pose CAP, fault tolerance, consistency. Playlist Spring 2020 sur YouTube. https://www.youtube.com/playlist?list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB
+- **Designing Data-Intensive Applications** (Martin Kleppmann, O'Reilly 2017) — Ch 1 (Reliable, Scalable, Maintainable) et Ch 2 (Data Models) sont la fondation incontournable. https://dataintensive.net/
+- **Google SRE Book** (Beyer et al., O'Reilly, libre en ligne) — Ch 3 "Embracing Risk" et Ch 4 "Service Level Objectives" pour quantifier disponibilite et latence. https://sre.google/sre-book/table-of-contents/
+- **System Design Interview Vol 1** (Alex Xu, ByteByteGo 2020) — Ch 1 "Scale from zero to millions of users" parcourt scaling vertical/horizontal/replication etape par etape. https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF

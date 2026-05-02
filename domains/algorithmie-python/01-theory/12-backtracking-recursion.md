@@ -440,3 +440,14 @@ La condition `if i > 0 and nums[i] == nums[i-1] and not used[i-1]` est subtile. 
 6. **N-queens** : sets pour cols + diag1 + diag2 (check O(1))
 7. **Word search** : marque avec `"#"` et restaure
 8. **Pruning = performance** : plus on coupe tot, moins on explore
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le backtracking :
+
+- **NeetCode — Backtracking roadmap** — 9 problemes phares (Subsets, Combinations, Permutations, Combination Sum, Word Search, Palindrome Partitioning, N-Queens) avec template universel "choose / explore / unchoose". https://neetcode.io/roadmap
+- **The Algorithm Design Manual** (Skiena, 3rd ed 2020) — Ch 7 (Backtracking) : la presentation la plus pedagogique avec generation systematique de subsets, permutations, combinations + war story sur pruning. https://www.algorist.com/
+- **Cracking the Coding Interview** (Gayle Laakmann McDowell, 6th ed) — Ch 8 (Recursion and Dynamic Programming) : 12 problemes types entretien dont Permutations, Power Set, N-Queens. https://www.crackingthecodinginterview.com/
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 34 (NP-Completeness) explique pourquoi le backtracking est souvent la meilleure option pratique pour les problemes NP-hard. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/

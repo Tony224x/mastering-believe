@@ -622,3 +622,14 @@ d.get('missing', 0)  # → 0 (methode safe)
 4. **Trade space for time** : la quasi-totalite des optimisations avec hash map ajoutent O(n) espace
 5. **Decision rapide** : anagramme/frequence → Counter, grouper → defaultdict(list), paire → dict lookup, doublon → set
 6. **Pieges** : cles immutables uniquement, ne pas modifier pendant l'iteration, defaultdict cree les cles
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur les hash tables :
+
+- **CLRS — Introduction to Algorithms** (4th ed, MIT Press 2022) — Ch 11 (Hash Tables) : fonctions de hachage, collision resolution, analyse amortie de l'open addressing. La theorie complete. https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
+- **NeetCode — Arrays & Hashing roadmap** — la majorite des problemes "hash map" entretien sont dans cette section, avec template Python (Counter, defaultdict). https://neetcode.io/roadmap
+- **MIT 6.006 — Introduction to Algorithms** (Erik Demaine, MIT OCW Spring 2020) — Lec. 8-10 (Hashing, Open Addressing, Cryptographic Hashing) : derivation pedagogique du O(1) amorti. https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/
+- **The Algorithm Design Manual** (Skiena, 3rd ed 2020) — Ch 3 : compromis entre BST et hash table avec exemples reels.

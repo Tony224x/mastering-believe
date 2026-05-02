@@ -678,3 +678,14 @@ Pendant l'entrainement, chaque neurone est desactive avec probabilite p (mis a z
 On divise par (1-p) = **inverted dropout** : si on desactive 50% des neurones, la somme des activations est 2x plus petite. En divisant par 0.5, on restaure la magnitude attendue. Ainsi, pendant l'inference, on n'a rien a modifier — le modele fonctionne tel quel.
 
 </details>
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant MLP, regularisation et optimisation (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Stanford CS230 — Lec. 3 (Full Cycle of a DL project)** — Adam, batch norm, dropout en contexte projet.
+- **Stanford CS231N — Lec. 3 (Regularization & Optimization)** — couverture exhaustive optims modernes.
+- **MIT 6.S191 — Lecture "Introduction to Deep Learning"** (édition récente) — vue compacte regularisation.
+

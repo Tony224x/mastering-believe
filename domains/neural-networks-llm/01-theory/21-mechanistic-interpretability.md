@@ -300,3 +300,12 @@ Etat de l'art honnete :
 - Gao, L. et al. (OpenAI, 2024) — *Scaling and Evaluating Sparse Autoencoders*. https://arxiv.org/abs/2406.04093
 - Belrose et al. (2023) — *Eliciting Latent Predictions from Transformers with the Tuned Lens*. https://arxiv.org/abs/2303.08112
 - Ghandeharioun et al. (2024) — *Patchscopes: A Unifying Framework for Inspecting Hidden Representations of Language Models*. https://arxiv.org/abs/2401.06102
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **Harvard CS 2881R — Lec. 10 (Mechanistic Interpretability)** — la conference dediee mech interp dans le cours AI safety de Harvard.

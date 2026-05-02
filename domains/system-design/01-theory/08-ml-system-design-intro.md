@@ -252,3 +252,13 @@ R: Les artifacts (poids), les metadata (metriques, dataset, hyperparams), le lin
 - Batch vs real-time = choix structurant. Commence toujours par batch si possible.
 - Shadow deployment avant canary avant A/B test. Ne jamais deployer directement en prod.
 - Un bon systeme ML retraine automatiquement. Le monitoring doit declencher le retraining.
+
+
+---
+
+## Pour aller plus loin
+
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+
+- **MIT 6.5940 — Lec. 1 (Introduction)** — vue d'ensemble du cycle de vie d'un systeme ML en production.
+- **MIT 6.5940 — Lec. 2 (Basics of Neural Networks)** — pre-requis si tu veux comprendre ce qui tourne dans la box "model" du systeme.

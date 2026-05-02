@@ -364,3 +364,14 @@ Shopify utilise des sagas pour orchestrer un checkout : valider le panier, calcu
 6. **Event sourcing** donne un audit trail complet mais au prix d'une complexite forte. A reserver aux domaines ou l'historique est valeur metier.
 7. **Saga** = transactions distribuees sans 2PC. Commencer en choreographed, passer en orchestrated des que ca depasse 4-5 etapes.
 8. **En entretien** : propose une queue des que tu vois un traitement long, multiple destinataires, ou un besoin de resilience.
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **Designing Data-Intensive Applications** (Martin Kleppmann, O'Reilly 2017) — Ch 11 (Stream Processing) traite log-based queues, exactly-once, change data capture ; Ch 12 (The Future of Data Systems) introduit l'event sourcing. https://dataintensive.net/
+- **Kafka: The Definitive Guide v2** (Narkhede, Shapira, Palino, O'Reilly via Confluent, gratuit) — manuel de reference Kafka : producers, consumers, replication, exactly-once, stream processing. https://www.confluent.io/resources/kafka-the-definitive-guide-v2/
+- **Confluent Documentation** (Confluent, officiel) — patterns operationnels Kafka (consumer groups, transactions, schema registry, Kafka Streams) avec exemples concrets. https://docs.confluent.io/platform/current/overview.html
+- **MIT 6.824 — Distributed Systems** (Robert Morris, MIT) — Lectures 7-9 (Raft, Zookeeper) eclairent les fondations distribuees derriere Kafka et les coordinateurs de queues. https://www.youtube.com/playlist?list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB

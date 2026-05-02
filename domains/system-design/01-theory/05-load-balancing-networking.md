@@ -360,3 +360,15 @@ Une architecture AWS typique : Route53 (DNS) -> NLB (L4, TLS passthrough, throug
 6. **Circuit breaker** empeche les cascades de pannes. Chaque appel a un service externe doit etre protege par un breaker.
 7. **Exponential backoff + jitter** pour les retries. Sans jitter, tu crees un thundering herd.
 8. **En entretien** : parler de healthchecks, de drain mode (retrait gracieux d'un backend), de TLS termination, et de session affinity si c'est pertinent.
+
+---
+
+## Pour aller plus loin
+
+Ressources canoniques sur le sujet :
+
+- **System Design Interview Vol 1** (Alex Xu, ByteByteGo 2020) — Ch 5 (Design consistent hashing) et Ch 6 (Design key-value store) explicitent ring hashing et virtual nodes utilises dans les LB stateful. https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
+- **Designing Data-Intensive Applications** (Martin Kleppmann, O'Reilly 2017) — Ch 8 (Trouble with Distributed Systems) couvre timeouts, network partitions, retries, jitter — le coeur du networking distribue. https://dataintensive.net/
+- **nginx Documentation** (nginx, officiel) — modules `ngx_http_upstream`, `ngx_stream_upstream` documentent algorithmes (round-robin, least_conn, ip_hash) et healthchecks reels. https://nginx.org/en/docs/
+- **HAProxy Documentation** (HAProxy, officiel) — Configuration Manual : algorithmes de balance, sticky sessions, layer 4/7, retries, circuit breakers. https://docs.haproxy.org/
+- **Google SRE Book** (Beyer et al.) — Ch 19 (Load Balancing at the Frontend) et Ch 20 (Load Balancing in the Datacenter) decrivent l'architecture LB Google a grande echelle. https://sre.google/sre-book/load-balancing-frontend/
