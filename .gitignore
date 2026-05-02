@@ -69,6 +69,10 @@ tasks/lessons/
 # --- Outils internes ---
 .code-review-graph/
 
+# --- Ressources externes & outils internes prives ---
+references/
+.private-tools/
+
 # --- IDE / editeurs ---
 .vscode/
 .idea/
