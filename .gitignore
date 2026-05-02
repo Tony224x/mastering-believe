@@ -69,6 +69,11 @@ tasks/lessons/
 # --- Outils internes ---
 .code-review-graph/
 
+# --- Quarkdown build output (HTML/PDF/slides genere depuis les .qd) ---
+quarkdown/output/
+quarkdown/output-site/
+quarkdown/.cache/
+
 # --- Ressources externes & outils internes prives ---
 references/
 .private-tools/

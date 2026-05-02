@@ -25,9 +25,13 @@ mastering-believe/
 ├── domains/
 │   └── <domain-name>/       # One folder per mastery domain
 │       ├── README.md        # Domain overview, learning path, time budget
-│       ├── 01-theory/       # Numbered theory modules (Markdown)
+│       ├── 01-theory/       # Numbered theory modules (Markdown, source-of-truth)
 │       │   ├── 01-fundamentals.md
 │       │   ├── 02-intermediate.md
+│       │   └── ...
+│       ├── 01-theory-qd/    # Site Quarkdown enrichi (optionnel, 1 par domaine)
+│       │   ├── main.qd      # Index avec sidebar nav
+│       │   ├── 01-fundamentals.qd
 │       │   └── ...
 │       ├── 02-code/         # Runnable commented examples matching theory
 │       │   ├── 01-fundamentals/
