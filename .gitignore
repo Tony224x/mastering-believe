@@ -66,6 +66,10 @@ tasks/todo.md
 tasks/lessons.md
 tasks/lessons/
 
+# --- Specs / plans internes (process Kalira, references KaView, paths machine) ---
+docs/superpowers/
+docs/plans/
+
 # --- Outils internes ---
 .code-review-graph/
 

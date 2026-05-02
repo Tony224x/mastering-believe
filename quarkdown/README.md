@@ -50,8 +50,19 @@ https://github.com/iamgio/quarkdown/releases et le wrapper soi-meme.
 ## Build
 
 Toutes les commandes sont a lancer depuis la racine du repo. Le
-wrapper `build-all.ps1` configure JAVA_HOME et PATH automatiquement,
-applique le post-process des liens, et gere le mode watch.
+wrapper `build-all.ps1` applique le post-process des liens et gere
+le mode watch. Il assume que `java` et `quarkdown` sont dans le
+PATH (cas par defaut apres `scoop install`).
+
+> **Overrides locaux optionnels** si l'install n'est pas dans le
+> PATH (ex. JDK ou Quarkdown bin custom) :
+>
+> ```powershell
+> $env:QUARKDOWN_JAVA_HOME = "C:\path\to\jdk-21"
+> $env:QUARKDOWN_BIN_DIR   = "C:\path\to\quarkdown\bin"
+> ```
+>
+> Le wrapper les detecte et les ajoute au PATH pour l'invocation.
 
 ```powershell
 # Build de tous les domaines qui ont un 01-theory-qd/
@@ -69,6 +80,84 @@ Output : `quarkdown/output-site/<domain>/` par domaine. Gitignored.
 > **Note** : un domaine sans `01-theory-qd/` est silencieusement
 > ignore. Pour scaffolder un nouveau domaine, voir la section
 > suivante.
+
+## Lire les sites compiles (apres build)
+
+Apres un build, les sites vivent dans
+`quarkdown/output-site/<domain>/Mastering-Believe-<Titre-Du-Domaine>/`.
+Il y a 3 facons de les ouvrir, par ordre de simplicite :
+
+### 1. Ouverture directe `file://` (le plus simple)
+
+Le post-process `post-build-fix-links.py` (auto-applique par
+`build-all.ps1`) reecrit les liens en `<chap>/index.html` explicites,
+ce qui rend le bundle portable hors serveur HTTP. Donc :
+
+```powershell
+# Ouvre le site agentic-ai dans le navigateur par defaut
+start quarkdown/output-site/agentic-ai/Mastering-Believe-Systemes-IA-Agentiques/index.html
+```
+
+Marche en `file://`, en double-clic, dans WKWebView (KaView). Seule
+limitation : la **search bar globale** de Quarkdown (en haut) peut
+necessiter un serveur HTTP pour charger `search-index.json` selon le
+navigateur (politique CORS sur `file://`).
+
+### 2. Live preview avec auto-reload (en cours d'enrichissement)
+
+Pour iterer sur un chapitre, le mode watch rebuild + reload le
+navigateur a chaque sauvegarde du `.qd` :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File `
+  quarkdown/scripts/build-all.ps1 -Domain agentic-ai -Watch
+```
+
+Quarkdown sert le site sur `http://localhost:8089` (port par defaut)
+et ouvre le browser. Ctrl+C pour arreter.
+
+### 3. Serveur HTTP local (search bar 100% fonctionnelle)
+
+Si on veut juste re-lire un build deja fait (sans watch) avec la
+search bar globale qui marche partout :
+
+```powershell
+cd quarkdown/output-site/agentic-ai/Mastering-Believe-Systemes-IA-Agentiques
+python -m http.server 8765
+# puis ouvrir http://localhost:8765/
+```
+
+### 4. Embarquer le bundle dans une app native (iOS / Android)
+
+Les bundles produits sont **portables** : grace au post-process,
+les liens inter-chapitres pointent en `<chap>/index.html` explicite,
+ce qui les rend chargeables dans une `WebView` native via
+`file://` (sans serveur HTTP embarque).
+
+Workflow type :
+
+1. Builder le domaine : `build-all.ps1 -Domain <domain>`.
+2. Zipper le dossier `output-site/<domain>/Mastering-...` produit.
+3. Embarquer le zip dans les `Resources/` de l'app, le dezipper au
+   premier lancement dans un dossier writable (ex.
+   `Application Support/courses/<domain>/`).
+4. Charger `index.html` dans la WebView en pointant le 2eme argument
+   d'autorisation de lecture sur la **racine du bundle** (sinon
+   CSS/JS/sous-pages refusent silencieusement de charger).
+
+Pour automatiser : un workflow GitHub Actions sur tag `v*` qui build
+tous les domaines + zip + upload comme asset de GitHub Release est
+l'approche standard. L'app fetch alors
+`releases/latest/download/<domain>-bundle.tar.gz` et cache localement
+(ETag pour eviter les re-DL inutiles). Avantage : maj des cours sans
+passer par les stores.
+
+**Limitation connue** : la search bar globale Quarkdown ne marche pas
+en `file://` a cause de la politique CORS sur `search-index.json`.
+Sidebar + prev/next + nav inter-chapitres fonctionnent normalement.
+Pour la search, soit demarrer un mini-serveur HTTP local dans l'app
+(overkill), soit exposer l'index dans une UI native qui parse
+`search-index.json` directement.
 
 ## Scaffolder un nouveau domaine
 

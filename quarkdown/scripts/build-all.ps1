@@ -46,13 +46,17 @@ $DomainsDir = Join-Path $RepoRoot "domains"
 $OutputBase = Join-Path $RepoRoot "quarkdown\output-site"
 $PostBuildScript = Join-Path $RepoRoot "quarkdown\post-build-fix-links.py"
 
-# Configuration JAVA_HOME et PATH si non set
-if (-not $env:JAVA_HOME -or -not (Test-Path $env:JAVA_HOME)) {
-    $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.11.10-hotspot"
+# Configuration JAVA_HOME et PATH si overrides locaux disponibles
+# Override par variables d'env :
+#   $env:QUARKDOWN_JAVA_HOME = "C:\path\to\jdk"
+#   $env:QUARKDOWN_BIN_DIR   = "C:\path\to\quarkdown\bin"
+# Sinon on assume que `java` et `quarkdown` sont deja dans le PATH.
+if ($env:QUARKDOWN_JAVA_HOME -and (Test-Path $env:QUARKDOWN_JAVA_HOME)) {
+    $env:JAVA_HOME = $env:QUARKDOWN_JAVA_HOME
+    $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 }
-$QuarkdownBin = "C:\Users\antho\.tools\quarkdown\bin"
-if (Test-Path $QuarkdownBin) {
-    $env:Path = "$env:JAVA_HOME\bin;$QuarkdownBin;$env:Path"
+if ($env:QUARKDOWN_BIN_DIR -and (Test-Path $env:QUARKDOWN_BIN_DIR)) {
+    $env:Path = "$env:QUARKDOWN_BIN_DIR;$env:Path"
 }
 
 # Validation Watch + Domain
