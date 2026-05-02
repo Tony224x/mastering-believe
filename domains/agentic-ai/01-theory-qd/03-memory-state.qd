@@ -1,0 +1,24 @@
+.doctype {docs}
+.docname {Memory & State}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Anatomie d'un Agent IA](01-anatomie-agent.qd)
+        - [2. Tool Use & Function Calling](02-tool-use-function-calling.qd)
+        - [3. Memory & State](03-memory-state.qd)
+
+# 3. Memory & State
+
+> **Statut** : page placeholder.
+
+## A venir
+
+- Short-term memory (context window)
+- Working memory (scratchpad)
+- Long-term memory (RAG, vector stores)
+- Episodic memory (MemGPT-style)
+
+.box type:{note}
+    Cette page demontre le 3e nœud de la sidebar du doctype `docs`.

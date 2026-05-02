@@ -1,0 +1,696 @@
+.doctype {docs}
+.docname {J1 — Anatomie d'un Agent IA}
+.docauthor {mastering-believe}
+.doclang {fr}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Anatomie d'un Agent IA](01-anatomie-agent.qd)
+        - [2. Tool Use & Function Calling](02-tool-use-function-calling.qd)
+        - [3. Memory & State](03-memory-state.qd)
+
+# J1 — Anatomie d'un Agent IA
+
+.box type:{note}
+    **Temps estime** : 3h · **Prerequis** : appels API LLM, Python async basique
+
+    **Objectif** : comprendre ce qu'est reellement un agent IA, quand
+    l'utiliser, et maitriser la boucle ReAct from scratch.
+
+---
+
+## 1. Qu'est-ce qu'un agent IA ? Definition precise
+
+Un agent IA n'est **pas** un chatbot avec des plugins. C'est un systeme qui :
+
+1. **Recoit un objectif** (pas juste une question)
+2. **Decide de maniere autonome** quelles actions effectuer
+3. **Execute ces actions** dans un environnement (APIs, fichiers, BDD...)
+4. **Observe les resultats** et adapte sa strategie
+5. **Itere** jusqu'a ce que l'objectif soit atteint ou qu'il abandonne
+
+.box type:{tip}
+    **Definition operationnelle** : un agent est un LLM qui controle son
+    propre flux d'execution. Il choisit quand appeler des outils,
+    lesquels, dans quel ordre, et quand s'arreter.
+
+La difference fondamentale avec un pipeline classique : **le LLM est dans
+la boucle de controle**, pas juste un noeud dans un DAG predetermine.
+
+.mermaid caption:{Pipeline vs Agent — flux de controle}
+    flowchart LR
+        subgraph Pipeline["Pipeline classique (chemin fixe)"]
+            P1[Input] --> P2[Etape 1] --> P3[Etape 2] --> P4[Etape 3] --> P5[Output]
+        end
+        subgraph Agent["Agent (chemin dynamique)"]
+            A1[Input] --> A2{LLM decide}
+            A2 --> A3[Action] --> A4[Observation] --> A2
+            A2 --> A5[Output]
+        end
+
+---
+
+## 2. Agent vs Chatbot vs Pipeline — les 3 niveaux
+
+| Critere | Pipeline | Chatbot | Agent |
+|---------|----------|---------|-------|
+| **Flux de controle** | Predetermine (DAG fixe) | Tour par tour, humain guide | Autonome, LLM decide |
+| **Outils** | Codes en dur dans le pipeline | Aucun ou pre-routes | Selection dynamique |
+| **Boucle** | Lineaire, une passe | Request-response | Iteratif jusqu'a completion |
+| **Memoire** | Pas de memoire inter-etapes | Historique de conversation | Working memory + long-term |
+| **Quand utiliser** | Tache deterministe, toujours le meme chemin | Q&A, assistance conversationnelle | Tache ouverte, multi-etapes, decouverte |
+| **Cout** | Bas, predictible | Moyen | Eleve, variable |
+| **Risque** | Quasi nul | Faible | Hallucination, boucles infinies, tool misuse |
+| **Exemple** | ETL, summarization pipeline | ChatGPT vanilla | Devin, Claude Code, AutoGPT |
+
+.box title:{Lecon pratique} type:{warning}
+    La plupart des cas d'usage en entreprise **ne necessitent pas** un
+    agent. Un bon pipeline RAG avec du prompt engineering solide couvre
+    80% des besoins. L'agent intervient quand :
+
+    - Le nombre d'etapes est **inconnu a l'avance**
+    - Les outils necessaires **dependent des resultats intermediaires**
+    - La tache requiert de la **decouverte** (chercher, essayer, corriger)
+
+---
+
+## 3. La boucle fondamentale : Perceive → Think → Act
+
+Tout agent, qu'il soit un robot physique ou un systeme LLM, suit la
+meme boucle :
+
+.mermaid caption:{Boucle fondamentale d'un agent}
+    flowchart TD
+        Start([Goal]) --> Perceive
+        Perceive[PERCEIVE<br/>observations, resultats outils, contexte]
+        Think[THINK<br/>raisonnement, planification]
+        Act[ACT<br/>appel d'outil ou reponse finale]
+        Done([Done])
+        Perceive --> Think --> Act
+        Act -- nouvelle observation --> Perceive
+        Act -- objectif atteint --> Done
+
+**Pourquoi c'est la cle de tout** : chaque framework d'agents
+(LangGraph, CrewAI, AutoGen, Anthropic Agent SDK) est une
+implementation de cette boucle. Si tu comprends cette boucle, tu peux :
+
+- Debugger n'importe quel agent en identifiant **ou** dans la boucle ca deraille
+- Construire un agent from scratch sans framework
+- Migrer un agent d'un framework a un autre
+
+### Les 3 points de defaillance
+
+| Phase | Symptome | Cause typique |
+|-------|----------|---------------|
+| Perceive | L'agent ignore une observation importante | Trop de contexte, info noyee dans le bruit |
+| Think | L'agent prend une mauvaise decision | Prompt faible, manque de few-shot, modele trop petit |
+| Act | L'agent appelle le mauvais outil ou avec les mauvais params | Schema d'outil ambigu, descriptions floues |
+
+---
+
+## 4. Le pattern ReAct : Reasoning + Acting
+
+**ReAct** (Yao et al., 2022) est le pattern fondateur des agents LLM
+modernes. L'idee est simple mais puissante : forcer le LLM a
+**raisonner avant d'agir**, et a **raisonner sur les observations**
+apres chaque action.
+
+### Format d'une trace ReAct
+
+```text
+Question: Quel est le PIB par habitant de la France en 2024,
+          et comment se compare-t-il a l'Allemagne ?
+
+Thought 1: Je dois trouver le PIB par habitant de la France en 2024.
+Action 1:  search("PIB par habitant France 2024")
+Observation 1: ~44 400 USD (FMI).
+
+Thought 2: Maintenant celui de l'Allemagne pour comparer.
+Action 2:  search("PIB par habitant Allemagne 2024")
+Observation 2: ~52 800 USD (FMI).
+
+Thought 3: Ecart d'environ $\frac{52800 - 44400}{52800} \approx 16\%$.
+Action 3:  finish("La France est inferieure de ~16% a l'Allemagne.")
+```
+
+### Pourquoi ca marche
+
+1. **Trace de raisonnement explicite** → le LLM "montre son travail", plus facile a debugger
+2. **Grounding par les observations** → chaque pensee est ancree dans des faits reels
+3. **Decomposition naturelle** → le LLM decompose un probleme complexe en sous-etapes
+4. **Self-correction** → si une observation contredit l'hypothese, le LLM peut changer de strategie
+
+### Implementation concrete
+
+```python
+# Pseudo-code de la boucle ReAct
+while True:
+    response = llm(prompt + history)        # Think
+    action = parse_action(response)         # Extract action
+    if action.name == "finish":
+        return action.input                 # Done
+    observation = execute_tool(action)      # Act
+    history.append(action, observation)     # Perceive (feed back)
+```
+
+.box title:{Opinion} type:{tip}
+    ReAct est au coeur de 90% des agents en production. Meme les
+    architectures complexes (plan-and-execute, reflexion) sont des
+    variations de ReAct. Maitrise ce pattern, et tout le reste n'est
+    que de la specialisation.
+
+---
+
+## 5. Les 4 composants d'un agent
+
+### 5.1 LLM — Le cerveau
+
+Le LLM est le moteur de raisonnement de l'agent. A chaque tour de
+boucle, il recoit l'integralite du contexte (system prompt + outils
+disponibles + historique des actions et observations) et produit la
+prochaine decision : quel outil appeler, avec quels parametres, ou
+"finish" si la tache est terminee. **Tout repose sur sa capacite a
+choisir correctement** — un mauvais LLM rend l'agent inutile, peu
+importe la qualite du reste.
+
+**Les 4 dimensions a evaluer pour choisir un LLM d'agent** :
+
+- **Function calling natif** : capacite du modele a generer des
+  appels d'outils structures (JSON conformes au schema) sans
+  hallucination. Claude 4.x (Opus/Sonnet/Haiku), GPT-5.x, Gemini 2.x
+  excellent. Les modeles open-source <14B sont en general
+  insuffisants — ils inventent des champs ou cassent le JSON.
+  Verifier sur les benchs **Berkeley Function Calling Leaderboard**
+  (BFCL) et **Tau-Bench**.
+
+- **Taille de contexte** : limite haute du nombre de tokens que le
+  modele peut tenir en memoire en un appel. Claude Opus 4.x = 200k,
+  Claude Sonnet 4.6 = 1M, GPT-5.x = 400k. Plus c'est grand, plus
+  l'agent peut accumuler d'historique sans summarization. **Mais
+  attention au "lost in the middle"** : meme avec 1M de contexte, les
+  infos placees au milieu du prompt sont moins bien rappelees que
+  celles au debut/fin (papier Liu et al. 2023). Mettre les
+  informations critiques en debut de system prompt ou en fin de
+  conversation.
+
+- **Cout** : un agent peut faire 5 a 50+ appels LLM par tache, chacun
+  avec un contexte qui grandit. Le cout total devient vite domine par
+  ce facteur. Tarifs typiques 2026 : Haiku 4.5 ~ $0.80/Mtok input,
+  Sonnet 4.6 ~ $3, Opus 4.x ~ $15. **Un agent qui fait 30 appels
+  Opus a $15/Mtok coute 10x plus qu'avec Sonnet a $3/Mtok pour la
+  meme tache** — souvent sans gain de qualite mesurable. Tester
+  systematiquement le modele moins cher d'abord, monter en gamme
+  uniquement si la metric d'evaluation chute.
+
+- **Latence** : chaque appel LLM = 1 a 5 secondes (parfois plus pour
+  les gros modeles avec long contexte). Une tache a 20 etapes = 20 a
+  100s d'attente. Le **streaming** ameliore l'UX percue (l'utilisateur
+  voit le LLM "reflechir") mais ne reduit pas la latence totale. Pour
+  reduire vraiment : modele plus petit pour le routing, parallelisation
+  des outils independants (avec `asyncio` cote serveur), ou agent
+  asynchrone qui notifie via webhook quand termine.
+
+.box title:{Heuristique de choix} type:{tip}
+    Commence avec **Sonnet 4.6** (sweet spot capacite/cout/contexte).
+    Down-grade vers Haiku 4.5 si la tache est routiniere et que les
+    evals tiennent. Up-grade vers Opus 4.x uniquement pour le
+    raisonnement complexe (planning multi-etapes, refactor large
+    codebase) ou si tu vois des erreurs de raisonnement
+    systematiques.
+
+### 5.2 Tools — Les bras
+
+Les outils sont l'**interface entre le LLM et le monde reel**. Sans
+outils, un agent est juste un chatbot : il peut raisonner mais rien
+faire. Chaque outil expose au LLM 4 elements :
+
+- Un **nom** : identifiant que le LLM produira dans son appel
+  (`search_web`, `read_file`, `send_email`)
+- Une **description** : texte en langage naturel qui dit au LLM
+  **quand** et **pourquoi** utiliser cet outil. C'est le levier le
+  plus sous-estime — une bonne description divise par 5 les erreurs
+  de selection d'outil.
+- Un **schema de parametres** (JSON Schema) : definit les inputs
+  attendus avec types, contraintes (`required`, `enum`, `pattern`),
+  defaults. Le LLM s'en sert pour generer un appel conforme.
+- Une **fonction d'execution** : le code Python (ou autre) qui prend
+  les params parses, fait le travail reel, retourne un resultat
+  serialise (string, JSON) que le LLM voit comme observation.
+
+```python
+tools = [
+    {
+        "name": "search_web",
+        "description": (
+            "Search the web for CURRENT information you don't know. "
+            "Use when the user asks about recent events, prices, or "
+            "specific entities (people, companies, products). "
+            "Do NOT use for general knowledge or coding questions — "
+            "the LLM already knows those. "
+            "Example: search_web(query='euro exchange rate today')"
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Concise search query, 3-8 words ideal",
+                    "minLength": 3,
+                    "maxLength": 200
+                }
+            },
+            "required": ["query"]
+        }
+    }
+]
+```
+
+.box title:{Les 5 regles de design d'outils (retex production)} type:{callout}
+    1. **Noms explicites et verbaux** : `search_web` > `search` > `s`.
+       Privilegier verbe + objet (`read_file`, `create_issue`).
+       Eviter les acronymes internes (`ldap_q` est illisible pour le
+       LLM).
+    2. **Descriptions qui disent QUAND utiliser** : le LLM voit la
+       description **avant** de choisir. Inclure : but, conditions
+       d'usage (quand l'utiliser), conditions de **non-usage** (quand
+       NE PAS l'utiliser, c'est crucial), un exemple d'appel.
+    3. **Peu d'outils — 3 a 7 max** : c'est le sweet spot mesure
+       empiriquement. Au-dela, le LLM melange les noms et choisit le
+       mauvais. Si tu as 20 outils, **regroupe par domaine** (ex.
+       `file_ops`, `git_ops`, `web_ops`) avec un router en amont.
+    4. **Schemas stricts avec validation** : utiliser `required`,
+       `enum` pour les valeurs limitees, `pattern` (regex) pour les
+       formats (UUID, email). Retourner une erreur claire au LLM s'il
+       passe un parametre invalide ("Error: 'status' must be one of
+       [open, closed, draft], got 'pending'") — il corrige au tour
+       suivant.
+    5. **Idempotents si possible** : un meme appel doit donner le
+       meme resultat. Indispensable pour le retry, le cache, le test.
+       Pour les outils non-idempotents (envoi mail, paiement), exiger
+       un `idempotency_key` explicite genere par l'agent.
+
+### 5.3 Memory — La memoire
+
+La memoire d'un agent n'est **pas un bloc unique**. Elle se decompose
+en 4 couches selon la duree de vie et le mecanisme de stockage. Bien
+les distinguer evite les confusions de design (ex. essayer de tout
+mettre en RAG alors qu'un scratchpad suffit).
+
+| Type | Duree | Implementation | Usage typique |
+|------|-------|----------------|---------------|
+| **Short-term** | Pendant l'execution | Messages dans le prompt | Historique des appels d'outils + observations du tour en cours |
+| **Working memory** | Pendant une tache | Scratchpad (fichier, variables) | Notes intermediaires : plan, hypotheses, faits decouverts |
+| **Long-term** | Persistant | Vector store, BDD | Connaissances passees, preferences utilisateur, exemples de taches reussies |
+| **Episodic** | Persistant | Logs structures avec timestamps | "La derniere fois que j'ai fait X, j'ai appris que..." — apprentissage par experience |
+
+**Comment les 4 interagissent en pratique** :
+
+- La **short-term memory** est le context window LLM lui-meme. Tout y
+  passe : system prompt, outils, historique. C'est gratuit (pas
+  d'infra) mais limite (200k-1M tokens) et **ephemere** : tout
+  disparait a la fin de la session. **80% des agents en production
+  n'utilisent que ca.**
+
+- La **working memory** (scratchpad) est une astuce simple mais
+  puissante : donner a l'agent un outil `write_note(content)` et
+  `read_notes()`. Il y consigne ses decouvertes intermediaires. Sortie
+  du prompt, donc gratuit en tokens, persistant pendant la tache.
+  Pattern utilise dans **Claude Code** (TODO list interne) et **Devin**.
+
+- La **long-term memory** typiquement implementee en RAG : on chunk
+  les sources, on embed, on stocke dans Pinecone/Qdrant/pgvector. A
+  chaque tache, l'agent retrieve les top-k chunks pertinents.
+  **Utile mais complexe** : il faut gerer chunking, retrieval quality,
+  re-ranking, deduplication. Surinvesti dans les POC, sous-investi
+  dans les details qui font la qualite (chunking notamment).
+
+- La **memoire episodique** est le graal : l'agent **apprend de ses
+  erreurs passees** sans re-entrainement. Implementations actuelles :
+  **MemGPT** (Packer et al. 2023, hierarchie de memoire avec pagination),
+  **A-MEM** (Atomic Memory, plus recent), **Letta** (commercial).
+  Encore experimental — peu d'agents en production l'utilisent
+  serieusement, le ROI est difficile a mesurer.
+
+.box title:{Heuristique de demarrage} type:{tip}
+    Commence avec **uniquement la short-term memory**. Ajoute un
+    **scratchpad** des que l'agent oublie ses propres decouvertes.
+    Ajoute du **RAG** seulement si tu as un vrai corpus de
+    connaissances stable (docs produit, base juridique). Ignore la
+    memoire episodique tant que tu n'as pas un cas d'usage clair —
+    c'est de la sur-ingenierie pour 95% des projets.
+
+### 5.4 Planning — La strategie
+
+Le planning, c'est la capacite de l'agent a **decomposer un objectif
+en sous-etapes avant d'agir**, plutot que de reagir uniquement au
+prochain stimulus. C'est la difference entre "je vais d'abord lister
+les fichiers, puis identifier ceux qui matchent X, puis les modifier"
+et "je fais ce qui me semble logique au coup par coup".
+
+**Les 3 niveaux de planning** (du plus simple au plus puissant) :
+
+1. **Aucun planning explicite (ReAct pur)** : l'agent decide etape
+   par etape, sans plan global. Le LLM choisit le prochain outil en
+   regardant uniquement l'historique recent. Fonctionne pour les
+   taches **courtes** (<10 etapes) et **bien definies** ("recupere
+   le PIB de la France"). Avantage : simple, rapide, peu de tokens.
+   Limite : sur les taches longues, l'agent perd le fil et tourne
+   en rond.
+
+2. **Plan-then-execute** : l'agent cree d'abord un plan complet
+   (liste ordonnee de sous-objectifs), puis l'execute etape par
+   etape. **Pattern** : un premier appel LLM avec prompt "decompose
+   cet objectif en 3-7 sous-taches sequentielles", puis une boucle
+   ReAct sur chaque sous-tache. Meilleure coherence sur les taches
+   complexes ("analyse ce repo et propose 3 refactors prioritaires"),
+   mais le plan peut devenir obsolete si l'execution revele des
+   surprises (fichier introuvable, API down). **Frameworks** :
+   LangGraph `plan-and-execute`, AutoGPT.
+
+3. **Adaptive planning (re-planning dynamique)** : plan initial +
+   execution + re-evaluation reguliere du plan. Apres chaque etape
+   (ou tous les N), l'agent se demande "mon plan est-il toujours
+   valide ?" et ajuste si necessaire. **Le plus robuste mais le plus
+   couteux** : multiplie les appels LLM par 2-3x vs ReAct pur.
+   Pattern utilise par **Claude Code** (TodoWrite avec mises a jour
+   inline) et **Devin** (timeline visible en UI). Indispensable pour
+   les taches >20 etapes ou les environnements changeants.
+
+| Niveau | Quand utiliser | Cout relatif | Robustesse |
+|--------|----------------|--------------|------------|
+| ReAct pur | Taches courtes (<10 etapes), bien definies | 1x | Faible sur taches longues |
+| Plan-then-execute | Taches moyennes (10-20 etapes), env stable | 1.5x | Moyenne |
+| Adaptive | Taches longues (>20 etapes), env incertain | 2-3x | Forte |
+
+.box title:{Opinion — l'erreur classique} type:{tip}
+    **Commence sans planning explicite** (ReAct pur). C'est tentant
+    d'ajouter du planning par defaut "pour que ce soit plus
+    intelligent", mais ca **cache souvent un probleme de prompt**
+    plus profond. Si ton agent ReAct se perd a 5 etapes, le
+    coupable est rarement l'absence de plan — c'est plus souvent un
+    system prompt vague, des outils mal decrits, ou trop d'outils.
+    Fixe ces causes racines d'abord. **N'ajoute du planning explicite
+    que quand tu peux montrer une trace concrete d'un agent qui
+    aurait benefice d'un plan.**
+
+---
+
+## 6. Taxonomie des agents
+
+Cette taxonomie vient de la litterature classique en IA (Russell &
+Norvig, *AI: A Modern Approach*) et reste d'actualite pour categoriser
+les agents LLM. Comprendre ces 3 archetypes aide a choisir la bonne
+architecture pour un cas d'usage donne — et a parler le meme langage
+quand on lit un papier ou qu'on discute design.
+
+### 6.1 Agent reactif
+
+L'agent reactif **reagit a chaque observation sans plan global**.
+Pas de modele mental persistant, pas d'anticipation : il regarde la
+derniere observation et decide la prochaine action. C'est l'agent
+ReAct pur dans sa forme la plus stricte.
+
+- **Architecture** : boucle Perceive → Think → Act, sans memoire
+  inter-tache, sans scratchpad.
+- **Force** : simple a implementer (~50 lignes Python), rapide
+  (peu d'overhead), comportement previsible et facile a debugger.
+- **Faiblesse** : se perd dans les taches longues (>10 etapes), oublie
+  les decouvertes precoces, peut tourner en boucle sur des taches
+  ambigues.
+- **Quand choisir** : Q&A enrichi (search + answer), extraction de
+  donnees structurees, transformations en 1-5 etapes deterministes.
+- **Exemple concret** : un assistant qui repond aux questions support
+  client en interrogeant la knowledge base puis formulant la reponse.
+
+### 6.2 Agent deliberatif
+
+L'agent deliberatif **construit un plan explicite avant d'agir** et
+maintient un modele mental de la tache. Il anticipe les etapes,
+identifie les dependances, peut evaluer plusieurs strategies avant
+d'en choisir une.
+
+- **Architecture** : phase de planning (1-2 appels LLM dedies) qui
+  produit un plan structure (liste ordonnee, DAG, ou arbre), puis
+  phase d'execution qui suit le plan etape par etape.
+- **Force** : meilleure coherence sur les taches longues, capacite a
+  identifier les sous-problemes en parallele, traceabilite (le plan
+  est explicite, donc auditable).
+- **Faiblesse** : phase de planning couteuse en tokens et en latence,
+  le plan peut devenir obsolete si l'execution revele des surprises
+  non anticipees, complexite de re-planning si on l'ajoute.
+- **Quand choisir** : taches complexes en environnement stable
+  (specifications precises, outils fiables) — ex. generation de
+  rapport multi-sections, audit de codebase selon une grille fixe.
+- **Exemple concret** : un agent "ecris-moi un livre blanc sur X" qui
+  produit d'abord un plan en sections, puis remplit chaque section.
+
+### 6.3 Agent hybride
+
+L'agent hybride **combine planning de haut niveau et execution reactive
+locale**, avec **re-planification adaptative** quand l'environnement
+change. C'est l'architecture dominante des agents en production en 2026
+parce qu'elle reunit le meilleur des deux mondes : la coherence du
+plan, la flexibilite de la reaction.
+
+- **Architecture** : planning initial leger (3-7 sous-objectifs),
+  chaque sous-objectif execute de facon reactive (mini-boucle ReAct),
+  re-evaluation du plan tous les N etapes ou sur evenement
+  declencheur (echec d'outil, decouverte majeure).
+- **Force** : robuste face aux imprevus, adapte aux taches longues
+  (>20 etapes), permet le human-in-the-loop sur le plan global tout
+  en gardant l'autonomie sur l'execution.
+- **Faiblesse** : plus complexe a implementer (gestion d'etat,
+  triggers de re-planning), debug plus difficile (le comportement
+  depend de l'etat global), cout 2-3x un agent reactif pur.
+- **Quand choisir** : **presque toujours en production serieuse**,
+  des que la tache depasse 10 etapes ou que l'environnement n'est
+  pas garanti stable.
+- **Exemples concrets** : **Claude Code** (planning via TodoWrite +
+  execution avec replanning au besoin), **Devin** (timeline avec
+  steps modifiables), **Cognition Wintermute**.
+
+---
+
+## 7. Decision framework : Agent vs Simple prompt
+
+.mermaid caption:{Arbre de decision : ai-je vraiment besoin d'un agent ?}
+    flowchart TD
+        Q1{Actions reelles<br/>API/fichiers/BDD ?}
+        Q1 -- NON --> R1[Simple prompt / pipeline]
+        Q1 -- OUI --> Q2
+        Q2{Nombre d'etapes<br/>connu a l'avance ?}
+        Q2 -- OUI --> R2[Pipeline deterministe]
+        Q2 -- NON --> Q3
+        Q3{Decouverte<br/>necessaire ?<br/><i>chercher, essayer, corriger</i>}
+        Q3 -- NON --> R3[Chain LLM + tools fixes]
+        Q3 -- OUI --> R4([AGENT])
+        style R4 fill:#d4edda,stroke:#28a745
+
+| Tache | Solution | Pourquoi |
+|-------|----------|----------|
+| Resumer un document | Simple prompt | Une passe, pas d'outil |
+| Extraire des donnees d'un PDF | Pipeline | Etapes fixes : parse → extract → format |
+| Q&A avec recherche web | Chain (1 outil) | search → answer, toujours 2 etapes |
+| "Investigue ce bug et propose un fix" | **Agent** | Etapes inconnues, decouverte, iteration |
+| "Analyse ce repo et cree une PR" | **Agent** | Exploration, decisions multiples |
+| "Planifie mon voyage a Tokyo" | **Agent** | Multi-outils, preferences, iteration |
+
+.box title:{Regle d'or} type:{warning}
+    Si tu peux ecrire un `for` loop qui fait le job, tu n'as pas besoin
+    d'un agent. L'agent n'a de sens que quand le LLM doit prendre des
+    **decisions de routing** a chaque etape.
+
+---
+
+## 8. Limites actuelles des agents
+
+### 8.1 Hallucination d'outils
+
+Le LLM invente des outils qui n'existent pas (`search_database` au
+lieu de `query_db`), passe des parametres avec le mauvais nom
+(`q` au lieu de `query`), ou invente des valeurs plausibles mais
+fausses (`user_id: "12345"` quand il ne l'a jamais vu). Risque
+particulierement eleve avec les petits modeles (<7B) et les schemas
+flous.
+
+**Mitigation — 4 leviers complementaires** :
+
+- **Schema strict + validation a l'execution** : utiliser JSON Schema
+  avec `required`, `enum`, `pattern` (regex) pour les inputs.
+  Rejeter et renvoyer l'erreur au LLM au lieu d'executer un appel
+  invalide. Pydantic, Zod, ou les schemas natifs de l'API tool-use
+  d'Anthropic / OpenAI font ce travail.
+- **Limiter le nombre d'outils a 3-7 max** : au-dela, le LLM melange
+  les noms et choisit le mauvais. Si tu as 20 outils, regroupe-les
+  par domaine et fais une 1re etape "router" qui choisit le sous-set
+  pertinent.
+- **Descriptions explicites avec exemples** : pas juste "search the
+  web" mais "search the web for current factual information you
+  don't already know. Use when the user asks about recent events,
+  prices, or specific entities. Example: search_web(query='euro
+  exchange rate today')". Le LLM apprend par les exemples.
+- **Retry avec feedback d'erreur** : si l'appel echoue, renvoyer le
+  message d'erreur au LLM dans le prochain tour ("Error: parameter
+  'query' is required"). Le LLM corrige typiquement au 2e essai.
+  Limiter a 2-3 retries pour eviter les boucles.
+
+### 8.2 Boucles infinies
+
+L'agent repete la meme action sans fin (re-search la meme query, re-list
+le meme dossier), ou alterne entre 2 etats ("ouvre fichier A → echec →
+ouvre fichier B → echec → ouvre fichier A → ..."). Cause typique : le
+LLM n'integre pas les observations dans son raisonnement, ou la tache
+est mal specifiee et impossible.
+
+**Mitigation — defense en profondeur** :
+
+- **Max iterations (hard limit)** : compteur incremental, arret a
+  10-30 selon la complexite attendue. **Toujours** poser cette borne,
+  meme en POC. Sans elle, un bug peut couter 50€ en quelques minutes.
+  En production, logger l'event "max_iters_reached" pour identifier
+  les taches systematiquement bloquees.
+- **Detection de repetition (soft signal)** : si les N dernieres
+  actions ont les memes `(name, params)` (typiquement N=3), forcer un
+  arret ou injecter un message "tu repetes la meme action, essaie
+  autre chose". Hash sur la signature de l'appel pour comparer.
+- **Timeout global (wall-clock)** : independant du nombre d'iters.
+  Une seule etape peut bloquer (outil web qui hang). Mettre par ex.
+  120s max par tache, avec un signal d'arret propre qui sauvegarde
+  l'etat partiel.
+- **Budget tokens** : safety net financier — par ex. "max 100k tokens
+  cumules". Si depasse, arret immediat. C'est la **derniere ligne de
+  defense** quand iters et timeout n'ont pas suffi.
+
+### 8.3 Explosion de couts
+
+Un agent peut faire 50+ appels LLM, chacun avec un contexte qui
+**grandit a chaque etape** — donc le cout par appel grandit lui aussi.
+Resultat : le cout total croit **super-lineairement** avec le nombre
+d'etapes (n etapes ne coutent pas n × cout-de-base, mais bien plus).
+Exemple concret : un agent code-review qui scan 50 fichiers peut passer
+de 0.10€ (debut) a 5€ (fin) par appel, soit ~80€ pour la tache si on
+laisse filer.
+
+**Mitigation — par ordre d'efficacite** :
+
+- **Budget tokens hard cap** : plafond par execution (ex. 200k tokens
+  ou 5€). Au-dela, arret. Premiere mesure a poser, **avant tout le
+  reste** — c'est ton airbag.
+- **Modele adaptatif (cascading)** : petit modele rapide pour les
+  decisions simples (Haiku, GPT-5.4-mini), gros modele pour le
+  raisonnement complexe (Opus, GPT-5.4). Un router simple fait gagner
+  60-80% du cout. Pattern : "small model decides, big model executes
+  when needed".
+- **Summarization de l'historique** : tous les N tours (typiquement
+  N=10), remplacer les anciens messages par un resume condense
+  ("Etapes 1-10 : a explore le repo, identifie 3 fichiers cles X/Y/Z,
+  decouvert un bug dans Y ligne 42"). Garde la trace utile, divise le
+  cout par 5-10.
+- **Caching de prompt** (Anthropic, OpenAI) : si ton system prompt et
+  tes outils sont stables (>1024 tokens), le cache reduit le cout des
+  tokens repetes de **90%**. Activer systematiquement en production.
+- **Early exit** : si la reponse est evidente apres 2-3 etapes, ne
+  pas forcer l'agent a continuer. Detecter via une heuristique
+  ("confidence > 0.9") ou une sortie structuree dediee.
+
+### 8.4 Tool misuse
+
+L'agent utilise un outil a mauvais escient : supprimer un fichier au
+lieu de le lire (`delete` vs `read`), envoyer un mail de prod au lieu
+de test, lancer une migration BDD sur la mauvaise base. Risque maximal
+quand les outils sont read+write melanges et les noms ambigus.
+
+**Mitigation — principe du moindre privilege** :
+
+- **Sandbox d'execution** : isoler les outils dans un environnement
+  restreint. Ex. : container Docker en read-only sauf un workspace
+  /tmp dedie ; service account avec permissions minimales sur les
+  APIs externes. **L'agent ne peut casser que ce qu'on lui a permis
+  de toucher.**
+- **Human-in-the-loop sur actions destructives** : pour tout outil
+  qui supprime, envoie, paye, deploie — exiger une confirmation
+  humaine explicite. Pattern : retourner un "preview" de l'action,
+  attendre approbation, executer. Coute en latence mais previent les
+  catastrophes irreversibles.
+- **Dry-run mode** : tout outil destructeur expose un flag
+  `dry_run=true` qui montre ce qui serait fait sans le faire.
+  Standard en pre-prod ou pendant les tests d'agent.
+- **Outils read-only par defaut, write explicitement autorise** :
+  l'agent a 10 outils read et 2 outils write. Les write necessitent
+  un toggle `allow_writes=true` au niveau de la config de l'agent —
+  pas une decision du LLM.
+- **Audit log structure** : logger chaque appel d'outil
+  (timestamp, agent_id, tool_name, params, result, user_id) pour
+  pouvoir tracer/auditer en cas d'incident. Indispensable en
+  production reglementee (sante, finance).
+
+### 8.5 Context window overflow
+
+Apres beaucoup d'etapes, l'historique cumule (messages, observations,
+sorties d'outils) depasse la taille du context window du modele
+(200k pour Claude Opus 4.x, 1M pour Sonnet 4.6). Symptomes : erreurs
+API "context_length_exceeded", ou pire — pas d'erreur mais le modele
+"oublie" le debut (perte silencieuse d'info critique).
+
+**Mitigation — strategies par ordre de preference** :
+
+- **Summarization rolling** : declencher des qu'on atteint 60-70% du
+  context max. Resumer les K plus anciens messages en un seul, garder
+  les M derniers tels quels. Pattern courant : `summarize_if_above_threshold(messages, max=120k, keep_last=20)`.
+- **Sliding window strict** : ne garder que les N derniers messages,
+  jeter le reste sans resumer. Plus simple, mais perd de l'info.
+  Convient aux taches sans memoire longue (Q&A simple).
+- **Working memory externe (scratchpad)** : extraire les faits cles
+  dans un store hors-prompt (fichier JSON, BDD vectorielle). L'agent
+  y ecrit ses notes intermediaires et y lit a la demande. Le prompt
+  reste compact, la memoire devient illimitee.
+- **Compression structuree** : pour les outils qui retournent
+  beaucoup (ex. resultat de search web = 10 KB), compresser cote
+  outil avant de feed l'agent ("retourne juste les 3 meilleurs
+  snippets, pas la page entiere"). Souvent **plus efficace que
+  d'optimiser le prompt downstream**.
+- **Choisir un modele a context plus large** : derniere option, car
+  cher et masque le probleme sans le resoudre — l'agent qui sature
+  200k saturera 1M dans 5x plus d'etapes.
+
+---
+
+## 9. Flash Cards — Test de comprehension
+
+.box title:{Q1 — Agent vs pipeline ?} type:{callout}
+    **R** : dans un pipeline, le flux est predetermine (DAG fixe). Dans
+    un agent, le LLM controle le flux d'execution — il decide
+    dynamiquement quelles actions effectuer et quand s'arreter.
+
+.box title:{Q2 — Les 3 phases de la boucle d'un agent ?} type:{callout}
+    **R** : Perceive (observer le resultat), Think (raisonner, decider),
+    Act (executer une action ou repondre). L'agent boucle jusqu'a completion.
+
+.box title:{Q3 — Pourquoi ReAct force un Thought avant chaque Action ?} type:{callout}
+    **R** : pour ancrer le raisonnement dans les observations, faciliter
+    le debugging (trace explicite), et permettre la self-correction si
+    une observation contredit l'hypothese.
+
+.box title:{Q4 — Extraction de factures PDF + insert BDD : agent ou pipeline ?} type:{callout}
+    **R** : pipeline. Etapes fixes (parse PDF → extraire champs →
+    valider → inserer BDD), pas de decouverte ni de decision dynamique.
+    Un agent serait du over-engineering.
+
+.box title:{Q5 — 3 mitigations contre les boucles infinies ?} type:{callout}
+    **R** : (1) max iterations (hard limit), (2) detection de repetition
+    (3 actions identiques = stop), (3) timeout global. Bonus : budget
+    tokens comme safety net.
+
+---
+
+## Points cles a retenir
+
+.box title:{TL;DR} type:{note}
+    - Un agent = LLM dans la boucle de controle (flux dynamique, pas un DAG fixe)
+    - La boucle Perceive → Think → Act est universelle — tout framework l'implemente
+    - ReAct est le pattern fondateur : raisonner avant d'agir, observer apres
+    - 4 composants : LLM (cerveau), Tools (bras), Memory (memoire), Planning (strategie)
+    - La majorite des cas d'usage ne necessitent PAS un agent — utiliser le decision framework
+    - Toujours mettre des guardrails : max iterations, budget, timeout, sandbox

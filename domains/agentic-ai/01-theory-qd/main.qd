@@ -1,0 +1,30 @@
+.doctype {docs}
+.docname {Mastering Believe — Agentic AI}
+.docauthor {mastering-believe}
+.doclang {fr}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Anatomie d'un Agent IA](01-anatomie-agent.qd)
+        - [2. Tool Use & Function Calling](02-tool-use-function-calling.qd)
+        - [3. Memory & State](03-memory-state.qd)
+
+# Mastering Believe — Agentic AI
+
+Cours communautaire d'apprentissage accelere des agents IA — theorie,
+code applique, exercices progressifs.
+
+## Plan du module
+
+1. [Anatomie d'un Agent IA](01-anatomie-agent.qd) — definition, boucle ReAct, 4 composants, taxonomie, decision framework
+2. [Tool Use & Function Calling](02-tool-use-function-calling.qd) — schema, design, parsing, erreurs courantes
+3. [Memory & State](03-memory-state.qd) — short/long-term, episodic, scratchpad
+
+## Approche pedagogique
+
+- **Pareto-first** : 20% qui donne 80% du resultat en premier
+- **Concret avant abstrait** : exemple, puis principe
+- **Spaced repetition** : flash-cards en fin de chapitre
+- **Capstone reel** : projet ship-able a la fin du module
