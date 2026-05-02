@@ -1,5 +1,5 @@
 .doctype {docs}
-.docname {Mastering Believe — Agentic AI}
+.docname {Mastering Believe — Systemes IA Agentiques}
 .docauthor {mastering-believe}
 .doclang {fr}
 .theme {paperwhite} layout:{hyperlegible}
@@ -10,17 +10,39 @@
         - [1. Anatomie d'un Agent IA](01-anatomie-agent.qd)
         - [2. Tool Use & Function Calling](02-tool-use-function-calling.qd)
         - [3. Memory & State](03-memory-state.qd)
+        - [4. Planning & Reasoning](04-planning-reasoning.qd)
+        - [5. LangGraph fondamentaux](05-langgraph-fondamentaux.qd)
+        - [6. LangGraph avance](06-langgraph-avance.qd)
+        - [7. Build : un agent de recherche+analyse complet (capstone semaine 1)](07-agent-complet.qd)
+        - [8. RAG Agentique](08-rag-agentique.qd)
+        - [9. Multi-Agent Patterns](09-multi-agent-patterns.qd)
+        - [10. MCP (Model Context Protocol)](10-mcp.qd)
+        - [11. Evaluation & Testing](11-evaluation-testing.qd)
+        - [12. Production & Observabilite](12-production-observabilite.qd)
+        - [13. Securite & Robustesse](13-securite-robustesse.qd)
+        - [14. Capstone : assistant de recherche autonome production-ready](14-capstone.qd)
 
-# Mastering Believe — Agentic AI
+# Mastering Believe — Systemes IA Agentiques
 
-Cours communautaire d'apprentissage accelere des agents IA — theorie,
-code applique, exercices progressifs.
+Cours communautaire d'apprentissage accelere — theorie, code applique,
+exercices progressifs.
 
 ## Plan du module
 
-1. [Anatomie d'un Agent IA](01-anatomie-agent.qd) — definition, boucle ReAct, 4 composants, taxonomie, decision framework
-2. [Tool Use & Function Calling](02-tool-use-function-calling.qd) — schema, design, parsing, erreurs courantes
-3. [Memory & State](03-memory-state.qd) — short/long-term, episodic, scratchpad
+1. [Anatomie d'un Agent IA](01-anatomie-agent.qd)
+2. [Tool Use & Function Calling](02-tool-use-function-calling.qd)
+3. [Memory & State](03-memory-state.qd)
+4. [Planning & Reasoning](04-planning-reasoning.qd)
+5. [LangGraph fondamentaux](05-langgraph-fondamentaux.qd)
+6. [LangGraph avance](06-langgraph-avance.qd)
+7. [Build : un agent de recherche+analyse complet (capstone semaine 1)](07-agent-complet.qd)
+8. [RAG Agentique](08-rag-agentique.qd)
+9. [Multi-Agent Patterns](09-multi-agent-patterns.qd)
+10. [MCP (Model Context Protocol)](10-mcp.qd)
+11. [Evaluation & Testing](11-evaluation-testing.qd)
+12. [Production & Observabilite](12-production-observabilite.qd)
+13. [Securite & Robustesse](13-securite-robustesse.qd)
+14. [Capstone : assistant de recherche autonome production-ready](14-capstone.qd)
 
 ## Approche pedagogique
 
