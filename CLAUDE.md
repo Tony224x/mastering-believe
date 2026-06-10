@@ -18,39 +18,45 @@ Each domain is a self-contained module composed of:
 ```
 mastering-believe/
 ├── CLAUDE.md
-├── tasks/
-│   ├── todo.md              # Current task tracking
-│   └── lessons/             # Self-improvement loop
-│       └── *.md
+├── .claude/skills/
+│   └── mastering-domain-creator/   # Skill Claude Code : pipeline 7 phases de creation de domaine
 ├── domains/
 │   └── <domain-name>/       # One folder per mastery domain
 │       ├── README.md        # Domain overview, learning path, time budget
+│       ├── PLAN.md          # (si cree via le skill) Plan fige du curriculum
+│       ├── REFERENCES.md    # (si cree via le skill) Sources tier-1 par module
 │       ├── 01-theory/       # Numbered theory modules (Markdown, source-of-truth)
 │       │   ├── 01-fundamentals.md
-│       │   ├── 02-intermediate.md
 │       │   └── ...
 │       ├── 01-theory-qd/    # Site Quarkdown enrichi (optionnel, 1 par domaine)
 │       │   ├── main.qd      # Index avec sidebar nav
-│       │   ├── 01-fundamentals.qd
 │       │   └── ...
 │       ├── 02-code/         # Runnable commented examples matching theory
-│       │   ├── 01-fundamentals/
-│       │   └── ...
 │       ├── 03-exercises/    # Progressive exercises + solutions
 │       │   ├── 01-easy/
 │       │   ├── 02-medium/
 │       │   ├── 03-hard/
-│       │   └── solutions/
+│       │   ├── solutions/
+│       │   └── workspace/   # Espace perso de l'apprenant (gitignore, sauf README/.gitkeep)
 │       ├── 04-projects/     # Mini-projets / capstones libres lies au domaine
 │       └── 05-projets-guides/   # Guided real-world projects in LogiSim context
 │           ├── 01-<project>/
 │           │   ├── README.md    # Contexte, consigne, etapes, criteres
 │           │   └── solution/    # Corrige commente
 │           └── ...
+├── quarkdown/               # Pipeline de rendu .qd -> site HTML statique
+│   ├── README.md            # Prerequis (Java 17+, Quarkdown CLI), install, build
+│   ├── post-build-fix-links.py
+│   └── scripts/
+│       ├── build-all.ps1            # Build tous les sites (ou -Domain X, -Watch)
+│       └── scaffold-domain.py       # Genere 01-theory-qd/ depuis 01-theory/
 └── shared/
     ├── templates/           # Templates for new domains
-    └── logistics-context.md      # Shared LogiSim context referenced by all 05-projets-guides
+    ├── external-courses.md  # Index de cours universitaires (Stanford, MIT, CMU, ...)
+    └── logistics-context.md # Shared LogiSim context referenced by all 05-projets-guides
 ```
+
+Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore** — il peut exister sur une machine de dev mais n'est jamais commite. Idem pour `references/`, `docs/plans/` et les outputs Quarkdown (`quarkdown/output*/`).
 
 ## Conventions
 
@@ -60,6 +66,8 @@ mastering-believe/
 - **Code files** (when the domain has code): runnable standalone. Every non-obvious line has a comment explaining WHY, not WHAT
 - **Exercises**: Each exercise file starts with `## Objectif`, `## Consigne`, `## Criteres de reussite`
 - **Solutions**: Separate folder, never mixed with exercise files
+- **Workspace**: `03-exercises/workspace/` est gitignore — l'apprenant y ecrit ses solutions sans polluer le repo
+- **Naming coherence**: pour un module N, `01-theory/NN-x.md`, `02-code/NN-x.py`, `01-theory-qd/NN-x.qd` et les exercices/solutions partagent le meme slug numerote
 - **Public repo**: contenu lisible par tous, pas d'info perso/sensible dans les fichiers commites
 
 ## Learning Methodology Rules
@@ -74,6 +82,9 @@ When creating content for a domain:
 
 ## Creating a New Domain
 
+**Voie recommandee** : le skill `mastering-domain-creator` (`.claude/skills/mastering-domain-creator/`) automatise tout le pipeline en 7 phases avec gates : interview en 2 vagues, recherche sourcee (→ `REFERENCES.md`), plan challenge par un subagent adverse (→ `PLAN.md`), creation parallele (1 subagent par module), 2 passes de verification (facts-checker, code-runner, pedagogy-reviewer), capstone. Modes `full` / `lite`, duree N jours parametrable. Se declenche sur "ajouter un domaine", "create a domain", etc. — uniquement dans ce repo.
+
+Voie manuelle :
 1. Copy `shared/templates/` structure into `domains/<domain-name>/`
 2. Write `README.md` with: scope, prerequisites, schedule (durée libre — quelques jours à plusieurs semaines selon le sujet), success criteria
 3. Build theory → (code if applicable) → exercises in order, numbering consistently
@@ -89,13 +100,25 @@ When creating content for a domain:
 | System Design | `domains/system-design/` | Diagrammes + Python/infra | Architecture backend & IA, entretiens senior |
 | Neural Networks & LLMs | `domains/neural-networks-llm/` | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
 | Agentic AI | `domains/agentic-ai/` | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
-| Robotics & AI | `domains/robotics-ai/` | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies), capstone Diffusion Policy 28j |
+| Robotics & AI | `domains/robotics-ai/` | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies), capstone Diffusion Policy 28j — **en cours** : pas encore de `04-projects/` ni `05-projets-guides/` |
 
-**Projets guides (contexte logistique automatisee)** : chaque domaine a un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
+**Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
+
+**Quarkdown** : seuls `agentic-ai` et `neural-networks-llm` ont un `01-theory-qd/` pour l'instant (3 chapitres enrichis cote agentic-ai, le reste en placeholders generes par le scaffolder). Les `.md` de `01-theory/` restent la source-of-truth lisible sur GitHub ; les `.qd` sont des versions enrichies (math LaTeX, mermaid, callouts).
 
 ## Commands
 
-Code examples are standalone scripts — run them directly:
+Code examples are standalone scripts — run them directly (Python 3.11+ recommande):
 - **Python**: `python domains/<domain>/02-code/<file>.py`
 - **PyTorch**: `python domains/neural-networks-llm/02-code/<file>.py` (requires `torch`)
-- **LangGraph**: `python domains/agentic-ai/02-code/<file>.py` (requires `langgraph`, `langchain`)
+- **LangGraph**: `python domains/agentic-ai/02-code/<file>.py` (requires `langgraph`, `langchain` — mocks LLM fournis, pas de cle API obligatoire)
+- **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (requires `mujoco`, `gymnasium`, `torch` selon le module)
+- Algorithmie & System Design : stdlib seulement
+- Pas de suite de tests ni de linter au niveau repo — verifier un exemple = le lancer
+
+Quarkdown (build des sites de cours — requiert Java 17+ et le CLI `quarkdown`, voir `quarkdown/README.md`) :
+- **Build tous les domaines** : `pwsh quarkdown/scripts/build-all.ps1`
+- **Build un domaine** : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai`
+- **Live preview** : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai -Watch`
+- **Scaffold un 01-theory-qd/** : `python quarkdown/scripts/scaffold-domain.py <domain>` (idempotent, `--force` pour reecrire ; `main.qd` toujours regenere)
+- Output : `quarkdown/output-site/<domain>/` (gitignore)
