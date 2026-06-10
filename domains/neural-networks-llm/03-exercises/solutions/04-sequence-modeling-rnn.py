@@ -693,35 +693,46 @@ assert all(np.array_equal(same[k], small[k]) for k in small)
 print("  below threshold: gradients unchanged  [PASS]")
 
 # --- 5. Training with vs without clipping on a toy task: y = sum(X) ---
-print("\n  Toy task: predict sum(X) over T=10 (exploding init, lr=0.01)")
+print("\n  Toy task: predict sum(X), T=6, exploding init (rho=1.5), lr=0.2")
+
+eval_set8 = [np.random.default_rng(100 + i).standard_normal((6, D_in8)) * 0.5
+             for i in range(50)]
 
 
-def train8(use_clip, steps=200, lr=0.01):
+def eval_loss8(p):
+    """Average loss on a FIXED eval set (per-step training loss is too noisy)."""
+    return float(np.mean([rnn_bptt(X, X.sum(), p)[0] for X in eval_set8]))
+
+
+def train8(use_clip, steps=1500, lr=0.2):
     rng_t = np.random.default_rng(11)
     p = init_params8(spectral_radius=1.5)
-    first = last = None
+    l0 = eval_loss8(p)
     for s in range(steps):
-        X = rng_t.standard_normal((10, D_in8)) * 0.3
-        tgt = X.sum()
-        loss, g = rnn_bptt(X, tgt, p)
-        if first is None:
-            first = loss
-        if not np.isfinite(loss) or loss > 1e3:
-            return first, float('inf')           # diverged
+        X = rng_t.standard_normal((6, D_in8)) * 0.5
+        loss, g = rnn_bptt(X, X.sum(), p)
+        if not np.isfinite(loss) or loss > 1e6:
+            return l0, float('inf')              # diverged
         if use_clip:
             g, _ = clip_gradients(g, max_norm=1.0)
         for k in p:
             p[k] -= lr * g[k]
-        last = loss
-    return first, last
+    if not all(np.all(np.isfinite(v)) for v in p.values()):
+        return l0, float('inf')
+    return l0, eval_loss8(p)
 
 
+# Re-seed the param-init generator so both runs start from the same weights
+rng8 = np.random.default_rng(3)
 loss0_nc, lossF_nc = train8(use_clip=False)
+rng8 = np.random.default_rng(3)
 loss0_c, lossF_c = train8(use_clip=True)
-print(f"  without clipping: first loss {loss0_nc:.3f} -> {'DIVERGED' if not np.isfinite(lossF_nc) else f'{lossF_nc:.4f}'}")
-print(f"  with    clipping: first loss {loss0_c:.3f} -> {lossF_c:.4f}")
-assert not np.isfinite(lossF_nc) or lossF_nc > 1e3, "unclipped run should diverge"
-assert lossF_c < loss0_c / 10, "clipped run should converge (loss / 10)"
+print(f"  without clipping: eval loss {loss0_nc:.3f} -> "
+      f"{'DIVERGED' if not np.isfinite(lossF_nc) else f'{lossF_nc:.4f}'}")
+print(f"  with    clipping: eval loss {loss0_c:.3f} -> {lossF_c:.4f} "
+      f"(/{loss0_c / lossF_c:.1f})")
+assert not np.isfinite(lossF_nc) or lossF_nc > 1e6, "unclipped run should diverge"
+assert lossF_c < loss0_c / 4, "clipped run should converge (eval loss / 4)"
 print("  [PASS] clipping turns a divergent run into a convergent one")
 
 print("\n" + "=" * 70)

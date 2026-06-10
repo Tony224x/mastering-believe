@@ -1,7 +1,8 @@
 """
 Solutions -- Exercices Jour 7 : Design classiques
 
-Ce fichier contient les walkthroughs pedagogiques des 3 exercices Easy.
+Ce fichier contient les walkthroughs pedagogiques des exercices Easy,
+Medium et Hard.
 Chaque solution suit le framework en 6 etapes : clarify, estimate,
 high-level, deep dive, bottlenecks, extensions.
 

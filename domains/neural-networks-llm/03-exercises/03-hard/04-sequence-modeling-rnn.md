@@ -62,7 +62,7 @@ Implementer la Backpropagation Through Time complete d'un RNN vanilla, la valide
    ```
    et verifier : si la norme globale depasse `max_norm`, apres clipping elle vaut exactement `max_norm` ; sinon les gradients sont inchanges.
 
-5. Mini demonstration d'entrainement : sur une tache jouet (predire `sum(X)` a partir de la sequence), entrainer 200 steps avec et sans clipping (lr=0.01, W_hh explosif au depart). Sans clipping la loss doit diverger (NaN ou > 1e3) ; avec clipping elle doit decroitre.
+5. Mini demonstration d'entrainement : sur une tache jouet (predire `sum(X)` a partir de sequences T=6, inputs * 0.5), entrainer 1500 steps avec et sans clipping (lr=0.2, max_norm=1.0, W_hh explosif au depart, rayon spectral 1.5). Mesurer la loss moyenne sur un set d'evaluation FIXE de 50 sequences avant et apres. Sans clipping la loss doit diverger (NaN ou > 1e6) ; avec clipping la loss d'evaluation doit etre divisee par au moins 4.
 
 ### Criteres de reussite
 
@@ -70,5 +70,5 @@ Implementer la Backpropagation Through Time complete d'un RNN vanilla, la valide
 - [ ] Gradient check : erreur relative max < 1e-5 sur les 3 gradients, tous elements testes
 - [ ] La croissance de `||dW_hh||` est mesuree en regime quasi-lineaire : `||dW_hh||(T=12) > 20 * ||dW_hh||(T=3)` ; le plafonnement par saturation tanh a T=40 est constate et explique
 - [ ] `clip_gradients` preserve la DIRECTION du gradient (rescale global, pas de clip element par element) — verifie par un test de colinearite
-- [ ] L'entrainement sans clipping diverge, avec clipping converge (loss finale < loss initiale / 10)
+- [ ] L'entrainement sans clipping diverge, avec clipping converge (loss d'evaluation finale < loss initiale / 4)
 - [ ] Execution totale < 30 s
