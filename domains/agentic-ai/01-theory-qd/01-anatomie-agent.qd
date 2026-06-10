@@ -104,7 +104,7 @@ meme boucle :
         Act -- objectif atteint --> Done
 
 **Pourquoi c'est la cle de tout** : chaque framework d'agents
-(LangGraph, CrewAI, AutoGen, Anthropic Agent SDK) est une
+(LangGraph, CrewAI, AutoGen, Claude Agent SDK) est une
 implementation de cette boucle. Si tu comprends cette boucle, tu peux :
 
 - Debugger n'importe quel agent en identifiant **ou** dans la boucle ca deraille

@@ -72,7 +72,7 @@ Tout agent, qu'il soit un robot physique ou un systeme LLM, suit la meme boucle 
 │        └──────── boucle ─────────────┘
 ```
 
-**Pourquoi c'est la cle de tout** : chaque framework d'agents (LangGraph, CrewAI, AutoGen, Anthropic Agent SDK) est une implementation de cette boucle. Si tu comprends cette boucle, tu peux :
+**Pourquoi c'est la cle de tout** : chaque framework d'agents (LangGraph, CrewAI, AutoGen, Claude Agent SDK) est une implementation de cette boucle. Si tu comprends cette boucle, tu peux :
 - Debugger n'importe quel agent en identifiant **ou** dans la boucle ca deraille
 - Construire un agent from scratch sans framework
 - Migrer un agent d'un framework a un autre

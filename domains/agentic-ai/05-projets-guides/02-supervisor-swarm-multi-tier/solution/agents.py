@@ -12,7 +12,7 @@ from __future__ import annotations
 import os
 from typing import Callable
 
-from langchain_core.messages import AIMessage, BaseMessage, SystemMessage
+from langchain_core.messages import AIMessage, BaseMessage, SystemMessage, ToolMessage
 
 from state import ShiftState
 from tools import (
@@ -97,9 +97,14 @@ def supervisor_node(state: ShiftState) -> dict:
 
     # Stub deterministe : illustre l'orchestration phase par phase
     if not _llm_available():
+        # The DISPATCH phase (pickup of the marked parcels) is fully covered by
+        # the swarm handoff drone -> agv: by the time control returns to the
+        # supervisor at phase SCAN, the AGV has already reported the pickup.
+        # The supervisor therefore moves straight to sorting (FULFILL) — that is
+        # the whole point of the swarm pattern (no supervisor round-trip).
         next_by_phase = {
             "PLAN":     ("drone",   "SCAN",     "Scanner la zone B-12, identifier anomalies"),
-            "SCAN":     ("agv",     "DISPATCH", "Pickup des colis marques en B-12-NE"),
+            "SCAN":     ("sorting", "FULFILL",  "Trier la zone B-12 vers lignes 3 et 4"),
             "DISPATCH": ("sorting", "FULFILL",  "Trier la zone B-12 vers lignes 3 et 4"),
             "FULFILL":  ("FINISH",  "DONE",     "Shift complete"),
             "DONE":     ("FINISH",  "DONE",     "Deja termine"),
@@ -163,18 +168,48 @@ def _stub_worker_response(agent_name: str, state: ShiftState) -> AIMessage:
         )
 
     if agent_name == "agv":
-        if state.get("pickup_requested"):
-            # Pickup demande par sorting -> swarm retour vers sorting
+        # The AGV is visited twice per pickup: once to dispatch, once after the
+        # tool ran (route_after_tools sends control back to the active worker).
+        last = state["messages"][-1] if state["messages"] else None
+        pickup_done = isinstance(last, ToolMessage) and "Pickup execute" in str(last.content)
+
+        if pickup_done:
+            if state.get("pickup_requested"):
+                # Pickup requested by sorting (swarm): hand control straight
+                # back to sorting so it can resume — no supervisor round-trip.
+                return AIMessage(
+                    content="Colis fragile evacue, handoff retour sorting",
+                    tool_calls=[
+                        {
+                            "name": "handoff_to_sorting",
+                            "args": {"reason": "Colis fragile evacue de B-12-sud, ligne debloquee"},
+                            "id": "stub-agv-3",
+                            "type": "tool_call",
+                        }
+                    ],
+                    name="agv_lead",
+                )
+            # Pickup of the drone-marked parcels: report up to the supervisor.
             return AIMessage(
-                content="Pickup execute en B-12-sud, retour sorting",
+                content="Pickup colis marques B-12-NE termine, report coordinator",
+                tool_calls=[
+                    {"name": "report_to_coordinator", "args": {"summary": "Pickup B-12-NE termine, 3 AGV de retour"}, "id": "stub-agv-4", "type": "tool_call"},
+                ],
+                name="agv_lead",
+            )
+
+        if state.get("pickup_requested"):
+            # Transport requested by sorting (fragile parcel blocking the line)
+            return AIMessage(
+                content="Pickup fragile demande par sorting, dispatch B-12-sud",
                 tool_calls=[
                     {"name": "dispatch_pickup", "args": {"zone": "B-12-sud", "units": 2}, "id": "stub-agv-1", "type": "tool_call"},
                 ],
                 name="agv_lead",
             )
-        # Premier passage : pickup sur colis marque par drone, puis retour au coordinator
+        # Default: pickup of the parcels marked by the drone (swarm handoff drone -> agv)
         return AIMessage(
-            content="Pickup colis marque B-12-NE termine, retour coordinator",
+            content="Pickup colis marques B-12-NE en cours",
             tool_calls=[
                 {"name": "dispatch_pickup", "args": {"zone": "B-12-NE", "units": 3}, "id": "stub-agv-2", "type": "tool_call"},
             ],
@@ -182,6 +217,10 @@ def _stub_worker_response(agent_name: str, state: ShiftState) -> AIMessage:
         )
 
     if agent_name == "sorting":
+        # First visit: pickup_requested is False (the drone -> agv handoff does
+        # NOT set it), so sorting raises the fragile-parcel pickup (swarm).
+        # Second visit (after the AGV hands control back): pickup_requested is
+        # True — sorting's own request — so it falls through to the final report.
         if not state.get("shift_complete") and not state.get("pickup_requested"):
             # Detecte un colis fragile bloquant -> demande pickup AGV (swarm)
             return AIMessage(

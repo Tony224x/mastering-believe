@@ -381,9 +381,9 @@ result: TicketClassification = response.choices[0].message.parsed
 
 **Sous le capot** : OpenAI serialise `TicketClassification` en JSON Schema, passe `"strict": true`, et le decodage est contraint au niveau des tokens (CFG — context-free grammar). Pas moyen de generer du JSON invalide.
 
-#### Anthropic — `tool_choice` force + Pydantic
+#### Anthropic — structured outputs natifs, ou `tool_choice` force + Pydantic
 
-Anthropic n'a pas encore d'equivalent direct de `response_format` mais le pattern `tool_choice={"type": "tool", "name": "..."}` force le LLM a retourner exactement le schema attendu.
+Anthropic propose desormais des **structured outputs natifs** : un parametre `output_format` avec un JSON schema (lance fin 2025 en beta) qui contraint directement la reponse au schema, sans passer par un tool. Le pattern `tool_choice={"type": "tool", "name": "..."}` ci-dessous reste un **fallback universel** valide (il marche sur tous les modeles et versions d'API) : il force le LLM a retourner exactement le schema attendu via un appel de tool.
 
 ```python
 from pydantic import BaseModel
@@ -419,7 +419,7 @@ system=[{
 }],
 ```
 
-> **Regle 2026** : des que tu veux un output structure, utilise `response_format` (OpenAI) ou `tool_choice` force (Anthropic) avec une Pydantic BaseModel. Les anciens patterns (JSON mode vanilla + regex fallback) sont obsoletes.
+> **Regle 2026** : des que tu veux un output structure, utilise les structured outputs natifs (`response_format` chez OpenAI, `output_format` chez Anthropic) ou le `tool_choice` force avec une Pydantic BaseModel. Les anciens patterns (JSON mode vanilla + regex fallback) sont obsoletes.
 
 ---
 

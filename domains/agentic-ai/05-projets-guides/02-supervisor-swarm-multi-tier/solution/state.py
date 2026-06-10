@@ -36,7 +36,7 @@ class ShiftState(TypedDict):
 
     # Etat operationnel partage
     parcels_observed: list[ParcelObservation]
-    pickup_requested: bool       # set par handoff sorting -> agv
+    pickup_requested: bool       # set par handoff sorting -> agv (PAS par drone -> agv)
     parcel_marked: str | None    # zone si un drone a marque un colis prioritaire
     shift_complete: bool
 

@@ -116,7 +116,8 @@ Deroule attendu :
  6. Supervisor -> Sorting : "trier la zone B-12 vers les lignes de tri 3 et 4"
  7. Sorting progresse, detecte un colis fragile bloquant
  8. Sorting handoff SWARM -> AGV : "demande pickup colis fragile en B-12-sud"
- 9. AGV vient chercher le colis, Sorting continue
+ 9. AGV evacue le colis fragile, puis handoff SWARM retour -> Sorting : "ligne debloquee"
+    (3e handoff horizontal : l'AGV rend la main a celui qui l'a sollicite)
 10. Sorting report shift complete
 11. Supervisor -> FINISH
 ```

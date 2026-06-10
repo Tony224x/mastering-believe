@@ -3,9 +3,12 @@ Assemblage du graphe LangGraph : supervisor + 3 workers.
 
 Topologie :
 - START -> supervisor
-- supervisor -> routing vers worker ou FINISH
-- worker -> si handoff (swarm), le Command du tool redirige ; sinon retour supervisor
-- finish -> END
+- supervisor -> conditional edge vers un worker ou END
+- worker -> si l'AIMessage contient des tool_calls -> son tools node ; sinon supervisor
+- tools node -> conditional edge (route_after_tools) :
+    * handoff swarm  -> le Command(goto=...) du tool redirige vers le worker cible
+    * report         -> retour au supervisor
+    * tool metier    -> retour au worker courant
 
 Cle : le tool_node execute les tools metier ET les tools de handoff. Les tools
 de handoff retournent des Command(goto=...) que LangGraph interprete comme
@@ -57,21 +60,30 @@ def route_from_worker(state: ShiftState, worker_tools_node: str, fallback: str =
 
 
 def route_after_tools(state: ShiftState) -> str:
-    """Apres execution des tools, on regarde le dernier message :
-    - si c'etait un handoff (ToolMessage contenant "[SWARM HANDOFF"), le state.active_agent a deja ete
-      mis a jour et le graph routing va la. Sinon, retour au worker qui etait actif.
+    """Apres execution des tools, route selon le dernier ToolMessage :
+    - handoff swarm : le tool a renvoye un Command(goto=...) qui re-route deja le
+      graphe et a mis a jour active_agent. On renvoie la MEME cible : LangGraph
+      fusionne les deux destinations identiques en une seule tache (pas de
+      double invocation).
+    - report au coordinator : retour au supervisor.
+    - tool metier classique : le worker actif reprend la main pour decider de
+      sa prochaine action (continuer, reporter, ou handoff).
     """
     last = state["messages"][-1]
-    if isinstance(last, ToolMessage) and "[SWARM HANDOFF" in last.content:
-        # Le Command du tool a deja set active_agent et goto. Rien a faire ici.
-        # Mais LangGraph va utiliser le goto du Command, pas ce retour.
-        return state["active_agent"].lower() + "_lead"
+    if isinstance(last, ToolMessage):
+        if "[SWARM HANDOFF" in last.content:
+            # active_agent vient d'etre mis a jour par le Command du tool de
+            # handoff -> meme cible que le goto, deduplique par LangGraph.
+            return state["active_agent"].lower() + "_lead"
+        if "Report au coordinator" in last.content:
+            return "supervisor"
 
-    # Pas de handoff : le worker a execute un tool metier, il reprend la main
+    # Pas de handoff ni de report : le worker a execute un tool metier,
+    # il reprend la main.
     active = state.get("active_agent", "supervisor")
-    if active == "supervisor":
-        return "supervisor"
-    return f"{active}_lead"
+    if active in ("sorting", "drone", "agv"):
+        return f"{active}_lead"
+    return "supervisor"
 
 
 def build_graph():
@@ -115,10 +127,22 @@ def build_graph():
         {"agv_tools": "agv_tools", "supervisor": "supervisor"},
     )
 
-    # Apres execution des tools, on retourne au worker courant (sauf si swarm handoff
-    # via Command, auquel cas LangGraph suit le goto du Command automatiquement).
-    g.add_edge("sorting_tools", "supervisor")
-    g.add_edge("drone_tools", "supervisor")
-    g.add_edge("agv_tools", "supervisor")
+    # Apres execution des tools : conditional edge via route_after_tools.
+    # - tool metier  -> retour au worker courant (il decide de la suite)
+    # - report       -> retour au supervisor
+    # - handoff swarm -> le Command(goto=...) du tool re-route deja le graphe ;
+    #   route_after_tools renvoie la meme cible, LangGraph deduplique.
+    # NB : un add_edge inconditionnel ici serait un bug — il s'executerait EN PLUS
+    # du goto du Command (branches paralleles : double invocation des workers,
+    # ToolNodes executes a vide).
+    after_tools_targets = {
+        "supervisor": "supervisor",
+        "sorting_lead": "sorting_lead",
+        "drone_lead": "drone_lead",
+        "agv_lead": "agv_lead",
+    }
+    g.add_conditional_edges("sorting_tools", route_after_tools, after_tools_targets)
+    g.add_conditional_edges("drone_tools", route_after_tools, after_tools_targets)
+    g.add_conditional_edges("agv_tools", route_after_tools, after_tools_targets)
 
     return g.compile()

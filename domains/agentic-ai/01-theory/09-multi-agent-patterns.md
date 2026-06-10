@@ -376,9 +376,9 @@ reorganize and present the provided content clearly.
 
 ---
 
-## 7. Workflows Anthropic (Building Effective Agents, oct 2024)
+## 7. Workflows Anthropic (Building Effective Agents, dec 2024)
 
-En octobre 2024, Anthropic a publie [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — un article de reference qui distingue **workflows** (LLM calls orchestres par du code) et **agents** (LLM dirige son propre flow). Cette distinction est cruciale.
+En decembre 2024 (le 19), Anthropic a publie [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — un article de reference qui distingue **workflows** (LLM calls orchestres par du code) et **agents** (LLM dirige son propre flow). Cette distinction est cruciale.
 
 ### Workflow vs agent
 

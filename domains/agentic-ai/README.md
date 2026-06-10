@@ -45,6 +45,14 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 - [ ] Mettre en place un pipeline d'evaluation qui detecte les regressions
 - [ ] Designer l'architecture d'un systeme agentique complet sur whiteboard
 
+## Au-dela des 14 jours
+
+- **`05-projets-guides/`** — 3 projets appliques au contexte d'editeur de simulation logistique LogiSim/FleetSim (voir [`shared/logistics-context.md`](../../shared/logistics-context.md)). Projet phare : `02-supervisor-swarm-multi-tier/`, qui combine les patterns supervisor et swarm de LangGraph sur une operation multi-flotte.
+- **`04-projects/`** — espace libre pour mini-projets et capstones supplementaires lies au domaine.
+- **`01-theory-qd/`** — version Quarkdown enrichie de la theorie (math LaTeX, mermaid, callouts). Build : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai`. Les `.md` de `01-theory/` restent la source-of-truth.
+
+**Note sur les exercices hard (modules 01-03)** : ce sont des mini-projets a part entiere. Des corriges complets et executables existent desormais dans `03-exercises/solutions/` (fichiers `NN-<slug>-hard.py`), en plus des solutions easy/medium.
+
 ## Patterns d'architecture agentique
 
 ### Single Agent
@@ -66,7 +74,7 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 ## Ressources externes
 
 - **LangGraph Documentation** — reference officielle, tutorials
-- **Anthropic Agent SDK** — patterns Claude-natifs
+- **Claude Agent SDK** — patterns Claude-natifs
 - **"Building Effective Agents"** (Anthropic blog) — principles de design
 - **MCP Specification** — protocol officiel
 - **DeepLearning.AI — AI Agents in LangGraph** (Andrew Ng)

@@ -80,7 +80,11 @@ def handoff_to_agv(
                 )
             ],
             "active_agent": "agv",
-            "pickup_requested": True,
+            # pickup_requested tracks a *sorting*-initiated transport request
+            # (see state.py). The drone -> agv handoff must NOT set it, otherwise
+            # the sorting stub branch that triggers the "fragile parcel" handoff
+            # (scenario steps 7-9) would never fire.
+            "pickup_requested": from_agent == "sorting",
             "handoff_log": state.get("handoff_log", []) + [(from_agent, "agv", reason)],
         },
     )

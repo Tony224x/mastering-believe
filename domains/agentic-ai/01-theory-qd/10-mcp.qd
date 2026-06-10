@@ -136,7 +136,7 @@ def review_code_prompt(file_path: str) -> list[dict]:
 
 ---
 
-## 4. Le protocole : JSON-RPC sur stdio (ou HTTP/SSE)
+## 4. Le protocole : JSON-RPC sur stdio (ou Streamable HTTP)
 
 MCP utilise **JSON-RPC 2.0** comme protocole de transport. Les messages sont des JSON structurees selon ce standard.
 
@@ -145,7 +145,8 @@ MCP utilise **JSON-RPC 2.0** comme protocole de transport. Les messages sont des
 | Transport | Usage | Quand l'utiliser |
 |-----------|-------|------------------|
 | **stdio** | Le serveur est un process enfant. Le host lui ecrit sur stdin, lit sur stdout | Serveurs locaux (defaut). Rapide, pas de reseau, zero config |
-| **HTTP + SSE** | Le serveur est un endpoint HTTP. Server-sent events pour les notifications | Serveurs distants, partages entre utilisateurs, auth requise |
+| **Streamable HTTP** | Le serveur est un endpoint HTTP unique ; les reponses peuvent etre streamees | Serveurs distants, partages entre utilisateurs, auth requise. Standard actuel (revision 2025-03-26) |
+| **HTTP + SSE** *(legacy)* | Endpoint HTTP + Server-Sent Events pour les notifications | Deprecie depuis la revision 2025-03-26, remplace par Streamable HTTP. Encore supporte par certains clients pour compatibilite |
 
 ### Un message JSON-RPC minimal
 
@@ -209,7 +210,9 @@ Le serveur repond :
      - ...
        │
        ▼
-6. Shutdown : client envoie "shutdown", serveur termine proprement
+6. Shutdown : au niveau du TRANSPORT (pas de message JSON-RPC "shutdown"
+   dans la spec). En stdio : le client ferme stdin, attend que le process
+   serveur se termine, puis le tue si besoin (SIGTERM/SIGKILL)
 ```
 
 **Point important** : le client **decouvre** dynamiquement les capacites du serveur au demarrage. Le host ne sait pas a l'avance quels tools existent — il les liste a chaque session.
@@ -279,7 +282,7 @@ Pour ajouter un serveur MCP a Claude Desktop :
 
 Le host lance ton script Python comme process enfant et parle avec via stdio. Aucune autre config.
 
-Pour les serveurs distants, on utilise `transport: "sse"` avec un URL.
+Pour les serveurs distants, on configure une URL (transport Streamable HTTP ; certains clients acceptent encore `transport: "sse"` pour les serveurs legacy).
 
 ---
 
@@ -330,13 +333,71 @@ Cela transforme le modele de confiance : meme si un serveur MCP est compromis, l
 
 ---
 
-## 10. MCP spec 2025-11 (nouvelles features)
+## 10. Evolutions de la spec depuis 2024-11
 
-La specification MCP a ete revisee plusieurs fois depuis sa sortie fin 2024. La **version 2025-11** introduit des fonctionnalites importantes qui elargissent les cas d'usage et durcissent la securite.
+La specification MCP est versionnee par date. La **spec initiale (2024-11-05)** posait deja un socle riche (tools, resources, prompts, sampling, subscriptions), et les revisions suivantes — **2025-03-26** puis **2025-06-18** — ont elargi les cas d'usage et durci la securite. Voici les features marquantes, classees par revision.
 
-### Elicitation — le serveur peut demander des inputs a l'utilisateur
+### Spec initiale (2024-11-05)
 
-Avant : un serveur expose des tools et recoit des arguments. Si un tool a besoin d'un input interactif (ex: "quel schema DB utiliser ?"), il fallait le passer en amont.
+#### Sampling — le serveur peut demander au LLM hote de generer du texte
+
+Present des la premiere version de la spec. **Inversion inedite** : normalement le client (host) appelle le serveur. Avec **sampling**, le serveur peut demander au client **d'invoquer son LLM hote** pour generer du texte.
+
+**Cas d'usage** : un serveur MCP qui fait de la recherche documentaire peut demander au LLM hote de "reformuler cette query" ou "resumer ces 3 chunks" — sans avoir besoin de son propre LLM. Le serveur devient un orchestrateur qui **emprunte** le LLM du client pour ses sous-taches.
+
+```
+Server : j'ai besoin de resumer 5 documents pour cette requete
+  ↓
+Server appelle client.sample("Resume ces docs : ...")
+  ↓
+Client utilise son LLM hote (claude-opus-4-6) pour generer le resume
+  ↓
+Server recoit le resume, continue son traitement
+```
+
+**Interet** : pas besoin de stocker une cle API LLM sur le serveur, pas de cout additionnel (le cout est celui du client), et le serveur beneficie du meme modele que le client.
+
+#### Resources subscribing — event-driven au lieu de polling
+
+Egalement present des la spec initiale. Sans subscription : si le client veut etre notifie des changements d'une resource, il doit poller periodiquement (`resources/read` toutes les X secondes).
+
+**Avec subscribing** : le client peut s'abonner a une resource, et le serveur **push une notification** quand elle change.
+
+```
+Client : resources/subscribe("file:///notes.txt")
+Server : ack
+  ...
+(le fichier est modifie)
+Server : notifications/resources/updated {uri: "file:///notes.txt"}
+Client : resources/read pour recuperer la nouvelle version
+```
+
+**Cas d'usage** : dashboards live, monitoring de fichiers, synchronisation avec des bases de donnees, notifications en temps reel.
+
+### Revision 2025-03-26
+
+#### OAuth 2.1 — standard d'authentification pour les serveurs distants
+
+Introduit par la revision 2025-03-26. Les serveurs MCP distants (HTTP) supportent **OAuth 2.1** comme standard d'authentification. Avant, chaque serveur avait sa propre approche ad-hoc (API keys, basic auth). Maintenant :
+
+- Discovery automatique du flow OAuth via les metadata du serveur
+- PKCE obligatoire (defense contre les interceptions)
+- Refresh tokens supportes
+- Scopes par tool/resource (granularite fine)
+
+C'est **indispensable** pour les serveurs d'entreprise qui exposent des donnees sensibles (DB production, CRM, email).
+
+#### Streamable HTTP — le remplacement de SSE
+
+Introduit par la meme revision 2025-03-26. Le transport `HTTP + SSE` (Server-Sent Events) de la spec initiale avait des limites : connexions longues qui coupent, difficulte a gerer les retries, pas de multiplexing.
+
+**Streamable HTTP** remplace HTTP+SSE (desormais legacy) : un endpoint HTTP unique dont les reponses peuvent etre streamees, reconnexion et reprise de session, support des retries. Beaucoup plus stable pour les serveurs distants qui servent du traffic temps reel. C'est le transport distant standard actuel (cf. section 4).
+
+### Revision 2025-06-18
+
+#### Elicitation — le serveur peut demander des inputs a l'utilisateur
+
+Introduit par la revision 2025-06-18. Avant : un serveur expose des tools et recoit des arguments. Si un tool a besoin d'un input interactif (ex: "quel schema DB utiliser ?"), il fallait le passer en amont.
 
 Avec **elicitation** : le serveur peut **demander dynamiquement** des inputs a l'utilisateur via le client, sous forme de formulaires structures.
 
@@ -354,58 +415,6 @@ Server : execute la query sur la bonne DB
 ```
 
 **Cas d'usage** : confirmation d'action destructive, selection d'un parametre dynamique, disambiguation quand le tool a plusieurs interpretations possibles.
-
-### Sampling — le serveur peut demander au LLM hote de generer du texte
-
-**Inversion inedite** : normalement le client (host) appelle le serveur. Avec **sampling**, le serveur peut demander au client **d'invoquer son LLM hote** pour generer du texte.
-
-**Cas d'usage** : un serveur MCP qui fait de la recherche documentaire peut demander au LLM hote de "reformuler cette query" ou "resumer ces 3 chunks" — sans avoir besoin de son propre LLM. Le serveur devient un orchestrateur qui **emprunte** le LLM du client pour ses sous-taches.
-
-```
-Server : j'ai besoin de resumer 5 documents pour cette requete
-  ↓
-Server appelle client.sample("Resume ces docs : ...")
-  ↓
-Client utilise son LLM hote (claude-opus-4-6) pour generer le resume
-  ↓
-Server recoit le resume, continue son traitement
-```
-
-**Interet** : pas besoin de stocker une cle API LLM sur le serveur, pas de cout additionnel (le cout est celui du client), et le serveur beneficie du meme modele que le client.
-
-### Resources subscribing — event-driven au lieu de polling
-
-Avant : si le client veut etre notifie des changements d'une resource, il doit poller periodiquement (`resources/read` toutes les X secondes).
-
-**Avec subscribing** : le client peut s'abonner a une resource, et le serveur **push une notification** quand elle change.
-
-```
-Client : resources/subscribe("file:///notes.txt")
-Server : ack
-  ...
-(le fichier est modifie)
-Server : notifications/resources/updated {uri: "file:///notes.txt"}
-Client : resources/read pour recuperer la nouvelle version
-```
-
-**Cas d'usage** : dashboards live, monitoring de fichiers, synchronisation avec des bases de donnees, notifications en temps reel.
-
-### OAuth 2.1 — standard d'authentification pour les serveurs distants
-
-Les serveurs MCP distants (HTTP) supportent maintenant **OAuth 2.1** comme standard d'authentification. Avant, chaque serveur avait sa propre approche ad-hoc (API keys, basic auth). Maintenant :
-
-- Discovery automatique du flow OAuth via les metadata du serveur
-- PKCE obligatoire (defense contre les interceptions)
-- Refresh tokens supportes
-- Scopes par tool/resource (granularite fine)
-
-C'est **indispensable** pour les serveurs d'entreprise qui exposent des donnees sensibles (DB production, CRM, email).
-
-### Streamable HTTP — le remplacement de SSE
-
-Le transport `HTTP + SSE` (Server-Sent Events) de la v1 avait des limites : connexions longues qui coupent, difficulte a gerer les retries, pas de multiplexing.
-
-**Streamable HTTP** remplace SSE : HTTP chunked transfer avec un protocole de framing robuste, reconnexion automatique, support des retries avec idempotence. Beaucoup plus stable pour les serveurs distants qui servent du traffic temps reel.
 
 ### MCP est devenu le standard de facto
 
@@ -449,7 +458,7 @@ Installer un serveur = installer un package npm/pip + ajouter 3 lignes dans la c
 > R : Un **tool** est appele automatiquement par le LLM quand il juge que c'est necessaire (autonomie). Un **prompt** est invoque explicitement par l'utilisateur du host (ex: via un slash command). Les tools sont de l'outillage, les prompts sont des raccourcis de workflow.
 
 **Q4 : Quels sont les 2 transports principaux de MCP et quand utiliser l'un ou l'autre ?**
-> R : **stdio** pour les serveurs locaux (defaut) : le host lance le serveur comme subprocess, ils communiquent via stdin/stdout. Simple, rapide, zero config reseau. **HTTP + SSE** pour les serveurs distants, partages entre utilisateurs, necessitant auth et ouverture reseau.
+> R : **stdio** pour les serveurs locaux (defaut) : le host lance le serveur comme subprocess, ils communiquent via stdin/stdout. Simple, rapide, zero config reseau. **Streamable HTTP** pour les serveurs distants, partages entre utilisateurs, necessitant auth et ouverture reseau — c'est le standard actuel ; l'ancien transport HTTP+SSE est legacy (deprecie depuis la revision 2025-03-26).
 
 **Q5 : Quels sont les principaux risques de securite de MCP et comment s'en proteger ?**
 > R : **Prompt injection** (un serveur malveillant retourne des resources avec instructions cachees), **tool abuse** (mauvais tool exploitable), **confused deputy** (LLM appelle un tool avec arguments issus de contenu externe malicieux). Protections : approbation humaine des actions destructives, descriptions explicites, principe du moindre privilege, logs, sandbox process, et validation des arguments cote serveur.
@@ -460,9 +469,9 @@ Installer un serveur = installer un package npm/pip + ajouter 3 lignes dans la c
 
 - MCP standardise la maniere dont un LLM consomme des **tools, resources, prompts** d'un serveur externe
 - Analogie : MCP est au LLM ce que USB est au materiel — un standard qui permet a N clients de parler a M serveurs
-- Architecture : host (app) embarque des clients qui parlent a des serveurs via JSON-RPC (stdio ou HTTP/SSE)
+- Architecture : host (app) embarque des clients qui parlent a des serveurs via JSON-RPC (stdio ou Streamable HTTP)
 - 3 primitives : **resources** (donnees lisibles), **tools** (actions invocables par le LLM), **prompts** (templates invocables par l'utilisateur)
-- Transports : **stdio** pour local (defaut), **HTTP+SSE** pour distant
+- Transports : **stdio** pour local (defaut), **Streamable HTTP** pour distant (HTTP+SSE est legacy, deprecie depuis 2025-03-26)
 - SDKs officiels en Python, TS, Java, C#, Rust, Kotlin — FastMCP permet un serveur en ~20 lignes
 - Connecter Claude Desktop : ajouter 3 lignes dans `claude_desktop_config.json`
 - Securite : approbation humaine sur les actions, sandbox, moindre privilege, validation des arguments
