@@ -162,7 +162,7 @@ Dreamer reste **le standard pédagogique** : c'est lui qu'on lit pour comprendre
 
 ---
 
-## 8. Q&A spaced-repetition
+## 8. Flash cards (spaced repetition)
 
 **Q1** — Quelle est la différence entre prior et posterior dans RSSM, et pourquoi minimiser leur KL ?
 

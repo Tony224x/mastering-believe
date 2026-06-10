@@ -261,7 +261,7 @@ Outils : **LangSmith**, **Langfuse**, **Arize Phoenix**, **Helicone**. Vu demain
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q: Quels sont les 4 composants essentiels d'un agent ?**
 R: State, Plan, Act, Observe. En boucle, avec une condition de sortie explicite.

@@ -34,7 +34,7 @@ Tu testes avec un `velocity_fn` factice qui retourne **toujours** `(target - A)`
 3. Lancer `euler_integrate(lambda A, tau: A_star - A, A_init, n_steps=10)` et vérifier que la sortie est ≈ `A_star`.
 4. Refaire avec `n_steps=2` et observer que la convergence est moins bonne.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] `flow_matching_step` retourne bien un tenseur de la même shape que `A_tau`.
 - [ ] L'intégration Euler converge vers `target` à `MSE < 0.01` avec `n_steps=10`.

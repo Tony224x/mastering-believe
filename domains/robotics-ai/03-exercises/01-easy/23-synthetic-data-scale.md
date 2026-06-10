@@ -37,7 +37,7 @@ Puis écris une mini-démo qui :
 3. Tester `lighting_augment` avec différents gains et observer que la dynamique est compressée (gain < 1) ou dilatée (gain > 1).
 4. Tester `background_swap` et compter le nombre de pixels modifiés (`np.sum((before != after).any(axis=-1))`).
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] `lighting_augment` retourne une image strictement entre `0` et `1` (pas de NaN, pas de dépassement).
 - [ ] Avec `gain=0.6, temperature=[0.1, 0, 0]`, le canal R du pixel central reste **strictement supérieur** au canal R du fond (l'augmentation préserve la séparabilité objet/fond).

@@ -39,7 +39,7 @@ Implémenter trois optimisations clés du repo `real-stanford/diffusion_policy` 
 2. Évalue sur 50 rollouts (à T_p=1, T_a=1 forcément).
 3. Compare le success rate à la version T_p=16, T_a=8.
 
-## Critères de réussite
+## Criteres de reussite
 
 - DDIM 16 steps produit visuellement les **deux modes** comme DDPM 100 steps, avec un facteur de speedup d'environ 5-7×.
 - L'agent receding horizon résout l'env jouet avec >70% de success rate.

@@ -274,7 +274,7 @@ Outils : LaunchDarkly, Unleash, ou simple config dans Redis/DynamoDB.
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q: Qu'est-ce que le PSI et comment l'interpreter ?**
 R: Population Stability Index. < 0.1 = pas de drift. 0.1-0.25 = drift modere. > 0.25 = drift significatif, action requise.

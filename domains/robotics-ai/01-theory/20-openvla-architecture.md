@@ -211,7 +211,7 @@ Meme avec LoRA, fine-tune sur RTX 4090 prend **~10-20 heures** pour ~50k steps s
 
 ---
 
-## 6. Spaced-repetition — auto-test
+## 6. Flash cards (spaced repetition)
 
 > Reponds a chaque question avant de regarder la suivante. Si tu sechais sur 2+, relis la section concernee.
 

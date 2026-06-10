@@ -22,8 +22,9 @@ Chaque domaine est concu autour de techniques d'apprentissage prouvees :
 | [System Design](./domains/system-design/) | Diagrammes + Python | Architecture backend & IA, entretiens senior |
 | [Neural Networks & LLMs](./domains/neural-networks-llm/) | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
 | [Agentic AI](./domains/agentic-ai/) | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
+| [Robotics & AI](./domains/robotics-ai/) | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies), capstone Diffusion Policy |
 
-Les domaines actuels sont organises sur ~14 jours (3-5h/jour) avec un capstone, mais ce format reste indicatif — un nouveau domaine peut etre plus court ou plus long selon le sujet.
+Les domaines actuels sont organises sur ~14 jours (3-5h/jour) avec un capstone (28 jours pour Robotics & AI), mais ce format reste indicatif — un nouveau domaine peut etre plus court ou plus long selon le sujet.
 
 ## Structure d'un domaine
 
@@ -81,6 +82,7 @@ cd mastering-believe
 # Selon le domaine aborde :
 pip install torch                       # Neural Networks & LLMs
 pip install langgraph langchain         # Agentic AI
+pip install torch gymnasium[mujoco]     # Robotics & AI (certains jours seulement, voir README du domaine)
 # Algorithmie & System Design : stdlib seulement
 ```
 

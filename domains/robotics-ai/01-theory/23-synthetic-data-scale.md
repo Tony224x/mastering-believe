@@ -330,7 +330,7 @@ Synthetic data + sim-to-real à scale
 
 ---
 
-## 10. Q&A spaced repetition
+## 10. Flash cards (spaced repetition)
 
 **Q1.** Pourquoi 780k trajectoires synthétiques + seulement 88h réelles dans GR00T N1 ?
 **R.** Parce que collecter du réel coûte ~5 min de téléopération humaine par démo, donc 1M démos = 10 000 heures-humain inatteignable. Le synthétique parallélisé (Isaac Lab + Cosmos) génère le même volume en quelques jours-GPU. Le réel sert d'**ancre dynamique** ; le synthétique sert de **volume de couverture**.

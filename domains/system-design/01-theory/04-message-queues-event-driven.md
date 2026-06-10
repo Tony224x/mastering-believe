@@ -335,7 +335,7 @@ Shopify utilise des sagas pour orchestrer un checkout : valider le panier, calcu
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q1** : Quelle est la difference entre at-least-once et exactly-once, et laquelle est realiste ?
 **R** : At-least-once garantit qu'un message est traite au moins une fois (duplications possibles). Exactly-once est techniquement impossible sur un reseau non-fiable. En pratique on fait "at-least-once + consommateur idempotent" = "effectively exactly-once".

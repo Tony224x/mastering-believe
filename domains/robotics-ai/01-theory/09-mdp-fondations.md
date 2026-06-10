@@ -210,7 +210,7 @@ Mais : MDPs tabulaires + Bellman = **les fondations** sur lesquelles repose tout
 > **PI** = alternance évaluation / amélioration, peu d'itérations externes.
 > Tous deux convergent vers `V*` et `π*` ; choix pratique = compromis vitesse vs simplicité.
 
-## Flash-cards (spaced repetition)
+## Flash cards (spaced repetition)
 
 1. **Q.** Pourquoi a-t-on besoin du discount factor `γ` ?
    **R.** Pour garantir la convergence de la somme infinie de récompenses (si bornées) et pour exprimer la préférence pour le présent. Mathématiquement, `γ < 1` rend l'opérateur de Bellman contractant.

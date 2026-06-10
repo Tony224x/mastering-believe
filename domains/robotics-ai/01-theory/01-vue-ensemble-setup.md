@@ -126,7 +126,7 @@ Si ces 5 lignes tournent, tu as la stack. Le code applique du jour fait exacteme
 
 ---
 
-## Spaced repetition
+## Flash cards (spaced repetition)
 
 **Q1.** Cite les 5 maillons du pipeline robotique du capteur à l'actuation.
 > Capteurs → perception → planning → contrôle → actuation.

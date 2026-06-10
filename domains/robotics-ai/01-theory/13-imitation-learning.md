@@ -260,7 +260,7 @@ C'est exactement le pattern dominant en robotique 2024-2026 : **BC sur demos tel
 
 ---
 
-## 10. Flash-cards (spaced repetition)
+## 10. Flash cards (spaced repetition)
 
 > **Q1.** Pourquoi BC echoue sur des episodes longs en pratique ?
 >

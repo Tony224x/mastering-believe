@@ -226,7 +226,7 @@ Le capstone du domaine implemente Diffusion Policy (Chi 2023) — c'est-a-dire l
 
 ---
 
-## Spaced repetition — Q&A
+## Flash cards (spaced repetition)
 
 **Q1.** Pourquoi un VLM monolithique 7B ne peut pas piloter un humanoide a 200 Hz ?
 

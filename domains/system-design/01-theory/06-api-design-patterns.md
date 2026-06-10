@@ -417,7 +417,7 @@ Netflix a plusieurs clients (iOS, Android, TV, web). Chaque client a un BFF (Bac
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q1** : Quand choisir gRPC plutot que REST ?
 **R** : Pour la communication backend-to-backend (microservices) ou le typage strict et la performance comptent. Pas pour une API publique facing browser.

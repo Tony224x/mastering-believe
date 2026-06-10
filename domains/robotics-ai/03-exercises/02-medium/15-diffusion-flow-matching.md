@@ -29,7 +29,7 @@ def my_ddim_sample(model, schedule, n_samples: int, n_steps: int) -> torch.Tenso
    - Mean & std des échantillons générés vs distribution réelle.
    - Pourcentage de samples dans la "bonne" lune (top vs bottom — utiliser la coordonnée y comme heuristique).
 
-## Critères de réussite
+## Criteres de reussite
 
 - À 50 steps, la qualité (mean/std proches du réel à ±10%) doit être comparable à l'ancestral 200-step.
 - À 10 steps, la dégradation doit être **observable** (mean/std s'écartent davantage). Documente-le.

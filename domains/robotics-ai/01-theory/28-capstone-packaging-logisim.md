@@ -279,7 +279,7 @@ A la fin de ce parcours, tu peux honnetement claim ce qui suit. Pas plus, pas mo
 
 ---
 
-## 8. Spaced-repetition Q&A
+## 8. Flash cards (spaced repetition)
 
 **Q1 — Quelle est la regle "une commande, un resultat" pour un capstone ML ?**
 R — `python demo.py` (ou `make demo`) doit afficher en moins d'une minute : un visuel de rollout + un rapport texte avec success rate et latence. Pas plus.

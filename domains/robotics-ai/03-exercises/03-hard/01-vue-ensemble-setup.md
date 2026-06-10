@@ -18,7 +18,7 @@ Construire un environnement Gymnasium minimal **from scratch** qui respecte le c
 3. Un main qui lance 10 rollouts random sur `OneDPointEnv` et 10 sur `Pendulum-v1`, et imprime un tableau comparatif `mean_reward ± std` pour les deux.
 4. Bonus : registre ton env via `gymnasium.register("OneDPoint-v0", entry_point=...)` et instancie-le ensuite via `gym.make("OneDPoint-v0")`.
 
-## Critères de réussite
+## Criteres de reussite
 - `gymnasium.utils.env_checker.check_env(OneDPointEnv())` passe sans warning fatal.
 - Le main tourne, imprime les deux moyennes ± std.
 - Tu peux justifier pourquoi `dtype=np.float32` est important pour la compatibilité avec PyTorch en aval (J11+).

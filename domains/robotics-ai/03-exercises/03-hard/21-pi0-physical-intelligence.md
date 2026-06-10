@@ -39,7 +39,7 @@ C'est l'exercice qui matérialise réellement la valeur de π0.
 3. Lance `python ton_fichier.py` avec budget réduit (`train_steps=800`) pour itérer vite, puis budget complet (`train_steps=3000`) une fois propre.
 4. Génère un tableau Markdown des résultats (ou au minimum un print structuré).
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Le script tourne end-to-end en < 5 min sur CPU.
 - [ ] FM atteint une MSE comparable à DDPM en **5 à 10× moins** de steps d'inférence.

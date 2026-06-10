@@ -310,7 +310,7 @@ Pinecone reste un choix solide pour l'enterprise avec du budget et une exigence 
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q: Pourquoi utiliser un hybrid search dense + BM25 ?**
 R: Le dense capture la semantique, BM25 capture les matches exacts (noms propres, codes). Ensemble : recall 10-20% superieur a chacun seul.

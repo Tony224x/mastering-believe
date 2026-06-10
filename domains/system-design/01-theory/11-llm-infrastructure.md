@@ -285,7 +285,7 @@ Tous ces outils exposent le meme pattern : un SDK qui wrap les appels LLM et eme
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q: Quelle est la difference entre un cache HTTP et un semantic cache ?**
 R: HTTP cache matche sur cle exacte, semantic cache matche sur similarite d'embedding (threshold 0.92-0.97).

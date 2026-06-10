@@ -251,7 +251,7 @@ Et PPO + LLM = RLHF, qui a son propre folklore (KL penalty, reward model). Ca, c
 
 ---
 
-## 10. Flash-cards (5 Q/R)
+## 10. Flash cards (spaced repetition)
 
 1. **Q** : Qu'est-ce que le policy gradient theorem dit en une phrase ?
    **R** : Le gradient du retour espere est `E[ nabla log pi(a|s) * R ]` — augmente la log-prob des actions qui rapportent.

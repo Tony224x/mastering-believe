@@ -52,7 +52,7 @@ C'est l'exercice qui matérialise la valeur d'un capstone : à la fin tu as un l
 5. Pour le test t : `from scipy.stats import ttest_ind ; t, p = ttest_ind(c1_seeds, c2_seeds, equal_var=False)`.
 6. Print un commentaire structuré.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Le script tourne end-to-end en < 10 min sur CPU (4 trainings + 4 evals).
 - [ ] Le plot est lisible : 4 barres, errbars visibles, labels non-tronqués.

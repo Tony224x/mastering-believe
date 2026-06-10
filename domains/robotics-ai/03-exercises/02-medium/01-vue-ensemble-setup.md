@@ -13,7 +13,7 @@ Faire tourner un env MuJoCo (`HalfCheetah-v4`) avec une policy aléatoire, colle
 5. Imprime ensuite : `mean_reward = ..., std_reward = ..., mean_length = ...` calculés via numpy.
 6. Précondition : si `gymnasium` ou `mujoco` n'est pas importable, le script doit imprimer un message clair avec la commande `pip install` à exécuter et sortir avec `sys.exit(1)`.
 
-## Critères de réussite
+## Criteres de reussite
 - 5 épisodes tournent sans crash sur HalfCheetah-v4.
 - La reward moyenne d'une policy random est **négative** (typiquement ~-300 à -100 sur HalfCheetah). Si tu vois +1000, tu mesures autre chose.
 - Le script échoue proprement (avec message d'install) sur une machine sans MuJoCo.

@@ -622,7 +622,7 @@ def get_user(user_id: str):
 
 ---
 
-## Flash Cards — Q&A
+## Flash cards (spaced repetition)
 
 ### Q1
 **Q** : Tu as un endpoint API lu 10K fois/sec qui retourne des donnees identiques pour tous les utilisateurs. Les donnees changent toutes les 5 minutes. Quelle strategie de cache proposes-tu ?

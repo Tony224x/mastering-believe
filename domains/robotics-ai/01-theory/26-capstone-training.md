@@ -179,7 +179,7 @@ for step, batch in enumerate(loader):
 
 ---
 
-## 10. Q&A spaced-repetition
+## 10. Flash cards (spaced repetition)
 
 **Q1** : Pourquoi prédit-on `eps` et pas `x_0` directement ?
 **R** : Parce que `eps ~ N(0, I)` à variance constante donne un signal de gradient bien conditionné quel que soit le pas de bruit `t`. Prédire `x_0` donne un signal qui s'effondre à petit `t` (cible ~= input). Les deux sont mathématiquement équivalents par reparamétrisation, mais empiriquement `eps`-prediction est plus stable (Ho 2020).

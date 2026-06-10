@@ -14,7 +14,7 @@ Comprendre concrètement le **forward process** de DDPM et l'effet du schedule (
 4. Pour chaque schedule, plot (matplotlib) la trajectoire bruitée à `k ∈ {0, 25, 50, 75, 99}` (5 sous-plots côte à côte par schedule).
 5. Compare visuellement : à `k = 50`, quel schedule conserve le mieux la structure de la trajectoire ?
 
-## Critères de réussite
+## Criteres de reussite
 
 - Aux deux extrêmes (`k=0` et `k=K-1`), les courbes correspondent à `a^0` propre et à du pur bruit gaussien (sanity-check visuel).
 - `linear` détruit la structure plus tôt (vers `k ≈ 30-40`) ; `squared cosine` la préserve plus longtemps (jusqu'à `k ≈ 50-60`).

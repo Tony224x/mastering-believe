@@ -198,7 +198,7 @@ Au-dela : on peut chainer un swing-up energetique (J12) qui amene le pendule pre
 
 ---
 
-## 6. Flash cards (revision)
+## 6. Flash cards (spaced repetition)
 
 **Q1.** Pourquoi un PID brut oscille-t-il sur le pendule inverse ?
 **R1.** Le PID est lineaire local sans modele. Il ignore l'instabilite intrinseque (mode propre `+sqrt(g/l)`) et reagit seulement a l'erreur passee. Sans terme anticipatif, il poursuit une cible mouvante.

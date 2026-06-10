@@ -226,7 +226,7 @@ Apres validation en shadow : canary (1% -> 10% -> 50% -> 100%) ou A/B test (50/5
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q: Qu'est-ce que le training-serving skew ?**
 R: Quand la distribution ou le calcul des features differe entre l'entrainement et l'inference. Cause principale d'echec en prod. Mitigation : feature store unique.

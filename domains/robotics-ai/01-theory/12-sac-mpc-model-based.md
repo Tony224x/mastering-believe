@@ -220,7 +220,7 @@ LLM-style généralisation → World models (J17), VLA (J19+)
 
 ---
 
-## Flashcards (spaced repetition)
+## Flash cards (spaced repetition)
 
 1. **Q** : Pourquoi SAC ajoute un terme `α · H(π)` à l'objectif ?
    **R** : Pour encourager l'exploration native (pas de ε-greedy ni OU noise) et stabiliser l'apprentissage en évitant que la policy ne s'effondre sur une seule action.

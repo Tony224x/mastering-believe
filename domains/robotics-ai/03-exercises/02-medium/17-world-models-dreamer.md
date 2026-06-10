@@ -15,7 +15,7 @@ Mesurer empiriquement comment la qualité du *latent imagination rollout* dépen
 3. Trace la dérive pour `H ∈ {1, 2, 5, 10, 20}` et commente. Question pédagogique : à partir de quel H la dérive explose-t-elle ?
 4. Bonus : refais l'expérience avec `kl_weight=0.1` puis `kl_weight=5.0` dans la `Config` et compare. Que voit-on ?
 
-## Critères de réussite
+## Criteres de reussite
 
 - Ta fonction `imagination_drift` tourne sans erreur et produit un tenseur de la bonne forme.
 - Le plot montre une dérive monotone croissante avec `H` (sinon, ton modèle imagine ou observe mal — debug d'abord).

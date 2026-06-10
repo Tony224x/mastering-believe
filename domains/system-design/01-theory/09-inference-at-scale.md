@@ -242,7 +242,7 @@ Avantages :
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q: Pourquoi le static batching est une mauvaise idee pour les LLMs ?**
 R: Les sequences ont des longueurs differentes. Tu attends la plus longue, le GPU est sous-utilise 90% du temps.

@@ -13,7 +13,7 @@ Confirmer que la stack `gymnasium[mujoco] + mujoco + torch` est installée et co
 5. À la fin, imprime la **shape de `obs`** et la **shape de `action_space.sample()`**.
 6. Ferme l'env proprement (`env.close()`).
 
-## Critères de réussite
+## Criteres de reussite
 - Le script tourne sans crash sur Python 3.10+.
 - 10 lignes de log step + 2 lignes de shape.
 - Tu peux expliquer en une phrase la différence entre `terminated` et `truncated`.

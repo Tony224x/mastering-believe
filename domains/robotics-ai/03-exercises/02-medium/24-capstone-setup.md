@@ -34,7 +34,7 @@ C'est l'exercice qui matérialise la promesse de la théorie (key takeaway #2 du
 4. KMeans k=2 sur les actions du bucket. Si tu n'as pas sklearn, code-le en 15 lignes (initialisation random + 10 itérations Lloyd).
 5. Pour différencier alignement / poussée : pour chaque épisode, ses ~20% premiers steps sont alignement, le reste poussée. Construis 2 indices booléens.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Le script tourne en < 5 secondes.
 - [ ] Histogrammes globaux affichés ; tu commentes 1 ligne sur la forme (souvent : symétrique en x autour de 0, biais positif en y vu que la target est en haut, ou similaire selon la seed).

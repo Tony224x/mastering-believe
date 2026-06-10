@@ -26,7 +26,7 @@ Détails :
 
 Teste-la sur un point 2D `x0 = np.array([1.0, 0.5])` aux timesteps `t = 0, 100, 500, 999`.
 
-## Critères de réussite
+## Criteres de reussite
 
 - À `t = 0`, `x_t` doit être quasi égal à `x0` (alpha_bar ~ 1, eps multiplié par ~ 0).
 - À `t = 999`, la norme de `x_t` doit être proche de `sqrt(2) ~ 1.41` (variance unitaire en 2D, donc x_t ~ N(0, I)).

@@ -44,7 +44,7 @@ Ce qui crée `artifacts/pusht_demos/data.npz`, `artifacts/pusht_demos/meta.json`
 4. Pour chaque épisode `i`, `s, l = int(ep_start[i]), int(ep_length[i])` puis `obs[s:s+l]`.
 5. Pour le plot, utilise `plt.plot(traj[:, 0], traj[:, 1])` pour l'agent.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Le script s'exécute sans erreur sur le dataset par défaut (200 épisodes).
 - [ ] Les 3 vérifications de cohérence passent (assertions vraies).

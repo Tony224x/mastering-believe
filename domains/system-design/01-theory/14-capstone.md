@@ -309,7 +309,7 @@ Expected savings : 70% sur le cout LLM brut.
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q: Dans un storage distribue, pourquoi faire du chunking + dedup plutot que de stocker les fichiers entiers ?**
 R: Permet de sync partiellement (resume), d'economiser storage (dedup 30-40%), et d'economiser bandwidth (upload incremental).

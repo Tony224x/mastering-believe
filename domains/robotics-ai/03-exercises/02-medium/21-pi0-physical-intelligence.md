@@ -32,7 +32,7 @@ Reproduire un mécanisme clé de π0 : le **padding multi-embodiment**. Tu vas i
 3. Boucle d'entraînement classique avec la masked loss.
 4. Tableau d'évaluation : embodiment | MSE-valid-dims | MSE-padded-dims.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Le code tourne sans crash, fait au moins 1000 étapes d'entraînement.
 - [ ] Pour chaque embodiment, la MSE sur les dimensions valides converge à `< 0.05`.

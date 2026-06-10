@@ -16,7 +16,7 @@ Reproduire empiriquement la **thèse centrale** du papier Chi 2023 (REFERENCES.m
    - les deux modes "ground truth" (A et B) en vert pointillé.
 6. Calcule la variance des `argmax` temporels sur l'axe x pour BC vs Diffusion Policy. Commente.
 
-## Critères de réussite
+## Criteres de reussite
 
 - BC produit **une seule trajectoire** au milieu des deux modes (pas une cardioïde, plutôt un mélange aplati).
 - Diffusion Policy produit un nuage couvrant **les deux modes** (visuellement on distingue 2 groupes).

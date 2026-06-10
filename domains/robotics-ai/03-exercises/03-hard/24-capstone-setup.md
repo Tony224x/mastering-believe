@@ -56,7 +56,7 @@ Assemble le tout :
 - Pour 1 batch tiré au hasard : moyenne et std des observations avec et sans bruit (pour vérifier que le bruit a bien l'amplitude attendue).
 - Visualiser **1 chunk avant flip** et **1 chunk après flip** pour confirmer visuellement que le flip est cohérent géométriquement.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] `make_chunks` retourne des shapes cohérentes : `obs_t.shape[0] == action_chunk.shape[0]`.
 - [ ] Aucun chunk ne traverse une frontière d'épisode (vérifié via une assertion sur les `ep_id_t`).

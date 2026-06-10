@@ -536,7 +536,7 @@ Le choix de la partition key est **la decision la plus importante** du sharding.
 
 ---
 
-## Flash Cards — Q&A
+## Flash cards (spaced repetition)
 
 ### Q1
 **Q** : Tu concois un systeme IoT qui recoit 500K events/sec de capteurs. Les events doivent etre stockes pendant 2 ans et interrogeables par capteur et par plage de temps. Quelle DB et pourquoi ?

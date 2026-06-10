@@ -244,7 +244,7 @@ Lecture critique de ce tableau (à toujours faire, sinon le tableau ne sert à r
 
 ---
 
-## 8. Q&A — spaced repetition
+## 8. Flash cards (spaced repetition)
 
 **Q1 — Combien de rollouts minimum pour reporter un success rate raisonnable ?**
 N=50 par seed × K=3 seeds = 150 rollouts. Pour un success rate de 0.8, ça donne σ ≈ 0.06 entre seeds, suffisant pour distinguer un écart de 10%.

@@ -38,7 +38,7 @@ Tu vas implémenter la **trajectory deviation** : pour chaque rollout, on mesure
 4. Aligne par troncation : `T = min(len(traj_A), len(traj_B))`, calcule `mean(np.linalg.norm(traj_A[:T] - traj_B[:T], axis=1))`.
 5. Aggrège sur N=15 rollouts, reporte `mean ± std`.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] La fonction `trajectory_deviation` retourne un float positif.
 - [ ] `deviation(expert_policy)` est sensiblement plus faible que `deviation(random_policy)`.

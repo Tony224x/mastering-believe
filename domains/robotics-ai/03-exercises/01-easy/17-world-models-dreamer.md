@@ -16,7 +16,7 @@ Vérifier ta compréhension du transform `symlog` (DreamerV3) et de la séparati
    - où le **posterior** est calculé,
    - où le **KL balancing** est appliqué (avec ses deux termes asymétriques).
 
-## Critères de réussite
+## Criteres de reussite
 
 - `symexp(symlog(x))` retourne x à 1e-5 près sur le range [-1000, 1000].
 - Tu peux expliquer en une phrase pourquoi `log(|x|+1)` est préféré à `log|x|` (réponse attendue : éviter la singularité en 0 et garder le transform identité au voisinage).

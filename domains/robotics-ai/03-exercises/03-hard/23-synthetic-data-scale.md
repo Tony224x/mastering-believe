@@ -16,7 +16,7 @@ Tu vas :
    - avec les **4 axes**,
 6. **Évaluer** chaque policy sur un set de test **out-of-distribution** (lighting très différent du train) et reporter le delta de performance.
 
-## Consigne détaillée
+## Consigne
 
 ### A. Génération + augmentation + filtering (réutilisation du code J23)
 
@@ -72,7 +72,7 @@ Et **commente** dans la console au moins 3 phrases :
 - Ajoute un **5ᵉ axe** custom (ex. random crop, flip horizontal contraint à laisser l'objet visible) et compare.
 - Visualise 1 image avant/après chaque augmentation côte-à-côte avec `matplotlib.subplots`.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Le script tourne end-to-end en < 3 minutes sur CPU.
 - [ ] Les 4 policies sont entraînées avec exactement le même budget compute (mêmes epochs, lr, batch).

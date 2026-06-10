@@ -361,7 +361,7 @@ Partition par `conversation_id` (1 partition par chat 1-to-1 ou par groupe). Tri
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q1** : Quelles sont les 6 etapes du framework d'entretien system design ?
 **R** : Clarify, Estimate, High-level, Deep dive, Bottlenecks, Extensions.

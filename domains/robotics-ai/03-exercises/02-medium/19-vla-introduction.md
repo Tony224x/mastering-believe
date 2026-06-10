@@ -14,7 +14,7 @@ Reprendre le code du module (`02-code/19-vla-introduction.py`) et l'étendre pou
 4. La loss est la moyenne des cross-entropies sur les `K * 2` tokens.
 5. Au moment du décodage, afficher la trajectoire prédite vs vraie pour 1-2 échantillons (par ex. `[(0,-1), (0,-1), (0,-1), (0,-1)]` pour "up").
 
-## Critères de réussite
+## Criteres de reussite
 
 - Le code passe `python -m py_compile`.
 - Après ~5 epochs, la **per-token accuracy** sur la val depasse 0.85.

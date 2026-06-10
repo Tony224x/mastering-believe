@@ -226,7 +226,7 @@ Le repo utilise `diffusers` de HuggingFace pour le scheduler (`DDPMScheduler`, `
 
 ---
 
-## 7. Spaced repetition — Q&A
+## 7. Flash cards (spaced repetition)
 
 **Q1.** Pourquoi un Behavior Cloning naïf échoue sur des démonstrations humaines de "push-T" alors que sur un robot téléopéré scripté, il marche ?
 > **R.** Les démos humaines ont une distribution d'actions **multimodale** (plusieurs stratégies pour le même état). MSE force la prédiction vers la moyenne, qui n'est aucune des stratégies valides. Un robot scripté est unimodal par construction → BC y suffit.

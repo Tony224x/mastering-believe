@@ -262,7 +262,7 @@ Trois **astuces praticiennes** :
 
 ---
 
-## 8. Flash-cards (spaced repetition)
+## 8. Flash cards (spaced repetition)
 
 1. **Q :** Pourquoi `atan2(y, x)` et pas `atan(y/x)` ?
    **R :** `atan2` distingue les 4 quadrants (gere le signe de x et y separement) et evite la division par zero quand x=0. `atan` est ambigu pi/-pi.

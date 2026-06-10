@@ -204,7 +204,7 @@ où :
 
 ---
 
-## 7. Flash-cards (spaced repetition)
+## 7. Flash cards (spaced repetition)
 
 **Q1** — Comment vérifier numériquement qu'une matrice 3x3 est dans SO(3) ?
 **R1** — `np.allclose(R.T @ R, np.eye(3))` ET `np.isclose(np.linalg.det(R), 1.0)`. Les deux conditions sont nécessaires (sans le det, on inclut les réflexions).

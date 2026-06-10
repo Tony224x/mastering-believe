@@ -272,7 +272,7 @@ Une chute de pendule de 1 m avec `m=1, g=9.81` libère `mgh ≈ 9.81 J` qu'on re
 
 ---
 
-## 9. Flash-cards (spaced repetition)
+## 9. Flash cards (spaced repetition)
 
 1. **Q** : Sous quelle forme matricielle s'écrit la dynamique d'un bras à n DDL ?
    **R** : `M(q)q̈ + C(q,q̇)q̇ + g(q) = τ` — `M` symétrique définie positive, `C` Coriolis, `g` gravité.

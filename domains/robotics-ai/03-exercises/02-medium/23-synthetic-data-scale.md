@@ -46,7 +46,7 @@ rejected    : XX (XX.X%)
 4. Boucle de filtrage avec accumulation des stats dans un `dict[str, int]`.
 5. Print formaté.
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Le script tourne sans crash et termine en < 5 secondes.
 - [ ] Le taux de rejet observé est **proche de 40%** (à ±5% près, dépend du seed).

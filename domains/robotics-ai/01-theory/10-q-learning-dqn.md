@@ -252,7 +252,7 @@ Workarounds :
 
 ---
 
-## 8. Flash-cards (5 Q/R, spaced-rep)
+## 8. Flash cards (spaced repetition)
 
 1. **Q :** Pourquoi TD-learning n'a-t-il pas besoin de connaitre `P(s' | s, a)` ?
    **R :** Parce qu'il echantillonne `s'` directement en interagissant avec l'environnement, et utilise sa propre estimation `V(s')` pour bootstrapper la cible. L'esperance sur `P` est remplacee par un seul echantillon.

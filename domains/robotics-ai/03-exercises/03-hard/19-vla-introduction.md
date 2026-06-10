@@ -18,7 +18,7 @@ Pour chacune des 3 variantes, mesure :
 - **Erreur quadratique** sur le delta prédit (continu).
 - Sur la variante C, **diversité des prédictions** : combien des 4 directions le modèle couvre-t-il sur 100 inférences avec instruction `"go"` ?
 
-## Critères de réussite
+## Criteres de reussite
 
 - Variantes A et B atteignent une accuracy > 0.85 sur le dataset non-ambigu.
 - Sur le dataset ambigu (variante C), tu observes que la **régression MSE collapse** (prédit le delta moyen, ~ (0,0), perdant tout signal directionnel) tandis que la **tokenization conserve un softmax multimodal** (chaque appel argmax peut tomber sur un mode différent, surtout avec sampling stochastique).

@@ -277,7 +277,7 @@ en apprenant directement la trajectoire depuis les pixels.
 
 ---
 
-## 9. Flash-cards (active recall)
+## 9. Flash cards (spaced repetition)
 
 > Cache la reponse, donne ta version, puis verifie.
 

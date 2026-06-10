@@ -243,7 +243,7 @@ J24 — Capstone Day 1 — Setup PushT + dataset
 
 ---
 
-## 7. Q&A spaced repetition
+## 7. Flash cards (spaced repetition)
 
 **Q1.** Pourquoi PushT est-il *le* benchmark canonique de Diffusion Policy plutôt qu'une tâche manipulation MuJoCo standard ?
 **R.** Parce que sa structure expose explicitement la **multimodalité** des actions valides (pousser par la gauche OU par la droite), ce qui est *exactement* le phénomène que la diffusion modélise mieux que les baselines unimodales (BC MSE, gaussienne).

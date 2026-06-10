@@ -213,7 +213,7 @@ transformer + action bins                    VLM co-fine-tuned + action tokens
 
 ---
 
-## 8. Q&A spaced-repetition (5 cartes)
+## 8. Flash cards (spaced repetition)
 
 **Q1** — Quelle est la différence essentielle entre RT-1 et RT-2 ?
 **R1** — RT-1 entraîne un transformer policy **from scratch** sur des démos robot (pas de connaissance du monde héritée). RT-2 **co-fine-tune un VLM web-scale** (PaLI-X / PaLM-E) directement sur des actions sérialisées en tokens texte → généralisation émergente à des objets/scènes inédits.

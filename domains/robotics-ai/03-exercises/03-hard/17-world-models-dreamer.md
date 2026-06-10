@@ -21,7 +21,7 @@ Reproduire à petite échelle l'expérience d'ablation qui justifie le titre du 
    - hypothèses sur ce qui change à plus grande échelle (Atari, MuJoCo).
 5. Cite la table d'ablation de Hafner 2023 (REFERENCES.md #20, section 4) et compare qualitativement avec tes résultats.
 
-## Critères de réussite
+## Criteres de reussite
 
 - Tu produis un plot 2D (recon_loss vs iteration) avec 5 courbes (baseline + 4 ablations) et bandeau d'écart-type.
 - Au moins **une** des 4 ablations dégrade visiblement la stabilité ou la convergence (sinon, tu n'as probablement pas implémenté l'ablation correctement — debug).

@@ -80,7 +80,7 @@ Le systeme refuse de repondre s'il ne peut pas garantir la consistance.
 **Exemples reels** :
 - **ZooKeeper** : coordination de cluster, les locks doivent etre exacts
 - **etcd** : stockage de config Kubernetes, une mauvaise valeur = catastrophe
-- **MongoDB** (config par defaut avec write concern majority)
+- **MongoDB** (configurable : CP avec write concern `majority` ; le write concern par defaut `w: 1` relache cette garantie)
 - **Systeme bancaire** : un solde incorrect = perte financiere
 
 **Analogie** : Un notaire qui refuse de signer un acte tant qu'il n'a pas TOUS les documents — plus lent, mais garanti correct.
@@ -280,7 +280,7 @@ En entretien, on te demande : "Combien de serveurs pour supporter 1M d'utilisate
 
 ---
 
-## Flash Cards — Q&A
+## Flash cards (spaced repetition)
 
 ### Q1
 **Q** : Tu dois choisir entre CP et AP pour un systeme de reservation de billets d'avion. Lequel et pourquoi ?

@@ -269,7 +269,7 @@ Trajectoire 2025+ → System1/System2 (J22), foundation policies, deployment
 
 ---
 
-## 10. Q&A spaced repetition
+## 10. Flash cards (spaced repetition)
 
 **Q1.** En une phrase, quelle est la différence fondamentale entre flow matching et DDPM côté inférence ?
 **R.** Flow matching résout une **ODE déterministe** en 5-10 steps Euler ; DDPM résout une **SDE stochastique** en 50-100 steps avec scheduler complexe.

@@ -218,7 +218,7 @@ L'observation cle : meme les approches deep finissent par un **raffinement ICP**
 
 ---
 
-## Spaced repetition — flashcards
+## Flash cards (spaced repetition)
 
 1. Q : Soit un pixel `(u=320, v=240)` avec depth `d=1.5 m`, et `K` de focales `fx=fy=500`, principal point `(cx=320, cy=240)`. Quel est le point 3D dans le repere camera ?
    R : `X = (320-320)*1.5/500 = 0`, `Y = (240-240)*1.5/500 = 0`, `Z = 1.5`. C'est sur l'axe optique a 1.5 m.

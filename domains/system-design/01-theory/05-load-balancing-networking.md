@@ -331,7 +331,7 @@ Une architecture AWS typique : Route53 (DNS) -> NLB (L4, TLS passthrough, throug
 
 ---
 
-## Flash cards
+## Flash cards (spaced repetition)
 
 **Q1** : Quelle est la difference fondamentale entre L4 et L7 LB ?
 **R** : L4 regarde seulement les IPs/ports TCP sans lire le contenu -> tres rapide, protocole-agnostique. L7 parse le HTTP (URL, headers) -> routing intelligent mais plus cher en CPU.

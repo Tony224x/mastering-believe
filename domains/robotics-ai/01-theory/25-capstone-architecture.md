@@ -213,7 +213,7 @@ L'objectif J25 est strict : **monter l'architecture, faire un forward dummy, ver
 
 ---
 
-## Spaced repetition (a relire J+1, J+3, J+7)
+## Flash cards (spaced repetition)
 
 1. **Q** : Pourquoi predire une **sequence** d'actions et non une seule ?
    **R** : Action chunking permet de modeliser des distributions multimodales d'actions et de reduire la frequence d'inference. Une policy qui predit une seule action a chaque step a tendance a moyenner les modes (jittering).

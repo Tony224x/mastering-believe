@@ -31,7 +31,7 @@ Tu dois écrire un petit script Python (ou directement dans un REPL) qui :
 3. Calcule aussi le `mean_across_all_rollouts` (en aplatissant les 3 listes en une seule de 60 booléens) et compare-le à `mean_across_seeds`. Sont-ils égaux ? Sinon pourquoi ?
 4. Écris à la main la formule de l'erreur standard binomiale `σ_binom = sqrt(p * (1-p) / N)` avec `p = mean_across_seeds` et `N = total_rollouts = 60`. Compare-la à `std_across_seeds`. Laquelle est plus grande ? Que représente chacune ?
 
-## Critères de réussite
+## Criteres de reussite
 
 - [ ] Tu reportes correctement `success_rate = X.XX +/- Y.YY` pour cette policy.
 - [ ] Tu peux expliquer en 1-2 phrases pourquoi `mean_across_seeds == mean_across_all_rollouts` quand chaque seed a le même nombre de rollouts.

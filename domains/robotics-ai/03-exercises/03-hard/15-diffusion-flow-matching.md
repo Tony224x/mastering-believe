@@ -35,7 +35,7 @@ def sample_cfg(model, schedule, n, c_target: int, w: float):
    - Précision : % de samples dans la "bonne" zone (anneau de rayon ~1 ou two-moons distinctes — définis un test géométrique simple).
    - Diversité : variance totale des samples par classe.
 
-## Critères de réussite
+## Criteres de reussite
 
 - Précision croît avec `w` (de ~50% à `w=0`, vers >85% à `w=3`).
 - Diversité décroît avec `w` (variance baisse).
