@@ -1,18 +1,18 @@
 """
-Jour 6 -- API Design & Patterns
-Demonstrations interactives en Python.
+Day 6 -- API Design & Patterns
+Interactive demonstrations in Python.
 
 Usage:
     python 06-api-design-patterns.py
 
-Simulations :
-- Endpoint REST avec idempotency keys (table en memoire)
-- Cursor pagination avec encoding base64
-- Mini API Gateway qui route/authentifie/rate-limite en amont des handlers
-- Error response factory coherente
+Simulations:
+- REST endpoint with idempotency keys (in-memory table)
+- Cursor pagination with base64 encoding
+- Mini API Gateway that routes/authenticates/rate-limits upstream of the handlers
+- Consistent error response factory
 
-Le but : MONTRER les patterns sans dependre de FastAPI/Flask ; chaque
-pattern est implemente "a la main" pour exposer la logique.
+The goal: SHOW the patterns without depending on FastAPI/Flask; each
+pattern is implemented "by hand" to expose the logic.
 """
 
 import base64
@@ -28,16 +28,16 @@ SEPARATOR = "=" * 70
 
 
 # =============================================================================
-# SECTION 1 : Error response standard + exception helpers
+# SECTION 1 : Standard error response + exception helpers
 # =============================================================================
 
 
 class APIError(Exception):
-    """Exception de base qui se traduit en reponse d'erreur structuree.
+    """Base exception that translates into a structured error response.
 
-    WHY une classe dediee ? Pour centraliser la forme de la reponse d'erreur
-    (code stable, message human, status HTTP). Les clients codent sur 'code'
-    (stable), pas sur 'message' (peut changer).
+    WHY a dedicated class? To centralize the shape of the error response
+    (stable code, human message, HTTP status). Clients code against 'code'
+    (stable), not 'message' (can change).
     """
 
     def __init__(self, code: str, message: str, status: int = 400, details: dict = None):
@@ -64,10 +64,10 @@ class APIError(Exception):
 
 
 class UserDB:
-    """Faux store d'utilisateurs pour la demo.
+    """Fake user store for the demo.
 
-    WHY ne pas utiliser SQLite ? Pour garder le script runnable sans
-    fichier externe et focaliser sur les patterns API, pas sur la DB.
+    WHY not use SQLite? To keep the script runnable without an
+    external file and focus on the API patterns, not on the DB.
     """
 
     def __init__(self):
@@ -87,11 +87,11 @@ class UserDB:
         return self.users.get(uid)
 
     def list_after(self, after_id: Optional[str], limit: int) -> list[dict]:
-        """Retourne les 'limit' users apres 'after_id' (keyset pagination).
+        """Returns the 'limit' users after 'after_id' (keyset pagination).
 
-        WHY keyset plutot qu offset ? OFFSET 10000 scannerait 10000 rows
-        en DB. WHERE id > :after_id avec un index = O(log N), independant
-        de la profondeur de la page.
+        WHY keyset rather than offset? OFFSET 10000 would scan 10000 rows
+        in the DB. WHERE id > :after_id with an index = O(log N), independent
+        of the page depth.
         """
         if after_id is None:
             start = 0
@@ -104,14 +104,14 @@ class UserDB:
 
 
 class IdempotencyStore:
-    """Store des idempotency keys -> reponse mise en cache.
+    """Store of idempotency keys -> cached response.
 
-    WHY ? Les operations critiques (payments, create-order) peuvent etre
-    retryees par le client apres un timeout. Sans cette store, on risque
-    une double execution. Avec : la 2e (3e, ...) requete avec la meme cle
-    renvoie la reponse memorisee SANS re-executer la logique.
+    WHY? Critical operations (payments, create-order) can be
+    retried by the client after a timeout. Without this store, we risk
+    a double execution. With it: the 2nd (3rd, ...) request with the same key
+    returns the memorized response WITHOUT re-executing the logic.
 
-    En prod : Redis avec TTL 24h, ou table Postgres avec index unique.
+    In prod: Redis with a 24h TTL, or a Postgres table with a unique index.
     """
 
     def __init__(self, ttl_sec: int = 24 * 3600):
@@ -138,12 +138,12 @@ class IdempotencyStore:
 
 
 def encode_cursor(payload: dict) -> str:
-    """Encode un cursor opaque en base64.
+    """Encodes an opaque cursor in base64.
 
-    WHY opaque ? Le client ne doit pas deviner ni forger des cursors.
-    En encodant en base64 (voire signe HMAC pour prod), on garde une
-    API OU le serveur est libre de changer sa strategie interne sans
-    casser les clients. Le cursor est un token 'give-me-more'.
+    WHY opaque? The client must neither guess nor forge cursors.
+    By encoding in base64 (or even HMAC-signed for prod), we keep an
+    API WHERE the server is free to change its internal strategy without
+    breaking the clients. The cursor is a 'give-me-more' token.
     """
     raw = json.dumps(payload, separators=(",", ":")).encode()
     return base64.urlsafe_b64encode(raw).decode()
@@ -158,15 +158,15 @@ def decode_cursor(cursor: str) -> dict:
 
 
 # =============================================================================
-# SECTION 4 : Handlers REST (logique metier)
+# SECTION 4 : REST handlers (business logic)
 # =============================================================================
 
 
 def handler_create_user(db: UserDB, body: dict) -> tuple[int, dict]:
     """POST /users
 
-    Validation minimaliste pour la demo. En prod, utiliser pydantic /
-    OpenAPI validator pour enforcer le schema.
+    Minimalist validation for the demo. In prod, use pydantic /
+    an OpenAPI validator to enforce the schema.
     """
     email = body.get("email")
     if not email or "@" not in email:
@@ -188,7 +188,7 @@ def handler_get_user(db: UserDB, uid: str) -> tuple[int, dict]:
 def handler_list_users(db: UserDB, query: dict) -> tuple[int, dict]:
     """GET /users?cursor=X&limit=N
 
-    Cursor-based pagination. Retourne data + next_cursor.
+    Cursor-based pagination. Returns data + next_cursor.
     """
     try:
         limit = int(query.get("limit", 5))
@@ -206,7 +206,7 @@ def handler_list_users(db: UserDB, query: dict) -> tuple[int, dict]:
     users = db.list_after(after_id, limit)
     next_cursor = None
     if len(users) == limit:
-        # Il y a (peut-etre) encore des donnees : on construit un next cursor
+        # There is (maybe) more data: we build a next cursor
         next_cursor = encode_cursor({"after_id": users[-1]["id"]})
 
     return 200, {
@@ -223,7 +223,7 @@ def handler_list_users(db: UserDB, query: dict) -> tuple[int, dict]:
 
 @dataclass
 class Request:
-    """Representation simplifiee d'une requete HTTP."""
+    """Simplified representation of an HTTP request."""
 
     method: str
     path: str
@@ -239,7 +239,7 @@ class Response:
     headers: dict = field(default_factory=dict)
 
 
-# Token bucket simplifie (voir jour 5 pour la version complete)
+# Simplified token bucket (see day 5 for the full version)
 class SimpleRateLimiter:
     def __init__(self, per_sec: float, capacity: int):
         self.per_sec = per_sec
@@ -258,24 +258,24 @@ class SimpleRateLimiter:
 
 
 class APIGateway:
-    """Mini API Gateway qui illustre les responsabilites d'un gateway :
-    - Authentification (Bearer token)
+    """Mini API Gateway illustrating a gateway's responsibilities:
+    - Authentication (Bearer token)
     - Rate limiting
     - Routing (method + path -> handler)
-    - Idempotency enforcement pour les POST
-    - Error handling centralise
-    - Generation de request_id
+    - Idempotency enforcement for POSTs
+    - Centralized error handling
+    - request_id generation
 
-    WHY centraliser ces concerns ? Parce qu'ils sont generiques et
-    doivent etre appliques uniformement. Si chaque service les
-    reimplemente, on a des divergences et des bugs.
+    WHY centralize these concerns? Because they are generic and
+    must be applied uniformly. If each service reimplements
+    them, we get divergences and bugs.
     """
 
     def __init__(self, db: UserDB, idempo: IdempotencyStore):
         self.db = db
         self.idempo = idempo
         self.rate_limiter = SimpleRateLimiter(per_sec=5, capacity=10)
-        # Token de demo en dur. En prod : JWT ou token introspection.
+        # Hardcoded demo token. In prod: JWT or token introspection.
         self.valid_tokens = {"secret-token-abc": "user_42"}
         # Route table : (method, path_pattern) -> handler
         self.routes: list[tuple[str, str, Callable]] = [
@@ -285,16 +285,16 @@ class APIGateway:
         ]
 
     def handle(self, req: Request) -> Response:
-        """Entry point : orchestre tout le pipeline gateway."""
+        """Entry point: orchestrates the whole gateway pipeline."""
         request_id = str(uuid.uuid4())[:8]
         try:
             # 1. Auth
             user_id = self._authenticate(req)
-            # 2. Rate limiting (par user)
+            # 2. Rate limiting (per user)
             if not self.rate_limiter.allow(user_id):
                 raise APIError("rate_limited", "Too many requests", status=429,
                                details={"retry_after_seconds": 1})
-            # 3. Idempotency check (pour les writes)
+            # 3. Idempotency check (for writes)
             if req.method == "POST":
                 idem_key = req.headers.get("Idempotency-Key")
                 if idem_key:
@@ -317,12 +317,12 @@ class APIGateway:
         except APIError as e:
             return Response(e.status, e.to_dict(request_id), {"X-Request-Id": request_id})
         except Exception as e:
-            # Fallback : erreur 500 generique, JAMAIS le stack trace en prod
+            # Fallback: generic 500 error, NEVER the stack trace in prod
             err = APIError("internal_error", "An unexpected error occurred", status=500)
             return Response(500, err.to_dict(request_id), {"X-Request-Id": request_id})
 
     def _authenticate(self, req: Request) -> str:
-        """Extrait et valide le Bearer token. Retourne user_id."""
+        """Extracts and validates the Bearer token. Returns user_id."""
         auth = req.headers.get("Authorization", "")
         if not auth.startswith("Bearer "):
             raise APIError("unauthorized", "Missing Bearer token", status=401)
@@ -333,7 +333,7 @@ class APIGateway:
         return user_id
 
     def _match_route(self, req: Request) -> Optional[Callable]:
-        """Matcher simplifie pour des routes avec un seul {param}."""
+        """Simplified matcher for routes with a single {param}."""
         for method, pattern, handler in self.routes:
             if method != req.method:
                 continue
@@ -341,7 +341,7 @@ class APIGateway:
                 if req.path == pattern:
                     return handler
                 continue
-            # Pattern avec 1 segment variable, type /users/{id}
+            # Pattern with 1 variable segment, like /users/{id}
             p_parts = pattern.split("/")
             r_parts = req.path.split("/")
             if len(p_parts) != len(r_parts):
@@ -355,7 +355,7 @@ class APIGateway:
                     match = False
                     break
             if match:
-                # On bind les params dans req.body pour simplifier
+                # We bind the params into req.body to keep things simple
                 req.body["_path_params"] = params
                 return handler
         return None
@@ -377,7 +377,7 @@ class APIGateway:
 
 
 def demo_happy_path():
-    print(f"\n{SEPARATOR}\n  DEMO 1 : Happy path via le gateway\n{SEPARATOR}")
+    print(f"\n{SEPARATOR}\n  DEMO 1 : Happy path through the gateway\n{SEPARATOR}")
     db = UserDB()
     gw = APIGateway(db, IdempotencyStore())
 
@@ -408,32 +408,32 @@ def demo_idempotency():
     body = {"email": "bob@example.com"}
 
     r1 = gw.handle(Request("POST", "/users", headers, body=dict(body)))
-    print(f"  1re requete : status={r1.status}, id={r1.body.get('id')}, replay={r1.headers.get('X-Idempotent-Replay')}")
+    print(f"  1st request : status={r1.status}, id={r1.body.get('id')}, replay={r1.headers.get('X-Idempotent-Replay')}")
 
     r2 = gw.handle(Request("POST", "/users", headers, body=dict(body)))
-    print(f"  2e requete  : status={r2.status}, id={r2.body.get('id')}, replay={r2.headers.get('X-Idempotent-Replay')}")
-    print(f"  Meme id retourne : {r1.body.get('id') == r2.body.get('id')}")
-    print(f"  DB contient : {len(db.users)} user(s) -- pas de doublon.")
+    print(f"  2nd request : status={r2.status}, id={r2.body.get('id')}, replay={r2.headers.get('X-Idempotent-Replay')}")
+    print(f"  Same id returned : {r1.body.get('id') == r2.body.get('id')}")
+    print(f"  DB contains : {len(db.users)} user(s) -- no duplicate.")
 
 
 def demo_error_responses():
-    print(f"\n{SEPARATOR}\n  DEMO 3 : Format d'erreur coherent\n{SEPARATOR}")
+    print(f"\n{SEPARATOR}\n  DEMO 3 : Consistent error format\n{SEPARATOR}")
     db = UserDB()
     gw = APIGateway(db, IdempotencyStore())
 
-    # Token manquant -> 401
+    # Missing token -> 401
     r = gw.handle(Request("GET", "/users/123", {}))
-    print(f"  Sans token  : status={r.status}, body={r.body}")
+    print(f"  No token    : status={r.status}, body={r.body}")
 
-    # Token invalide -> 401
+    # Invalid token -> 401
     r = gw.handle(Request("GET", "/users/123", {"Authorization": "Bearer wrong"}))
     print(f"  Bad token   : status={r.status}, body={r.body}")
 
-    # User inexistant -> 404
+    # Nonexistent user -> 404
     r = gw.handle(Request("GET", "/users/999", {"Authorization": "Bearer secret-token-abc"}))
     print(f"  404         : status={r.status}, body={r.body}")
 
-    # Email invalide -> 400
+    # Invalid email -> 400
     r = gw.handle(Request("POST", "/users", {"Authorization": "Bearer secret-token-abc"},
                           body={"email": "not-an-email"}))
     print(f"  400         : status={r.status}, body={r.body}")
@@ -443,20 +443,20 @@ def demo_cursor_pagination():
     print(f"\n{SEPARATOR}\n  DEMO 4 : Cursor pagination\n{SEPARATOR}")
     db = UserDB()
     gw = APIGateway(db, IdempotencyStore())
-    # Pour cette demo, on relache le rate limiter pour pouvoir creer
-    # 12 users sans se faire bloquer (le bucket default est 10).
+    # For this demo, we loosen the rate limiter so we can create
+    # 12 users without getting blocked (the default bucket is 10).
     gw.rate_limiter = SimpleRateLimiter(per_sec=100, capacity=100)
     headers = {"Authorization": "Bearer secret-token-abc"}
-    # Creer 12 users
+    # Create 12 users
     for i in range(12):
         gw.handle(Request("POST", "/users", headers, body={"email": f"u{i}@ex.com"}))
 
-    # Premiere page
+    # First page
     r = gw.handle(Request("GET", "/users", headers, query={"limit": "5"}))
     print(f"  Page 1 : {len(r.body['data'])} users, has_more={r.body['has_more']}")
     print(f"  next_cursor = {r.body['next_cursor']}")
 
-    # Page suivante
+    # Next page
     r = gw.handle(Request("GET", "/users", headers,
                           query={"limit": "5", "cursor": r.body["next_cursor"]}))
     print(f"  Page 2 : {len(r.body['data'])} users, has_more={r.body['has_more']}")
@@ -467,7 +467,7 @@ def demo_cursor_pagination():
 
 
 def demo_rate_limiting():
-    print(f"\n{SEPARATOR}\n  DEMO 5 : Rate limiting sur /users\n{SEPARATOR}")
+    print(f"\n{SEPARATOR}\n  DEMO 5 : Rate limiting on /users\n{SEPARATOR}")
     db = UserDB()
     gw = APIGateway(db, IdempotencyStore())
     headers = {"Authorization": "Bearer secret-token-abc"}
@@ -476,7 +476,7 @@ def demo_rate_limiting():
     for i in range(15):
         r = gw.handle(Request("GET", "/users", headers, query={"limit": "5"}))
         results.append(r.status)
-    print(f"  15 requetes rapides : statuses = {results}")
+    print(f"  15 rapid requests : statuses = {results}")
     allowed = sum(1 for s in results if s == 200)
     rejected = sum(1 for s in results if s == 429)
     print(f"  Allowed: {allowed}, 429 Rate Limited: {rejected}")
@@ -489,7 +489,7 @@ def main():
     demo_error_responses()
     demo_cursor_pagination()
     demo_rate_limiting()
-    print(f"\n{SEPARATOR}\n  Fin des demos.\n{SEPARATOR}")
+    print(f"\n{SEPARATOR}\n  End of demos.\n{SEPARATOR}")
 
 
 if __name__ == "__main__":

@@ -1,17 +1,17 @@
 """
-Jour 14 -- Capstone : calculators d'estimation et structures de donnees
-references pour 2 designs complets.
+Day 14 -- Capstone: estimation calculators and reference data structures
+for 2 complete designs.
 
 Usage:
     python 14-capstone.py
 
-Contenu :
+Contents:
   1. Capacity planning helpers (users, QPS, storage, bandwidth, cost)
-  2. Reference data structures pour Dropbox-like (chunk metadata store)
-  3. Reference data structures pour LLM Support Assistant (conversation memory)
-  4. Demo : on lance une estimation Dropbox + une estimation LLM support
-     puis on manipule les structures de donnees pour montrer comment on
-     "repondrait a la question" en live.
+  2. Reference data structures for Dropbox-like (chunk metadata store)
+  3. Reference data structures for LLM Support Assistant (conversation memory)
+  4. Demo: we run a Dropbox estimate + an LLM support estimate
+     then we manipulate the data structures to show how we would
+     "answer the question" live.
 """
 
 import math

@@ -1,12 +1,12 @@
 """
-Jour 11 -- LLM Infrastructure : router, semantic cache, guardrails, fallback.
+Day 11 -- LLM Infrastructure: router, semantic cache, guardrails, fallback.
 
 Usage:
     python 11-llm-infrastructure.py
 
-Ce module simule une couche middleware pour des appels LLM. Aucun vrai LLM
-n'est appele : les "providers" sont des fonctions mock qui echouent parfois.
-Le point est de montrer l'architecture.
+This module simulates a middleware layer for LLM calls. No real LLM
+is called: the "providers" are mock functions that occasionally fail.
+The point is to show the architecture.
 """
 
 import json
@@ -21,7 +21,7 @@ SEPARATOR = "=" * 70
 
 
 # =============================================================================
-# SECTION 1 : Mock providers (LLM APIs simulees)
+# SECTION 1 : Mock providers (simulated LLM APIs)
 # =============================================================================
 
 

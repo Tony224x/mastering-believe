@@ -1,17 +1,17 @@
 """
-Jour 10 -- RAG end-to-end sans dependances externes.
+Day 10 -- End-to-end RAG without external dependencies.
 
 Usage:
     python 10-rag-architecture.py
 
-Pipeline mini mais complet :
-  1. Corpus de documents en dur
+Mini but complete pipeline:
+  1. Hardcoded document corpus
   2. Chunker (recursive)
-  3. Embedding naif via TF-IDF (aucun modele requis)
-  4. Index dense (cosine) + index sparse (BM25 simplifie)
+  3. Naive embedding via TF-IDF (no model required)
+  4. Dense index (cosine) + sparse index (simplified BM25)
   5. Hybrid search via Reciprocal Rank Fusion
-  6. Reranker simule (scoring base sur term overlap pondere)
-  7. Generation d'une reponse formatee avec citations
+  6. Simulated reranker (scoring based on weighted term overlap)
+  7. Generation of a formatted answer with citations
 """
 
 import math
@@ -77,7 +77,7 @@ CORPUS = {
 
 
 # =============================================================================
-# SECTION 2 : Tokenizer et chunker recursifs
+# SECTION 2 : Tokenizer and recursive chunker
 # =============================================================================
 
 
@@ -188,7 +188,7 @@ class TFIDFIndex:
 
 
 # =============================================================================
-# SECTION 4 : Sparse retrieval (BM25 simplifie)
+# SECTION 4 : Sparse retrieval (simplified BM25)
 # =============================================================================
 
 
@@ -259,7 +259,7 @@ def reciprocal_rank_fusion(
 
 
 # =============================================================================
-# SECTION 6 : Reranker simule
+# SECTION 6 : Simulated reranker
 # =============================================================================
 
 

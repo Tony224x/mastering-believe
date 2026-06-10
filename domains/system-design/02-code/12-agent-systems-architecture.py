@@ -1,20 +1,20 @@
 """
-Jour 12 -- Supervisor pattern simulation.
+Day 12 -- Supervisor pattern simulation.
 
 Usage:
     python 12-agent-systems-architecture.py
 
-Ce script simule un systeme multi-agent avec un superviseur et des specialistes.
-Aucun LLM reel n'est appele : le "reasoning" est simule par du pattern matching
-et des regles. L'architecture illustree est la meme que celle utilisee en prod
-avec LangGraph / CrewAI / OpenAI Swarm.
+This script simulates a multi-agent system with a supervisor and specialists.
+No real LLM is called: the "reasoning" is simulated with pattern matching
+and rules. The architecture illustrated is the same as the one used in prod
+with LangGraph / CrewAI / OpenAI Swarm.
 
-On montre aussi :
-  - le pattern state + plan + act + observe
-  - la memoire short-term avec summarization apres un seuil
-  - les handoff messages structures
-  - une condition d'arret (budget ou task completed)
-  - les traces pour debugging
+We also show:
+  - the state + plan + act + observe pattern
+  - short-term memory with summarization after a threshold
+  - structured handoff messages
+  - a stop condition (budget or task completed)
+  - traces for debugging
 """
 
 import json
@@ -35,8 +35,8 @@ SEPARATOR = "=" * 70
 class Handoff:
     """Structured message passed between agents.
 
-    Toujours inclure le contexte, ce qui est fait, ce qui reste, le critere
-    de succes et le budget. Un simple 'continue' est un code smell.
+    Always include the context, what is done, what remains, the success
+    criterion and the budget. A bare 'continue' is a code smell.
     """
 
     sender: str

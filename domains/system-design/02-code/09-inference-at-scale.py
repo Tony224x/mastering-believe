@@ -1,17 +1,17 @@
 """
-Jour 9 -- Inference at scale : simulateur de dynamic batching.
+Day 9 -- Inference at scale: dynamic batching simulator.
 
 Usage:
     python 09-inference-at-scale.py
 
-On simule un serveur d'inference avec :
-  - une queue d'entree
-  - un batcher qui flush sur max_batch_size OU max_wait
-  - un "GPU" qui traite un batch avec une latence depend du batch size
-  - des metriques par requete et agregees (throughput, p50, p99, GPU util)
+We simulate an inference server with:
+  - an input queue
+  - a batcher that flushes on max_batch_size OR max_wait
+  - a "GPU" that processes a batch with a latency that depends on the batch size
+  - per-request and aggregated metrics (throughput, p50, p99, GPU util)
 
-On compare 3 configurations : no batching, naive static batching, dynamic batching.
-Le but est de montrer le tradeoff throughput vs latency.
+We compare 3 configurations: no batching, naive static batching, dynamic batching.
+The goal is to show the throughput vs latency tradeoff.
 """
 
 import time
@@ -25,16 +25,16 @@ SEPARATOR = "=" * 70
 
 
 # =============================================================================
-# SECTION 1 : Modele de latence du "GPU"
+# SECTION 1 : Latency model of the "GPU"
 # =============================================================================
 
 
 def gpu_process_time(batch_size: int, base_ms: float = 40.0, per_item_ms: float = 2.0) -> float:
-    """Simule le temps que met un GPU a traiter un batch.
+    """Simulates the time a GPU takes to process a batch.
 
-    Modele simple : latence base (setup, attention matmul) + cost per item.
-    En realite la fonction est sous-lineaire : doubler la batch ne double pas
-    le temps, on amortit les couts fixes.
+    Simple model: base latency (setup, attention matmul) + cost per item.
+    In reality the function is sub-linear: doubling the batch does not double
+    the time, the fixed costs are amortized.
     """
     return base_ms + per_item_ms * batch_size
 
@@ -46,7 +46,7 @@ def gpu_process_time(batch_size: int, base_ms: float = 40.0, per_item_ms: float 
 
 @dataclass(order=True)
 class Request:
-    """Une requete entrante. Ordered by arrival_time for heap usage."""
+    """An incoming request. Ordered by arrival_time for heap usage."""
 
     arrival_time: float
     req_id: int = field(compare=False)
@@ -73,9 +73,9 @@ class Request:
 
 
 def generate_traffic(n_requests: int, mean_iat_ms: float, seed: int = 7) -> list[Request]:
-    """Genere n requetes avec des inter-arrival times exponentiels.
+    """Generates n requests with exponential inter-arrival times.
 
-    mean_iat_ms petit -> forte charge. Inverse = rate (req/s).
+    Small mean_iat_ms -> high load. Inverse = rate (req/s).
     """
     rng = random.Random(seed)
     requests = []
@@ -88,14 +88,14 @@ def generate_traffic(n_requests: int, mean_iat_ms: float, seed: int = 7) -> list
 
 
 # =============================================================================
-# SECTION 4 : Trois strategies de serving
+# SECTION 4 : Three serving strategies
 # =============================================================================
 
 
 def serve_no_batching(requests: list[Request]) -> dict:
-    """Strategy 1 : Une requete a la fois (batch de 1).
+    """Strategy 1 : One request at a time (batch of 1).
 
-    Le GPU est tres sous-utilise : cout fixe paye pour chaque requete.
+    The GPU is heavily underutilized: the fixed cost is paid for every request.
     """
     gpu_free_at = 0.0
     total_gpu_busy = 0.0
@@ -112,9 +112,9 @@ def serve_no_batching(requests: list[Request]) -> dict:
 def serve_static_batching(requests: list[Request], batch_size: int = 8) -> dict:
     """Strategy 2 : static batching.
 
-    On attend d'avoir exactement batch_size requetes avant de flusher.
-    Si moins, on attend indefiniment -> les dernieres requetes du run
-    risquent de ne jamais etre traitees (on les force a la fin ici).
+    We wait to have exactly batch_size requests before flushing.
+    If fewer, we wait indefinitely -> the last requests of the run
+    might never be processed (we force them at the end here).
     """
     queue = sorted(requests, key=lambda x: x.arrival_time)
     idx = 0
@@ -144,14 +144,14 @@ def serve_dynamic_batching(
 ) -> dict:
     """Strategy 3 : dynamic batching.
 
-    Flush le batch quand :
-      - max_batch_size atteint
-      - OU max_wait depasse depuis la premiere requete du batch
+    Flushes the batch when:
+      - max_batch_size is reached
+      - OR max_wait has elapsed since the first request of the batch
 
-    Algorithme simple et correct : on simule un scheduler qui, a chaque
-    iteration, decide QUAND ouvrir le prochain batch et QUOI mettre dedans.
-    Une iteration = un batch. On termine quand toutes les requetes sont
-    dispatchees.
+    Simple and correct algorithm: we simulate a scheduler which, at each
+    iteration, decides WHEN to open the next batch and WHAT to put in it.
+    One iteration = one batch. We finish when all requests have been
+    dispatched.
     """
     sorted_reqs = sorted(requests, key=lambda x: x.arrival_time)
     n = len(sorted_reqs)

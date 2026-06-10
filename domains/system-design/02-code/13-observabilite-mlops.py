@@ -1,17 +1,17 @@
 """
-Jour 13 -- Mini observability lib + PSI drift detector.
+Day 13 -- Mini observability lib + PSI drift detector.
 
 Usage:
     python 13-observabilite-mlops.py
 
-Ce module contient :
-  1. Une mini lib de tracing LLM : spans, latence, tokens, cost, attributes
-  2. Un exporter qui affiche un arbre d'execution
-  3. Un detecteur de drift via PSI (Population Stability Index)
-  4. Une demo qui instrumente un faux agent et fait drifter une feature
+This module contains:
+  1. A mini LLM tracing lib: spans, latency, tokens, cost, attributes
+  2. An exporter that displays an execution tree
+  3. A drift detector via PSI (Population Stability Index)
+  4. A demo that instruments a fake agent and makes a feature drift
 
-Le but est de montrer les structures de donnees derriere Langfuse / LangSmith
-et de rendre tangible la formule PSI.
+The goal is to show the data structures behind Langfuse / LangSmith
+and to make the PSI formula tangible.
 """
 
 import math

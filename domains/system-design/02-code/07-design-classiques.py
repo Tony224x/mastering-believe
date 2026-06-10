@@ -1,17 +1,17 @@
 """
-Jour 7 -- Design classiques
-Demonstrations interactives en Python.
+Day 7 -- Classic designs
+Interactive demonstrations in Python.
 
 Usage:
     python 07-design-classiques.py
 
-Mocks et outils pour les 3 designs classiques :
-- Capacity estimation helpers (ordres de grandeur)
-- URL shortener : base62 encoder, in-memory sharded KV store
-- Twitter timeline : fanout-on-write avec sorted set en memoire
-- Chat system : mini pub/sub WebSocket-like avec registry de connexions
+Mocks and tools for the 3 classic designs:
+- Capacity estimation helpers (orders of magnitude)
+- URL shortener: base62 encoder, in-memory sharded KV store
+- Twitter timeline: fanout-on-write with an in-memory sorted set
+- Chat system: mini WebSocket-like pub/sub with a connection registry
 
-Tout est in-memory, runnable sans dependance externe.
+Everything is in-memory, runnable without external dependencies.
 """
 
 import time
@@ -31,7 +31,7 @@ SEPARATOR = "=" * 70
 
 
 def si(n: float) -> str:
-    """Format un nombre avec des suffixes (K, M, B)."""
+    """Formats a number with suffixes (K, M, B)."""
     for unit, threshold in [("B", 1e9), ("M", 1e6), ("K", 1e3)]:
         if n >= threshold:
             return f"{n/threshold:.1f}{unit}"
@@ -46,11 +46,11 @@ def bytes_human(n: float) -> str:
 
 
 def estimate_qps(dau: int, actions_per_day: int, peak_factor: float = 3.0):
-    """Estime les QPS moyen et peak pour un systeme.
+    """Estimates the average and peak QPS for a system.
 
-    WHY peak_factor=3 ? En general, le peak horaire est 2-4x la moyenne
-    (distribution non uniforme sur 24h). 3x est un ordre de grandeur
-    raisonnable pour les calculs d'entretien.
+    WHY peak_factor=3? In general, the hourly peak is 2-4x the average
+    (non-uniform distribution over 24h). 3x is a reasonable order of
+    magnitude for interview calculations.
     """
     daily_events = dau * actions_per_day
     avg_qps = daily_events / 86400
@@ -59,7 +59,7 @@ def estimate_qps(dau: int, actions_per_day: int, peak_factor: float = 3.0):
 
 
 def estimate_storage(events_per_day: int, bytes_per_event: int, years: float = 1):
-    """Calcule le stockage total."""
+    """Computes the total storage."""
     daily = events_per_day * bytes_per_event
     total = daily * 365 * years
     return daily, total
@@ -74,11 +74,11 @@ BASE62_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 
 
 def base62_encode(num: int) -> str:
-    """Encode un int en base62.
+    """Encodes an int in base62.
 
-    WHY base62 ? 62^7 = 3.5 trillions de codes possibles en 7 chars.
-    Largement assez pour une url shortener. Plus court que base10 ou
-    base16. Accepte dans les URLs sans encoding.
+    WHY base62? 62^7 = 3.5 trillion possible codes in 7 chars.
+    More than enough for a URL shortener. Shorter than base10 or
+    base16. Accepted in URLs without encoding.
     """
     if num == 0:
         return BASE62_ALPHABET[0]
@@ -90,7 +90,7 @@ def base62_encode(num: int) -> str:
 
 
 def base62_decode(code: str) -> int:
-    """Decode une chaine base62 vers un int."""
+    """Decodes a base62 string to an int."""
     num = 0
     for char in code:
         num = num * 62 + BASE62_ALPHABET.index(char)
@@ -98,11 +98,11 @@ def base62_decode(code: str) -> int:
 
 
 class ShardedKVStore:
-    """Mock d'un KV store shardé (type Cassandra / DynamoDB).
+    """Mock of a sharded KV store (Cassandra / DynamoDB style).
 
-    WHY sharded ? Pour demontrer l'idee : chaque cle est routee vers
-    un shard selon hash(key) % N. C'est ce que font les DBs distribuees
-    en interne.
+    WHY sharded? To demonstrate the idea: each key is routed to
+    a shard via hash(key) % N. This is what distributed DBs do
+    internally.
     """
 
     def __init__(self, num_shards: int = 4):
@@ -123,23 +123,23 @@ class ShardedKVStore:
 
 
 class URLShortenerService:
-    """Service complet avec counter distribue (simplified) et cache.
+    """Complete service with a (simplified) distributed counter and a cache.
 
-    WHY counter + cache ? Approche "compteur global" : on alloue des ids
-    uniques en sequence, encodes en base62. Le cache Redis fait que 95%
-    des redirects sont servies sans toucher au KV store.
+    WHY counter + cache? "Global counter" approach: we allocate unique
+    ids in sequence, encoded in base62. The Redis cache means that 95%
+    of the redirects are served without touching the KV store.
     """
 
     def __init__(self, base_url: str = "https://tiny.ly/"):
         self.base_url = base_url
         self.kv = ShardedKVStore(num_shards=4)
         self.cache: dict[str, str] = {}  # LRU simplification
-        # Compteur distribue : on part d'un offset pour avoir des codes >= 3 chars
+        # Distributed counter: we start from an offset to get codes >= 3 chars
         self.counter = 100000
         self.stats = {"shortens": 0, "cache_hits": 0, "cache_misses": 0}
 
     def shorten(self, long_url: str) -> str:
-        """Cree un short code pour une URL."""
+        """Creates a short code for a URL."""
         self.counter += 1
         code = base62_encode(self.counter)
         self.kv.put(code, long_url)
@@ -147,7 +147,7 @@ class URLShortenerService:
         return self.base_url + code
 
     def expand(self, short_url: str) -> Optional[str]:
-        """Resolve un short URL vers sa version longue."""
+        """Resolves a short URL to its long version."""
         code = short_url.replace(self.base_url, "")
         # Check cache first
         if code in self.cache:
@@ -175,49 +175,49 @@ class Tweet:
 
 
 class TwitterTimeline:
-    """Timeline precalculee via fanout-on-write.
+    """Timeline precomputed via fanout-on-write.
 
-    WHY fanout-on-write ? Read = tres frequent (100x write). On trade
-    writes couteuses contre reads ultra-rapides. La timeline est juste
-    un sorted set en memoire, LRANGE = O(log N).
+    WHY fanout-on-write? Read = very frequent (100x write). We trade
+    expensive writes for ultra-fast reads. The timeline is just
+    an in-memory sorted set, LRANGE = O(log N).
 
-    Hybride reel Twitter : fanout-on-write pour users normaux, fanout-
-    on-read pour les celebrites avec 100M followers. Ici on simplifie
-    avec seulement fanout-on-write.
+    Twitter's real hybrid: fanout-on-write for normal users, fanout-
+    on-read for celebrities with 100M followers. Here we simplify
+    with fanout-on-write only.
     """
 
     def __init__(self, max_timeline_size: int = 100):
         self.max_timeline_size = max_timeline_size
         self.tweets: dict[str, Tweet] = {}  # tweet_id -> Tweet
         self.followers: dict[str, set[str]] = defaultdict(set)  # user -> set of followers
-        # timeline[user] = list de tweet_ids tries chronologiquement inverse
+        # timeline[user] = list of tweet_ids sorted in reverse chronological order
         self.timelines: dict[str, deque[str]] = defaultdict(lambda: deque(maxlen=max_timeline_size))
-        # Stats pour la demo
+        # Stats for the demo
         self.fanout_writes = 0
 
     def follow(self, follower: str, followed: str):
         self.followers[followed].add(follower)
 
     def post_tweet(self, user_id: str, content: str) -> str:
-        """Poste un tweet et le fanout vers toutes les timelines des followers.
+        """Posts a tweet and fans it out to all the followers' timelines.
 
-        WHY fanout synchrone ici ? En prod, c'est un job asynchrone
-        (Kafka -> fanout workers). Ici on simplifie pour la demo.
+        WHY synchronous fanout here? In prod, it is an asynchronous job
+        (Kafka -> fanout workers). Here we simplify for the demo.
         """
         tweet = Tweet(tweet_id=str(uuid.uuid4())[:8], user_id=user_id, content=content)
         self.tweets[tweet.tweet_id] = tweet
 
-        # Ajoute a la timeline de l'auteur
+        # Add to the author's timeline
         self.timelines[user_id].appendleft(tweet.tweet_id)
 
-        # FANOUT : ecriture dans la timeline de chaque follower
+        # FANOUT: write into each follower's timeline
         for follower in self.followers[user_id]:
             self.timelines[follower].appendleft(tweet.tweet_id)
             self.fanout_writes += 1
         return tweet.tweet_id
 
     def get_home_timeline(self, user_id: str, limit: int = 20) -> list[Tweet]:
-        """Retourne la timeline d'un user : lookup direct dans le sorted set."""
+        """Returns a user's timeline: direct lookup in the sorted set."""
         tweet_ids = list(self.timelines[user_id])[:limit]
         return [self.tweets[tid] for tid in tweet_ids if tid in self.tweets]
 
@@ -237,11 +237,11 @@ class ChatMessage:
 
 
 class ConnectionRegistry:
-    """Registry qui track quel user est connecte a quel serveur chat.
+    """Registry that tracks which user is connected to which chat server.
 
-    WHY ? Quand Alice envoie un message a Bob, on doit savoir quel
-    serveur WebSocket tient la connexion de Bob pour lui router le
-    message. En prod : Redis hash 'user -> chat_server'.
+    WHY? When Alice sends a message to Bob, we need to know which
+    WebSocket server holds Bob's connection in order to route the
+    message to him. In prod: Redis hash 'user -> chat_server'.
     """
 
     def __init__(self):
@@ -261,12 +261,12 @@ class ConnectionRegistry:
 
 
 class ChatService:
-    """Mini chat service avec persist + livraison via registry.
+    """Mini chat service with persist + delivery via the registry.
 
-    WHY separer persist et deliver ? Persist doit TOUJOURS reussir
-    (sinon le message est perdu). Delivery est best-effort (si le
-    destinataire est offline, on envoie une push notif). En prod :
-    ecrit d'abord Cassandra, puis Kafka pour le delivery async.
+    WHY separate persist and deliver? Persist must ALWAYS succeed
+    (otherwise the message is lost). Delivery is best-effort (if the
+    recipient is offline, we send a push notification). In prod:
+    write to Cassandra first, then Kafka for the async delivery.
     """
 
     def __init__(self, server_id: str, registry: ConnectionRegistry):
@@ -277,7 +277,7 @@ class ChatService:
         self.push_queue: list[tuple[str, ChatMessage]] = []  # offline users
 
     def send(self, sender: str, recipient: str, content: str):
-        """Envoie un message 1-to-1."""
+        """Sends a 1-to-1 message."""
         # Conversation id = deterministic hash of the sorted pair
         convo_id = "-".join(sorted([sender, recipient]))
         msg = ChatMessage(
@@ -286,9 +286,9 @@ class ChatService:
             sender_id=sender,
             content=content,
         )
-        # 1. Persist (TOUJOURS en premier)
+        # 1. Persist (ALWAYS first)
         self.storage[convo_id].append(msg)
-        # 2. Route via le registry
+        # 2. Route via the registry
         if self.registry.is_online(recipient):
             self.inbox[recipient].append(msg)
             print(f"    [{self.server_id}] delivered '{content}' to {recipient} (online)")
@@ -357,7 +357,7 @@ def demo_url_shortener():
         svc.expand(s)
     print(f"  Stats : {svc.stats}")
     print(f"  KV shards sizes : {[len(shard) for shard in svc.kv.shards]}")
-    # Note : avec seulement 3 URLs, le shard # depend du hash. OK pour la demo.
+    # Note: with only 3 URLs, the shard # depends on the hash. OK for the demo.
 
 
 def demo_twitter_fanout():
@@ -378,37 +378,37 @@ def demo_twitter_fanout():
     # Bob tweets once
     tw.post_tweet("bob", "good morning")
 
-    print(f"  Fanout writes effectues : {tw.fanout_writes}")
-    print(f"  (3 tweets alice * 5 followers + 1 tweet bob * 2 followers = 17)")
+    print(f"  Fanout writes performed : {tw.fanout_writes}")
+    print(f"  (3 alice tweets * 5 followers + 1 bob tweet * 2 followers = 17)")
 
-    # Chaque follower voit alice dans sa timeline
+    # Each follower sees alice in their timeline
     for user in ["user-0", "user-1", "alice", "charlie"]:
         tl = tw.get_home_timeline(user, limit=10)
-        print(f"  Timeline de {user} : {[t.content for t in tl]}")
+        print(f"  Timeline of {user} : {[t.content for t in tl]}")
 
 
 def demo_chat_system():
     print(f"\n{SEPARATOR}\n  DEMO 4 : Chat system\n{SEPARATOR}")
     registry = ConnectionRegistry()
-    # 2 chat servers pour simuler le partitioning
+    # 2 chat servers to simulate the partitioning
     server_1 = ChatService("ws-1", registry)
     server_2 = ChatService("ws-2", registry)
 
-    # Alice est connectee sur ws-1, Bob sur ws-2, Charlie offline
+    # Alice is connected on ws-1, Bob on ws-2, Charlie offline
     registry.register("alice", "ws-1")
     registry.register("bob", "ws-2")
     print(f"  Online users : alice (ws-1), bob (ws-2)")
     print(f"  Offline users : charlie")
 
-    # Alice envoie un message a Bob (via son serveur ws-1)
+    # Alice sends a message to Bob (via her server ws-1)
     print(f"\n  Alice -> Bob :")
     server_1.send("alice", "bob", "hey bob")
 
-    # Alice envoie un message a Charlie (offline)
+    # Alice sends a message to Charlie (offline)
     print(f"\n  Alice -> Charlie (offline) :")
     server_1.send("alice", "charlie", "call me back")
 
-    # Bob repond a Alice
+    # Bob replies to Alice
     print(f"\n  Bob -> Alice :")
     server_2.send("bob", "alice", "hi alice, how are you?")
 
@@ -424,7 +424,7 @@ def main():
     demo_url_shortener()
     demo_twitter_fanout()
     demo_chat_system()
-    print(f"\n{SEPARATOR}\n  Fin des demos.\n{SEPARATOR}")
+    print(f"\n{SEPARATOR}\n  End of demos.\n{SEPARATOR}")
 
 
 if __name__ == "__main__":

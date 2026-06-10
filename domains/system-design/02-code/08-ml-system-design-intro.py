@@ -1,16 +1,16 @@
 """
-Jour 8 -- ML System Design : Feature Store + Model Registry + Batch Pipeline
-Mini systeme ML end-to-end en memoire (no external dependencies).
+Day 8 -- ML System Design : Feature Store + Model Registry + Batch Pipeline
+Mini end-to-end ML system in memory (no external dependencies).
 
 Usage:
     python 08-ml-system-design-intro.py
 
-Le script simule un cycle de vie ML :
-1. Un feature store (offline + online)
-2. Un model registry avec versions et stages
-3. Un mini modele (rule-based pour rester sans dependances)
-4. Un pipeline de batch prediction
-5. Un shadow deployment compare les predictions v1 et v2
+The script simulates an ML lifecycle:
+1. A feature store (offline + online)
+2. A model registry with versions and stages
+3. A mini model (rule-based to stay dependency-free)
+4. A batch prediction pipeline
+5. A shadow deployment compares the v1 and v2 predictions
 """
 
 import time
@@ -26,13 +26,13 @@ SEPARATOR = "=" * 70
 
 
 # =============================================================================
-# SECTION 1 : Feature Store minimaliste
+# SECTION 1 : Minimalist Feature Store
 # =============================================================================
 
 
 @dataclass
 class FeatureDefinition:
-    """Definition d'une feature : comment la calculer a partir d'un event dict."""
+    """Definition of a feature: how to compute it from an event dict."""
 
     name: str
     compute_fn: Callable[[dict], Any]  # same fn used offline and online -> no skew
@@ -40,11 +40,11 @@ class FeatureDefinition:
 
 
 class FeatureStore:
-    """Feature store avec un offline store (historique) et un online store (latest).
+    """Feature store with an offline store (history) and an online store (latest).
 
-    Le offline store supporte le point-in-time lookup : etant donne un timestamp,
-    il retourne la valeur de la feature telle qu'elle etait a cet instant.
-    L'online store ne garde que la derniere valeur, pour l'inference rapide.
+    The offline store supports point-in-time lookup: given a timestamp,
+    it returns the value of the feature as it was at that moment.
+    The online store only keeps the latest value, for fast inference.
     """
 
     def __init__(self):
@@ -55,14 +55,14 @@ class FeatureStore:
         self.definitions: dict[str, FeatureDefinition] = {}
 
     def register(self, fdef: FeatureDefinition) -> None:
-        """Enregistre une feature definition."""
+        """Registers a feature definition."""
         self.definitions[fdef.name] = fdef
 
     def ingest(self, entity_id: str, event: dict, ts: Optional[float] = None) -> None:
-        """Ingere un event et calcule toutes les features enregistrees.
+        """Ingests an event and computes all the registered features.
 
-        Offline: append une ligne historique (timestamp + feature + valeur).
-        Online: override la derniere valeur.
+        Offline: appends a history row (timestamp + feature + value).
+        Online: overrides the latest value.
         """
         if ts is None:
             ts = time.time()
@@ -75,13 +75,13 @@ class FeatureStore:
             self.online[entity_id][fname] = value
 
     def get_online(self, entity_id: str) -> dict[str, Any]:
-        """Lookup online pour le serving (latence ms)."""
+        """Online lookup for serving (ms latency)."""
         return dict(self.online.get(entity_id, {}))
 
     def get_historical(self, entity_id: str, feature: str, as_of: float) -> Any:
-        """Lookup point-in-time : valeur de la feature a l'instant as_of.
+        """Point-in-time lookup: value of the feature at time as_of.
 
-        Necessaire pour generer des datasets d'entrainement sans data leakage.
+        Required to generate training datasets without data leakage.
         """
         # Scan timeline, keep values strictly before as_of
         candidates = [
@@ -93,13 +93,13 @@ class FeatureStore:
 
 
 # =============================================================================
-# SECTION 2 : Model Registry avec versions et stages
+# SECTION 2 : Model Registry with versions and stages
 # =============================================================================
 
 
 @dataclass
 class ModelVersion:
-    """Une version de modele dans le registry."""
+    """A model version in the registry."""
 
     name: str
     version: str
@@ -109,7 +109,7 @@ class ModelVersion:
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
     def fingerprint(self) -> str:
-        """Hash stable pour detecter les changements."""
+        """Stable hash to detect changes."""
         payload = json.dumps(
             {"name": self.name, "version": self.version, "metadata": self.metadata},
             sort_keys=True,
@@ -118,10 +118,10 @@ class ModelVersion:
 
 
 class ModelRegistry:
-    """Registry qui indexe les modeles par (name, version).
+    """Registry that indexes the models by (name, version).
 
-    Permet de promote/rollback entre stages et de retrouver le modele
-    production d'un nom donne.
+    Allows promote/rollback between stages and finding the
+    production model for a given name.
     """
 
     def __init__(self):
@@ -131,7 +131,7 @@ class ModelRegistry:
         self.versions[(mv.name, mv.version)] = mv
 
     def promote(self, name: str, version: str, stage: str) -> None:
-        """Promote un modele. Si stage=production, archive l'ancien production."""
+        """Promotes a model. If stage=production, archives the previous production."""
         key = (name, version)
         if key not in self.versions:
             raise KeyError(f"Unknown model {name}:{version}")
@@ -142,7 +142,7 @@ class ModelRegistry:
         self.versions[key].stage = stage
 
     def get_production(self, name: str) -> Optional[ModelVersion]:
-        """Retourne le modele actuellement en prod pour ce nom."""
+        """Returns the model currently in prod for this name."""
         for (n, _), mv in self.versions.items():
             if n == name and mv.stage == "production":
                 return mv
@@ -150,14 +150,14 @@ class ModelRegistry:
 
 
 # =============================================================================
-# SECTION 3 : Un "modele" rule-based (aucune dependance ML requise)
+# SECTION 3 : A rule-based "model" (no ML dependency required)
 # =============================================================================
 
 
 def model_v1_predict(features: dict) -> dict:
-    """Credit scoring simpliste v1 : seuils sur revenu et dettes.
+    """Simplistic credit scoring v1: thresholds on income and debts.
 
-    Retourne {'score': 0..1, 'decision': 'approve'|'reject'}.
+    Returns {'score': 0..1, 'decision': 'approve'|'reject'}.
     """
     income = features.get("monthly_income", 0) or 0
     debt = features.get("monthly_debt", 0) or 0
@@ -169,7 +169,7 @@ def model_v1_predict(features: dict) -> dict:
 
 
 def model_v2_predict(features: dict) -> dict:
-    """V2 : ajoute la feature 'num_late_payments' (meilleure capture du risque)."""
+    """V2: adds the 'num_late_payments' feature (better risk capture)."""
     income = features.get("monthly_income", 0) or 0
     debt = features.get("monthly_debt", 0) or 0
     late = features.get("num_late_payments", 0) or 0
@@ -180,15 +180,15 @@ def model_v2_predict(features: dict) -> dict:
 
 
 # =============================================================================
-# SECTION 4 : Pipeline de batch prediction
+# SECTION 4 : Batch prediction pipeline
 # =============================================================================
 
 
 def batch_predict(fs: FeatureStore, registry: ModelRegistry, entity_ids: list[str]) -> list[dict]:
-    """Pipeline batch : pour chaque entity, lit online features + applique le modele prod.
+    """Batch pipeline: for each entity, reads online features + applies the prod model.
 
-    En vrai, on lirait depuis l'offline store (Parquet/BigQuery) pour des millions
-    d'entities avec Spark. Ici on simule sur du petit volume.
+    In real life, we would read from the offline store (Parquet/BigQuery) for millions
+    of entities with Spark. Here we simulate on a small volume.
     """
     prod = registry.get_production("credit-scoring")
     if prod is None:
@@ -221,10 +221,10 @@ def shadow_compare(
     prod_fn: Callable,
     shadow_fn: Callable,
 ) -> dict:
-    """Execute prod + shadow sur chaque entity et mesure le disagreement rate.
+    """Runs prod + shadow on each entity and measures the disagreement rate.
 
-    Un disagreement > 10-20% est un signal d'alarme : le nouveau modele prend
-    des decisions significativement differentes. A inspecter avant promotion.
+    A disagreement > 10-20% is an alarm signal: the new model makes
+    significantly different decisions. To inspect before promotion.
     """
     disagreements = 0
     score_diffs = []
@@ -245,7 +245,7 @@ def shadow_compare(
 
 
 # =============================================================================
-# SECTION 6 : Demo end-to-end
+# SECTION 6 : End-to-end demo
 # =============================================================================
 
 
