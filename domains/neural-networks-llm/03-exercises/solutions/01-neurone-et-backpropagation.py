@@ -828,7 +828,7 @@ try:
     ax3.set_ylabel('MSE Loss')
     ax3.set_title('Loss per Epoch')
     ax3.legend()
-    ax3.zone(True, alpha=0.3)
+    ax3.grid(True, alpha=0.3)
 
     plt.suptitle('Exercise 8: Loss Surface & Gradient Descent Visualization', fontsize=13)
     plt.tight_layout()

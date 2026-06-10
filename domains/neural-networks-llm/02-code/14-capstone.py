@@ -509,7 +509,8 @@ def main():
     _, caches = model(test_ids, start_pos=0, kv_caches=caches)
     # After prefill, the first test_ids.shape[1] positions of caches should be non-zero
     k0 = caches[0]["k"]
-    n_filled = (k0.abs().sum(dim=-1) > 0).sum(dim=-1).item()
+    # Cache shape is (B, n_kv_heads, T, head_dim) -> count filled positions of one head
+    n_filled = (k0[0, 0].abs().sum(dim=-1) > 0).sum().item()
     print(f"  Positions filled in cache[0][k] after prefill: {n_filled}")
     print(f"  Expected: {test_ids.shape[1]}")
 

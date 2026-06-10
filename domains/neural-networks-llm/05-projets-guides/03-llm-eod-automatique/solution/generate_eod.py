@@ -1,20 +1,23 @@
 """
-Pipeline complet events -> rapport EOD Review markdown (LogiSim).
+Full pipeline events -> markdown EOD Review report (LogiSim).
 
-Pour la demo, on utilise l'API Anthropic (claude-haiku-4-5) qui est la plus
-proche en format de ce qu'un Mistral/Llama instruct local fait. En prod
-LogiSim ca serait un modele on-premise.
+For the demo we use the Anthropic API (claude-haiku-4-5), which is the
+closest in format to what a local Mistral/Llama instruct model does. In
+LogiSim production it would be an on-premise model.
 
-Usage :
+Usage:
     ANTHROPIC_API_KEY=... python generate_eod.py shift_events.json
 
-Le pipeline :
-1. Parse les events
-2. Extract les moments cles (heuristique v0)
-3. Pour chaque moment, construit le prompt avec contexte
-4. Appelle le LLM (temperature basse, max_tokens cappe)
-5. Post-check : parse les citations, verifie que chaque event_id existe
-6. Assemble le rapport markdown
+The pipeline:
+1. Parse the events
+2. Extract the key moments (v0 heuristic)
+3. For each moment, build the prompt with context
+4. Call the LLM (low temperature, capped max_tokens)
+5. Post-check: parse the citations, verify every event_id exists
+6. Assemble the markdown report
+
+Note: the generated report (and the LLM stub) is in French on purpose —
+the EOD report is a French-speaking business deliverable.
 """
 from __future__ import annotations
 
@@ -24,7 +27,7 @@ import re
 import sys
 from pathlib import Path
 
-# Import local — a adapter si relance depuis un autre repertoire
+# Local import — adapt if re-run from another directory
 sys.path.insert(0, str(Path(__file__).parent))
 from eod_prompt import SYSTEM_PROMPT, build_user_prompt, format_event_line
 from extract_key_moments import KeyMoment, context_window, extract_key_moments
@@ -33,11 +36,11 @@ CITATION_RE = re.compile(r"\[ev:([\d, ]+)\]")
 
 
 def call_llm(system: str, user: str) -> str:
-    """Appelle l'API Anthropic. A swap en prod contre un client local (Ollama, vLLM)."""
+    """Calls the Anthropic API. Swap in prod for a local client (Ollama, vLLM)."""
     try:
         from anthropic import Anthropic
     except ImportError:
-        # Fallback : retourne un stub pour tester le pipeline sans cle API
+        # Fallback: returns a stub to test the pipeline without an API key
         return (
             "**Contexte**\n"
             "AGV-Alpha-2 en patrouille. [ev:42871]\n\n"
@@ -62,7 +65,7 @@ def call_llm(system: str, user: str) -> str:
 
 
 def check_citations(paragraph: str, valid_event_ids: set[int]) -> tuple[bool, list[int]]:
-    """Verifie que chaque event cite existe. Retourne (all_valid, missing_ids)."""
+    """Verifies every cited event exists. Returns (all_valid, missing_ids)."""
     missing: list[int] = []
     for match in CITATION_RE.finditer(paragraph):
         ids = [int(x.strip()) for x in match.group(1).split(",") if x.strip()]
@@ -97,7 +100,7 @@ def generate_eod(events: list[dict]) -> str:
         )
         paragraph = call_llm(SYSTEM_PROMPT, user_prompt)
 
-        # Garde-fou citations
+        # Citation guardrail
         ok, missing = check_citations(paragraph, valid_ids)
         if not ok:
             warning = f"\n> [WARN] Citations invalides detectees : {missing}\n"
@@ -110,14 +113,16 @@ def generate_eod(events: list[dict]) -> str:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        # Demo avec events synthetiques
+        # Demo with synthetic events
         demo = [
             {"id": 42871, "t_sim": 2810.0, "kind": "MOVE",      "unit_id": "AGV-Alpha-2", "payload": {"to": "B-12-N"}},
             {"id": 42903, "t_sim": 2832.0, "kind": "DETECT",    "unit_id": "AGV-Alpha-2", "payload": {"target": "PCL-3", "dist_m": 4.0}},
             {"id": 42905, "t_sim": 2833.0, "kind": "ORDER",     "unit_id": "AGV-Alpha-2", "payload": {"from": "OCC", "order": "pickup_if_slot_free"}},
+            {"id": 42920, "t_sim": 2860.0, "kind": "DETECT",    "unit_id": "Sorter-7",    "payload": {"target": "AGV-Alpha-2", "dist_m": 1.2}},
             {"id": 42931, "t_sim": 2865.0, "kind": "PICKUP",    "unit_id": "AGV-Alpha-2", "payload": {"parcel_id": "PCL-3"}},
             {"id": 42942, "t_sim": 2878.0, "kind": "COLLISION", "unit_id": "AGV-Alpha-2", "payload": {"with_unit": "Sorter-7", "severity": 0.3}},
             {"id": 42951, "t_sim": 2885.0, "kind": "FAULT",     "unit_id": "AGV-Alpha-2", "payload": {"code": "BATTERY_LOW", "severity": "minor"}},
+            {"id": 42958, "t_sim": 2890.0, "kind": "DROPOFF",   "unit_id": "AGV-Alpha-2", "payload": {"parcel_id": "PCL-3"}},
         ]
         print(generate_eod(demo))
     else:

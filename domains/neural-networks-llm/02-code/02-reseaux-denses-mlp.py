@@ -162,7 +162,7 @@ def categorical_cross_entropy_loss(y_pred_softmax, y_true_onehot):
 # ============================================================================
 
 print("=" * 70)
-print("PART 1: Loss Functions Comparison")
+print("PART 3: Loss Functions Comparison")
 print("=" * 70)
 
 # Binary classification examples
@@ -205,7 +205,7 @@ print(f"  Gradient:     [{', '.join(f'{g:+.4f}' for g in cce_grad[0])}]  (= soft
 # ============================================================================
 
 print("\n" + "=" * 70)
-print("PART 2: Configurable MLP Class from Scratch")
+print("PART 4: Configurable MLP Class from Scratch")
 print("=" * 70)
 
 
@@ -540,7 +540,7 @@ class AdamOptimizer:
 # ============================================================================
 
 print("\n" + "=" * 70)
-print("PART 3: Generate Spiral Classification Dataset")
+print("PART 6: Generate Spiral Classification Dataset")
 print("=" * 70)
 
 
@@ -588,7 +588,7 @@ print(f"  Class balance - Train: {np.mean(y_train):.2f} | Val: {np.mean(y_val):.
 # ============================================================================
 
 print("\n" + "=" * 70)
-print("PART 4: Comparing 4 Optimizers on Spiral Classification")
+print("PART 7: Comparing 4 Optimizers on Spiral Classification")
 print("=" * 70)
 print("""
   Same architecture [2, 32, 16, 1], same data, different optimizers.
@@ -678,7 +678,7 @@ ascii_plot(results[best_opt]['train_loss'], title=f"Train Loss - {best_opt}")
 # ============================================================================
 
 print("\n" + "=" * 70)
-print("PART 5: Overfitting Demo — Too many parameters, too little data")
+print("PART 8: Overfitting Demo — Too many parameters, too little data")
 print("=" * 70)
 print("""
   We use a HUGE network [2, 128, 128, 64, 1] on our small dataset.
@@ -715,7 +715,7 @@ print(f"  Gap = {overfit_hist['train_acc'][-1] - overfit_hist['val_acc'][-1]:.2%
 # ============================================================================
 
 print("\n" + "=" * 70)
-print("PART 6: Fix Overfitting with L2 Regularization")
+print("PART 9: Fix Overfitting with L2 Regularization")
 print("=" * 70)
 print("""
   Same huge network, same small dataset, but now with L2 penalty (weight decay).
@@ -754,7 +754,7 @@ for label, hist in l2_results.items():
 # ============================================================================
 
 print("\n" + "=" * 70)
-print("PART 7: Fix Overfitting with Dropout")
+print("PART 10: Fix Overfitting with Dropout")
 print("=" * 70)
 print("""
   Same network, same data, but now randomly dropping neurons during training.
@@ -793,7 +793,7 @@ for label, hist in dropout_results.items():
 # ============================================================================
 
 print("\n" + "=" * 70)
-print("PART 8: Combined Regularization — L2 + Dropout")
+print("PART 11: Combined Regularization — L2 + Dropout")
 print("=" * 70)
 print("""
   In practice, you combine multiple regularization techniques.
@@ -844,7 +844,7 @@ try:
     ax.set_xlabel('Epoch')
     ax.set_ylabel('BCE Loss')
     ax.legend(fontsize=8)
-    ax.zone(True, alpha=0.3)
+    ax.grid(True, alpha=0.3)
 
     # Plot 2: Optimizer comparison (val accuracy)
     ax = axes[0, 1]
@@ -854,7 +854,7 @@ try:
     ax.set_xlabel('Epoch')
     ax.set_ylabel('Accuracy')
     ax.legend(fontsize=8)
-    ax.zone(True, alpha=0.3)
+    ax.grid(True, alpha=0.3)
 
     # Plot 3: Overfitting (train vs val loss)
     ax = axes[1, 0]
@@ -866,7 +866,7 @@ try:
     ax.set_xlabel('Epoch')
     ax.set_ylabel('Loss')
     ax.legend(fontsize=8)
-    ax.zone(True, alpha=0.3)
+    ax.grid(True, alpha=0.3)
 
     # Plot 4: Regularized vs not
     ax = axes[1, 1]
@@ -878,7 +878,7 @@ try:
     ax.set_xlabel('Epoch')
     ax.set_ylabel('Loss')
     ax.legend(fontsize=8)
-    ax.zone(True, alpha=0.3)
+    ax.grid(True, alpha=0.3)
 
     plt.suptitle('Day 2 — MLP: Optimizers, Overfitting & Regularization', fontsize=14, fontweight='bold')
     plt.tight_layout()
@@ -914,5 +914,5 @@ print("""
      - Fix with Dropout (random neuron deactivation = ensemble)
      - Best: combine both
 
-  Next: Day 3 — CNNs, convolutions, pooling, batch normalization.
+  Next: Day 3 — Embeddings & representations: how networks understand meaning.
 """)

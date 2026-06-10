@@ -1,67 +1,66 @@
 """
-Generateur de dataset synthetique pour la detection de quasi-collisions LogiSim.
+Synthetic dataset generator for LogiSim near-collision detection.
 
-On simule 5000 events MOVE dont ~3% sont des quasi-collisions, avec des features
-contextuelles plausibles. Les features de collisions ont une distribution
-biaisee (plus de robots de la meme flotte proches, moins d'unites externes detectees,
-shift de nuit plus frequent) mais avec assez de chevauchement pour que le
-probleme ne soit pas trivial.
+We simulate 5000 MOVE events of which ~3% are near-collisions, with plausible
+contextual features. Collision features have a biased distribution (more
+same-fleet robots nearby, fewer external units detected, night shift more
+frequent) but with enough overlap so the problem is not trivial.
 
-Objectif : ressemble suffisamment a un log EOD reel pour que les lecons
-tirees (metriques, ponderation, seuil) soient transferables. Ce n'est pas
-assez realiste pour juger un modele en production, mais assez pour apprendre.
+Goal: look close enough to a real EOD log so that the lessons learned
+(metrics, weighting, threshold) are transferable. Not realistic enough to
+judge a production model, but enough to learn from.
 """
 from __future__ import annotations
 
 import numpy as np
 
 FEATURE_NAMES = [
-    "friendly_units_within_5m",      # int 0-8 — robots de la meme flotte proches
-    "external_units_detected_last_60s",  # int 0-6 — unites de flotte externe detectees
+    "friendly_units_within_5m",      # int 0-8 — same-fleet robots nearby
+    "external_units_detected_last_60s",  # int 0-6 — external-fleet units detected
     "time_since_last_own_fleet_detect_s",  # 0-600
     "target_confidence",             # 0-1
-    "drone_marked_zone",             # 0/1 — zone marquee par drone d'inventaire
+    "drone_marked_zone",             # 0/1 — zone marked by inventory drone
     "motion_mode",                   # 0=ordered, 1=reactive, 2=preemptive
-    "partial_telemetry_index",       # 0-1 (1 = telemetrie tres degradee)
+    "partial_telemetry_index",       # 0-1 (1 = heavily degraded telemetry)
     "night_shift",                   # 0/1
     "minutes_in_shift",              # 0-240
 ]
 
 
 def _sample_clean_move(rng: np.random.Generator) -> np.ndarray:
-    """Mouvement nominal : distribution 'globale' avec biais contextuel modere.
+    """Nominal move: 'global' distribution with moderate contextual bias.
 
-    On veut eviter les signaux parfaits : chaque feature chevauche largement
-    avec la classe collision. C'est un vrai probleme si les features ne
-    sont qu'un proxy du contexte (ce qui est le cas en realite).
+    We want to avoid perfect signals: every feature overlaps widely with the
+    collision class. That is the real problem when features are only a proxy
+    of the context (which is the case in reality).
     """
     return np.array([
-        rng.integers(0, 6),                     # 0-5 robots de la meme flotte proches
-        rng.integers(0, 6),                     # 0-5 unites externes detectees
-        rng.uniform(0, 600),                    # temps quelconque
-        rng.beta(4, 2),                         # confidence plutot haute
+        rng.integers(0, 6),                     # 0-5 same-fleet robots nearby
+        rng.integers(0, 6),                     # 0-5 external units detected
+        rng.uniform(0, 600),                    # any time
+        rng.beta(4, 2),                         # rather high confidence
         float(rng.random() < 0.5),
         rng.choice([0, 1, 2], p=[0.6, 0.25, 0.15]),
-        rng.beta(2, 4),                         # telemetrie plutot bonne
+        rng.beta(2, 4),                         # rather good telemetry
         float(rng.random() < 0.2),
         rng.uniform(0, 240),
     ], dtype=np.float32)
 
 
 def _sample_collision(rng: np.random.Generator) -> np.ndarray:
-    """Quasi-collision : meme espace feature, mais distribution decalee.
+    """Near-collision: same feature space, but shifted distribution.
 
-    Le modele doit capturer une combinaison de plusieurs features — aucune
-    seule feature ne suffit. C'est ce qui rend la tache difficile et utile.
+    The model must capture a combination of several features — no single
+    feature is enough. That is what makes the task hard and useful.
     """
     return np.array([
-        rng.integers(1, 8),                     # typiquement plus de robots de la meme flotte proches
-        rng.integers(0, 4),                     # typiquement moins d'unites externes detectees
-        rng.uniform(0, 400),                    # unite propre vue plus recemment
-        rng.beta(2, 4),                         # confidence plutot basse
+        rng.integers(1, 8),                     # typically more same-fleet robots nearby
+        rng.integers(0, 4),                     # typically fewer external units detected
+        rng.uniform(0, 400),                    # own unit seen more recently
+        rng.beta(2, 4),                         # rather low confidence
         float(rng.random() < 0.25),
-        rng.choice([0, 1, 2], p=[0.25, 0.3, 0.45]),  # mouvement preemptif plus probable
-        rng.beta(4, 2),                         # telemetrie plutot degradee
+        rng.choice([0, 1, 2], p=[0.25, 0.3, 0.45]),  # preemptive motion more likely
+        rng.beta(4, 2),                         # rather degraded telemetry
         float(rng.random() < 0.45),
         rng.uniform(0, 240),
     ], dtype=np.float32)
@@ -69,10 +68,10 @@ def _sample_collision(rng: np.random.Generator) -> np.ndarray:
 
 def load_dataset(n_samples: int = 5000, collision_rate: float = 0.03,
                  seed: int = 42) -> tuple[np.ndarray, np.ndarray]:
-    """Genere (X, y) avec ~collision_rate positifs.
+    """Generates (X, y) with ~collision_rate positives.
 
-    Note : on genere independamment les classes puis on shuffle, au lieu de
-    tirer class puis sample. Plus simple, meme resultat.
+    Note: we generate each class independently then shuffle, instead of
+    drawing class then sample. Simpler, same result.
     """
     rng = np.random.default_rng(seed)
     n_pos = int(n_samples * collision_rate)
@@ -93,10 +92,10 @@ def load_dataset(n_samples: int = 5000, collision_rate: float = 0.03,
 def stratified_split(X: np.ndarray, y: np.ndarray,
                       ratios: tuple[float, float, float] = (0.7, 0.15, 0.15),
                       seed: int = 42):
-    """Split stratifie : garantit la meme prevalence dans chaque split.
+    """Stratified split: guarantees the same prevalence in every split.
 
-    Critique ici : sans stratification, un split peut se retrouver avec 0
-    positifs et l'eval devient impossible.
+    Critical here: without stratification a split could end up with 0
+    positives and evaluation becomes impossible.
     """
     rng = np.random.default_rng(seed)
     pos_idx = np.where(y == 1)[0]

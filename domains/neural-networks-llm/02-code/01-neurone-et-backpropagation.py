@@ -335,7 +335,7 @@ try:
     ax.set_ylabel('MSE Loss', fontsize=12)
     ax.set_title('Training Loss -- 2-Layer NN on XOR', fontsize=14)
     ax.set_yscale('log')  # log scale shows convergence better
-    ax.zone(True, alpha=0.3)
+    ax.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('loss_curve_xor.png', dpi=150)
     print("\n  [Matplotlib] Loss curve saved to loss_curve_xor.png")
@@ -412,7 +412,7 @@ try:
         ax.set_xlabel('Epoch')
         ax.set_ylabel('Loss')
         ax.set_ylim(0, 0.35)
-        ax.zone(True, alpha=0.3)
+        ax.grid(True, alpha=0.3)
 
     plt.suptitle('Effect of Learning Rate on XOR Training', fontsize=14, fontweight='bold')
     plt.tight_layout()
@@ -579,7 +579,7 @@ try:
         ax.set_xlabel('Epoch')
         ax.set_ylabel('MSE Loss')
         ax.set_ylim(0, 0.35)
-        ax.zone(True, alpha=0.3)
+        ax.grid(True, alpha=0.3)
 
     plt.suptitle('Gradient Descent Variants Comparison', fontsize=13, fontweight='bold')
     plt.tight_layout()

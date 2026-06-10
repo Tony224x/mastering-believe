@@ -560,8 +560,10 @@ print("=" * 70)
 # Small dataset for easy overfitting
 np.random.seed(42)
 n_small = 50
-X_s0 = np.random.randn(n_small, 2) * 0.5 + np.array([1, 1])
-X_s1 = np.random.randn(n_small, 2) * 0.5 + np.array([-1, -1])
+# Noise 0.9 makes the classes overlap -> the big network can memorize the
+# training noise, which is exactly what the overfitting demo needs to show
+X_s0 = np.random.randn(n_small, 2) * 0.9 + np.array([1, 1])
+X_s1 = np.random.randn(n_small, 2) * 0.9 + np.array([-1, -1])
 X_small = np.vstack([X_s0, X_s1])
 y_small = np.array([0]*n_small + [1]*n_small).reshape(-1, 1).astype(float)
 perm = np.random.permutation(2*n_small)
@@ -573,14 +575,16 @@ X_st, y_st = X_small[:n_split], y_small[:n_split]
 X_sv, y_sv = X_small[n_split:], y_small[n_split:]
 
 print(f"\n  Small dataset: {n_split} train, {len(X_small)-n_split} val")
-print(f"  Big network: [2, 256, 128, 64, 1] — way too big for {n_split} samples")
+print(f"  Big network: [2, 64, 32, 1] — still way too big for {n_split} samples")
 
 
-def train_with_reg(X_t, y_t, X_v, y_v, l2=0.0, dropout=0.0, epochs=1500, early_stop_patience=0):
+def train_with_reg(X_t, y_t, X_v, y_v, l2=0.0, dropout=0.0, epochs=400, early_stop_patience=0):
     """Train a big MLP with optional L2, dropout, and early stopping.
     Returns train/val loss histories and best val accuracy."""
     np.random.seed(42)
-    sizes = [2, 256, 128, 64, 1]
+    # [2, 64, 32, 1] = ~2300 params for 60 samples -> still heavily
+    # overparameterized (overfitting demo holds) but trains fast on CPU
+    sizes = [2, 64, 32, 1]
     L = len(sizes) - 1
     W = [np.random.randn(sizes[l], sizes[l+1]) * np.sqrt(2.0/sizes[l]) for l in range(L)]
     b = [np.zeros((1, sizes[l+1])) for l in range(L)]

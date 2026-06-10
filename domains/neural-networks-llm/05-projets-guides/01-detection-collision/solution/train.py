@@ -1,18 +1,18 @@
 """
-Training du detecteur de quasi-collisions LogiSim — correction.
+Training of the LogiSim near-collision detector — solution.
 
-Pipeline :
-1. Baseline majoritaire (predict "pas collision" tout le temps)
-2. Regression logistique avec class_weight='balanced'
-3. MLP avec BCEWithLogitsLoss(pos_weight)
-4. Threshold tuning sur val pour maximiser F1
-5. Eval finale sur test : accuracy, precision, recall, F1, AUC-PR, confusion matrix
+Pipeline:
+1. Majority baseline (predict "no collision" all the time)
+2. Logistic regression with class_weight='balanced'
+3. MLP with BCEWithLogitsLoss(pos_weight)
+4. Threshold tuning on val to maximize F1
+5. Final eval on test: accuracy, precision, recall, F1, AUC-PR, confusion matrix
 
-Le point pedagogique majeur : comparer accuracy vs F1. La baseline majoritaire
-a 97% accuracy et F1=0 — les bons eleves voient immediatement pourquoi accuracy
-est inutile ici.
+The major pedagogical point: comparing accuracy vs F1. The majority baseline
+gets 97% accuracy with F1=0 — good students immediately see why accuracy is
+useless here.
 
-Dependances : numpy, torch, scikit-learn (pour logistique + metriques).
+Dependencies: numpy, torch, scikit-learn (for logistic regression + metrics).
 """
 from __future__ import annotations
 
@@ -21,9 +21,9 @@ from pathlib import Path
 
 import numpy as np
 
-# sklearn et torch sont optionnels. Le script tourne avec juste numpy et
-# calcule les metriques a la main. Si sklearn est present, on ajoute la
-# regression logistique officielle. Si torch est present, le MLP.
+# sklearn and torch are optional. The script runs with numpy alone and
+# computes the metrics by hand. If sklearn is available, we add the official
+# logistic regression. If torch is available, the MLP.
 try:
     from sklearn.linear_model import LogisticRegression
     HAS_SKLEARN = True
@@ -69,7 +69,7 @@ if HAS_TORCH:
                 nn.Linear(32, 16),
                 nn.ReLU(),
                 nn.Dropout(0.3),
-                nn.Linear(16, 1),  # logit, pas de sigmoid (BCEWithLogitsLoss gere)
+                nn.Linear(16, 1),  # logit, no sigmoid (BCEWithLogitsLoss handles it)
             )
 
         def forward(self, x):
@@ -79,13 +79,13 @@ if HAS_TORCH:
 def train_mlp(X_train: np.ndarray, y_train: np.ndarray,
               X_val: np.ndarray, y_val: np.ndarray,
               epochs: int = 100, lr: float = 1e-3):
-    """MLP avec loss ponderee pour compenser le desequilibre."""
+    """MLP with a weighted loss to compensate for class imbalance."""
     _set_seeds()
     model = CollisionMLP(in_dim=X_train.shape[1])
     opt = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
 
-    # pos_weight = n_neg / n_pos : force le modele a payer plus cher les
-    # faux negatifs. Sans ca, il converge vers "tout negatif" (loss mini).
+    # pos_weight = n_neg / n_pos: forces the model to pay more for false
+    # negatives. Without it, it converges to "all negative" (minimal loss).
     n_pos = max(1, int(y_train.sum()))
     n_neg = len(y_train) - n_pos
     pos_weight = torch.tensor([n_neg / n_pos], dtype=torch.float32)
@@ -106,15 +106,13 @@ def train_mlp(X_train: np.ndarray, y_train: np.ndarray,
         loss.backward()
         opt.step()
 
-        # Val F1 pour early stopping
+        # Val F1 for early stopping
         model.eval()
         with torch.no_grad():
             val_logits = model(X_val_t)
             val_proba = torch.sigmoid(val_logits).numpy()
             val_pred = (val_proba > 0.5).astype(int)
-            _, _, f1, _ = precision_recall_fscore_support(
-                y_val, val_pred, average="binary", zero_division=0,
-            )
+            _, _, f1 = _binary_metrics(y_val, val_pred)
         if f1 > best_val_f1:
             best_val_f1 = f1
             best_state = {k: v.clone() for k, v in model.state_dict().items()}
@@ -124,11 +122,11 @@ def train_mlp(X_train: np.ndarray, y_train: np.ndarray,
     return model
 
 
-# ---------- Metriques (implementees a la main, numpy only) --------------
+# ---------- Metrics (implemented by hand, numpy only) -------------------
 
 
 def _binary_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> tuple[float, float, float]:
-    """Precision, recall, F1 sur la classe positive."""
+    """Precision, recall, F1 on the positive class."""
     tp = int(((y_pred == 1) & (y_true == 1)).sum())
     fp = int(((y_pred == 1) & (y_true == 0)).sum())
     fn = int(((y_pred == 0) & (y_true == 1)).sum())
@@ -139,10 +137,10 @@ def _binary_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> tuple[float, floa
 
 
 def _auc_pr(y_true: np.ndarray, y_proba: np.ndarray) -> float:
-    """Aire sous la courbe precision-recall (approche average-precision).
+    """Area under the precision-recall curve (average-precision approach).
 
-    Trie par proba decroissante, construit la courbe PR, integre avec la
-    methode du "step function" (AP = somme des (R_k - R_{k-1}) * P_k).
+    Sorts by decreasing probability, builds the PR curve, integrates with the
+    "step function" method (AP = sum of (R_k - R_{k-1}) * P_k).
     """
     order = np.argsort(-y_proba)
     y_sorted = y_true[order]
@@ -153,7 +151,7 @@ def _auc_pr(y_true: np.ndarray, y_proba: np.ndarray) -> float:
         return 0.0
     precisions = tp_cum / (tp_cum + fp_cum + 1e-12)
     recalls = tp_cum / n_pos
-    # Ajoute le point (0, 1) au debut
+    # Prepend the (0, 1) point
     precisions = np.concatenate([[1.0], precisions])
     recalls = np.concatenate([[0.0], recalls])
     return float(np.sum((recalls[1:] - recalls[:-1]) * precisions[1:]))
@@ -187,7 +185,7 @@ def evaluate(y_true: np.ndarray, y_proba: np.ndarray,
 
 
 def tune_threshold(y_val: np.ndarray, y_val_proba: np.ndarray) -> float:
-    """Trouve le threshold qui maximise F1 sur le val set."""
+    """Finds the threshold that maximizes F1 on the val set."""
     best_f1 = 0.0
     best_t = 0.5
     for t in np.arange(0.05, 0.95, 0.05):
@@ -200,19 +198,19 @@ def tune_threshold(y_val: np.ndarray, y_val_proba: np.ndarray) -> float:
     return float(best_t)
 
 
-# ---------- Regression logistique fallback (numpy) ---------------------
+# ---------- Logistic regression fallback (numpy) -----------------------
 
 
 def _train_logistic_numpy(X: np.ndarray, y: np.ndarray, epochs: int = 500,
                            lr: float = 0.1) -> np.ndarray:
-    """Regression logistique avec gradient descent, class_weight balanced.
+    """Logistic regression with gradient descent, balanced class weights.
 
-    Implem minimale pour que le projet tourne sans sklearn. Le poids de
-    classe compense le desequilibre en multipliant le gradient des exemples
-    positifs par n_neg / n_pos.
+    Minimal implementation so the project runs without sklearn. The class
+    weight compensates for the imbalance by multiplying the gradient of the
+    positive examples by n_neg / n_pos.
     """
     n, d = X.shape
-    X_aug = np.concatenate([X, np.ones((n, 1))], axis=1)  # biais
+    X_aug = np.concatenate([X, np.ones((n, 1))], axis=1)  # bias
     w = np.zeros(d + 1)
     n_pos = max(1, int(y.sum()))
     n_neg = n - n_pos
@@ -248,15 +246,15 @@ def main() -> None:
     print(f"Val   : {len(y_va)} ({y_va.sum()} positifs)")
     print(f"Test  : {len(y_te)} ({y_te.sum()} positifs)")
 
-    # -- Baseline majoritaire : predit toujours 0
+    # -- Majority baseline: always predicts 0
     print("\n" + "=" * 60)
     print("1. BASELINE MAJORITAIRE")
     print("=" * 60)
     y_proba_zero = np.zeros_like(y_te, dtype=float)
     evaluate(y_te, y_proba_zero, threshold=0.5, label="Baseline zero")
-    # Observation : accuracy ~97% mais F1=0 -> toutes les quasi-collisions sont manquees
+    # Observation: accuracy ~97% but F1=0 -> every near-collision is missed
 
-    # -- Regression logistique (sklearn si dispo, sinon fallback numpy)
+    # -- Logistic regression (sklearn if available, otherwise numpy fallback)
     print("\n" + "=" * 60)
     print("2. REGRESSION LOGISTIQUE (class_weight='balanced')")
     print("=" * 60)
@@ -273,7 +271,7 @@ def main() -> None:
     t_lr = tune_threshold(y_va, y_val_proba_lr)
     evaluate(y_te, y_te_proba_lr, threshold=t_lr, label="Logistic regression (test)")
 
-    # -- MLP (optionnel : necessite torch)
+    # -- MLP (optional: requires torch)
     print("\n" + "=" * 60)
     print("3. MLP (BCEWithLogitsLoss + pos_weight)")
     print("=" * 60)

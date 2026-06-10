@@ -1,15 +1,18 @@
 """
-Templates de prompt pour la generation EOD Review automatique LogiSim.
+Prompt templates for automatic LogiSim EOD Review generation.
 
-Principes :
-- System prompt : role, contraintes factuelles, format de sortie
-- User prompt : contexte events + question precise
-- Few-shot : 2 exemples de paragraphes bien formes pour orienter le style
-- Low temperature : 0.2 max pour du factuel
+Principles:
+- System prompt: role, factual constraints, output format
+- User prompt: events context + precise question
+- Few-shot: 2 examples of well-formed paragraphs to steer the style
+- Low temperature: 0.2 max for factual output
 
-Le prompt est pense pour etre reutilisable avec n'importe quel LLM instructable
-(Claude, Llama 3, Mistral). L'absence de features specifiques a un provider
-est deliberate : air-gap = portabilite.
+The prompt is designed to be reusable with any instructable LLM (Claude,
+Llama 3, Mistral). The absence of provider-specific features is deliberate:
+air-gap = portability.
+
+Note: the prompts themselves are in French on purpose — the generated EOD
+report is a French-speaking business deliverable.
 """
 from __future__ import annotations
 
@@ -70,7 +73,7 @@ Redige le paragraphe d'EOD en suivant strictement le format de l'exemple."""
 
 
 def format_event_line(event: dict) -> str:
-    """Formate un event dict pour insertion dans un prompt."""
+    """Formats an event dict for insertion into a prompt."""
     t = event["t_sim"]
     h = int(t // 3600)
     m = int((t % 3600) // 60)

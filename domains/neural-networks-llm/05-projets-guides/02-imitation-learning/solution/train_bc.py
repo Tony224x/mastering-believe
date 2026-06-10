@@ -1,12 +1,11 @@
 """
-Behavioral cloning avec LSTM — correction.
+Behavioral cloning with an LSTM — solution.
 
-Lecture conseillee : apres avoir lu ce script, reponds a ces questions
-AVANT de regarder les reponses dans `readme.md` section "Piege distribution
-shift":
-1. Pourquoi pack_padded_sequence ? (indice : padding + LSTM)
-2. Pourquoi moyennee la loss au niveau token ? (pas au niveau sequence)
-3. Qu'est-ce qui garantit le determinisme du training ?
+Suggested reading: after reading this script, answer these questions BEFORE
+looking at the answers in `readme.md`, section "Piege distribution shift":
+1. Why pack_padded_sequence? (hint: padding + LSTM)
+2. Why average the loss at the token level? (not at the sequence level)
+3. What guarantees training determinism?
 """
 from __future__ import annotations
 
@@ -35,13 +34,13 @@ class TraceDataset(Dataset):
 
 
 def _collate(batch: list[tuple[torch.Tensor, torch.Tensor]]):
-    """Pad sequences, renvoie (padded_states, padded_actions, lengths)."""
+    """Pads sequences, returns (padded_states, padded_actions, lengths)."""
     batch.sort(key=lambda x: len(x[0]), reverse=True)
     states = [b[0] for b in batch]
     actions = [b[1] for b in batch]
     lengths = torch.tensor([len(s) for s in states], dtype=torch.long)
     states_pad = pad_sequence(states, batch_first=True)
-    actions_pad = pad_sequence(actions, batch_first=True, padding_value=-100)  # -100 ignore dans CE
+    actions_pad = pad_sequence(actions, batch_first=True, padding_value=-100)  # -100 ignored by CE
     return states_pad, actions_pad, lengths
 
 
@@ -53,10 +52,10 @@ class BCModel(nn.Module):
         self.head = nn.Linear(64, N_ACTIONS)
 
     def forward(self, states: torch.Tensor, lengths: torch.Tensor) -> torch.Tensor:
-        # states : (B, T, 7), lengths : (B,)
+        # states: (B, T, 7), lengths: (B,)
         x = self.state_embed(states)
-        # pack pour eviter que le LSTM lise le padding -- ecrirait n'importe quoi
-        # apres la fin de sequence et polluerait la loss.
+        # pack so the LSTM never reads the padding -- it would write garbage
+        # past the end of the sequence and pollute the loss.
         packed = pack_padded_sequence(x, lengths.cpu(), batch_first=True, enforce_sorted=True)
         packed_out, _ = self.lstm(packed)
         from torch.nn.utils.rnn import pad_packed_sequence
@@ -82,8 +81,8 @@ def train() -> None:
 
     model = BCModel()
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
-    # ignore_index=-100 : les positions paddees n'entrent pas dans la loss.
-    # Sans ca, on apprendrait a predire "0" pour le padding -> biais.
+    # ignore_index=-100: padded positions do not enter the loss.
+    # Without it, we would learn to predict "0" for the padding -> bias.
     loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
 
     for epoch in range(20):
@@ -92,7 +91,7 @@ def train() -> None:
         for states, actions, lengths in train_loader:
             opt.zero_grad()
             logits = model(states, lengths)  # (B, T, N)
-            # CE attend (B*T, N) et (B*T,)
+            # CE expects (B*T, N) and (B*T,)
             loss = loss_fn(logits.reshape(-1, N_ACTIONS), actions.reshape(-1))
             loss.backward()
             opt.step()

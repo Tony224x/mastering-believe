@@ -1,12 +1,12 @@
 """
-Extraction de moments cles depuis un log d'events de shift LogiSim.
+Key-moment extraction from a LogiSim shift event log.
 
-Heuristique simple v0 : on detecte les "bursts" de densite d'events
-operationnels (PICKUP, DROPOFF, COLLISION, FAULT, DETECT) dans une fenetre
-glissante. Un burst au-dessus d'un seuil devient un "moment cle".
+Simple v0 heuristic: we detect density "bursts" of operational events
+(PICKUP, DROPOFF, COLLISION, FAULT, DETECT) inside a sliding window.
+A burst above a threshold becomes a "key moment".
 
-Pour le vrai produit, on aurait probablement un classifier ML entraine
-sur des moments cles annotes par des operateurs OCC. v0 suffit pour une baseline.
+For the real product we would probably have an ML classifier trained on key
+moments annotated by OCC operators. v0 is enough for a baseline.
 """
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ class KeyMoment:
     t_end: float
     center_unit_id: str
     event_ids: list[int]
-    intensity: int  # nombre d'events operationnels dans la fenetre
+    intensity: int  # number of operational events in the window
 
 
 def extract_key_moments(
@@ -31,10 +31,10 @@ def extract_key_moments(
     min_intensity: int = 5,
 ) -> list[KeyMoment]:
     """
-    events : liste dict avec au moins les cles {id, t_sim, kind, unit_id}, triee par t_sim.
+    events: list of dicts with at least the keys {id, t_sim, kind, unit_id}, sorted by t_sim.
 
-    Retourne une liste de moments cles non-overlapping : quand deux fenetres
-    intenses se chevauchent, on les fusionne.
+    Returns a list of non-overlapping key moments: when two intense windows
+    overlap, they are merged.
     """
     if not events:
         return []
@@ -51,7 +51,7 @@ def extract_key_moments(
             j += 1
         intensity = j - i
         if intensity >= min_intensity:
-            # Identifier l'unite pivot : celle qui apparait le plus dans la fenetre
+            # Identify the pivot unit: the one that appears most in the window
             counts: dict[str, int] = {}
             for e in operation_events[i:j]:
                 counts[e["unit_id"]] = counts.get(e["unit_id"], 0) + 1
@@ -64,7 +64,7 @@ def extract_key_moments(
                 event_ids=[e["id"] for e in operation_events[i:j]],
                 intensity=intensity,
             )
-            # Fusionner avec le moment precedent si overlap
+            # Merge with the previous moment if overlapping
             if moments and m.t_start <= moments[-1].t_end + 5.0:
                 prev = moments[-1]
                 merged_ids = list(dict.fromkeys(prev.event_ids + m.event_ids))
@@ -85,14 +85,14 @@ def extract_key_moments(
 
 
 def context_window(events: list[dict], moment: KeyMoment, pre_sec: float = 30.0, post_sec: float = 60.0) -> list[dict]:
-    """Retourne les events dans une fenetre autour d'un moment cle (pour le contexte LLM)."""
+    """Returns the events inside a window around a key moment (for the LLM context)."""
     t_min = moment.t_start - pre_sec
     t_max = moment.t_end + post_sec
     return [e for e in events if t_min <= e["t_sim"] <= t_max]
 
 
 if __name__ == "__main__":
-    # Mini test synthetique
+    # Mini synthetic test
     demo_events = [
         {"id": 1, "t_sim": 100.0, "kind": "MOVE",      "unit_id": "AGV-1"},
         {"id": 2, "t_sim": 110.0, "kind": "DETECT",    "unit_id": "AGV-1"},

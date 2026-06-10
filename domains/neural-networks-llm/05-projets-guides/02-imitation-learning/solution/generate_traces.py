@@ -1,16 +1,16 @@
 """
-Generateur de traces expert rule-based pour behavioral cloning.
+Rule-based expert trace generator for behavioral cloning.
 
-L'expert suit des regles simples :
-- enemy proche + ammo ok + health ok -> ENGAGE
-- enemy proche + health bas -> WITHDRAW
-- enemy loin + pas en cover -> TAKE_COVER
-- enemy loin + en cover + depuis longtemps sans ordre -> MOVE_FORWARD
-- besoin de reporter -> REPORT
-- sinon -> HOLD
+The expert follows simple rules:
+- enemy close + ammo ok + health ok -> ENGAGE
+- enemy close + low health -> WITHDRAW
+- enemy far + not in cover -> TAKE_COVER
+- enemy far + in cover + long time without orders -> MOVE_FORWARD
+- needs to report -> REPORT
+- otherwise -> HOLD
 
-Intentionnellement on melange un peu de bruit dans les decisions (10%) pour
-donner un peu de variance au dataset : sinon c'est trivialement apprenable.
+We intentionally mix some noise into the decisions (10%) to give the dataset
+some variance: otherwise it is trivially learnable.
 """
 from __future__ import annotations
 
@@ -45,14 +45,14 @@ def _expert_policy(state: np.ndarray, in_cover: bool, rng: np.random.Generator) 
     else:
         action = ACTIONS["HOLD"]
 
-    # 10% de bruit : choisir une autre action au hasard
+    # 10% noise: pick another action at random
     if noise < 0.10:
         action = int(rng.integers(0, len(ACTIONS)))
     return action
 
 
 def generate_sequence(rng: np.random.Generator, length: int) -> tuple[np.ndarray, np.ndarray]:
-    """Retourne (states, actions) ou states est (length, 7) et actions (length,)."""
+    """Returns (states, actions) where states is (length, 7) and actions (length,)."""
     states = np.zeros((length, STATE_DIM), dtype=np.float32)
     actions = np.zeros(length, dtype=np.int64)
 
@@ -71,7 +71,7 @@ def generate_sequence(rng: np.random.Generator, length: int) -> tuple[np.ndarray
         states[t] = state
         actions[t] = action
 
-        # Dynamique simplifiee
+        # Simplified dynamics
         if action == ACTIONS["MOVE_FORWARD"]:
             pos += rng.uniform(-0.05, 0.05, size=2)
             enemy_dist = max(0.0, enemy_dist - 0.03)
