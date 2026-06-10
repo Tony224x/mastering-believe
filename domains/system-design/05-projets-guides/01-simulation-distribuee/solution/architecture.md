@@ -4,7 +4,7 @@
 
 ```
                   +------------------+
-                  |   Tick master    |<---- commande formateur (Work Order Plan injection)
+                  |   Tick master    |<---- commande operateur OCC (Work Order Plan injection)
                   |  (barrier + seed)|
                   +---------+--------+
                             |
@@ -22,14 +22,14 @@
 **Roles** :
 - **Tick master** — coordonne la progression globale. Emet "TICK n" a 10 Hz, attend ACK de tous les workers, puis "COMMIT n" pour autoriser la publication cross-zone. Pas de logique simu, juste l'orchestration.
 - **Worker** — authoritative sur une zone. Simule les unites dans sa zone, execute les events, publie son etat frontier aux voisins.
-- **Observer** — client read-only (GUI formateur, service EOD). N'influence pas la simu.
+- **Observer** — client read-only (console OCC, service EOD). N'influence pas la simu.
 
 ## Decoupage spatial — choix : grille reguliere statique
 
 Considere :
 1. **Grille reguliere** — simple, predictible, facile a debugger. Mauvais si l'action se concentre sur une seule zone (un worker sature quand les 4 autres sont idle).
-2. **Quadtree adaptatif** — redistribue dynamiquement. Plus complexe, casse le determinisme si on rebalance en cours d'exercice.
-3. **Zones metier** — "forest area", "urban area" definies a la main. Flexible mais pas general, demande de la config par scenario.
+2. **Quadtree adaptatif** — redistribue dynamiquement. Plus complexe, casse le determinisme si on rebalance en cours de shift.
+3. **Zones metier** — "zone de docks", "mezzanine de tri" definies a la main. Flexible mais pas general, demande de la config par scenario.
 
 **Choix : grille reguliere** pour la v1. Simplicite > optimalite sur un prototype. On acceptera qu'un worker sature en cas de concentration — mesurable et documentable.
 
@@ -83,7 +83,7 @@ Protocole :
 ## Crash d'un worker
 
 Options :
-1. **Abort exercise** — le plus simple, acceptable pour la v1. L'exercice est perdu, le formateur recommence.
+1. **Abort shift** — le plus simple, acceptable pour la v1. Le shift est perdu, l'operateur OCC recommence.
 2. **Snapshot + reprise** — chaque worker persiste son snapshot a chaque COMMIT (disque local). Un worker de secours peut reprendre la zone a partir du dernier snapshot.
 3. **Etat replique** — chaque zone a un follower qui copie l'etat en temps reel. Instantane en cas de bascule, mais x2 la RAM et la bande.
 
@@ -101,7 +101,7 @@ Options :
 ## Questions de revue — reponses
 
 **Pourquoi pas un gros serveur unique ?**
-Pour 5000 unites, on atteint les limites d'un seul thread Python/C++ non-vectorise. Le GIL Python serait bloquant. Un seul noeud = unique SPOF. La distribution est aussi une competence que le client defense valorise (resilience).
+Pour 5000 unites, on atteint les limites d'un seul thread Python/C++ non-vectorise. Le GIL Python serait bloquant. Un seul noeud = unique SPOF. La distribution est aussi une competence que le client 3PL valorise (resilience).
 
 **Taille max d'une zone ?**
 Empirique : quand le cout de l'exchange depasse 20% du temps de tick, la zone est trop grande. Dans notre cas ca tombe autour de 1500 unites / zone.

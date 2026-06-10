@@ -1,11 +1,11 @@
 """
-Jour 1 -- Principes fondamentaux du System Design
-Demonstrations interactives en Python.
+Day 1 -- System Design Fundamentals
+Interactive demonstrations in Python.
 
 Usage:
     python 01-principes-fondamentaux.py
 
-Chaque section est independante et peut etre executee via la fonction main().
+Each section is independent and can be executed via the main() function.
 """
 
 import time
@@ -22,7 +22,7 @@ from dataclasses import dataclass
 
 @dataclass
 class SystemEstimation:
-    """Estimation rapide des besoins d'un systeme."""
+    """Quick estimation of a system's resource needs."""
 
     name: str
     dau: int                    # Daily Active Users
@@ -34,40 +34,40 @@ class SystemEstimation:
 
     @property
     def qps_average(self) -> float:
-        """QPS moyen = DAU * actions/jour / 86400 secondes."""
+        """Average QPS = DAU * actions/day / 86400 seconds."""
         return self.dau * self.actions_per_user_per_day / 86_400
 
     @property
     def qps_peak(self) -> float:
-        """QPS pic = QPS moyen * 3 (regle empirique : pic ~ 2-5x moyenne)."""
+        """Peak QPS = average QPS * 3 (rule of thumb: peak ~ 2-5x average)."""
         return self.qps_average * 3
 
     @property
     def bandwidth_in_mbps(self) -> float:
-        """Bande passante entrante = QPS pic * taille requete, convertie en Mbps."""
+        """Inbound bandwidth = peak QPS * request size, converted to Mbps."""
         bytes_per_sec = self.qps_peak * self.avg_request_size_bytes
         return bytes_per_sec * 8 / 1_000_000  # bits -> Mbps
 
     @property
     def bandwidth_out_mbps(self) -> float:
-        """Bande passante sortante = QPS pic * taille reponse."""
+        """Outbound bandwidth = peak QPS * response size."""
         bytes_per_sec = self.qps_peak * self.avg_response_size_bytes
         return bytes_per_sec * 8 / 1_000_000
 
     @property
     def storage_per_day_gb(self) -> float:
-        """Stockage/jour = QPS moyen * 86400 * taille objet."""
-        # On utilise QPS moyen (pas pic) car le stockage est cumule sur 24h
+        """Storage/day = average QPS * 86400 * object size."""
+        # We use average QPS (not peak) because storage accumulates over 24h
         total_objects_per_day = self.dau * self.actions_per_user_per_day
         return total_objects_per_day * self.storage_per_object_bytes / (1024**3)
 
     @property
     def storage_total_tb(self) -> float:
-        """Stockage total = stockage/jour * retention, en To."""
+        """Total storage = storage/day * retention, in TB."""
         return self.storage_per_day_gb * self.retention_days / 1024
 
     def report(self) -> str:
-        """Genere un rapport lisible des estimations."""
+        """Generates a readable report of the estimates."""
         lines = [
             f"\n{'='*60}",
             f"  ESTIMATION : {self.name}",
@@ -75,21 +75,21 @@ class SystemEstimation:
             f"  DAU                    : {self.dau:>15,}",
             f"  Actions/user/day       : {self.actions_per_user_per_day:>15,}",
             f"  {'-'*56}",
-            f"  QPS moyen              : {self.qps_average:>15,.0f} req/s",
-            f"  QPS pic (x3)           : {self.qps_peak:>15,.0f} req/s",
+            f"  Average QPS            : {self.qps_average:>15,.0f} req/s",
+            f"  Peak QPS (x3)          : {self.qps_peak:>15,.0f} req/s",
             f"  {'-'*56}",
-            f"  Bande passante IN      : {self.bandwidth_in_mbps:>15,.1f} Mbps",
-            f"  Bande passante OUT     : {self.bandwidth_out_mbps:>15,.1f} Mbps",
+            f"  Bandwidth IN           : {self.bandwidth_in_mbps:>15,.1f} Mbps",
+            f"  Bandwidth OUT          : {self.bandwidth_out_mbps:>15,.1f} Mbps",
             f"  {'-'*56}",
-            f"  Stockage/jour          : {self.storage_per_day_gb:>15,.2f} Go",
-            f"  Stockage total ({self.retention_days}j)   : {self.storage_total_tb:>12,.2f} To",
+            f"  Storage/day            : {self.storage_per_day_gb:>15,.2f} GB",
+            f"  Total storage ({self.retention_days}d) : {self.storage_total_tb:>12,.2f} TB",
             f"{'='*60}",
         ]
         return "\n".join(lines)
 
 
 def demo_estimation():
-    """Estime les besoins pour un clone Twitter et un service de chat."""
+    """Estimates the resource needs for a Twitter clone and a chat service."""
     print("\n" + "=" * 60)
     print("  SECTION 1 : Back-of-the-envelope Estimation")
     print("=" * 60)
@@ -98,22 +98,22 @@ def demo_estimation():
     twitter = SystemEstimation(
         name="Twitter-like (posts + timeline reads)",
         dau=200_000_000,
-        actions_per_user_per_day=50,        # 50 lectures de timeline / tweets par jour
-        avg_request_size_bytes=500,          # Requete legere (GET timeline)
-        avg_response_size_bytes=5_000,       # 5 Ko de JSON (20 tweets avec metadata)
-        storage_per_object_bytes=1_000,      # 1 Ko par tweet (texte + metadata)
-        retention_days=365 * 5,              # 5 ans de retention
+        actions_per_user_per_day=50,        # 50 timeline reads / tweets per day
+        avg_request_size_bytes=500,          # Lightweight request (GET timeline)
+        avg_response_size_bytes=5_000,       # 5 KB of JSON (20 tweets with metadata)
+        storage_per_object_bytes=1_000,      # 1 KB per tweet (text + metadata)
+        retention_days=365 * 5,              # 5 years of retention
     )
 
-    # Scenario 2 : Service de chat (WhatsApp-like)
+    # Scenario 2 : Chat service (WhatsApp-like)
     chat = SystemEstimation(
         name="Chat service (WhatsApp-like)",
         dau=500_000_000,
-        actions_per_user_per_day=100,        # 100 messages envoyes/recus par jour
-        avg_request_size_bytes=200,          # Message court
+        actions_per_user_per_day=100,        # 100 messages sent/received per day
+        avg_request_size_bytes=200,          # Short message
         avg_response_size_bytes=200,         # ACK + message
         storage_per_object_bytes=500,        # Message + metadata + index
-        retention_days=365,                  # 1 an
+        retention_days=365,                  # 1 year
     )
 
     print(twitter.report())
@@ -121,27 +121,27 @@ def demo_estimation():
 
 
 # =============================================================================
-# SECTION 2 : Latence -- Sequentiel vs Parallele
+# SECTION 2 : Latency -- Sequential vs Parallel
 # =============================================================================
 
 
 def simulate_api_call(service_name: str, latency_ms: int) -> dict:
-    """Simule un appel API avec une latence fixe.
+    """Simulates an API call with a fixed latency.
 
-    En vrai, on ferait un HTTP call. Ici on simule avec sleep
-    pour montrer l'impact de la parallelisation.
+    In real life, we would make an HTTP call. Here we simulate with sleep
+    to show the impact of parallelization.
     """
     time.sleep(latency_ms / 1000)
     return {"service": service_name, "latency_ms": latency_ms, "status": "ok"}
 
 
 def demo_latency():
-    """Compare appels sequentiels vs paralleles -- meme travail, temps tres different."""
+    """Compares sequential vs parallel calls -- same work, very different time."""
     print("\n" + "=" * 60)
-    print("  SECTION 2 : Latence -- Sequentiel vs Parallele")
+    print("  SECTION 2 : Latency -- Sequential vs Parallel")
     print("=" * 60)
 
-    # Scenario : un endpoint doit appeler 5 microservices pour construire une reponse
+    # Scenario: an endpoint must call 5 microservices to build a response
     services = [
         ("user-service", 50),
         ("product-service", 80),
@@ -152,20 +152,20 @@ def demo_latency():
 
     total_theoretical = sum(lat for _, lat in services)
 
-    # --- Sequentiel ---
+    # --- Sequential ---
     start = time.perf_counter()
     results_seq = []
     for name, latency in services:
         results_seq.append(simulate_api_call(name, latency))
     elapsed_seq = (time.perf_counter() - start) * 1000
 
-    print(f"\n  Sequentiel ({len(services)} appels)")
-    print(f"  Somme des latences individuelles : {total_theoretical} ms")
-    print(f"  Temps reel mesure                : {elapsed_seq:.0f} ms")
+    print(f"\n  Sequential ({len(services)} calls)")
+    print(f"  Sum of individual latencies      : {total_theoretical} ms")
+    print(f"  Actual measured time             : {elapsed_seq:.0f} ms")
 
-    # --- Parallele ---
-    # ThreadPoolExecutor lance tous les calls en meme temps
-    # Le temps total = max(latences), pas la somme
+    # --- Parallel ---
+    # ThreadPoolExecutor launches all the calls at the same time
+    # Total time = max(latencies), not the sum
     start = time.perf_counter()
     results_par = []
     with ThreadPoolExecutor(max_workers=len(services)) as executor:
@@ -178,15 +178,15 @@ def demo_latency():
     elapsed_par = (time.perf_counter() - start) * 1000
 
     max_latency = max(lat for _, lat in services)
-    print(f"\n  Parallele ({len(services)} appels)")
-    print(f"  Latence du plus lent             : {max_latency} ms")
-    print(f"  Temps reel mesure                : {elapsed_par:.0f} ms")
+    print(f"\n  Parallel ({len(services)} calls)")
+    print(f"  Latency of the slowest one       : {max_latency} ms")
+    print(f"  Actual measured time             : {elapsed_par:.0f} ms")
     print(f"\n  Speedup                          : {elapsed_seq / elapsed_par:.1f}x")
-    print(f"  Temps economise                  : {elapsed_seq - elapsed_par:.0f} ms")
+    print(f"  Time saved                       : {elapsed_seq - elapsed_par:.0f} ms")
 
-    # Lecon cle
-    print("\n  >> Lecon : En parallele, la latence totale = max(latences individuelles)")
-    print("  >> C'est pourquoi les architectures modernes fan-out puis aggregent.")
+    # Key lesson
+    print("\n  >> Lesson: In parallel, total latency = max(individual latencies)")
+    print("  >> This is why modern architectures fan out then aggregate.")
 
 
 # =============================================================================
@@ -195,43 +195,43 @@ def demo_latency():
 
 
 class StrongConsistencyStore:
-    """Simule un store avec strong consistency via un lock global.
+    """Simulates a store with strong consistency via a global lock.
 
-    Chaque ecriture bloque toutes les lectures et ecritures
-    jusqu'a ce que TOUS les replicas soient mis a jour.
+    Every write blocks all reads and writes
+    until ALL replicas have been updated.
     """
 
     def __init__(self, num_replicas: int = 3):
-        self._lock = threading.Lock()  # Le lock simule la synchronisation entre replicas
+        self._lock = threading.Lock()  # The lock simulates synchronization between replicas
         self._replicas = [None] * num_replicas
         self._write_count = 0
         self._stale_reads = 0
         self._total_reads = 0
 
     def write(self, value):
-        """Ecriture : acquiert le lock, met a jour TOUS les replicas, puis libere."""
+        """Write: acquires the lock, updates ALL replicas, then releases."""
         with self._lock:
-            # Simule le temps de replication synchrone (tous les replicas)
+            # Simulates synchronous replication time (all replicas)
             time.sleep(0.01 * len(self._replicas))
             for i in range(len(self._replicas)):
                 self._replicas[i] = value
             self._write_count += 1
 
     def read(self) -> tuple:
-        """Lecture : attend le lock (garantit de lire la derniere ecriture)."""
+        """Read: waits for the lock (guarantees reading the latest write)."""
         with self._lock:
             self._total_reads += 1
-            # Tous les replicas sont identiques grace au lock
+            # All replicas are identical thanks to the lock
             replica_idx = random.randint(0, len(self._replicas) - 1)
             return self._replicas[replica_idx], replica_idx
 
 
 class EventualConsistencyStore:
-    """Simule un store avec eventual consistency.
+    """Simulates a store with eventual consistency.
 
-    L'ecriture met a jour UN replica immediatement.
-    La propagation aux autres replicas se fait en arriere-plan (async).
-    Les lectures peuvent toucher un replica pas encore mis a jour = stale read.
+    A write updates ONE replica immediately.
+    Propagation to the other replicas happens in the background (async).
+    Reads may hit a replica that has not been updated yet = stale read.
     """
 
     def __init__(self, num_replicas: int = 3):
@@ -242,21 +242,21 @@ class EventualConsistencyStore:
         self._latest_value = None
 
     def write(self, value):
-        """Ecriture : met a jour UN seul replica, lance la propagation en background."""
+        """Write: updates a SINGLE replica, kicks off propagation in the background."""
         self._latest_value = value
-        self._replicas[0] = value  # Seul le replica primaire est a jour immediatement
+        self._replicas[0] = value  # Only the primary replica is up to date immediately
         self._write_count += 1
 
-        # Propagation asynchrone aux autres replicas (simule un delai reseau)
+        # Asynchronous propagation to the other replicas (simulates network delay)
         def propagate():
             for i in range(1, len(self._replicas)):
-                time.sleep(random.uniform(0.005, 0.03))  # Delai variable par replica
+                time.sleep(random.uniform(0.005, 0.03))  # Variable delay per replica
                 self._replicas[i] = value
 
         threading.Thread(target=propagate, daemon=True).start()
 
     def read(self) -> tuple:
-        """Lecture : choisit un replica aleatoire (peut etre stale)."""
+        """Read: picks a random replica (may be stale)."""
         self._total_reads += 1
         replica_idx = random.randint(0, len(self._replicas) - 1)
         value = self._replicas[replica_idx]
@@ -266,7 +266,7 @@ class EventualConsistencyStore:
 
 
 def demo_consistency():
-    """Montre la difference entre strong et eventual consistency avec des threads."""
+    """Shows the difference between strong and eventual consistency using threads."""
     print("\n" + "=" * 60)
     print("  SECTION 3 : Consistency Models")
     print("=" * 60)
@@ -323,12 +323,12 @@ def demo_consistency():
     # -- Wait a bit for propagation to complete --
     time.sleep(0.1)
 
-    print(f"\n  {'Metrique':<30} {'Strong':>12} {'Eventual':>12}")
+    print(f"\n  {'Metric':<30} {'Strong':>12} {'Eventual':>12}")
     print(f"  {'-'*54}")
-    print(f"  {'Ecritures':<30} {strong._write_count:>12} {eventual._write_count:>12}")
-    print(f"  {'Lectures totales':<30} {strong._total_reads:>12} {eventual._total_reads:>12}")
+    print(f"  {'Writes':<30} {strong._write_count:>12} {eventual._write_count:>12}")
+    print(f"  {'Total reads':<30} {strong._total_reads:>12} {eventual._total_reads:>12}")
     print(f"  {'Stale reads':<30} {strong._stale_reads:>12} {eventual._stale_reads:>12}")
-    print(f"  {'Temps total (ms)':<30} {elapsed_strong:>12.0f} {elapsed_eventual:>12.0f}")
+    print(f"  {'Total time (ms)':<30} {elapsed_strong:>12.0f} {elapsed_eventual:>12.0f}")
 
     stale_pct = (
         (eventual._stale_reads / eventual._total_reads * 100)
@@ -336,9 +336,9 @@ def demo_consistency():
         else 0
     )
 
-    print(f"\n  >> Strong : 0 stale reads, mais {elapsed_strong:.0f}ms (lock bloque les readers)")
-    print(f"  >> Eventual : {eventual._stale_reads} stale reads ({stale_pct:.1f}%), mais {elapsed_eventual:.0f}ms")
-    print(f"  >> Tradeoff : consistance vs performance. Choisis selon le domaine metier.")
+    print(f"\n  >> Strong : 0 stale reads, but {elapsed_strong:.0f}ms (lock blocks the readers)")
+    print(f"  >> Eventual : {eventual._stale_reads} stale reads ({stale_pct:.1f}%), but {elapsed_eventual:.0f}ms")
+    print(f"  >> Tradeoff: consistency vs performance. Choose based on the business domain.")
 
 
 # =============================================================================
@@ -347,33 +347,33 @@ def demo_consistency():
 
 
 def sla_downtime(uptime_pct: float) -> dict:
-    """Calcule le downtime autorise pour un SLA donne.
+    """Computes the allowed downtime for a given SLA.
 
     Args:
-        uptime_pct: Pourcentage d'uptime (ex: 99.99)
+        uptime_pct: Uptime percentage (e.g. 99.99)
 
     Returns:
-        Dict avec downtime par an, mois, semaine, jour en format lisible.
+        Dict with downtime per year, month, week, day in human-readable format.
     """
-    # Fraction de downtime = 1 - uptime/100
+    # Downtime fraction = 1 - uptime/100
     downtime_fraction = 1 - (uptime_pct / 100)
 
-    # Secondes dans chaque periode
+    # Seconds in each period
     seconds_per_year = 365.25 * 24 * 3600
     seconds_per_month = seconds_per_year / 12
     seconds_per_week = 7 * 24 * 3600
     seconds_per_day = 24 * 3600
 
     def format_duration(seconds: float) -> str:
-        """Formate une duree en secondes en format humain."""
+        """Formats a duration in seconds into a human-readable string."""
         if seconds >= 86400:
-            return f"{seconds / 86400:.2f} jours"
+            return f"{seconds / 86400:.2f} days"
         elif seconds >= 3600:
-            return f"{seconds / 3600:.2f} heures"
+            return f"{seconds / 3600:.2f} hours"
         elif seconds >= 60:
             return f"{seconds / 60:.2f} minutes"
         else:
-            return f"{seconds:.2f} secondes"
+            return f"{seconds:.2f} seconds"
 
     return {
         "uptime": f"{uptime_pct}%",
@@ -386,9 +386,9 @@ def sla_downtime(uptime_pct: float) -> dict:
 
 
 def _count_nines(uptime_pct: float) -> str:
-    """Compte le nombre de '9' dans un SLA (ex: 99.99% = 'four nines').
+    """Counts the number of '9's in an SLA (e.g. 99.99% = 'four nines').
 
-    Methode : -log10(1 - uptime/100) donne le nombre de nines.
+    Method: -log10(1 - uptime/100) gives the number of nines.
     99.9% -> -log10(0.001) = 3 -> 'three nines'
     """
     if uptime_pct >= 100:
@@ -397,21 +397,21 @@ def _count_nines(uptime_pct: float) -> str:
     names = {1: "one nine", 2: "two nines", 3: "three nines",
              4: "four nines", 5: "five nines", 6: "six nines"}
     rounded = round(nines_count, 1)
-    # Si c'est un entier, utilise le nom
+    # If it is an integer, use the name
     if rounded == int(rounded) and int(rounded) in names:
         return f"{names[int(rounded)]} ({nines_count:.2f})"
     return f"{nines_count:.2f} nines"
 
 
 def demo_sla():
-    """Affiche un tableau comparatif des SLA courants."""
+    """Displays a comparison table of common SLAs."""
     print("\n" + "=" * 60)
     print("  SECTION 4 : SLA Calculator")
     print("=" * 60)
 
     sla_levels = [99.0, 99.5, 99.9, 99.95, 99.99, 99.999]
 
-    print(f"\n  {'SLA':>8}  {'Nines':<22}  {'Downtime/an':<18}  {'Downtime/mois':<18}  {'Downtime/jour':<18}")
+    print(f"\n  {'SLA':>8}  {'Nines':<22}  {'Downtime/year':<18}  {'Downtime/month':<18}  {'Downtime/day':<18}")
     print(f"  {'-'*90}")
 
     for level in sla_levels:
@@ -424,18 +424,18 @@ def demo_sla():
             f"{info['downtime_per_day']:<18}"
         )
 
-    # Cas pratique : combiner des SLAs
+    # Practical case: combining SLAs
     print(f"\n  {'-'*60}")
-    print("  COMBINAISON DE SLAs")
+    print("  COMBINING SLAs")
     print(f"  {'-'*60}")
-    print("  Si ton systeme depend de 3 services chacun a 99.9% :")
+    print("  If your system depends on 3 services each at 99.9% :")
     combined = 0.999 ** 3
-    print(f"  SLA combine = 99.9% * 99.9% * 99.9% = {combined * 100:.4f}%")
+    print(f"  Combined SLA = 99.9% * 99.9% * 99.9% = {combined * 100:.4f}%")
     combined_info = sla_downtime(combined * 100)
-    print(f"  Downtime/an = {combined_info['downtime_per_year']}")
-    print(f"\n  >> Lecon : Les SLAs se multiplient. 3 services a 'three nines'")
-    print(f"     donnent un systeme a ~{combined * 100:.2f}% -- presque 'two nines'.")
-    print(f"     C'est pourquoi la redondance et les fallbacks sont essentiels.")
+    print(f"  Downtime/year = {combined_info['downtime_per_year']}")
+    print(f"\n  >> Lesson: SLAs multiply. 3 services at 'three nines'")
+    print(f"     yield a system at ~{combined * 100:.2f}% -- almost 'two nines'.")
+    print(f"     This is why redundancy and fallbacks are essential.")
 
 
 # =============================================================================
@@ -444,12 +444,12 @@ def demo_sla():
 
 
 def demo_latency_numbers():
-    """Affiche les ordres de grandeur de latence avec echelle visuelle."""
+    """Displays latency orders of magnitude with a visual scale."""
     print("\n" + "=" * 60)
     print("  SECTION 5 : Latency Numbers")
     print("=" * 60)
 
-    # (operation, latence en nanosecondes)
+    # (operation, latency in nanoseconds)
     latencies = [
         ("L1 cache reference", 1),
         ("Branch mispredict", 3),
@@ -469,12 +469,12 @@ def demo_latency_numbers():
         ("Europe-Asia round trip", 150_000_000),
     ]
 
-    # Echelle logarithmique visuelle : chaque '#' = un ordre de grandeur
-    print(f"\n  {'Operation':<38} {'Latence':>12}  Echelle (log)")
+    # Visual logarithmic scale: each '#' = one order of magnitude
+    print(f"\n  {'Operation':<38} {'Latency':>12}  Scale (log)")
     print(f"  {'-'*75}")
 
     for op, ns in latencies:
-        # Formater la latence en unite lisible
+        # Format the latency into a readable unit
         if ns < 1_000:
             lat_str = f"{ns} ns"
         elif ns < 1_000_000:
@@ -482,16 +482,16 @@ def demo_latency_numbers():
         else:
             lat_str = f"{ns / 1_000_000:.0f} ms"
 
-        # Barre logarithmique : log10(ns) donne l'echelle
-        bar_len = int(math.log10(max(ns, 1)) * 3)  # *3 pour lisibilite
+        # Logarithmic bar: log10(ns) gives the scale
+        bar_len = int(math.log10(max(ns, 1)) * 3)  # *3 for readability
         bar = "#" * bar_len
 
         print(f"  {op:<38} {lat_str:>12}  {bar}")
 
-    print(f"\n  >> Facteur RAM vs SSD       : ~{49_000 / 3_000:.0f}x")
-    print(f"  >> Facteur SSD vs Network   : ~{10_000_000 / 49_000:.0f}x")
-    print(f"  >> Facteur RAM vs Network   : ~{10_000_000 / 3_000:.0f}x")
-    print(f"\n  >> Conclusion : un cache memoire evite un round-trip reseau = gain de 3000x")
+    print(f"\n  >> RAM vs SSD factor        : ~{49_000 / 3_000:.0f}x")
+    print(f"  >> SSD vs Network factor    : ~{10_000_000 / 49_000:.0f}x")
+    print(f"  >> RAM vs Network factor    : ~{10_000_000 / 3_000:.0f}x")
+    print(f"\n  >> Conclusion: an in-memory cache avoids a network round trip = 3000x gain")
 
 
 # =============================================================================
@@ -500,9 +500,9 @@ def demo_latency_numbers():
 
 
 def main():
-    """Execute toutes les demos sequentiellement."""
+    """Runs all the demos sequentially."""
     print("\n" + "#" * 60)
-    print("#  JOUR 1 -- PRINCIPES FONDAMENTAUX DU SYSTEM DESIGN")
+    print("#  DAY 1 -- SYSTEM DESIGN FUNDAMENTALS")
     print("#" * 60)
 
     demo_estimation()
@@ -512,7 +512,7 @@ def main():
     demo_sla()
 
     print("\n" + "#" * 60)
-    print("#  FIN -- Toutes les demos ont ete executees.")
+    print("#  DONE -- All demos have been executed.")
     print("#" * 60 + "\n")
 
 

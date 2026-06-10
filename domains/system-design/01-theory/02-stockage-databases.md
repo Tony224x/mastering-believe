@@ -70,7 +70,7 @@ Chaque composant d'un systeme (cache, queue, search engine) est au fond **un sys
 | Schema | Rigide, protege | Flexible, risque de chaos |
 | Jointures | Natives, performantes | Couteuses ou impossibles |
 | Scaling writes | Complexe | Natif |
-| Transactions complexes | Excellent | Limite (single-document ou 25 items max) |
+| Transactions complexes | Excellent | Limite (single-document ou 100 items max) |
 | Queries ad hoc | Flexible (SQL complet) | Limite aux access patterns prevus |
 | Latence | ms (avec index) | Sub-ms (key-value), ms (document) |
 | Courbe d'apprentissage | Mature, bien documentee | Variable selon le type |

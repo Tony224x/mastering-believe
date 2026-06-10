@@ -2,7 +2,7 @@
 
 ## Pourquoi l'inference est un probleme de systems, pas de ML
 
-**Exemple d'abord** : Tu deploies Llama-3-70B sur une A100 80Go. Requete par requete, tu sers 1 user a la fois, 800 ms par reponse. Throughput : ~1.25 req/s. Tu utilises 15% du GPU. Avec le **continuous batching** de vLLM, la meme machine sert ~50 users en parallele, p99 latency 1500 ms, throughput ~40 req/s, 90% d'utilisation GPU. Gain : **32x**.
+**Exemple d'abord** : Tu deploies Llama-3-70B quantize en int4 sur une A100 80Go. Requete par requete, tu sers 1 user a la fois, 800 ms par reponse. Throughput : ~1.25 req/s. Tu utilises 15% du GPU. Avec le **continuous batching** de vLLM, la meme machine sert ~50 users en parallele, p99 latency 1500 ms, throughput ~40 req/s, 90% d'utilisation GPU. Gain : **32x**.
 
 C'est toute la problematique de l'inference at scale. Le modele est deja entraine, le code est simple. Mais faire passer un GPU de 15% a 95% d'utilisation demande une ingenierie system non triviale : scheduling, batching, gestion memoire, quantization, autoscaling, routing.
 
@@ -205,9 +205,9 @@ Pattern devenu dominant chez OpenAI, Anthropic et Meta en 2025 : **separer physi
 
 Ne pas envoyer toutes les queries au gros modele. Un **routeur leger** (classifier ou matching d'embeddings) dispatche vers le bon tier :
 
-- Requete triviale ("bonjour", "merci") -> Haiku / gpt-5.4-nano
-- Q&A factuelle courte -> Sonnet / gpt-5.4-mini
-- Reasoning complexe -> Opus / gpt-5.4
+- Requete triviale ("bonjour", "merci") -> Haiku / le tier nano du provider
+- Q&A factuelle courte -> Sonnet / le tier mid-size du provider
+- Reasoning complexe -> Opus / le modele frontier du provider
 
 **Outils** : **LiteLLM router**, **Portkey**, **OpenRouter**. Gain typique : 40-70% de cout en moins pour une qualite percue equivalente, a condition que le routeur soit bien calibre sur les vraies distributions de trafic. Voir J11 pour le detail.
 

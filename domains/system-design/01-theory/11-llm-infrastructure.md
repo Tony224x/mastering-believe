@@ -37,10 +37,10 @@ L'erreur du debutant : utiliser GPT-4o pour tout. La realite : 80% des taches pe
 
 | Tier | Modeles (2026) | Cout relatif | Use case |
 |---|---|---|---|
-| **Nano** | gpt-5.4-nano, Haiku 4.5, Llama-3.1-8B | 1x | Classification, routing, simple extraction |
-| **Mini** | gpt-5.4-mini, Haiku 4.5, Mistral Small | 3-5x | Q&A factuelle, resumes, transformations |
-| **Standard** | gpt-5.4, Sonnet 4.6, Llama-3-70B | 15-25x | Reasoning complexe, code, RAG |
-| **Frontier** | Opus 4.6, gpt-5.4 avec reasoning etendu | 50-100x | Problemes mathematiques, agents, analyse profonde |
+| **Nano** | tier nano de la famille GPT, Llama-3.1-8B | 1x | Classification, routing, simple extraction |
+| **Mini** | tier mini de la famille GPT, Haiku 4.5, Mistral Small | 3-5x | Q&A factuelle, resumes, transformations |
+| **Standard** | modele standard de la famille GPT, Sonnet 4.6, Llama-3-70B | 15-25x | Reasoning complexe, code, RAG |
+| **Frontier** | Opus 4.6, modele frontier du provider avec reasoning etendu | 50-100x | Problemes mathematiques, agents, analyse profonde |
 
 ### Strategie de routage
 
@@ -174,7 +174,7 @@ Les prompts trop longs coutent cher. Techniques :
 
 ### 3. Caching de prompt (prompt caching natif)
 
-Anthropic et OpenAI proposent du **prompt caching** natif : tu marques une portion stable du prompt, et les tokens sont factures 10% de leur prix normal aux requetes suivantes.
+Anthropic et OpenAI proposent du **prompt caching** natif, avec deux approches differentes. Chez Anthropic, tu marques explicitement la portion stable du prompt (`cache_control`), et la lecture du cache est facturee ~10% du prix d'input. Chez OpenAI, le caching est automatique (pas de marquage, prompts > 1024 tokens), avec une remise d'environ 50%.
 
 **Typical savings** : 50-80% sur les appels repetes avec un system prompt long. Standard pour les agents.
 
