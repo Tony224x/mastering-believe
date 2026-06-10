@@ -1,8 +1,8 @@
 """
-Solutions -- Exercices Jour 1 : Principes fondamentaux
+Solutions -- Day 1 Exercises: Fundamental principles
 
-Ce fichier contient les solutions calculees pour les exercices Easy, Medium, et Hard.
-Chaque solution montre le raisonnement etape par etape.
+This file contains the worked solutions for the Easy, Medium, and Hard exercises.
+Each solution shows the reasoning step by step.
 
 Usage:
     python 01-principes-fondamentaux.py
@@ -14,13 +14,13 @@ SEPARATOR = "=" * 60
 
 
 # =============================================================================
-# EASY -- Exercice 1 : Estimation QPS d'un service de notifications
+# EASY -- Exercise 1 : QPS estimation for a notification service
 # =============================================================================
 
 def easy_1_notifications():
-    """Solution pour l'estimation du service de notifications."""
+    """Solution for the notification service estimation."""
     print(f"\n{SEPARATOR}")
-    print("  EASY 1 : Service de notifications push")
+    print("  EASY 1 : Push notification service")
     print(SEPARATOR)
 
     dau = 5_000_000
@@ -29,162 +29,162 @@ def easy_1_notifications():
     peak_factor = 4
     retention_days = 30
 
-    # 1. QPS moyen
-    total_notifs_per_day = dau * notifs_per_user  # 40M notifs/jour
+    # 1. Average QPS
+    total_notifs_per_day = dau * notifs_per_user  # 40M notifs/day
     qps_avg = total_notifs_per_day / 86_400
-    print(f"\n  1. QPS moyen")
-    print(f"     Total notifs/jour = {dau:,} * {notifs_per_user} = {total_notifs_per_day:,}")
-    print(f"     QPS moyen = {total_notifs_per_day:,} / 86400 = {qps_avg:,.0f} req/s")
+    print(f"\n  1. Average QPS")
+    print(f"     Total notifs/day = {dau:,} * {notifs_per_user} = {total_notifs_per_day:,}")
+    print(f"     Average QPS = {total_notifs_per_day:,} / 86400 = {qps_avg:,.0f} req/s")
 
-    # 2. QPS pic
+    # 2. Peak QPS
     qps_peak = qps_avg * peak_factor
-    print(f"\n  2. QPS pic")
-    print(f"     QPS pic = {qps_avg:,.0f} * {peak_factor} = {qps_peak:,.0f} req/s")
+    print(f"\n  2. Peak QPS")
+    print(f"     Peak QPS = {qps_avg:,.0f} * {peak_factor} = {qps_peak:,.0f} req/s")
 
-    # 3. Bande passante sortante en pic
-    # Attention : Mbps = megabits per second (pas megabytes)
+    # 3. Outbound bandwidth at peak
+    # Careful: Mbps = megabits per second (not megabytes)
     bandwidth_bytes_per_sec = qps_peak * payload_bytes
     bandwidth_mbps = bandwidth_bytes_per_sec * 8 / 1_000_000  # bytes -> bits -> megabits
-    print(f"\n  3. Bande passante sortante (pic)")
+    print(f"\n  3. Outbound bandwidth (peak)")
     print(f"     = {qps_peak:,.0f} req/s * {payload_bytes} bytes * 8 bits/byte")
     print(f"     = {bandwidth_mbps:,.1f} Mbps")
     print(f"     = {bandwidth_mbps / 1000:.2f} Gbps")
 
-    # 4. Stockage pour 30 jours
+    # 4. Storage for 30 days
     storage_per_day_bytes = total_notifs_per_day * payload_bytes
     storage_per_day_gb = storage_per_day_bytes / (1024**3)
     storage_total_gb = storage_per_day_gb * retention_days
-    print(f"\n  4. Stockage (30 jours)")
-    print(f"     Par jour = {total_notifs_per_day:,} * {payload_bytes} = {storage_per_day_bytes / 1e9:.1f} Go")
-    print(f"     30 jours = {storage_total_gb:.1f} Go")
+    print(f"\n  4. Storage (30 days)")
+    print(f"     Per day = {total_notifs_per_day:,} * {payload_bytes} = {storage_per_day_bytes / 1e9:.1f} GB")
+    print(f"     30 days = {storage_total_gb:.1f} GB")
 
 
 # =============================================================================
-# EASY -- Exercice 2 : CP ou AP
+# EASY -- Exercise 2 : CP or AP
 # =============================================================================
 
 def easy_2_cp_ap():
-    """Solution pour le choix CP vs AP."""
+    """Solution for the CP vs AP choice."""
     print(f"\n{SEPARATOR}")
-    print("  EASY 2 : CP ou AP -- Choisis ton camp")
+    print("  EASY 2 : CP or AP -- Pick your side")
     print(SEPARATOR)
 
     choices = [
         (
-            "Vote en ligne (election nationale)",
+            "Online voting (national election)",
             "CP",
-            "Un double vote ou un vote perdu est inacceptable. "
-            "Mieux vaut refuser temporairement un votant que compter un vote en double."
+            "A double vote or a lost vote is unacceptable. "
+            "Better to temporarily turn away a voter than count a vote twice."
         ),
         (
-            "Compteur de vues YouTube",
+            "YouTube view counter",
             "AP",
-            "Un compteur inexact de quelques unites est invisible pour l'utilisateur. "
-            "L'indisponibilite du compteur bloquerait l'affichage de la video."
+            "A counter off by a few units is invisible to the user. "
+            "An unavailable counter would block the video from displaying."
         ),
         (
-            "Gestion d'inventaire e-commerce",
+            "E-commerce inventory management",
             "CP",
-            "Vendre un produit en rupture de stock = commande annulee = client furieux. "
-            "Mieux vaut afficher 'indisponible' temporairement."
+            "Selling an out-of-stock product = cancelled order = furious customer. "
+            "Better to temporarily show 'unavailable'."
         ),
         (
-            "Feed d'actualites (reseau social)",
+            "News feed (social network)",
             "AP",
-            "Un post qui apparait 2 secondes en retard est invisible. "
-            "Un feed qui ne charge pas = utilisateur qui part."
+            "A post that shows up 2 seconds late is invisible. "
+            "A feed that does not load = user who leaves."
         ),
         (
-            "Transfert d'argent bancaire",
+            "Bank money transfer",
             "CP",
-            "Un solde incorrect = perte financiere. Les transactions doivent etre ACID. "
-            "Une indisponibilite temporaire est preferee a un debit en double."
+            "An incorrect balance = financial loss. Transactions must be ACID. "
+            "A temporary outage is preferred over a double debit."
         ),
         (
-            "Cache DNS",
+            "DNS cache",
             "AP",
-            "Un enregistrement DNS legerement obsolete (TTL) est tolerable. "
-            "Un DNS indisponible = internet inaccessible pour les utilisateurs."
+            "A slightly stale DNS record (TTL) is tolerable. "
+            "An unavailable DNS = internet inaccessible for the users."
         ),
     ]
 
     for i, (system, choice, justification) in enumerate(choices, 1):
         print(f"\n  {i}. {system}")
-        print(f"     Choix : {choice}")
-        print(f"     Raison : {justification}")
+        print(f"     Choice : {choice}")
+        print(f"     Reason : {justification}")
 
-    print(f"\n  Note : L'inventaire e-commerce est un cas nuance. Certains systemes")
-    print(f"  tolerent un overselling de 0.1% et reconciled apres (AP avec compensation).")
-    print(f"  La reponse depend du contexte metier exact.")
+    print(f"\n  Note : E-commerce inventory is a nuanced case. Some systems")
+    print(f"  tolerate 0.1% overselling and reconcile afterwards (AP with compensation).")
+    print(f"  The answer depends on the exact business context.")
 
 
 # =============================================================================
-# EASY -- Exercice 3 : Les nines en pratique
+# EASY -- Exercise 3 : The nines in practice
 # =============================================================================
 
 def easy_3_nines():
-    """Solution pour les calculs de SLA."""
+    """Solution for the SLA calculations."""
     print(f"\n{SEPARATOR}")
-    print("  EASY 3 : Les nines en pratique")
+    print("  EASY 3 : The nines in practice")
     print(SEPARATOR)
 
     uptime_pct = 99.95
     downtime_fraction = 1 - uptime_pct / 100  # 0.0005
 
-    # 1. Downtime autorise
-    seconds_per_month = 30 * 24 * 3600  # ~2.592M secondes
-    seconds_per_day = 24 * 3600  # 86400 secondes
+    # 1. Allowed downtime
+    seconds_per_month = 30 * 24 * 3600  # ~2.592M seconds
+    seconds_per_day = 24 * 3600  # 86400 seconds
     dt_month = downtime_fraction * seconds_per_month
     dt_day = downtime_fraction * seconds_per_day
 
-    print(f"\n  1. Downtime autorise pour SLA {uptime_pct}%")
-    print(f"     Par mois = {downtime_fraction} * {seconds_per_month:,} = {dt_month:.0f}s = {dt_month / 60:.1f} min")
-    print(f"     Par jour = {downtime_fraction} * {seconds_per_day:,} = {dt_day:.1f}s")
+    print(f"\n  1. Allowed downtime for SLA {uptime_pct}%")
+    print(f"     Per month = {downtime_fraction} * {seconds_per_month:,} = {dt_month:.0f}s = {dt_month / 60:.1f} min")
+    print(f"     Per day = {downtime_fraction} * {seconds_per_day:,} = {dt_day:.1f}s")
 
-    # 2. Maintenance hebdo de 15 min
-    maintenance_per_month = 15 * 4  # 4 dimanches par mois, en minutes
+    # 2. Weekly 15 min maintenance
+    maintenance_per_month = 15 * 4  # 4 Sundays per month, in minutes
     maintenance_seconds = maintenance_per_month * 60
-    print(f"\n  2. Maintenance 15 min/dimanche = {maintenance_per_month} min/mois = {maintenance_seconds}s/mois")
-    print(f"     Budget downtime/mois = {dt_month:.0f}s = {dt_month / 60:.1f} min")
-    print(f"     Maintenance seule    = {maintenance_seconds}s = {maintenance_per_month} min")
+    print(f"\n  2. Maintenance 15 min/Sunday = {maintenance_per_month} min/month = {maintenance_seconds}s/month")
+    print(f"     Downtime budget/month = {dt_month:.0f}s = {dt_month / 60:.1f} min")
+    print(f"     Maintenance alone     = {maintenance_seconds}s = {maintenance_per_month} min")
     if maintenance_seconds > dt_month:
         print(f"     INCOMPATIBLE : maintenance ({maintenance_per_month} min) > budget ({dt_month / 60:.1f} min)")
     else:
         remaining = dt_month - maintenance_seconds
-        print(f"     Compatible : il reste {remaining:.0f}s = {remaining / 60:.1f} min de budget")
+        print(f"     Compatible : {remaining:.0f}s = {remaining / 60:.1f} min of budget remains")
 
-    # 3. Incident de 2h ce mois
+    # 3. A 2h incident this month
     incident_seconds = 2 * 3600  # 7200s
     remaining_after_incident = dt_month - incident_seconds
-    print(f"\n  3. Incident de 2h = {incident_seconds}s")
-    print(f"     Budget total  = {dt_month:.0f}s = {dt_month / 60:.1f} min")
-    print(f"     Apres incident = {remaining_after_incident:.0f}s = {remaining_after_incident / 60:.1f} min")
+    print(f"\n  3. 2h incident = {incident_seconds}s")
+    print(f"     Total budget  = {dt_month:.0f}s = {dt_month / 60:.1f} min")
+    print(f"     After incident = {remaining_after_incident:.0f}s = {remaining_after_incident / 60:.1f} min")
     if remaining_after_incident < 0:
-        print(f"     SLA BREACH : budget depasse de {abs(remaining_after_incident):.0f}s")
+        print(f"     SLA BREACH : budget exceeded by {abs(remaining_after_incident):.0f}s")
     else:
-        print(f"     Il reste {remaining_after_incident:.0f}s de budget pour le mois")
+        print(f"     {remaining_after_incident:.0f}s of budget remain for the month")
 
-    # 4. SLA combine
+    # 4. Combined SLA
     sla_interne = 99.95 / 100
     sla_ext_1 = 99.99 / 100
     sla_ext_2 = 99.99 / 100
-    # Le SLA combine = produit des SLAs de tous les composants sur le chemin critique
+    # The combined SLA = product of the SLAs of all components on the critical path
     sla_combined = sla_interne * sla_ext_1 * sla_ext_2
-    print(f"\n  4. SLA combine")
+    print(f"\n  4. Combined SLA")
     print(f"     = {sla_interne} * {sla_ext_1} * {sla_ext_2}")
     print(f"     = {sla_combined * 100:.4f}%")
-    print(f"     Le SLA du systeme est plafonne par le maillon le plus faible.")
-    print(f"     Ici, c'est le service interne a 99.95% qui domine.")
+    print(f"     The system's SLA is capped by the weakest link.")
+    print(f"     Here, the internal service at 99.95% dominates.")
 
 
 # =============================================================================
-# MEDIUM -- Exercice 1 : Service de stockage de photos
+# MEDIUM -- Exercise 1 : Photo storage service
 # =============================================================================
 
 def medium_1_photos():
-    """Solution pour l'estimation du service de photos."""
+    """Solution for the photo service estimation."""
     print(f"\n{SEPARATOR}")
-    print("  MEDIUM 1 : Service de stockage de photos")
+    print("  MEDIUM 1 : Photo storage service")
     print(SEPARATOR)
 
     dau = 100_000_000
@@ -193,144 +193,144 @@ def medium_1_photos():
     readers_pct = 0.80
     photos_per_feed_load = 30
     feed_loads_per_day = 5
-    photo_size_bytes = 2 * 1024 * 1024  # 2 Mo
+    photo_size_bytes = 2 * 1024 * 1024  # 2 MB
     metadata_bytes = 500
     peak_factor = 3
 
-    # 1. QPS ecriture (upload)
+    # 1. Write QPS (upload)
     uploaders = dau * uploaders_pct  # 20M
-    total_uploads = uploaders * photos_per_uploader  # 40M/jour
+    total_uploads = uploaders * photos_per_uploader  # 40M/day
     qps_write_avg = total_uploads / 86_400
     qps_write_peak = qps_write_avg * peak_factor
 
-    print(f"\n  1. QPS ecriture (upload)")
+    print(f"\n  1. Write QPS (upload)")
     print(f"     Uploaders = {dau:,} * {uploaders_pct} = {uploaders:,.0f}")
-    print(f"     Uploads/jour = {uploaders:,.0f} * {photos_per_uploader} = {total_uploads:,.0f}")
-    print(f"     QPS moyen = {total_uploads:,.0f} / 86400 = {qps_write_avg:,.0f} req/s")
-    print(f"     QPS pic   = {qps_write_avg:,.0f} * {peak_factor} = {qps_write_peak:,.0f} req/s")
+    print(f"     Uploads/day = {uploaders:,.0f} * {photos_per_uploader} = {total_uploads:,.0f}")
+    print(f"     Average QPS = {total_uploads:,.0f} / 86400 = {qps_write_avg:,.0f} req/s")
+    print(f"     Peak QPS    = {qps_write_avg:,.0f} * {peak_factor} = {qps_write_peak:,.0f} req/s")
 
-    # 2. QPS lecture (feed)
+    # 2. Read QPS (feed)
     readers = dau * readers_pct  # 80M
-    total_reads = readers * photos_per_feed_load * feed_loads_per_day  # 12B/jour
+    total_reads = readers * photos_per_feed_load * feed_loads_per_day  # 12B/day
     qps_read_avg = total_reads / 86_400
     qps_read_peak = qps_read_avg * peak_factor
 
-    print(f"\n  2. QPS lecture (feed)")
+    print(f"\n  2. Read QPS (feed)")
     print(f"     Readers = {dau:,} * {readers_pct} = {readers:,.0f}")
-    print(f"     Photos lues/jour = {readers:,.0f} * {photos_per_feed_load} * {feed_loads_per_day} = {total_reads:,.0f}")
-    print(f"     QPS moyen = {total_reads:,.0f} / 86400 = {qps_read_avg:,.0f} req/s")
-    print(f"     QPS pic   = {qps_read_avg:,.0f} * {peak_factor} = {qps_read_peak:,.0f} req/s")
+    print(f"     Photos read/day = {readers:,.0f} * {photos_per_feed_load} * {feed_loads_per_day} = {total_reads:,.0f}")
+    print(f"     Average QPS = {total_reads:,.0f} / 86400 = {qps_read_avg:,.0f} req/s")
+    print(f"     Peak QPS    = {qps_read_avg:,.0f} * {peak_factor} = {qps_read_peak:,.0f} req/s")
 
-    # 3. Ratio lecture/ecriture
+    # 3. Read/write ratio
     ratio = qps_read_avg / qps_write_avg
-    print(f"\n  3. Ratio lecture/ecriture = {ratio:.0f}:1")
-    print(f"     Systeme fortement oriente lecture -> CDN + cache essentiels")
+    print(f"\n  3. Read/write ratio = {ratio:.0f}:1")
+    print(f"     Heavily read-oriented system -> CDN + cache essential")
 
-    # 4. Bande passante
+    # 4. Bandwidth
     bw_write_peak_gbps = qps_write_peak * photo_size_bytes * 8 / 1e9
     bw_read_peak_gbps = qps_read_peak * photo_size_bytes * 8 / 1e9
-    # En realite, les lectures sont souvent servies par CDN, pas les serveurs d'origine
-    print(f"\n  4. Bande passante (pic)")
-    print(f"     Ecriture = {qps_write_peak:,.0f} * {photo_size_bytes / 1e6:.0f} Mo = {bw_write_peak_gbps:,.0f} Gbps")
-    print(f"     Lecture  = {qps_read_peak:,.0f} * {photo_size_bytes / 1e6:.0f} Mo = {bw_read_peak_gbps:,.0f} Gbps")
-    print(f"     (En pratique, 90%+ des lectures sont servies par CDN)")
+    # In reality, reads are often served by a CDN, not the origin servers
+    print(f"\n  4. Bandwidth (peak)")
+    print(f"     Write = {qps_write_peak:,.0f} * {photo_size_bytes / 1e6:.0f} MB = {bw_write_peak_gbps:,.0f} Gbps")
+    print(f"     Read  = {qps_read_peak:,.0f} * {photo_size_bytes / 1e6:.0f} MB = {bw_read_peak_gbps:,.0f} Gbps")
+    print(f"     (In practice, 90%+ of the reads are served by a CDN)")
 
-    # 5. Stockage
+    # 5. Storage
     storage_per_day_tb = total_uploads * photo_size_bytes / (1024**4)
     storage_1y_pb = storage_per_day_tb * 365 / 1024
     storage_5y_pb = storage_1y_pb * 5
 
-    print(f"\n  5. Stockage")
-    print(f"     Par jour  = {total_uploads:,.0f} * {photo_size_bytes / 1e6:.0f} Mo = {storage_per_day_tb:.1f} To/jour")
-    print(f"     1 an      = {storage_per_day_tb:.1f} * 365 = {storage_per_day_tb * 365:.0f} To = {storage_1y_pb:.1f} Po")
-    print(f"     5 ans     = {storage_5y_pb:.1f} Po")
+    print(f"\n  5. Storage")
+    print(f"     Per day = {total_uploads:,.0f} * {photo_size_bytes / 1e6:.0f} MB = {storage_per_day_tb:.1f} TB/day")
+    print(f"     1 year  = {storage_per_day_tb:.1f} * 365 = {storage_per_day_tb * 365:.0f} TB = {storage_1y_pb:.1f} PB")
+    print(f"     5 years = {storage_5y_pb:.1f} PB")
 
-    # 6. Nombre de serveurs pour la lecture
+    # 6. Number of servers for reads
     server_capacity_rps = 10_000
     servers_needed = math.ceil(qps_read_peak / server_capacity_rps)
-    print(f"\n  6. Serveurs pour le pic de lecture")
-    print(f"     = {qps_read_peak:,.0f} / {server_capacity_rps:,} = {servers_needed} serveurs")
-    print(f"     (+ marge 30% pour redondance = {math.ceil(servers_needed * 1.3)} serveurs)")
+    print(f"\n  6. Servers for the read peak")
+    print(f"     = {qps_read_peak:,.0f} / {server_capacity_rps:,} = {servers_needed} servers")
+    print(f"     (+ 30% margin for redundancy = {math.ceil(servers_needed * 1.3)} servers)")
 
-    # Bonus : bottleneck
-    print(f"\n  BONUS : Bottleneck principal")
-    print(f"     Bande passante sortante ({bw_read_peak_gbps:,.0f} Gbps) est astronomique.")
-    print(f"     Sans CDN, aucun datacenter ne peut servir ce trafic.")
-    print(f"     Solution : CDN (CloudFront, Fastly) pour 95%+ des lectures.")
-    print(f"     Le stockage ({storage_5y_pb:.0f} Po sur 5 ans) necessite un object store (S3).")
+    # Bonus: bottleneck
+    print(f"\n  BONUS : Main bottleneck")
+    print(f"     Outbound bandwidth ({bw_read_peak_gbps:,.0f} Gbps) is astronomical.")
+    print(f"     Without a CDN, no datacenter can serve this traffic.")
+    print(f"     Solution : CDN (CloudFront, Fastly) for 95%+ of the reads.")
+    print(f"     Storage ({storage_5y_pb:.0f} PB over 5 years) requires an object store (S3).")
 
 
 # =============================================================================
-# MEDIUM -- Exercice 2 : Choix de DB
+# MEDIUM -- Exercise 2 : DB choice
 # =============================================================================
 
 def medium_2_db_choice():
-    """Solution pour le choix de base de donnees."""
+    """Solution for the database choice."""
     print(f"\n{SEPARATOR}")
-    print("  MEDIUM 2 : Tradeoff Analysis -- Choix de DB")
+    print("  MEDIUM 2 : Tradeoff Analysis -- DB Choice")
     print(SEPARATOR)
 
     choices = [
         {
-            "donnee": "Catalogue produits",
-            "db": "MongoDB (ou Elasticsearch pour la recherche)",
+            "donnee": "Product catalog",
+            "db": "MongoDB (or Elasticsearch for search)",
             "consistency": "Eventual consistency",
             "justification": (
-                "Schema flexible : les produits ont des attributs variables par categorie "
-                "(vetements = taille/couleur, electronique = specs techniques). "
-                "MongoDB gere nativement les documents avec schemas differents. "
-                "Ratio 1000:1 lecture/ecriture -> lecture optimisee avec read replicas."
+                "Flexible schema: products have attributes that vary by category "
+                "(clothing = size/color, electronics = technical specs). "
+                "MongoDB natively handles documents with different schemas. "
+                "1000:1 read/write ratio -> read-optimized with read replicas."
             ),
             "alternatives_ecartees": (
-                "PostgreSQL (JSONB) : possible mais moins performant pour les queries "
-                "sur des champs imbriques a fort volume. "
-                "Cassandra : overkill pour 10M de produits, et les queries ad hoc sont limitees."
+                "PostgreSQL (JSONB): possible but less performant for queries "
+                "on nested fields at high volume. "
+                "Cassandra: overkill for 10M products, and ad hoc queries are limited."
             ),
             "risque": (
-                "MongoDB peut avoir des problemes de performance sur les aggregations complexes. "
-                "Mitigation : Elasticsearch en read replica pour la recherche full-text et les facettes."
+                "MongoDB can have performance issues on complex aggregations. "
+                "Mitigation: Elasticsearch as a read replica for full-text search and facets."
             ),
         },
         {
-            "donnee": "Commandes",
+            "donnee": "Orders",
             "db": "PostgreSQL",
             "consistency": "Strong consistency",
             "justification": (
-                "Transactions ACID obligatoires : une commande implique un debit stock, "
-                "une creation de ligne de commande, une reservation de paiement. "
-                "Integrite referentielle entre commande/lignes/client/produit."
+                "ACID transactions required: an order involves a stock debit, "
+                "creating an order line, reserving a payment. "
+                "Referential integrity between order/lines/customer/product."
             ),
             "alternatives_ecartees": (
-                "MongoDB : pas de transactions multi-documents natives avant 4.0, et meme "
-                "apres, moins mature que PostgreSQL pour les transactions complexes. "
-                "DynamoDB : pas de jointures, transactions limitees a 25 items."
+                "MongoDB: no native multi-document transactions before 4.0, and even "
+                "after, less mature than PostgreSQL for complex transactions. "
+                "DynamoDB: no joins, transactions limited to 25 items."
             ),
             "risque": (
-                "50K commandes/jour = ~0.6 req/s, ce n'est pas un probleme de scale. "
-                "Risque : si le volume monte a 5M/jour, le sharding PostgreSQL est complexe. "
-                "Mitigation : Citus (PostgreSQL distribue) ou migration vers un event-sourcing pattern."
+                "50K orders/day = ~0.6 req/s, that's not a scale problem. "
+                "Risk: if volume rises to 5M/day, PostgreSQL sharding is complex. "
+                "Mitigation: Citus (distributed PostgreSQL) or migration to an event-sourcing pattern."
             ),
         },
         {
-            "donnee": "Sessions utilisateur",
+            "donnee": "User sessions",
             "db": "Redis",
-            "consistency": "Eventual consistency (acceptable ici : perte tolerable)",
+            "consistency": "Eventual consistency (acceptable here: loss tolerable)",
             "justification": (
-                "Acces sub-milliseconde obligatoire (chaque requete HTTP verifie la session). "
-                "TTL natif de 30 min avec expiration automatique. "
-                "Perte tolerable = pas besoin de persistence durable."
+                "Sub-millisecond access required (every HTTP request checks the session). "
+                "Native 30-min TTL with automatic expiration. "
+                "Tolerable loss = no need for durable persistence."
             ),
             "alternatives_ecartees": (
-                "PostgreSQL : trop lent pour un acces par requete HTTP (meme avec index). "
-                "Memcached : possible mais pas de persistence meme partielle, "
-                "pas de structures de donnees avancees. "
-                "DynamoDB : latence > Redis, cout plus eleve pour ce pattern."
+                "PostgreSQL: too slow for per-HTTP-request access (even with an index). "
+                "Memcached: possible but no persistence at all, "
+                "no advanced data structures. "
+                "DynamoDB: latency > Redis, higher cost for this pattern."
             ),
             "risque": (
-                "Redis est single-threaded (io-threads aide mais limite) : un pic peut saturer. "
-                "En cas de panne Redis, TOUTES les sessions sont perdues. "
-                "Mitigation : Redis Sentinel ou Redis Cluster pour la HA. "
-                "Fallback : re-authentification transparente si session perdue."
+                "Redis is single-threaded (io-threads helps but limited): a spike can saturate it. "
+                "If Redis goes down, ALL sessions are lost. "
+                "Mitigation: Redis Sentinel or Redis Cluster for HA. "
+                "Fallback: transparent re-authentication if the session is lost."
             ),
         },
     ]
@@ -339,19 +339,19 @@ def medium_2_db_choice():
         print(f"\n  {'-'*56}")
         print(f"  {choice['donnee']}")
         print(f"  {'-'*56}")
-        print(f"  DB choisie     : {choice['db']}")
+        print(f"  Chosen DB      : {choice['db']}")
         print(f"  Consistency    : {choice['consistency']}")
         print(f"  Justification  : {choice['justification']}")
-        print(f"  Ecarte         : {choice['alternatives_ecartees']}")
-        print(f"  Risque + mitig : {choice['risque']}")
+        print(f"  Rejected       : {choice['alternatives_ecartees']}")
+        print(f"  Risk + mitig   : {choice['risque']}")
 
 
 # =============================================================================
-# MEDIUM -- Exercice 3 : Latency Budget
+# MEDIUM -- Exercise 3 : Latency Budget
 # =============================================================================
 
 def medium_3_latency_budget():
-    """Solution pour la decomposition de latence."""
+    """Solution for the latency decomposition."""
     print(f"\n{SEPARATOR}")
     print("  MEDIUM 3 : Latency Budget")
     print(SEPARATOR)
@@ -364,240 +364,240 @@ def medium_3_latency_budget():
     reco = 100
     price = 30
 
-    # 1. Sans cache, sequentiel
+    # 1. Without cache, sequential
     seq_no_cache = gateway + auth + postgres + reco + price
-    print(f"\n  1. Sequentiel, sans cache")
+    print(f"\n  1. Sequential, no cache")
     print(f"     Gateway({gateway}) + Auth({auth}) + PG({postgres}) + Reco({reco}) + Price({price})")
     print(f"     = {seq_no_cache} ms")
-    print(f"     SLO 200ms -> DEPASSE ({seq_no_cache} > 200)")
+    print(f"     SLO 200ms -> EXCEEDED ({seq_no_cache} > 200)")
 
-    # 2. Avec cache (hit rate 80%), sequentiel
-    # p99 = worst case = cache miss (car au p99, on tombe dans les 20% de miss)
-    # En fait, au p99, la probabilite de cache miss est ce qui importe
-    # Mais pour un SEUL appel, p99 signifie : dans le pire 1% des cas
-    # Le cache miss arrive 20% du temps -> au p99, c'est un cache miss
-    db_latency_p99 = postgres  # Cache miss = on tape la DB
+    # 2. With cache (80% hit rate), sequential
+    # p99 = worst case = cache miss (because at p99, we fall into the 20% of misses)
+    # In fact, at p99, the probability of a cache miss is what matters
+    # But for a SINGLE call, p99 means: in the worst 1% of cases
+    # The cache miss happens 20% of the time -> at p99, it's a cache miss
+    db_latency_p99 = postgres  # Cache miss = we hit the DB
     seq_with_cache_p99 = gateway + auth + db_latency_p99 + reco + price
     seq_with_cache_avg = gateway + auth + (cache_hit_rate * redis_cache + (1 - cache_hit_rate) * postgres) + reco + price
 
-    print(f"\n  2. Sequentiel, avec cache (80% hit rate)")
-    print(f"     Latence moyenne DB = 0.8*{redis_cache} + 0.2*{postgres} = {cache_hit_rate * redis_cache + (1 - cache_hit_rate) * postgres:.1f} ms")
+    print(f"\n  2. Sequential, with cache (80% hit rate)")
+    print(f"     Average DB latency = 0.8*{redis_cache} + 0.2*{postgres} = {cache_hit_rate * redis_cache + (1 - cache_hit_rate) * postgres:.1f} ms")
     print(f"     p50 (cache hit)  = {gateway} + {auth} + {redis_cache} + {reco} + {price} = {gateway + auth + redis_cache + reco + price} ms")
     print(f"     p99 (cache miss) = {gateway} + {auth} + {postgres} + {reco} + {price} = {seq_with_cache_p99} ms")
-    print(f"     SLO 200ms -> p99 DEPASSE ({seq_with_cache_p99} > 200)")
+    print(f"     SLO 200ms -> p99 EXCEEDED ({seq_with_cache_p99} > 200)")
 
-    # 3. Optimisations proposees
-    print(f"\n  3. Optimisations")
-    print(f"     a) Paralleliser Product lookup, Reco, et Price (independants)")
-    print(f"     b) Pre-fetch les recommandations (cache les resultats)")
-    print(f"     c) Fusionner Auth dans le Gateway (middleware, pas un appel reseau)")
+    # 3. Proposed optimizations
+    print(f"\n  3. Optimizations")
+    print(f"     a) Parallelize Product lookup, Reco, and Price (independent)")
+    print(f"     b) Pre-fetch the recommendations (cache the results)")
+    print(f"     c) Merge Auth into the Gateway (middleware, not a network call)")
 
     # 4. Redesign
-    print(f"\n  4. Redesign optimise")
+    print(f"\n  4. Optimized redesign")
     print(f"     Client -> Gateway+Auth (5ms) -> [Parallel: DB/Cache + Reco + Price]")
     print(f"")
-    print(f"     Phase 1 (sequentiel) : Gateway + Auth middleware = {gateway}ms")
-    print(f"     Phase 2 (parallele)  : max(DB({postgres}), Reco({reco}), Price({price})) = {max(postgres, reco, price)}ms")
+    print(f"     Phase 1 (sequential) : Gateway + Auth middleware = {gateway}ms")
+    print(f"     Phase 2 (parallel)   : max(DB({postgres}), Reco({reco}), Price({price})) = {max(postgres, reco, price)}ms")
 
-    # Auth est maintenant un middleware dans le Gateway (pas un appel reseau separe)
-    # On economise 15ms de latence reseau
+    # Auth is now a middleware in the Gateway (not a separate network call)
+    # We save 15ms of network latency
     optimized_p99 = gateway + max(postgres, reco, price)
     optimized_p50 = gateway + max(redis_cache, reco, price)
 
-    print(f"\n  5. Latence apres optimisation")
+    print(f"\n  5. Latency after optimization")
     print(f"     p50 (cache hit)  = {gateway} + max({redis_cache}, {reco}, {price}) = {gateway} + {max(redis_cache, reco, price)} = {optimized_p50} ms")
     print(f"     p99 (cache miss) = {gateway} + max({postgres}, {reco}, {price}) = {gateway} + {max(postgres, reco, price)} = {optimized_p99} ms")
-    print(f"     SLO 200ms -> p99 = {optimized_p99}ms -> RESPECTE")
+    print(f"     SLO 200ms -> p99 = {optimized_p99}ms -> MET")
 
-    print(f"\n  Resume des gains :")
-    print(f"     Avant : {seq_no_cache}ms (sequentiel, sans cache)")
-    print(f"     Apres : {optimized_p99}ms (parallele, p99 cache miss)")
-    print(f"     Gain  : {seq_no_cache - optimized_p99}ms ({(1 - optimized_p99/seq_no_cache)*100:.0f}% de reduction)")
+    print(f"\n  Summary of the gains :")
+    print(f"     Before : {seq_no_cache}ms (sequential, no cache)")
+    print(f"     After  : {optimized_p99}ms (parallel, p99 cache miss)")
+    print(f"     Gain   : {seq_no_cache - optimized_p99}ms ({(1 - optimized_p99/seq_no_cache)*100:.0f}% reduction)")
 
 
 # =============================================================================
-# HARD -- Exercice 1 : Compteur de vues (solution esquissee)
+# HARD -- Exercise 1 : View counter (sketched solution)
 # =============================================================================
 
 def hard_1_view_counter():
-    """Solution esquissee pour le compteur de vues en temps reel."""
+    """Sketched solution for the real-time view counter."""
     print(f"\n{SEPARATOR}")
-    print("  HARD 1 : Compteur de vues -- Estimation & Architecture")
+    print("  HARD 1 : View counter -- Estimation & Architecture")
     print(SEPARATOR)
 
     # --- Estimation ---
     views_per_day = 1_000_000_000
     qps_avg = views_per_day / 86_400
-    qps_peak = qps_avg * 5  # Video virale = spike
-    # On suppose 500M de videos au total, chaque compteur = 8 bytes (int64) + 16 bytes video_id
+    qps_peak = qps_avg * 5  # Viral video = spike
+    # We assume 500M videos in total, each counter = 8 bytes (int64) + 16 bytes video_id
     num_videos = 500_000_000
     counter_size = 8 + 16  # video_id (UUID) + count (int64)
-    # Analytics : 1 row par video par heure = 500M * 24 * 365 * (8+16+8) = enorme
-    # On pre-aggregate par heure
+    # Analytics: 1 row per video per hour = 500M * 24 * 365 * (8+16+8) = enormous
+    # We pre-aggregate hourly
     analytics_row_size = 16 + 8 + 8  # video_id + timestamp + count
 
     print(f"\n  ESTIMATION")
     print(f"  {'-'*50}")
-    print(f"  Vues/jour               : {views_per_day:,}")
-    print(f"  QPS moyen               : {qps_avg:,.0f}")
-    print(f"  QPS pic (x5, virale)    : {qps_peak:,.0f}")
-    print(f"  Compteurs (RAM)         : {num_videos:,} * {counter_size} B = {num_videos * counter_size / 1e9:.1f} Go")
-    print(f"  Analytics/an (hourly)   : {num_videos:,} * 8760h * {analytics_row_size}B = {num_videos * 8760 * analytics_row_size / 1e12:.1f} To")
-    print(f"  Bande passante (ecriture): {qps_peak * 100 * 8 / 1e6:,.0f} Mbps (100 bytes/req)")
+    print(f"  Views/day               : {views_per_day:,}")
+    print(f"  Average QPS             : {qps_avg:,.0f}")
+    print(f"  Peak QPS (x5, viral)    : {qps_peak:,.0f}")
+    print(f"  Counters (RAM)          : {num_videos:,} * {counter_size} B = {num_videos * counter_size / 1e9:.1f} GB")
+    print(f"  Analytics/year (hourly) : {num_videos:,} * 8760h * {analytics_row_size}B = {num_videos * 8760 * analytics_row_size / 1e12:.1f} TB")
+    print(f"  Bandwidth (writes)      : {qps_peak * 100 * 8 / 1e6:,.0f} Mbps (100 bytes/req)")
 
     # --- Architecture ---
     print(f"\n  ARCHITECTURE")
     print(f"  {'-'*50}")
     print(f"""
-  Write path (incrementer une vue) :
+  Write path (increment a view) :
     Client -> API Gateway -> Kafka (topic: view-events)
-    Kafka -> View Counter Service -> Redis (INCR atomique)
+    Kafka -> View Counter Service -> Redis (atomic INCR)
     Kafka -> Analytics Aggregator -> ClickHouse (batch insert hourly)
 
-  Read path (afficher le compteur) :
+  Read path (display the counter) :
     Client -> API Gateway -> Redis (GET counter)
-    Fallback si miss -> ClickHouse (SUM des aggregations)
+    Fallback on miss -> ClickHouse (SUM of the aggregations)
 
-  Analytics path (dashboard createur) :
+  Analytics path (creator dashboard) :
     Client -> API Gateway -> ClickHouse (pre-aggregated tables)
 """)
 
-    print(f"  CHOIX DE DB")
+    print(f"  DB CHOICE")
     print(f"  {'-'*50}")
-    print(f"  Compteurs temps reel : Redis")
-    print(f"    - INCR atomique, sub-ms, parfait pour ~{num_videos * counter_size / 1e9:.0f} Go de donnees")
-    print(f"    - Consistency : eventual (acceptable, tolerance 1-2%)")
+    print(f"  Real-time counters : Redis")
+    print(f"    - Atomic INCR, sub-ms, perfect for ~{num_videos * counter_size / 1e9:.0f} GB of data")
+    print(f"    - Consistency : eventual (acceptable, 1-2% tolerance)")
     print(f"  Analytics : ClickHouse")
-    print(f"    - Optimise pour les aggregations sur colonnes (SUM, COUNT par heure/jour)")
-    print(f"    - Consistency : eventual (batch processing, OK pour analytics)")
+    print(f"    - Optimized for columnar aggregations (SUM, COUNT per hour/day)")
+    print(f"    - Consistency : eventual (batch processing, OK for analytics)")
 
     print(f"\n  TRADEOFFS")
     print(f"  {'-'*50}")
-    print(f"  1. Kafka buffer au lieu d'ecriture directe Redis")
-    print(f"     + Absorbe les pics de trafic (video virale)")
-    print(f"     + Decouple le write path du counter service")
-    print(f"     - Ajoute 10-100ms de latence entre la vue et le compteur")
-    print(f"     Accepte car : tolerance de 1-2% sur le compteur affiche")
+    print(f"  1. Kafka buffer instead of direct Redis writes")
+    print(f"     + Absorbs traffic spikes (viral video)")
+    print(f"     + Decouples the write path from the counter service")
+    print(f"     - Adds 10-100ms of latency between the view and the counter")
+    print(f"     Accepted because : 1-2% tolerance on the displayed counter")
     print(f"")
-    print(f"  2. Redis (AP) au lieu de PostgreSQL (CP) pour les compteurs")
-    print(f"     + Sub-ms latence de lecture")
-    print(f"     + INCR atomique sans lock global")
-    print(f"     - Pas de durabilite garantie (perte possible au crash)")
-    print(f"     Accepte car : analytics dans ClickHouse = source de verite")
+    print(f"  2. Redis (AP) instead of PostgreSQL (CP) for the counters")
+    print(f"     + Sub-ms read latency")
+    print(f"     + Atomic INCR without a global lock")
+    print(f"     - No guaranteed durability (possible loss on crash)")
+    print(f"     Accepted because : analytics in ClickHouse = source of truth")
     print(f"")
-    print(f"  3. Pre-aggregation hourly au lieu de raw events")
-    print(f"     + Stockage 8760x plus petit que les events bruts")
-    print(f"     + Queries analytics rapides")
-    print(f"     - Perte de granularite (pas de vue par seconde)")
-    print(f"     Accepte car : les createurs n'ont pas besoin de granularite < 1h")
+    print(f"  3. Hourly pre-aggregation instead of raw events")
+    print(f"     + Storage 8760x smaller than raw events")
+    print(f"     + Fast analytics queries")
+    print(f"     - Loss of granularity (no per-second view)")
+    print(f"     Accepted because : creators do not need granularity < 1h")
 
     print(f"\n  SLIs / SLOs")
     print(f"  {'-'*50}")
-    print(f"  1. Write latency p99 < 10ms (SLI: latence d'ecriture dans Kafka)")
-    print(f"  2. Counter staleness < 30s (SLI: age du compteur Redis vs Kafka offset)")
-    print(f"  3. Availability > 99.9% (SLI: taux de requetes en succes)")
+    print(f"  1. Write latency p99 < 10ms (SLI: write latency into Kafka)")
+    print(f"  2. Counter staleness < 30s (SLI: age of the Redis counter vs Kafka offset)")
+    print(f"  3. Availability > 99.9% (SLI: successful request rate)")
 
 
 # =============================================================================
-# HARD -- Exercice 2 : Cascading Failures (analyse textuelle)
+# HARD -- Exercise 2 : Cascading Failures (written analysis)
 # =============================================================================
 
 def hard_2_cascading_failures():
-    """Solution pour l'analyse de cascading failures."""
+    """Solution for the cascading failures analysis."""
     print(f"\n{SEPARATOR}")
-    print("  HARD 2 : Cascading Failures -- Analyse")
+    print("  HARD 2 : Cascading Failures -- Analysis")
     print(SEPARATOR)
 
     print(f"""
-  1. PROPAGATION DE LA PANNE
+  1. FAILURE PROPAGATION
   {'-'*50}
-  Etape 1 : Payment Service repond en 30s au lieu de 200ms.
-  Etape 2 : Les threads de Order Service qui appellent Payment sont bloques 30s.
-            Chaque commande consomme un thread pendant 30s au lieu de 200ms (150x plus long).
-  Etape 3 : Le thread pool de Order Service se remplit. Nouvelles requetes -> timeout ou rejet.
-  Etape 4 : Les API servers (API-1/2/3) qui attendent Order Service sont bloques aussi.
-            Leurs threads se remplissent progressivement.
-  Etape 5 : Les API servers ne peuvent plus traiter AUCUNE requete, meme celles
-            qui n'utilisent PAS le Payment Service (User, Product).
-  Etape 6 : Le Load Balancer detecte les API servers comme "unhealthy" -> downtime total.
+  Step 1 : Payment Service responds in 30s instead of 200ms.
+  Step 2 : The Order Service threads calling Payment are blocked for 30s.
+            Each order consumes a thread for 30s instead of 200ms (150x longer).
+  Step 3 : The Order Service thread pool fills up. New requests -> timeout or rejection.
+  Step 4 : The API servers (API-1/2/3) waiting on Order Service get blocked too.
+            Their threads fill up progressively.
+  Step 5 : The API servers can no longer handle ANY request, even those
+            that do NOT use the Payment Service (User, Product).
+  Step 6 : The Load Balancer marks the API servers as "unhealthy" -> total downtime.
 
-  Ordre d'impact : Payment -> Order Svc -> API servers -> TOUT le systeme
+  Order of impact : Payment -> Order Svc -> API servers -> the WHOLE system
 
-  2. CALCUL D'IMPACT
+  2. IMPACT CALCULATION
   {'-'*50}
-  Thread pool par API server : 200 threads
+  Thread pool per API server : 200 threads
   3 API servers = 600 threads total
-  Avec Payment a 200ms : 1 thread traite 5 commandes/seconde
-  Avec Payment a 30s   : 1 thread traite 1 commande/30s = 0.033/s
+  With Payment at 200ms : 1 thread handles 5 orders/second
+  With Payment at 30s   : 1 thread handles 1 order/30s = 0.033/s
 
-  Threads consommes par les commandes :
-  - Avant : a 100 commandes/s, il faut 100/5 = 20 threads (10% du pool)
-  - Apres : a 100 commandes/s, il faut 100 * 30s = 3000 threads -> IMPOSSIBLE
+  Threads consumed by the orders :
+  - Before : at 100 orders/s, we need 100/5 = 20 threads (10% of the pool)
+  - After  : at 100 orders/s, we need 100 * 30s = 3000 threads -> IMPOSSIBLE
 
-  Saturation : Les 600 threads sont consommes en 600 * (1/100 commandes/s) = 6 secondes
-  En ~6 secondes, tous les threads sont bloques. Le systeme est down.
+  Saturation : The 600 threads are consumed in 600 * (1/100 orders/s) = 6 seconds
+  In ~6 seconds, all threads are blocked. The system is down.
 
-  3. MECANISMES DE PROTECTION
+  3. PROTECTION MECHANISMS
   {'-'*50}
   a) Circuit Breaker :
-     COMMENT : Apres N echecs/timeouts consecutifs, le circuit "s'ouvre" et court-circuite
-     les appels vers Payment (renvoie une erreur immediatement sans appeler le service).
-     POURQUOI : Libere les threads instantanement. Empeche l'accumulation.
+     HOW : After N consecutive failures/timeouts, the circuit "opens" and short-circuits
+     the calls to Payment (returns an error immediately without calling the service).
+     WHY : Frees the threads instantly. Prevents the pile-up.
 
-  b) Timeout + Retry avec backoff exponentiel :
-     COMMENT : Timeout de 2s sur l'appel Payment. Si timeout, retry apres 1s, 2s, 4s.
-     POURQUOI : Limite le temps de blocage d'un thread a 2s (pas 30s).
-     Le backoff evite de surcharger un service deja en difficulte.
+  b) Timeout + Retry with exponential backoff :
+     HOW : 2s timeout on the Payment call. On timeout, retry after 1s, 2s, 4s.
+     WHY : Limits a thread's blocking time to 2s (not 30s).
+     The backoff avoids overloading a service already in trouble.
 
-  c) Bulkhead (isolation des thread pools) :
-     COMMENT : Thread pool dedie pour les appels Payment (ex: 30 threads sur 200).
-     Les 170 autres threads restent disponibles pour User/Product/autres.
-     POURQUOI : Un service lent ne peut consommer que SES threads, pas les autres.
+  c) Bulkhead (thread pool isolation) :
+     HOW : Dedicated thread pool for Payment calls (e.g. 30 threads out of 200).
+     The 170 other threads stay available for User/Product/others.
+     WHY : A slow service can only consume ITS threads, not the others.
 
-  d) Queue de decouplage (Kafka) :
-     COMMENT : Order Service publie un event "order.created" dans Kafka.
-     Un consumer separe traite le paiement de maniere asynchrone.
-     POURQUOI : Le thread de l'API est libere immediatement. Le paiement est traite en background.
+  d) Decoupling queue (Kafka) :
+     HOW : Order Service publishes an "order.created" event into Kafka.
+     A separate consumer processes the payment asynchronously.
+     WHY : The API thread is freed immediately. The payment is processed in the background.
 
   e) Fallback / Degraded mode :
-     COMMENT : Si Payment est indisponible, la commande est creee en etat "pending_payment".
-     L'utilisateur est informe que le paiement sera traite sous 5 min.
-     POURQUOI : Le service reste "disponible" meme si degrade. Meilleur que rien.
+     HOW : If Payment is unavailable, the order is created in "pending_payment" state.
+     The user is told the payment will be processed within 5 min.
+     WHY : The service stays "available" even if degraded. Better than nothing.
 
-  4. REDESIGN RESILIENT
+  4. RESILIENT REDESIGN
   {'-'*50}
-  Flux de commande redesigne :
-    Client -> API -> Order Service : cree la commande (status=pending) -> repond au client
-    Order Service -> Kafka : publie "order.created"
-    Payment Consumer <- Kafka : traite le paiement de maniere asynchrone
-    Payment Consumer -> Kafka : publie "payment.confirmed" ou "payment.failed"
-    Order Service <- Kafka : met a jour la commande -> notifie le client (websocket/push)
+  Redesigned order flow :
+    Client -> API -> Order Service : creates the order (status=pending) -> responds to the client
+    Order Service -> Kafka : publishes "order.created"
+    Payment Consumer <- Kafka : processes the payment asynchronously
+    Payment Consumer -> Kafka : publishes "payment.confirmed" or "payment.failed"
+    Order Service <- Kafka : updates the order -> notifies the client (websocket/push)
 
-  Consistency model : eventual consistency entre creation et confirmation.
-  La commande passe par les etats : pending -> confirmed / failed.
-  C'est le Saga pattern.
+  Consistency model : eventual consistency between creation and confirmation.
+  The order goes through the states : pending -> confirmed / failed.
+  This is the Saga pattern.
 
-  Informer l'utilisateur : "Votre commande est enregistree. Confirmation de paiement
-  sous quelques secondes." + notification push quand le paiement est traite.
+  Informing the user : "Your order has been recorded. Payment confirmation
+  within a few seconds." + push notification when the payment is processed.
 
-  5. SLA COMPOSE
+  5. COMPOSED SLA
   {'-'*50}""")
 
-    services = [0.9995, 0.9995, 0.9995, 0.995]  # 3 internes + Payment
+    services = [0.9995, 0.9995, 0.9995, 0.995]  # 3 internal + Payment
     sla_sync = 1.0
     for s in services:
         sla_sync *= s
-    print(f"  SLA synchrone = 99.95% * 99.95% * 99.95% * 99.5% = {sla_sync * 100:.3f}%")
-    print(f"  Downtime/an = {(1 - sla_sync) * 365.25 * 24:.1f} heures")
+    print(f"  Synchronous SLA = 99.95% * 99.95% * 99.95% * 99.5% = {sla_sync * 100:.3f}%")
+    print(f"  Downtime/year = {(1 - sla_sync) * 365.25 * 24:.1f} hours")
 
     print(f"""
-  Pour atteindre > 99.9% malgre Payment a 99.5% :
-  - Decoupler Payment via Kafka (async)
-  - Le flux synchrone ne depend plus de Payment :
-    SLA sync = 99.95% * 99.95% * 99.95% = {0.9995**3 * 100:.3f}%
-  - Payment failures sont retries automatiquement par le consumer Kafka
-  - Avec retry + dead letter queue, le taux de succes effectif de Payment monte a ~99.99%
-  - SLA effectif du flux complet > 99.9%""")
+  To reach > 99.9% despite Payment at 99.5% :
+  - Decouple Payment via Kafka (async)
+  - The synchronous flow no longer depends on Payment :
+    Sync SLA = 99.95% * 99.95% * 99.95% = {0.9995**3 * 100:.3f}%
+  - Payment failures are retried automatically by the Kafka consumer
+  - With retry + dead letter queue, Payment's effective success rate rises to ~99.99%
+  - Effective SLA of the full flow > 99.9%""")
 
 
 # =============================================================================
@@ -605,9 +605,9 @@ def hard_2_cascading_failures():
 # =============================================================================
 
 def main():
-    """Execute toutes les solutions."""
+    """Runs all the solutions."""
     print("\n" + "#" * 60)
-    print("#  SOLUTIONS -- JOUR 1 : PRINCIPES FONDAMENTAUX")
+    print("#  SOLUTIONS -- DAY 1 : FUNDAMENTAL PRINCIPLES")
     print("#" * 60)
 
     # Easy
@@ -625,7 +625,7 @@ def main():
     hard_2_cascading_failures()
 
     print("\n" + "#" * 60)
-    print("#  FIN DES SOLUTIONS")
+    print("#  END OF SOLUTIONS")
     print("#" * 60 + "\n")
 
 

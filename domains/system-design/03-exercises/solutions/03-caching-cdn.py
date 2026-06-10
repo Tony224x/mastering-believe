@@ -1,8 +1,8 @@
 """
-Solutions -- Exercices Jour 3 : Caching & CDN
+Solutions -- Day 3 Exercises: Caching & CDN
 
-Ce fichier contient les solutions calculees pour les exercices Easy, Medium, et Hard.
-Chaque solution montre le raisonnement etape par etape.
+This file contains the worked solutions for the Easy, Medium, and Hard exercises.
+Each solution shows the reasoning step by step.
 
 Usage:
     python 03-caching-cdn.py
@@ -14,292 +14,292 @@ SEPARATOR = "=" * 60
 
 
 # =============================================================================
-# EASY -- Exercice 1 : Quelle strategie de cache ?
+# EASY -- Exercise 1 : Which caching strategy?
 # =============================================================================
 
 def easy_1_cache_strategy():
-    """Solution pour le choix de strategie de cache par use case."""
+    """Solution for the caching strategy choice per use case."""
     print(f"\n{SEPARATOR}")
-    print("  EASY 1 : Quelle strategie de cache ?")
+    print("  EASY 1 : Which caching strategy?")
     print(SEPARATOR)
 
     choices = [
         (
-            "Profils utilisateur (50K reads/sec, 10 writes/sec)",
+            "User profiles (50K reads/sec, 10 writes/sec)",
             "Cache-Aside",
-            "Read-heavy (ratio 5000:1). Cache-aside est le choix par defaut : "
-            "on ne met en cache que les profils effectivement demandes. "
-            "10 writes/sec = invalidation negligeable. TTL de 5-15 min "
-            "pour tolerer le stale eventuel."
+            "Read-heavy (5000:1 ratio). Cache-aside is the default choice: "
+            "we only cache the profiles that are actually requested. "
+            "10 writes/sec = negligible invalidation. 5-15 min TTL "
+            "to tolerate occasional staleness."
         ),
         (
-            "Compteur de vues videos",
+            "Video view counter",
             "Write-Behind (Write-Back)",
-            "Write-heavy : chaque vue = 1 increment. Write-behind accumule "
-            "les increments en memoire (Redis INCR) et flush en batch vers "
-            "la DB toutes les 5-10 secondes. On tolere la perte de quelques "
-            "vues en cas de crash (pas critique). Tradeoff : consistance "
-            "faible mais performance maximale."
+            "Write-heavy: each view = 1 increment. Write-behind accumulates "
+            "the increments in memory (Redis INCR) and batch-flushes to "
+            "the DB every 5-10 seconds. We tolerate losing a few "
+            "views on crash (not critical). Tradeoff: weak consistency "
+            "but maximum performance."
         ),
         (
-            "Stock e-commerce (survente couteuse)",
+            "E-commerce stock (overselling is costly)",
             "Write-Through",
-            "La consistance est critique : afficher un stock > 0 alors que "
-            "le stock reel est 0 = survente = perte financiere. Write-through "
-            "garantit que le cache et la DB sont toujours synchrones. "
-            "Le cout en latence d'ecriture est acceptable car les mises a jour "
-            "de stock sont moins frequentes que les lectures."
+            "Consistency is critical: showing stock > 0 while the "
+            "real stock is 0 = overselling = financial loss. Write-through "
+            "guarantees the cache and the DB are always in sync. "
+            "The write latency cost is acceptable because stock updates "
+            "are less frequent than reads."
         ),
         (
-            "Config globale pour un cluster K8s",
-            "Read-Through + Cache L1 in-process",
-            "Donnee identique pour tous les pods, change rarement. "
-            "Cache L1 in-process (dict local) avec TTL 30s evite "
-            "meme le round-trip reseau vers Redis. Read-through car "
-            "l'app n'a pas besoin de connaitre la source (DB vs Redis)."
+            "Global config for a K8s cluster",
+            "Read-Through + in-process L1 cache",
+            "Identical data for all pods, rarely changes. "
+            "In-process L1 cache (local dict) with a 30s TTL avoids "
+            "even the network round trip to Redis. Read-through because "
+            "the app does not need to know the source (DB vs Redis)."
         ),
         (
-            "Dashboard analytics (aggregation 24h)",
-            "Cache-Aside avec TTL long",
-            "Les aggregations sont couteuses (scan de millions de lignes). "
-            "Le resultat est identique pour tous les users. Cache-aside "
-            "avec TTL de 5-15 min. Ou materialized view en DB + cache-aside. "
-            "Le stale de quelques minutes est acceptable sur un dashboard."
+            "Analytics dashboard (24h aggregation)",
+            "Cache-Aside with a long TTL",
+            "The aggregations are expensive (scanning millions of rows). "
+            "The result is identical for all users. Cache-aside "
+            "with a 5-15 min TTL. Or a materialized view in the DB + cache-aside. "
+            "A few minutes of staleness is acceptable on a dashboard."
         ),
         (
-            "Sessions utilisateur (login/logout)",
-            "Write-Through ou Cache-Aside",
-            "La session doit etre a jour (logout = suppression immediate). "
-            "Write-through pour les ecritures (login cree la session dans "
-            "cache + DB atomiquement). Cache-aside pour les lectures. "
-            "TTL = duree de la session (30 min). Redis est le choix naturel "
-            "car les sessions sont des key-value simples avec TTL natif."
+            "User sessions (login/logout)",
+            "Write-Through or Cache-Aside",
+            "The session must be up to date (logout = immediate deletion). "
+            "Write-through for writes (login creates the session in "
+            "cache + DB atomically). Cache-aside for reads. "
+            "TTL = session duration (30 min). Redis is the natural choice "
+            "because sessions are simple key-values with native TTL."
         ),
     ]
 
     for i, (system, choice, justification) in enumerate(choices, 1):
         print(f"\n  {i}. {system}")
-        print(f"     Strategie : {choice}")
-        print(f"     Raison : {justification}")
+        print(f"     Strategy : {choice}")
+        print(f"     Reason : {justification}")
 
 
 # =============================================================================
-# EASY -- Exercice 2 : Cache-Control headers
+# EASY -- Exercise 2 : Cache-Control headers
 # =============================================================================
 
 def easy_2_cache_control():
-    """Solution pour les headers Cache-Control par type de contenu."""
+    """Solution for the Cache-Control headers per content type."""
     print(f"\n{SEPARATOR}")
     print("  EASY 2 : Cache-Control headers")
     print(SEPARATOR)
 
     headers = [
         (
-            "app.a3f2b1c.js (JS avec hash dans le nom)",
+            "app.a3f2b1c.js (JS with a hash in the name)",
             "Cache-Control: public, max-age=31536000, immutable",
-            "public : tout cache (CDN, proxy, browser) peut stocker. "
-            "max-age=31536000 : 1 an (maximum pratique). "
-            "immutable : le browser ne revalidera jamais. "
-            "Le hash dans le nom garantit que tout changement = nouvelle URL. "
-            "C'est le pattern standard pour les assets bundles (webpack, vite)."
+            "public : any cache (CDN, proxy, browser) may store it. "
+            "max-age=31536000 : 1 year (practical maximum). "
+            "immutable : the browser will never revalidate. "
+            "The hash in the name guarantees any change = new URL. "
+            "This is the standard pattern for bundled assets (webpack, vite)."
         ),
         (
-            "/api/me (profil utilisateur connecte)",
+            "/api/me (logged-in user profile)",
             "Cache-Control: private, no-cache",
-            "private : seul le browser peut cacher (pas le CDN, car le contenu "
-            "est personnalise). no-cache : le browser doit revalider a chaque "
-            "fois (If-None-Match avec ETag). Cela economise la bande passante "
-            "(304 si pas de changement) tout en garantissant la fraicheur."
+            "private : only the browser may cache (not the CDN, since the content "
+            "is personalized). no-cache : the browser must revalidate every "
+            "time (If-None-Match with ETag). This saves bandwidth "
+            "(304 if no change) while guaranteeing freshness."
         ),
         (
-            "/api/products (catalogue mis a jour toutes les heures)",
+            "/api/products (catalog updated every hour)",
             "Cache-Control: public, s-maxage=3600, max-age=300, stale-while-revalidate=60",
-            "public : identique pour tous les users. "
-            "s-maxage=3600 : le CDN cache pendant 1h (synchrone avec les mises a jour). "
-            "max-age=300 : le browser cache pendant 5 min (revalidation plus frequente cote client). "
-            "stale-while-revalidate=60 : servir le stale pendant 60s en arriere-plan pendant la revalidation."
+            "public : identical for all users. "
+            "s-maxage=3600 : the CDN caches for 1h (in sync with the updates). "
+            "max-age=300 : the browser caches for 5 min (more frequent client-side revalidation). "
+            "stale-while-revalidate=60 : serve stale for 60s while revalidating in the background."
         ),
         (
-            "/login (page HTML de connexion)",
+            "/login (login HTML page)",
             "Cache-Control: no-cache",
-            "no-cache : la page peut etre cachee mais doit etre revalidee. "
-            "On veut que le browser revalide car le HTML peut changer "
-            "(nouveau build, CSRF token). Le CDN peut aussi cacher "
-            "avec revalidation (ETag). Pas no-store car la page n'est "
-            "pas sensible en elle-meme."
+            "no-cache : the page may be cached but must be revalidated. "
+            "We want the browser to revalidate because the HTML can change "
+            "(new build, CSRF token). The CDN can also cache "
+            "with revalidation (ETag). Not no-store because the page is "
+            "not sensitive in itself."
         ),
         (
-            "PDF de facture (utilisateur authentifie)",
+            "Invoice PDF (authenticated user)",
             "Cache-Control: private, no-store",
-            "private : ne pas cacher sur le CDN (document confidentiel). "
-            "no-store : ne pas stocker du tout (meme sur le disque local). "
-            "Les factures contiennent des donnees financieres sensibles. "
-            "Alternative acceptable : private, no-cache si on veut permettre "
-            "le cache browser avec revalidation."
+            "private : do not cache on the CDN (confidential document). "
+            "no-store : do not store at all (even on the local disk). "
+            "Invoices contain sensitive financial data. "
+            "Acceptable alternative : private, no-cache if we want to allow "
+            "browser caching with revalidation."
         ),
     ]
 
     for i, (resource, header, justification) in enumerate(headers, 1):
         print(f"\n  {i}. {resource}")
         print(f"     Header : {header}")
-        print(f"     Raison : {justification}")
+        print(f"     Reason : {justification}")
 
 
 # =============================================================================
-# EASY -- Exercice 3 : Dimensionnement memoire Redis
+# EASY -- Exercise 3 : Redis memory sizing
 # =============================================================================
 
 def easy_3_redis_sizing():
-    """Solution pour le dimensionnement memoire Redis."""
+    """Solution for the Redis memory sizing."""
     print(f"\n{SEPARATOR}")
-    print("  EASY 3 : Dimensionnement memoire Redis")
+    print("  EASY 3 : Redis memory sizing")
     print(SEPARATOR)
 
-    # Donnees
+    # Data
     uuid_bytes = 36
     role_bytes = 10
     token_bytes = 64
     timestamp_bytes = 8
     preferences_bytes = 200
-    redis_overhead = 2.5  # Facteur d'overhead Redis
+    redis_overhead = 2.5  # Redis overhead factor
     concurrent_sessions = 2_000_000
     masters = 3
     replicas_per_master = 1
 
-    # 1. Taille brute d'une session
+    # 1. Raw size of a session
     raw_size = uuid_bytes + role_bytes + token_bytes + timestamp_bytes + preferences_bytes
-    print(f"\n  1. Taille brute d'une session :")
+    print(f"\n  1. Raw size of a session :")
     print(f"     user_id (UUID)    : {uuid_bytes} bytes")
     print(f"     role              : {role_bytes} bytes")
     print(f"     token             : {token_bytes} bytes")
     print(f"     last_seen         : {timestamp_bytes} bytes")
     print(f"     preferences (JSON): {preferences_bytes} bytes")
-    print(f"     Total brut        : {raw_size} bytes")
+    print(f"     Raw total         : {raw_size} bytes")
 
-    # 2. Memoire totale avec overhead Redis
+    # 2. Total memory with Redis overhead
     raw_total = concurrent_sessions * raw_size
     total_with_overhead = raw_total * redis_overhead
     raw_total_gb = raw_total / (1024 ** 3)
     total_gb = total_with_overhead / (1024 ** 3)
-    print(f"\n  2. Memoire totale pour {concurrent_sessions:,} sessions :")
-    print(f"     Brut              : {concurrent_sessions:,} * {raw_size} = {raw_total:,} bytes = {raw_total_gb:.2f} Go")
-    print(f"     Avec overhead {redis_overhead}x : {total_with_overhead:,.0f} bytes = {total_gb:.2f} Go")
+    print(f"\n  2. Total memory for {concurrent_sessions:,} sessions :")
+    print(f"     Raw               : {concurrent_sessions:,} * {raw_size} = {raw_total:,} bytes = {raw_total_gb:.2f} GB")
+    print(f"     With {redis_overhead}x overhead : {total_with_overhead:,.0f} bytes = {total_gb:.2f} GB")
 
-    # 3. RAM par noeud master
+    # 3. RAM per master node
     ram_per_master = total_gb / masters
-    print(f"\n  3. RAM par noeud master ({masters} masters) :")
-    print(f"     {total_gb:.2f} Go / {masters} = {ram_per_master:.2f} Go par master")
-    print(f"     Recommandation : prevoir 2x pour la marge -> {ram_per_master * 2:.1f} Go par master")
+    print(f"\n  3. RAM per master node ({masters} masters) :")
+    print(f"     {total_gb:.2f} GB / {masters} = {ram_per_master:.2f} GB per master")
+    print(f"     Recommendation : plan for 2x as margin -> {ram_per_master * 2:.1f} GB per master")
 
-    # 4. Total avec replicas
+    # 4. Total with replicas
     total_nodes = masters * (1 + replicas_per_master)
     total_ram = total_gb * (1 + replicas_per_master)
-    print(f"\n  4. Avec replicas ({replicas_per_master} replica par master) :")
-    print(f"     Noeuds totaux     : {masters} masters + {masters * replicas_per_master} replicas = {total_nodes}")
-    print(f"     RAM totale cluster: {total_gb:.2f} * {1 + replicas_per_master} = {total_ram:.2f} Go")
-    print(f"     Les replicas sont essentiels pour la HA (si un master tombe,")
-    print(f"     son replica est promu automatiquement)")
+    print(f"\n  4. With replicas ({replicas_per_master} replica per master) :")
+    print(f"     Total nodes       : {masters} masters + {masters * replicas_per_master} replicas = {total_nodes}")
+    print(f"     Total cluster RAM : {total_gb:.2f} * {1 + replicas_per_master} = {total_ram:.2f} GB")
+    print(f"     The replicas are essential for HA (if a master goes down,")
+    print(f"     its replica is promoted automatically)")
 
     # 5. Eviction policy
-    print(f"\n  5. maxmemory-policy recommandee :")
+    print(f"\n  5. Recommended maxmemory-policy :")
     print(f"     volatile-ttl")
-    print(f"     Raison : les sessions ont toutes un TTL (30 min). volatile-ttl")
-    print(f"     evince les cles avec le TTL le plus court en premier, ce qui est")
-    print(f"     logique pour les sessions (les plus anciennes expirent d'abord).")
-    print(f"     Alternative : volatile-lru si les sessions ont des TTL identiques")
-    print(f"     (evince les moins recemment accedees).")
-    print(f"     NE PAS utiliser allkeys-* car les sessions DOIVENT avoir un TTL.")
+    print(f"     Reason : the sessions all have a TTL (30 min). volatile-ttl")
+    print(f"     evicts the keys with the shortest TTL first, which makes")
+    print(f"     sense for sessions (the oldest expire first).")
+    print(f"     Alternative : volatile-lru if the sessions have identical TTLs")
+    print(f"     (evicts the least recently accessed).")
+    print(f"     Do NOT use allkeys-* because sessions MUST have a TTL.")
 
 
 # =============================================================================
-# MEDIUM -- Exercice 1 : Cache pour un feed social
+# MEDIUM -- Exercise 1 : Cache for a social feed
 # =============================================================================
 
 def medium_1_social_feed():
-    """Solution pour la couche de cache d'un feed social."""
+    """Solution for the caching layer of a social feed."""
     print(f"\n{SEPARATOR}")
-    print("  MEDIUM 1 : Cache pour un feed social")
+    print("  MEDIUM 1 : Cache for a social feed")
     print(SEPARATOR)
 
     users = 200_000_000
     avg_following = 200
     posts_per_min = 500_000
-    feed_size = 50  # Posts par feed
+    feed_size = 50  # Posts per feed
 
-    print(f"\n  1. Type de cache :")
-    print(f"     Redis (distributed cache) — PAS de CDN.")
-    print(f"     Pourquoi pas CDN : le feed est personnalise (chaque user voit")
-    print(f"     un contenu different). Le CDN cache du contenu identique pour")
-    print(f"     tous les users d'une meme region. Ici, le cache doit etre")
-    print(f"     par user -> seul Redis permet ca efficacement.")
+    print(f"\n  1. Cache type :")
+    print(f"     Redis (distributed cache) — NOT a CDN.")
+    print(f"     Why not a CDN : the feed is personalized (each user sees")
+    print(f"     different content). A CDN caches identical content for")
+    print(f"     all users in a given region. Here, the cache must be")
+    print(f"     per user -> only Redis can do that efficiently.")
 
-    print(f"\n  2. Structure Redis : Sorted Set")
-    print(f"     Cle : feed:{{user_id}}")
-    print(f"     Score : timestamp du post")
-    print(f"     Member : post_id (reference, pas le contenu entier)")
-    print(f"     Commande : ZREVRANGE feed:{{user_id}} 0 49 -> les 50 derniers posts")
-    print(f"     Les details du post sont dans un Hash separe : post:{{post_id}}")
+    print(f"\n  2. Redis structure : Sorted Set")
+    print(f"     Key : feed:{{user_id}}")
+    print(f"     Score : timestamp of the post")
+    print(f"     Member : post_id (reference, not the full content)")
+    print(f"     Command : ZREVRANGE feed:{{user_id}} 0 49 -> the latest 50 posts")
+    print(f"     The post details live in a separate Hash : post:{{post_id}}")
 
-    print(f"\n  3. Gestion de la taille :")
-    print(f"     ZREMRANGEBYRANK feed:{{user_id}} 0 -501 apres chaque ZADD")
-    print(f"     -> garde seulement les 500 derniers posts en cache")
-    print(f"     (10 pages de 50). Au-dela, la pagination va en DB.")
+    print(f"\n  3. Size management :")
+    print(f"     ZREMRANGEBYRANK feed:{{user_id}} 0 -501 after each ZADD")
+    print(f"     -> keeps only the latest 500 posts in cache")
+    print(f"     (10 pages of 50). Beyond that, pagination goes to the DB.")
 
     print(f"\n  4. Fanout-on-write vs Fanout-on-read :")
-    print(f"     Fanout-on-write : quand un user poste, on ecrit dans le feed")
-    print(f"     cache de CHAQUE follower. Pour un user avec 200 followers,")
-    print(f"     ca fait 200 ZADD Redis. C'est rapide et le read est en O(1).")
-    print(f"     Fanout-on-read : quand un user ouvre son feed, on aggrege les")
-    print(f"     posts de tous les comptes qu'il suit. Moins de writes, mais")
-    print(f"     le read est lent (200 queries pour merger 200 timelines).")
+    print(f"     Fanout-on-write : when a user posts, we write into the cached")
+    print(f"     feed of EACH follower. For a user with 200 followers,")
+    print(f"     that's 200 Redis ZADDs. It's fast and the read is O(1).")
+    print(f"     Fanout-on-read : when a user opens their feed, we aggregate the")
+    print(f"     posts of all the accounts they follow. Fewer writes, but")
+    print(f"     the read is slow (200 queries to merge 200 timelines).")
 
-    print(f"\n     Solution hybride (approche Twitter) :")
-    print(f"     - Users normaux (< 10K followers) : fanout-on-write")
+    print(f"\n     Hybrid solution (Twitter approach) :")
+    print(f"     - Normal users (< 10K followers) : fanout-on-write")
     print(f"     - Celebrities (> 10K followers) : fanout-on-read")
-    print(f"     Quand un user ouvre son feed : lire le feed pre-calcule + merger")
-    print(f"     les posts des celebrities qu'il suit.")
+    print(f"     When a user opens their feed : read the precomputed feed + merge")
+    print(f"     the posts of the celebrities they follow.")
 
     print(f"\n  5. Celebrities :")
-    print(f"     Un celebrity a 50M followers. Fanout-on-write = 50M ZADD par post.")
-    print(f"     A {posts_per_min:,} posts/min, c'est insoutenable.")
-    print(f"     Solution : ne PAS pre-calculer le feed pour les followers de celebrities.")
-    print(f"     Au read, merger le feed pre-calcule avec les derniers posts des celebrities.")
+    print(f"     A celebrity has 50M followers. Fanout-on-write = 50M ZADDs per post.")
+    print(f"     At {posts_per_min:,} posts/min, that's unsustainable.")
+    print(f"     Solution : do NOT precompute the feed for celebrity followers.")
+    print(f"     At read time, merge the precomputed feed with the celebrities' latest posts.")
 
-    # 6. Estimation memoire
-    post_id_size = 20  # bytes (UUID compact ou snowflake ID)
-    score_size = 8     # bytes (timestamp double)
-    redis_entry_overhead = 40  # bytes overhead par entry dans un sorted set
+    # 6. Memory estimation
+    post_id_size = 20  # bytes (compact UUID or snowflake ID)
+    score_size = 8     # bytes (double timestamp)
+    redis_entry_overhead = 40  # bytes of overhead per entry in a sorted set
     entries_per_feed = 500
-    active_users_pct = 0.3  # 30% ont un feed en cache (les actifs recents)
+    active_users_pct = 0.3  # 30% have a cached feed (the recently active)
     active_users = int(users * active_users_pct)
 
     feed_size_bytes = entries_per_feed * (post_id_size + score_size + redis_entry_overhead)
     total_bytes = active_users * feed_size_bytes
     total_tb = total_bytes / (1024 ** 4)
 
-    print(f"\n  6. Estimation memoire :")
-    print(f"     Taille par entry : {post_id_size} + {score_size} + {redis_entry_overhead} = {post_id_size + score_size + redis_entry_overhead} bytes")
-    print(f"     Taille par feed ({entries_per_feed} entries) : {feed_size_bytes:,} bytes = {feed_size_bytes/1024:.1f} Ko")
-    print(f"     Users actifs avec feed en cache (30%) : {active_users:,}")
-    print(f"     Total : {active_users:,} * {feed_size_bytes:,} = {total_bytes:,} bytes = {total_tb:.1f} To")
-    print(f"     + les Hash des posts eux-memes (~2-5 To supplementaires)")
+    print(f"\n  6. Memory estimation :")
+    print(f"     Size per entry : {post_id_size} + {score_size} + {redis_entry_overhead} = {post_id_size + score_size + redis_entry_overhead} bytes")
+    print(f"     Size per feed ({entries_per_feed} entries) : {feed_size_bytes:,} bytes = {feed_size_bytes/1024:.1f} KB")
+    print(f"     Active users with a cached feed (30%) : {active_users:,}")
+    print(f"     Total : {active_users:,} * {feed_size_bytes:,} = {total_bytes:,} bytes = {total_tb:.1f} TB")
+    print(f"     + the Hashes of the posts themselves (~2-5 TB more)")
 
     print(f"\n  7. Invalidation :")
-    print(f"     Event-driven : quand un post est publie, un worker Kafka")
-    print(f"     fait le fanout (ZADD dans les feeds des followers).")
-    print(f"     TTL de 24h sur les feeds : filet de securite, evite les")
-    print(f"     feeds fantomes d'users inactifs. Pas besoin de TTL court")
-    print(f"     car l'event-driven garantit la fraicheur.")
+    print(f"     Event-driven : when a post is published, a Kafka worker")
+    print(f"     performs the fanout (ZADD into the followers' feeds).")
+    print(f"     24h TTL on the feeds : safety net, avoids ghost")
+    print(f"     feeds of inactive users. No need for a short TTL")
+    print(f"     because the event-driven flow guarantees freshness.")
 
 
 # =============================================================================
-# MEDIUM -- Exercice 2 : Diagnostic cache miss rate
+# MEDIUM -- Exercise 2 : Diagnosing a high cache miss rate
 # =============================================================================
 
 def medium_2_cache_diagnosis():
-    """Solution pour le diagnostic d'un cache miss rate eleve."""
+    """Solution for diagnosing a high cache miss rate."""
     print(f"\n{SEPARATOR}")
-    print("  MEDIUM 2 : Diagnostic cache miss rate eleve")
+    print("  MEDIUM 2 : Diagnosing a high cache miss rate")
     print(SEPARATOR)
 
     num_keys = 15_000_000
@@ -307,166 +307,166 @@ def medium_2_cache_diagnosis():
     redis_overhead = 2.5
     current_ram_gb = 8
 
-    print(f"\n  1. Cause racine :")
-    print(f"     Le cache est SOUS-DIMENSIONNE. 15M cles * 500 bytes * 2.5 overhead")
-    print(f"     = ~17.5 Go necessaires, mais seulement 8 Go disponibles.")
-    print(f"     Redis evince en permanence (12K evictions/sec) pour faire de la place.")
-    print(f"     En plus, les cles search: (25% du cache = 3.75M cles) ont un taux")
-    print(f"     de re-acces < 5%, ce qui signifie qu'elles gaspillent ~4.4 Go de cache")
-    print(f"     pour des donnees rarement relues.")
+    print(f"\n  1. Root cause :")
+    print(f"     The cache is UNDERSIZED. 15M keys * 500 bytes * 2.5 overhead")
+    print(f"     = ~17.5 GB needed, but only 8 GB available.")
+    print(f"     Redis evicts constantly (12K evictions/sec) to make room.")
+    print(f"     Moreover, the search: keys (25% of the cache = 3.75M keys) have a")
+    print(f"     re-access rate < 5%, meaning they waste ~4.4 GB of cache")
+    print(f"     on data that is rarely re-read.")
 
-    # 2. Calcul memoire ideale
+    # 2. Ideal memory calculation
     raw_total = num_keys * avg_size
     ideal_total = raw_total * redis_overhead
     ideal_gb = ideal_total / (1024 ** 3)
-    print(f"\n  2. Memoire ideale :")
-    print(f"     {num_keys:,} * {avg_size} bytes = {raw_total:,} bytes = {raw_total/(1024**3):.1f} Go brut")
-    print(f"     Avec overhead Redis ({redis_overhead}x) : {ideal_gb:.1f} Go")
-    print(f"     Deficit : {ideal_gb:.1f} - {current_ram_gb} = {ideal_gb - current_ram_gb:.1f} Go manquants")
+    print(f"\n  2. Ideal memory :")
+    print(f"     {num_keys:,} * {avg_size} bytes = {raw_total:,} bytes = {raw_total/(1024**3):.1f} GB raw")
+    print(f"     With Redis overhead ({redis_overhead}x) : {ideal_gb:.1f} GB")
+    print(f"     Deficit : {ideal_gb:.1f} - {current_ram_gb} = {ideal_gb - current_ram_gb:.1f} GB missing")
 
-    # 3. Actions par impact
-    print(f"\n  3. Actions par ordre d'impact :")
+    # 3. Actions by impact
+    print(f"\n  3. Actions ranked by impact :")
 
     search_keys = int(num_keys * 0.25)
     search_memory = search_keys * avg_size * redis_overhead / (1024 ** 3)
 
-    print(f"\n     Action 1 (impact le plus fort, cout zero) : Reduire les cles search:")
-    print(f"     Les {search_keys:,} cles search: occupent ~{search_memory:.1f} Go")
-    print(f"     avec un taux de re-acces de 5%. Options :")
-    print(f"     - Reduire le TTL de 1h a 5 min")
-    print(f"     - Ou ne cacher que les recherches les plus frequentes (top 10%)")
-    print(f"     Impact estime : libere ~{search_memory * 0.8:.1f} Go -> hit rate +20-25%")
+    print(f"\n     Action 1 (highest impact, zero cost) : Reduce the search: keys")
+    print(f"     The {search_keys:,} search: keys occupy ~{search_memory:.1f} GB")
+    print(f"     with a 5% re-access rate. Options :")
+    print(f"     - Reduce the TTL from 1h to 5 min")
+    print(f"     - Or only cache the most frequent searches (top 10%)")
+    print(f"     Estimated impact : frees ~{search_memory * 0.8:.1f} GB -> hit rate +20-25%")
 
-    print(f"\n     Action 2 (impact moyen, cout modere) : Augmenter la RAM Redis")
-    print(f"     Passer de 8 Go a 20 Go (ou 2 * 10 Go en cluster)")
-    print(f"     Cout : ~$200-400/mois supplementaires")
-    print(f"     Impact estime : hit rate +15-20% (plus d'evictions)")
+    print(f"\n     Action 2 (medium impact, moderate cost) : Increase the Redis RAM")
+    print(f"     Go from 8 GB to 20 GB (or 2 * 10 GB in a cluster)")
+    print(f"     Cost : ~$200-400/month extra")
+    print(f"     Estimated impact : hit rate +15-20% (fewer evictions)")
 
-    print(f"\n     Action 3 (impact complementaire) : Ajouter un L1 in-process cache")
-    print(f"     Pour les cles les plus hot (session: et product: les plus accedees)")
-    print(f"     Cache local de 100 Mo par instance avec TTL 30s")
-    print(f"     Impact estime : hit rate +5-10% et reduction de la charge Redis de 30%")
+    print(f"\n     Action 3 (complementary impact) : Add an in-process L1 cache")
+    print(f"     For the hottest keys (most accessed session: and product:)")
+    print(f"     100 MB local cache per instance with a 30s TTL")
+    print(f"     Estimated impact : hit rate +5-10% and a 30% reduction of the Redis load")
 
-    # 4. Amelioration estimee
-    print(f"\n  4. Amelioration estimee du hit rate :")
-    print(f"     Actuel : 45%")
-    print(f"     Apres action 1 : ~70% (+25%)")
-    print(f"     Apres action 1+2 : ~88% (+18%)")
-    print(f"     Apres action 1+2+3 : ~92% (+4%)")
+    # 4. Estimated improvement
+    print(f"\n  4. Estimated hit rate improvement :")
+    print(f"     Current : 45%")
+    print(f"     After action 1 : ~70% (+25%)")
+    print(f"     After actions 1+2 : ~88% (+18%)")
+    print(f"     After actions 1+2+3 : ~92% (+4%)")
 
     # 5. Decision
-    print(f"\n  5. Augmenter la RAM OU optimiser ?")
-    print(f"     D'ABORD optimiser (action 1) : gratuit, impact immediat.")
-    print(f"     ENSUITE augmenter la RAM si le hit rate reste < 85%.")
-    print(f"     Justification : les cles search: gaspillent {search_memory:.1f} Go pour")
-    print(f"     des donnees accedees a 5%. Les supprimer libere de la place pour les")
-    print(f"     cles product: et session: qui ont un re-acces bien plus eleve.")
+    print(f"\n  5. Increase the RAM OR optimize ?")
+    print(f"     FIRST optimize (action 1) : free, immediate impact.")
+    print(f"     THEN increase the RAM if the hit rate stays < 85%.")
+    print(f"     Justification : the search: keys waste {search_memory:.1f} GB on")
+    print(f"     data accessed at 5%. Removing them frees up room for the")
+    print(f"     product: and session: keys which have a much higher re-access rate.")
 
-    print(f"\n  6. Dashboard monitoring (5 metriques) :")
+    print(f"\n  6. Monitoring dashboard (5 metrics) :")
     metrics = [
-        ("Hit rate (%)", "> 85%", "< 70%", "L'indicateur #1 de sante du cache"),
-        ("Eviction rate (/sec)", "< 100/s", "> 1K/s", "Signal que le cache est trop petit"),
-        ("Memory usage (%)", "< 80%", "> 95%", "Marge avant les evictions massives"),
-        ("Latency p99 (ms)", "< 2ms", "> 10ms", "Degradation = surcharge ou reseau"),
-        ("Key count (total)", "stable +/-10%", "chute brutale", "Un drop = TTL massif ou FLUSHALL"),
+        ("Hit rate (%)", "> 85%", "< 70%", "The #1 indicator of cache health"),
+        ("Eviction rate (/sec)", "< 100/s", "> 1K/s", "Signal that the cache is too small"),
+        ("Memory usage (%)", "< 80%", "> 95%", "Margin before massive evictions"),
+        ("Latency p99 (ms)", "< 2ms", "> 10ms", "Degradation = overload or network"),
+        ("Key count (total)", "stable +/-10%", "sharp drop", "A drop = massive TTL or FLUSHALL"),
     ]
     for name, ok, alert, why in metrics:
-        print(f"     - {name} : OK={ok}, ALERTE={alert} ({why})")
+        print(f"     - {name} : OK={ok}, ALERT={alert} ({why})")
 
 
 # =============================================================================
-# MEDIUM -- Exercice 3 : CDN strategy multi-region
+# MEDIUM -- Exercise 3 : Multi-region CDN strategy
 # =============================================================================
 
 def medium_3_cdn_strategy():
-    """Solution pour la strategie CDN multi-region."""
+    """Solution for the multi-region CDN strategy."""
     print(f"\n{SEPARATOR}")
-    print("  MEDIUM 3 : CDN strategy multi-region")
+    print("  MEDIUM 3 : Multi-region CDN strategy")
     print(SEPARATOR)
 
-    print(f"\n  1. Architecture CDN :")
-    print(f"     Provider : CloudFront (integration native S3) ou Cloudflare")
-    print(f"     Niveaux : 2 niveaux (edge + origin shield)")
-    print(f"     - Edge : POPs dans chaque region (Paris, Francfort, NYC, Tokyo...)")
-    print(f"     - Origin Shield : 1 cache intermediaire par region (reduit la charge origin)")
-    print(f"     - Origin : les 3 regions API (US-East, EU-West, APAC)")
-    print(f"     Route les requetes vers l'origin la plus proche (latency-based routing)")
+    print(f"\n  1. CDN architecture :")
+    print(f"     Provider : CloudFront (native S3 integration) or Cloudflare")
+    print(f"     Levels : 2 levels (edge + origin shield)")
+    print(f"     - Edge : POPs in each region (Paris, Frankfurt, NYC, Tokyo...)")
+    print(f"     - Origin Shield : 1 intermediate cache per region (reduces origin load)")
+    print(f"     - Origin : the 3 API regions (US-East, EU-West, APAC)")
+    print(f"     Routes the requests to the closest origin (latency-based routing)")
 
-    print(f"\n  2. Securisation des documents :")
-    print(f"     Signed URLs (CloudFront) ou Signed Cookies (pour un domaine entier)")
-    print(f"     Flow : l'API genere une signed URL avec expiration (15 min)")
-    print(f"     Le CDN verifie la signature avant de servir le document.")
-    print(f"     Si la signature est invalide ou expiree -> 403 Forbidden.")
-    print(f"     Avantage : le document reste en cache CDN, mais seuls les users")
-    print(f"     avec une URL signee valide y accedent.")
+    print(f"\n  2. Securing the documents :")
+    print(f"     Signed URLs (CloudFront) or Signed Cookies (for a whole domain)")
+    print(f"     Flow : the API generates a signed URL with an expiration (15 min)")
+    print(f"     The CDN verifies the signature before serving the document.")
+    print(f"     If the signature is invalid or expired -> 403 Forbidden.")
+    print(f"     Advantage : the document stays in the CDN cache, but only users")
+    print(f"     with a valid signed URL can access it.")
 
-    print(f"\n  3. Invalidation documents (< 5 min) :")
-    print(f"     Option A : TTL court (s-maxage=300) -> le CDN revalide toutes les 5 min")
-    print(f"     Option B : Purge API (CloudFront CreateInvalidation) declenche par l'update")
-    print(f"     Recommandation : TTL 300s + purge API pour les updates urgents.")
-    print(f"     Le purge API prend 30-60s sur CloudFront (propagation globale).")
+    print(f"\n  3. Document invalidation (< 5 min) :")
+    print(f"     Option A : short TTL (s-maxage=300) -> the CDN revalidates every 5 min")
+    print(f"     Option B : Purge API (CloudFront CreateInvalidation) triggered by the update")
+    print(f"     Recommendation : 300s TTL + purge API for urgent updates.")
+    print(f"     The purge API takes 30-60s on CloudFront (global propagation).")
 
-    print(f"\n  4. Cache headers par type :")
+    print(f"\n  4. Cache headers per type :")
     headers = [
         ("app.hash.js (React)", "Cache-Control: public, max-age=31536000, immutable",
-         "Hash dans le nom = versionne. Cache 1 an."),
+         "Hash in the name = versioned. Cache for 1 year."),
         ("/api/documents/list", "Cache-Control: private, no-cache",
-         "Personnalise (liste des documents du user). Revalidation obligatoire."),
+         "Personalized (the user's document list). Mandatory revalidation."),
         ("/documents/{id}/download", "Cache-Control: private, no-cache + Signed URL",
-         "Document confidentiel. Le CDN cache le fichier mais exige une signed URL."),
+         "Confidential document. The CDN caches the file but requires a signed URL."),
         ("index.html", "Cache-Control: no-cache",
-         "Toujours revalider pour pointer vers le dernier build (hash dans les <script>)."),
+         "Always revalidate to point to the latest build (hash in the <script> tags)."),
     ]
     for resource, header, reason in headers:
         print(f"     {resource}")
         print(f"       {header}")
         print(f"       -> {reason}")
 
-    print(f"\n  5. Mesure du hit rate :")
-    print(f"     CloudFront fournit des metriques natives :")
-    print(f"     - Hit rate par distribution (global)")
-    print(f"     - Hit rate par path pattern (/static/*, /api/*, /documents/*)")
+    print(f"\n  5. Measuring the hit rate :")
+    print(f"     CloudFront provides native metrics :")
+    print(f"     - Hit rate per distribution (global)")
+    print(f"     - Hit rate per path pattern (/static/*, /api/*, /documents/*)")
     print(f"     - Bandwidth savings = bytes served from edge / total bytes")
-    print(f"     Objectifs :")
-    print(f"     - Assets statiques : > 95% hit rate")
-    print(f"     - Documents : > 60% hit rate (re-telechargements)")
-    print(f"     - API : < 10% hit rate (personnalise, normal)")
-    print(f"     Si le hit rate assets < 90%, verifier les headers.")
+    print(f"     Targets :")
+    print(f"     - Static assets : > 95% hit rate")
+    print(f"     - Documents : > 60% hit rate (re-downloads)")
+    print(f"     - API : < 10% hit rate (personalized, normal)")
+    print(f"     If the asset hit rate is < 90%, check the headers.")
 
-    # 6. Estimation cout
-    print(f"\n  6. Estimation cout CDN (CloudFront) :")
-    static_gb = 500       # Go/mois d'assets statiques
-    docs_gb = 2000        # Go/mois de documents PDF
-    api_gb = 100          # Go/mois de reponses API
+    # 6. Cost estimation
+    print(f"\n  6. CDN cost estimation (CloudFront) :")
+    static_gb = 500       # GB/month of static assets
+    docs_gb = 2000        # GB/month of PDF documents
+    api_gb = 100          # GB/month of API responses
     total_gb = static_gb + docs_gb + api_gb
-    cost_per_gb = 0.085   # $/Go pour les premiers 10 To
-    requests_millions = 50  # Millions de requetes/mois
-    request_cost_per_10k = 0.01  # $/10K requetes HTTPS
+    cost_per_gb = 0.085   # $/GB for the first 10 TB
+    requests_millions = 50  # Millions of requests/month
+    request_cost_per_10k = 0.01  # $/10K HTTPS requests
 
     bandwidth_cost = total_gb * cost_per_gb
     request_cost = requests_millions * 1000 * request_cost_per_10k
     total_cost = bandwidth_cost + request_cost
 
     print(f"     Bandwidth :")
-    print(f"       Assets statiques : {static_gb} Go/mois")
-    print(f"       Documents PDF    : {docs_gb} Go/mois")
-    print(f"       API responses    : {api_gb} Go/mois")
-    print(f"       Total            : {total_gb} Go/mois")
-    print(f"       Cout bandwidth   : {total_gb} * ${cost_per_gb} = ${bandwidth_cost:.0f}/mois")
-    print(f"     Requetes :")
-    print(f"       {requests_millions}M requetes * ${request_cost_per_10k}/10K = ${request_cost:.0f}/mois")
-    print(f"     Total CDN          : ~${total_cost:.0f}/mois")
-    print(f"     (Pour un SaaS moyen, $200-500/mois est typique)")
+    print(f"       Static assets    : {static_gb} GB/month")
+    print(f"       PDF documents    : {docs_gb} GB/month")
+    print(f"       API responses    : {api_gb} GB/month")
+    print(f"       Total            : {total_gb} GB/month")
+    print(f"       Bandwidth cost   : {total_gb} * ${cost_per_gb} = ${bandwidth_cost:.0f}/month")
+    print(f"     Requests :")
+    print(f"       {requests_millions}M requests * ${request_cost_per_10k}/10K = ${request_cost:.0f}/month")
+    print(f"     Total CDN          : ~${total_cost:.0f}/month")
+    print(f"     (For a mid-size SaaS, $200-500/month is typical)")
 
 
 # =============================================================================
-# HARD -- Exercice 1 : Cache e-commerce Black Friday
+# HARD -- Exercise 1 : Black Friday e-commerce cache
 # =============================================================================
 
 def hard_1_black_friday():
-    """Solution pour le caching layer Black Friday."""
+    """Solution for the Black Friday caching layer."""
     print(f"\n{SEPARATOR}")
-    print("  HARD 1 : Cache e-commerce Black Friday")
+    print("  HARD 1 : Black Friday e-commerce cache")
     print(SEPARATOR)
 
     products = 5_000_000
@@ -476,201 +476,201 @@ def hard_1_black_friday():
     peak_writes = 40_000
     flash_deals = 100
 
-    print(f"\n  1. Architecture multi-tier :")
+    print(f"\n  1. Multi-tier architecture :")
     print(f"     L1 : In-process cache (Caffeine/dict)")
-    print(f"       - Contenu : prix des flash deals, config promo, feature flags")
-    print(f"       - TTL : 5-10 secondes (prix ne doivent pas etre stale > 10s)")
-    print(f"       - Taille : ~50 Mo par instance")
-    print(f"       - Avantage : 0 latence reseau, absorbe les cles ultra-hot")
+    print(f"       - Content : flash deal prices, promo config, feature flags")
+    print(f"       - TTL : 5-10 seconds (prices must not be stale > 10s)")
+    print(f"       - Size : ~50 MB per instance")
+    print(f"       - Advantage : 0 network latency, absorbs the ultra-hot keys")
     print(f"     L2 : Redis Cluster")
-    print(f"       - Contenu : catalogue complet, sessions, paniers")
-    print(f"       - TTL : 5 min (catalogue), 30 min (sessions)")
-    print(f"       - Le prix a un TTL de 10s OU event-driven invalidation")
+    print(f"       - Content : full catalog, sessions, carts")
+    print(f"       - TTL : 5 min (catalog), 30 min (sessions)")
+    print(f"       - The price has a 10s TTL OR event-driven invalidation")
     print(f"     L3 : CDN (CloudFront)")
-    print(f"       - Contenu : assets statiques, images produits")
-    print(f"       - TTL : 1 an (versionne par hash)")
+    print(f"       - Content : static assets, product images")
+    print(f"       - TTL : 1 year (versioned by hash)")
 
-    # 2. Dimensionnement Redis
+    # 2. Redis sizing
     catalog_gb = (products * product_size_kb * 1024) / (1024 ** 3)
     catalog_with_overhead = catalog_gb * 2.5
-    # Redis peut faire ~100K ops/sec par noeud
+    # Redis can do ~100K ops/sec per node
     ops_per_node = 100_000
     nodes_for_throughput = math.ceil(peak_reads / ops_per_node)
 
-    print(f"\n  2. Dimensionnement Redis :")
-    print(f"     Memoire catalogue : {products:,} * {product_size_kb} Ko = {catalog_gb:.1f} Go brut")
-    print(f"     Avec overhead Redis (2.5x) : {catalog_with_overhead:.1f} Go")
-    print(f"     + sessions + paniers : ~5-10 Go supplementaires")
-    print(f"     Total memoire : ~{catalog_with_overhead + 10:.0f} Go")
-    print(f"     Noeuds pour {peak_reads:,} reads/sec : {peak_reads:,} / {ops_per_node:,} = {nodes_for_throughput} noeuds")
-    print(f"     Avec replicas (1 par master) : {nodes_for_throughput * 2} noeuds")
-    print(f"     Shard key : hash(product_id) % 16384 (Redis Cluster standard)")
+    print(f"\n  2. Redis sizing :")
+    print(f"     Catalog memory : {products:,} * {product_size_kb} KB = {catalog_gb:.1f} GB raw")
+    print(f"     With Redis overhead (2.5x) : {catalog_with_overhead:.1f} GB")
+    print(f"     + sessions + carts : ~5-10 GB more")
+    print(f"     Total memory : ~{catalog_with_overhead + 10:.0f} GB")
+    print(f"     Nodes for {peak_reads:,} reads/sec : {peak_reads:,} / {ops_per_node:,} = {nodes_for_throughput} nodes")
+    print(f"     With replicas (1 per master) : {nodes_for_throughput * 2} nodes")
+    print(f"     Shard key : hash(product_id) % 16384 (standard Redis Cluster)")
 
     # 3. Flash deals
     print(f"\n  3. Flash deals :")
-    print(f"     Probleme : a 14:00 exactement, 100 produits passent en promo.")
-    print(f"     Des millions d'users chargent la page en meme temps.")
-    print(f"     -> Cache stampede sur 100 cles simultanement.")
+    print(f"     Problem : at 14:00 exactly, 100 products go on sale.")
+    print(f"     Millions of users load the page at the same time.")
+    print(f"     -> Cache stampede on 100 keys simultaneously.")
     print(f"     Solution :")
-    print(f"     a) Cache warming 5 min AVANT le deal (charger les 100 produits dans")
-    print(f"        L1 + L2 avec le nouveau prix)")
-    print(f"     b) stale-while-revalidate : servir le cache existant pendant le rebuild")
-    print(f"     c) Mutex par cle pour les misses residuels")
-    print(f"\n     Reservation de stock avec Redis :")
-    print(f"     SET stock:product_123 500   # Initialiser le stock")
-    print(f"     DECR stock:product_123      # Atomique ! Retourne le stock restant")
-    print(f"     Si DECR retourne < 0 : survente -> INCR pour annuler + refuser la commande")
-    print(f"     DECR est atomique en Redis -> pas de race condition meme avec 100K requetes")
+    print(f"     a) Cache warming 5 min BEFORE the deal (load the 100 products into")
+    print(f"        L1 + L2 with the new price)")
+    print(f"     b) stale-while-revalidate : serve the existing cache during the rebuild")
+    print(f"     c) Per-key mutex for the residual misses")
+    print(f"\n     Stock reservation with Redis :")
+    print(f"     SET stock:product_123 500   # Initialize the stock")
+    print(f"     DECR stock:product_123      # Atomic! Returns the remaining stock")
+    print(f"     If DECR returns < 0 : oversell -> INCR to undo + reject the order")
+    print(f"     DECR is atomic in Redis -> no race condition even with 100K requests")
 
     # 4. Cache warming
     print(f"\n  4. Cache warming :")
-    print(f"     Donnees a pre-charger :")
-    print(f"     - 100 flash deals (prix, description, stock)")
-    print(f"     - Top 10K produits les plus vus (historique)")
-    print(f"     - Config globale (seuils promo, feature flags)")
-    print(f"     Comment eviter de surcharger la DB :")
-    print(f"     - Rate limiter : 1000 queries/sec max pendant le warm")
-    print(f"     - Commencer 30 min avant le pic")
-    print(f"     - Utiliser un read replica pour le warm (pas le master)")
+    print(f"     Data to preload :")
+    print(f"     - 100 flash deals (price, description, stock)")
+    print(f"     - Top 10K most viewed products (historical)")
+    print(f"     - Global config (promo thresholds, feature flags)")
+    print(f"     How to avoid overloading the DB :")
+    print(f"     - Rate limiter : 1000 queries/sec max during the warm")
+    print(f"     - Start 30 min before the peak")
+    print(f"     - Use a read replica for the warm (not the master)")
     print(f"     Timing : T-30min (bulk warm) -> T-5min (refresh flash deals) -> T-0 (go)")
 
     # 5. Resilience
     print(f"\n  5. Resilience :")
-    print(f"     Si Redis tombe pendant le Black Friday :")
-    print(f"     a) Circuit breaker : detecte les timeouts Redis (> 5ms)")
-    print(f"        Apres 10 echecs consecutifs -> ouvrir le circuit")
-    print(f"     b) Fallback : servir les donnees du L1 cache (stale mais disponible)")
-    print(f"     c) Rate limiter sur la DB : max 5K queries/sec (vs 50K sans cache)")
-    print(f"        -> degrade mais ne tue pas la DB")
-    print(f"     d) Page de file d'attente virtuelle si la charge depasse la capacite")
-    print(f"     Detection : alerte si hit rate < 60% pendant 30 secondes")
+    print(f"     If Redis goes down during Black Friday :")
+    print(f"     a) Circuit breaker : detects Redis timeouts (> 5ms)")
+    print(f"        After 10 consecutive failures -> open the circuit")
+    print(f"     b) Fallback : serve the L1 cache data (stale but available)")
+    print(f"     c) Rate limiter on the DB : max 5K queries/sec (vs 50K without cache)")
+    print(f"        -> degraded but does not kill the DB")
+    print(f"     d) Virtual waiting room page if the load exceeds capacity")
+    print(f"     Detection : alert if hit rate < 60% for 30 seconds")
 
     # 6. Monitoring
-    print(f"\n  6. Monitoring (8 metriques) :")
+    print(f"\n  6. Monitoring (8 metrics) :")
     metrics = [
-        ("Redis hit rate", "< 75%", "Cache sous-performant"),
-        ("Redis eviction rate", "> 5K/s", "Cache trop petit pour le workload"),
-        ("Redis latency p99", "> 5ms", "Redis surcharge ou reseau"),
-        ("Redis memory usage %", "> 85%", "Risque d'eviction imminente"),
-        ("DB connections active", "> 160/200", "Pool quasi-sature"),
-        ("DB CPU %", "> 70%", "DB surchargee (cache inefficace)"),
-        ("API error rate (5xx)", "> 0.1%", "Degradation visible par les users"),
-        ("Stock DECR rate/sec", "> stock initial", "Survente potentielle"),
+        ("Redis hit rate", "< 75%", "Underperforming cache"),
+        ("Redis eviction rate", "> 5K/s", "Cache too small for the workload"),
+        ("Redis latency p99", "> 5ms", "Redis overloaded or network"),
+        ("Redis memory usage %", "> 85%", "Risk of imminent eviction"),
+        ("DB connections active", "> 160/200", "Pool nearly saturated"),
+        ("DB CPU %", "> 70%", "DB overloaded (cache ineffective)"),
+        ("API error rate (5xx)", "> 0.1%", "Degradation visible to users"),
+        ("Stock DECR rate/sec", "> initial stock", "Potential overselling"),
     ]
     for name, threshold, meaning in metrics:
-        print(f"     - {name} : alerte si {threshold} ({meaning})")
+        print(f"     - {name} : alert if {threshold} ({meaning})")
 
     # Budget
     print(f"\n  Budget estimation :")
-    redis_nodes = nodes_for_throughput * 2  # Avec replicas
-    redis_cost_per_node = 800  # $/mois pour un r6g.xlarge (32 Go RAM)
+    redis_nodes = nodes_for_throughput * 2  # With replicas
+    redis_cost_per_node = 800  # $/month for an r6g.xlarge (32 GB RAM)
     redis_cost = redis_nodes * redis_cost_per_node
-    cdn_cost = 8000  # $/mois pour le pic Black Friday
+    cdn_cost = 8000  # $/month for the Black Friday peak
     total = redis_cost + cdn_cost
-    print(f"     Redis : {redis_nodes} noeuds * ${redis_cost_per_node}/mois = ${redis_cost:,}/mois")
-    print(f"     CDN   : ~${cdn_cost:,}/mois (pic Black Friday)")
-    print(f"     Total : ~${total:,}/mois (dans le budget de $50K)")
+    print(f"     Redis : {redis_nodes} nodes * ${redis_cost_per_node}/month = ${redis_cost:,}/month")
+    print(f"     CDN   : ~${cdn_cost:,}/month (Black Friday peak)")
+    print(f"     Total : ~${total:,}/month (within the $50K budget)")
 
 
 # =============================================================================
-# HARD -- Exercice 2 : Post-mortem cache incident
+# HARD -- Exercise 2 : Cache incident post-mortem
 # =============================================================================
 
 def hard_2_postmortem():
-    """Solution pour le post-mortem de l'incident cache."""
+    """Solution for the cache incident post-mortem."""
     print(f"\n{SEPARATOR}")
-    print("  HARD 2 : Post-mortem — Le cache qui a casse le paiement")
+    print("  HARD 2 : Post-mortem — The cache that broke checkout")
     print(SEPARATOR)
 
-    print(f"\n  1. Chaine causale complete :")
+    print(f"\n  1. Full causal chain :")
     chain = [
-        ("PROCESSUS", "Script marketing ecrit directement en DB",
-         "Guardrail manquant : toute ecriture doit passer par le service applicatif (API)"),
-        ("ARCHITECTURE", "Le cache n'est pas invalide car le script contourne le service",
-         "Guardrail manquant : CDC (Change Data Capture) pour capturer les writes DB directs"),
-        ("ARCHITECTURE", "Stale cache pendant 5 min (TTL) avec des prix incorrects",
-         "Guardrail manquant : TTL de 5 min trop long pour les prix (devrait etre 10-30s)"),
-        ("PROCESSUS", "FLUSHALL comme reaction d'urgence",
-         "Guardrail manquant : runbook d'incident qui interdit FLUSHALL en production"),
-        ("ARCHITECTURE", "Cache stampede massif (15M cache miss simultanes)",
-         "Guardrail manquant : mecanisme anti-stampede (mutex, stale-while-revalidate)"),
-        ("ARCHITECTURE", "DB saturee (100% CPU, connexions epuisees)",
-         "Guardrail manquant : circuit breaker + rate limiter entre app et DB"),
-        ("MONITORING", "Erreurs 500 en cascade, site down 35 min",
-         "Guardrail manquant : graceful degradation (servir le stale plutot que des 500)"),
+        ("PROCESS", "Marketing script writes directly to the DB",
+         "Missing guardrail : every write must go through the application service (API)"),
+        ("ARCHITECTURE", "The cache is not invalidated because the script bypasses the service",
+         "Missing guardrail : CDC (Change Data Capture) to capture direct DB writes"),
+        ("ARCHITECTURE", "Stale cache for 5 min (TTL) with incorrect prices",
+         "Missing guardrail : a 5 min TTL is too long for prices (should be 10-30s)"),
+        ("PROCESS", "FLUSHALL as an emergency reaction",
+         "Missing guardrail : incident runbook that forbids FLUSHALL in production"),
+        ("ARCHITECTURE", "Massive cache stampede (15M simultaneous cache misses)",
+         "Missing guardrail : anti-stampede mechanism (mutex, stale-while-revalidate)"),
+        ("ARCHITECTURE", "DB saturated (100% CPU, connections exhausted)",
+         "Missing guardrail : circuit breaker + rate limiter between app and DB"),
+        ("MONITORING", "Cascading 500 errors, site down 35 min",
+         "Missing guardrail : graceful degradation (serve stale rather than 500s)"),
     ]
     for category, cause, guardrail in chain:
         print(f"     [{category}] {cause}")
         print(f"       -> {guardrail}")
 
-    print(f"\n  2. Le FLUSHALL etait-il la bonne decision ?")
-    print(f"     NON. C'est l'erreur qui a transforme un probleme mineur")
-    print(f"     (prix stale pendant < 5 min) en incident majeur (35 min de downtime).")
-    print(f"\n     Alternatives au FLUSHALL :")
-    print(f"     a) Invalider SEULEMENT les 500 cles concernees :")
+    print(f"\n  2. Was the FLUSHALL the right decision ?")
+    print(f"     NO. It's the mistake that turned a minor problem")
+    print(f"     (stale prices for < 5 min) into a major incident (35 min of downtime).")
+    print(f"\n     Alternatives to FLUSHALL :")
+    print(f"     a) Invalidate ONLY the 500 affected keys :")
     print(f"        for product_id in promo_products:")
     print(f"            redis.delete(f'product:price:{{product_id}}')")
-    print(f"        Etaler sur 5 secondes (100 DEL/sec) pour eviter le stampede")
-    print(f"     b) Attendre que le TTL expire naturellement (< 5 min)")
-    print(f"        Le stale price est un probleme, mais 35 min de downtime est pire")
-    print(f"     c) Reduire le TTL a 10s pour les cles de prix :")
+    print(f"        Spread over 5 seconds (100 DEL/sec) to avoid the stampede")
+    print(f"     b) Wait for the TTL to expire naturally (< 5 min)")
+    print(f"        The stale price is a problem, but 35 min of downtime is worse")
+    print(f"     c) Reduce the TTL to 10s for the price keys :")
     print(f"        redis.expire(f'product:price:{{id}}', 10)")
-    print(f"        Les cles expirent naturellement en 10s sans stampede")
+    print(f"        The keys expire naturally within 10s without a stampede")
 
-    print(f"\n     Si FLUSHALL etait absolument necessaire :")
-    print(f"     1. Activer le circuit breaker sur la DB AVANT le flush")
-    print(f"     2. Limiter le refill a 1000 queries/sec (rate limiter)")
-    print(f"     3. Utiliser stale-while-revalidate pour servir le vieux cache")
-    print(f"     4. Flusher par chunks (SCAN + DELETE) au lieu de FLUSHALL")
+    print(f"\n     If FLUSHALL was absolutely necessary :")
+    print(f"     1. Enable the circuit breaker on the DB BEFORE the flush")
+    print(f"     2. Limit the refill to 1000 queries/sec (rate limiter)")
+    print(f"     3. Use stale-while-revalidate to serve the old cache")
+    print(f"     4. Flush in chunks (SCAN + DELETE) instead of FLUSHALL")
 
-    print(f"\n  3. Architecture corrigee :")
-    print(f"     a) Empecher les ecritures directes en DB :")
-    print(f"        - Principe : tout changement de prix passe par l'API (pas de SQL direct)")
-    print(f"        - Enforcement : le user DB du script a seulement SELECT, pas UPDATE")
-    print(f"        - Backup : CDC (Debezium) surveille la table prices en temps reel")
-    print(f"     b) 3 mecanismes contre l'inconsistance de prix :")
-    print(f"        1. TTL court (10s) sur les cles de prix")
-    print(f"        2. CDC via Debezium : capture les writes DB -> invalide le cache")
-    print(f"        3. Double-check au checkout : relire le prix en DB avant de creer la commande")
+    print(f"\n  3. Fixed architecture :")
+    print(f"     a) Prevent direct DB writes :")
+    print(f"        - Principle : every price change goes through the API (no direct SQL)")
+    print(f"        - Enforcement : the script's DB user only has SELECT, not UPDATE")
+    print(f"        - Backup : CDC (Debezium) watches the prices table in real time")
+    print(f"     b) 3 mechanisms against price inconsistency :")
+    print(f"        1. Short TTL (10s) on the price keys")
+    print(f"        2. CDC via Debezium : captures DB writes -> invalidates the cache")
+    print(f"        3. Double-check at checkout : re-read the price in the DB before creating the order")
     print(f"     c) Safe cache invalidation pattern :")
-    print(f"        1. Invalider les cles par batch (100/sec)")
-    print(f"        2. Utiliser le lock/mutex pour le rebuild")
-    print(f"        3. stale-while-revalidate : servir l'ancien pendant le rebuild")
+    print(f"        1. Invalidate the keys in batches (100/sec)")
+    print(f"        2. Use the lock/mutex for the rebuild")
+    print(f"        3. stale-while-revalidate : serve the old data during the rebuild")
 
-    print(f"\n  4. Architecture event-driven pour les prix :")
-    print(f"     Option 1 : CDC avec Debezium")
+    print(f"\n  4. Event-driven architecture for the prices :")
+    print(f"     Option 1 : CDC with Debezium")
     print(f"       PostgreSQL WAL -> Debezium -> Kafka topic 'price-changes'")
-    print(f"       -> Consumer invalide les cles Redis correspondantes")
-    print(f"       Avantage : capture TOUT, meme les scripts SQL directs")
+    print(f"       -> Consumer invalidates the corresponding Redis keys")
+    print(f"       Advantage : captures EVERYTHING, even direct SQL scripts")
     print(f"     Option 2 : Outbox pattern")
-    print(f"       L'API ecrit dans la table prices ET dans une table outbox")
-    print(f"       Un worker poll la table outbox et invalide le cache")
-    print(f"       Avantage : transactionnel (write + event dans la meme TX)")
-    print(f"     Recommandation : CDC (Debezium) car il capture aussi les scripts directs")
+    print(f"       The API writes into the prices table AND into an outbox table")
+    print(f"       A worker polls the outbox table and invalidates the cache")
+    print(f"       Advantage : transactional (write + event in the same TX)")
+    print(f"     Recommendation : CDC (Debezium) because it also captures direct scripts")
 
     print(f"\n  5. Resilience patterns :")
-    print(f"     Circuit breaker (seuils concrets) :")
-    print(f"       - CLOSED (normal) : < 160 connexions DB actives")
-    print(f"       - OPEN (fallback) : > 160 connexions pendant 5 secondes")
-    print(f"       - Fallback : servir le cache stale + header X-Cache-Stale: true")
-    print(f"       - HALF-OPEN : apres 30s, laisser passer 10% du trafic pour tester")
+    print(f"     Circuit breaker (concrete thresholds) :")
+    print(f"       - CLOSED (normal) : < 160 active DB connections")
+    print(f"       - OPEN (fallback) : > 160 connections for 5 seconds")
+    print(f"       - Fallback : serve the stale cache + header X-Cache-Stale: true")
+    print(f"       - HALF-OPEN : after 30s, let 10% of the traffic through to test")
     print(f"     Graceful degradation :")
-    print(f"       - Servir les prix stale avec un bandeau 'prix indicatif'")
-    print(f"       - Verifier le prix reel au checkout (DB directement)")
-    print(f"       - Mieux vaut un prix stale que une erreur 500")
+    print(f"       - Serve the stale prices with an 'indicative price' banner")
+    print(f"       - Verify the real price at checkout (directly in the DB)")
+    print(f"       - Better a stale price than a 500 error")
 
-    print(f"\n     Runbook (10 etapes) :")
+    print(f"\n     Runbook (10 steps) :")
     steps = [
-        "NE PAS FLUSHALL (jamais en production sans protection)",
-        "Identifier les cles impactees (quel prefixe, combien)",
-        "Activer le circuit breaker si pas deja actif",
-        "Invalider les cles specifiques par batch (100/sec max)",
-        "Monitorer le hit rate et le DB CPU en temps reel",
-        "Si le hit rate chute < 50% : activer le rate limiter DB (1K QPS max)",
-        "Si la DB est saturee : activer le fallback stale-cache (servir l'ancien)",
-        "Communiquer l'incident en interne (Slack #incidents)",
-        "Quand le cache est reconstruit (hit rate > 80%) : desactiver les protections",
-        "Post-mortem dans les 24h : timeline, root cause, actions correctives",
+        "Do NOT FLUSHALL (never in production without protection)",
+        "Identify the impacted keys (which prefix, how many)",
+        "Enable the circuit breaker if not already active",
+        "Invalidate the specific keys in batches (100/sec max)",
+        "Monitor the hit rate and the DB CPU in real time",
+        "If the hit rate drops < 50% : enable the DB rate limiter (1K QPS max)",
+        "If the DB is saturated : enable the stale-cache fallback (serve the old data)",
+        "Communicate the incident internally (Slack #incidents)",
+        "Once the cache is rebuilt (hit rate > 80%) : disable the protections",
+        "Post-mortem within 24h : timeline, root cause, corrective actions",
     ]
     for i, step in enumerate(steps, 1):
         print(f"       {i:2d}. {step}")
@@ -682,9 +682,9 @@ def hard_2_postmortem():
 
 
 def main():
-    """Execute toutes les solutions."""
+    """Runs all the solutions."""
     print("\n" + "=" * 60)
-    print("  SOLUTIONS — JOUR 3 : CACHING & CDN")
+    print("  SOLUTIONS — DAY 3 : CACHING & CDN")
     print("=" * 60)
 
     # Easy
@@ -702,7 +702,7 @@ def main():
     hard_2_postmortem()
 
     print(f"\n{'=' * 60}")
-    print("  FIN DES SOLUTIONS")
+    print("  END OF SOLUTIONS")
     print(f"{'=' * 60}\n")
 
 
