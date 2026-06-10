@@ -886,24 +886,9 @@ if __name__ == "__main__":
     medium_ex2_structured_output()
     medium_ex3_middleware()
 
-    # Hard exercises are not included here because they are substantial
-    # projects (150-300 lines each). Key hints:
-    #
-    # Hard Ex 1 (Dynamic Tool Discovery):
-    #   - The "Tool Server" is just a dict with 3 endpoints simulated as functions
-    #   - The agent starts with 3 meta-tools: discover_tools, get_tool_schema, call_tool
-    #   - The system prompt says: "You don't know what tools are available. Use
-    #     discover_tools first, then get_tool_schema to learn how to use them."
-    #   - The agent loop is standard ReAct, but the tools are meta-tools
-    #   - This pattern is how MCP servers work -- tools are discovered at runtime
-    #
-    # Hard Ex 2 (Tool Composition Engine):
-    #   - Steps are dicts with "tool", "params_template", "output_key"
-    #   - Template resolution: replace {var} in params_template with values from context
-    #   - Context is a dict that accumulates outputs: {"step1_result": ..., "step2_result": ...}
-    #   - Error handling: wrap each step in try/except, check continue_on_error flag
-    #   - The composed tool's fn() runs all steps sequentially and returns the final result
-    #   - Register the composed tool normally in the registry -- the agent can't tell the difference
+    # Hard exercises (dynamic tool discovery + tool composition engine) are
+    # substantial projects, so they live in their own file:
+    #   python 03-exercises/solutions/02-tool-use-function-calling-hard.py
 
     print("\n" + "#" * 60)
     print("  All solutions executed successfully.")

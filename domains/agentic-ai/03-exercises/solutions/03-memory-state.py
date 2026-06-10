@@ -950,6 +950,6 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 60)
     print("  All solutions complete!")
-    print("  Hard exercises are architecture-heavy — see the exercise")
-    print("  descriptions for implementation guidance.")
+    print("  Hard exercises (MemGPT-lite + shared memory bus) live in:")
+    print("    03-exercises/solutions/03-memory-state-hard.py")
     print("=" * 60)

@@ -567,22 +567,9 @@ if __name__ == "__main__":
     medium_ex2_working_memory()
     medium_ex3_router_specialists()
 
-    # Hard exercises are not included here because they are substantial
-    # projects (100-300 lines each). The exercise descriptions provide
-    # enough guidance to implement them. Key hints:
-    #
-    # Hard Ex 1 (Reflexion):
-    #   - Wrap react_agent in an outer loop with max 3 retries
-    #   - Use a second LLM call as evaluator: "Is this correct? PASS/RETRY"
-    #   - On RETRY, append the evaluator's feedback to the agent's context
-    #   - The agent sees: "Previous attempt failed because: <feedback>"
-    #
-    # Hard Ex 2 (Framework):
-    #   - Use dataclasses for Tool, Memory, AgentConfig, AgentTrace
-    #   - Hooks are just Dict[str, List[Callable]] -- event name -> callbacks
-    #   - ReActAgent.run() is the same loop as 01-anatomie-agent.py
-    #   - But wrapped in try/except with retry logic and hook dispatch
-    #   - AgentTrace.to_json() uses dataclasses.asdict() + json.dumps()
+    # Hard exercises (Reflexion agent + generic agent framework) are
+    # substantial projects, so they live in their own file:
+    #   python 03-exercises/solutions/01-anatomie-agent-hard.py
 
     print("\n" + "#" * 60)
     print("  All solutions executed successfully.")
