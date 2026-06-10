@@ -74,11 +74,15 @@ sorted(pairs, key=lambda x: x[1])                 # [(2, 'a'), (3, 'b'), (1, 'c'
 ```python
 # Trier d'abord par longueur croissante, puis par ordre alphabetique
 sorted(words, key=lambda s: (len(s), s))
-# [('fig'), 'apple', 'banana', 'cherry'] — les tuples se comparent lexicographiquement
+# ['fig', 'apple', 'banana', 'cherry'] — les tuples se comparent lexicographiquement
 
 # Tri mixte : longueur croissante, nom decroissant
-# Astuce : inverser l'ordre en niant la cle numerique
-sorted(words, key=lambda s: (len(s), -ord(s[0])))
+# Piege : key=lambda s: (len(s), -ord(s[0])) ne nie que le PREMIER caractere,
+# pas le nom complet — "apple" et "avocado" seraient consideres egaux.
+# Solution correcte : exploiter la stabilite (critere le moins important d'abord)
+step1 = sorted(words, reverse=True)        # by name, descending
+sorted(step1, key=len)                     # then by length, ascending (stable)
+# (autre option : functools.cmp_to_key, voir plus bas)
 ```
 
 **Regle** : pour un tri compose stable, emballe tes criteres dans un tuple. Python compare les tuples element par element, et s'arrete au premier ecart.
@@ -119,7 +123,7 @@ def compare(a, b):
 nums = [10, 2, 9, 39, 17]
 str_nums = [str(n) for n in nums]
 result = ''.join(sorted(str_nums, key=cmp_to_key(compare)))
-# "939210..." etc.
+# "93921710"
 ```
 
 **Quand l'utiliser** : quand l'ordre ne peut pas etre exprime comme une cle fixe. Moins rapide que `key=` (constante plus elevee).

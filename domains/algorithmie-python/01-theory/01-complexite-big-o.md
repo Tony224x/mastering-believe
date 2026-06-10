@@ -336,7 +336,7 @@ def process(arr):
 > **R1** : `list` → O(n), `set` → O(1) en moyenne. Toujours convertir en set si on fait des lookups repetes.
 
 **Q2** : Pourquoi `list.append()` est O(1) alors qu'il doit parfois reallouer ?
-> **R2** : Complexite amortie. La reallocation double (environ) la capacite, donc le cout de copie est "dilue" sur les prochains appends. En moyenne : O(1) par operation.
+> **R2** : Complexite amortie. La reallocation agrandit la capacite d'un facteur ~1.125x (croissance sous-exponentielle de CPython), donc le cout de copie est "dilue" sur les prochains appends. En moyenne : O(1) amorti par operation.
 
 **Q3** : Tu vois deux boucles `for` imbriquees sur un tableau de taille n. Complexite ?
 > **R3** : O(n^2). Multiplier les bornes des boucles imbriquees. Attention : si la boucle interne est sur un autre tableau de taille m, c'est O(n*m).

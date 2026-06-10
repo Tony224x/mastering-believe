@@ -9,7 +9,7 @@
 Ils partagent un point commun : **ce ne sont pas des "must-know" absolus**, mais chacun debloque une classe de problemes autrement inaccessibles en O(n log n) ou pire.
 
 - **Bits** : operations O(1) qui remplacent des boucles entieres (flags, sets compacts)
-- **Heaps** : top-K, merge K sorted, priority queues — en O(k log n) ou O(log n) par op
+- **Heaps** : top-K en O(n log k) avec un heap de taille k, merge K sorted, priority queues — O(log n) par op
 - **Tries** : recherche par prefixe, autocomplete, dictionnaires — O(L) independant de la taille du dico
 
 En entretien, ces sujets apparaissent moins souvent, mais quand ils apparaissent, **ils sont la cle de la solution optimale**. Ne pas les connaitre = stuck.
@@ -40,7 +40,7 @@ En entretien, ces sujets apparaissent moins souvent, mais quand ils apparaissent
 20 >> 2          # 20 / 4 = 5
 ```
 
-### Les 5 tricks incontournables
+### Les 7 tricks incontournables
 
 ```python
 # 1. Verifier si le bit i est a 1
