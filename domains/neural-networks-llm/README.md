@@ -10,31 +10,31 @@ Comprendre les mecanismes internes des LLMs, du neurone unique jusqu'aux archite
 - Algebre lineaire basique (matrices, vecteurs, produit scalaire)
 - Notions de calcul differentiel (derivees, chaine)
 
-## Planning (2 semaines)
+## Planning (3 semaines)
 
 ### Semaine 1 — Des fondations aux Transformers
 
 | Jour | Module | Focus | Temps |
 |------|--------|-------|-------|
 | J1 | Le neurone & backpropagation | Perceptron, fonctions d'activation, gradient descent, backprop a la main | 4h |
-| J2 | Reseaux denses (MLP) | Forward pass, loss functions, optimizers (SGD, Adam), regularization | 3h |
-| J3 | Embeddings & representations | Word2Vec, espaces vectoriels, similarite cosinus, pourquoi ca marche | 3h |
-| J4 | Sequence modeling | RNN, LSTM, GRU — pourquoi ils existent, pourquoi ils ont echoue a scale | 3h |
-| J5 | Attention mechanism | Self-attention from scratch, QKV, pourquoi l'attention resout le bottleneck | 4h |
-| J6 | Transformer architecture | "Attention is All You Need" bloc par bloc, positional encoding, layer norm | 4h |
-| J7 | **Implementer un mini-Transformer** | Coder un Transformer complet from scratch en PyTorch (~200 lignes) | 4h |
+| J2 | Reseaux denses (MLP) | Forward pass, loss functions, optimizers (SGD, Adam), regularization | 5h |
+| J3 | Embeddings & representations | Word2Vec, espaces vectoriels, similarite cosinus, pourquoi ca marche | 5h |
+| J4 | Sequence modeling | RNN, LSTM, GRU — pourquoi ils existent, pourquoi ils ont echoue a scale | 5h |
+| J5 | Attention mechanism | Self-attention from scratch, QKV, pourquoi l'attention resout le bottleneck | 6h |
+| J6 | Transformer architecture | "Attention is All You Need" bloc par bloc, positional encoding, layer norm | 6h |
+| J7 | **Implementer un mini-Transformer** | Coder un Transformer complet from scratch en PyTorch (~200 lignes) | 6-8h |
 
 ### Semaine 2 — LLMs modernes & techniques avancees
 
 | Jour | Module | Focus | Temps |
 |------|--------|-------|-------|
-| J8 | Pre-training & Tokenization | BPE, SentencePiece, pre-training objectives (CLM, MLM), scaling laws | 3h |
-| J9 | Architecture des LLMs modernes | GPT, LLaMA, Mistral — diff architecturales (RoPE, GQA, SwiGLU, RMSNorm) | 4h |
-| J10 | Fine-tuning & Alignment | SFT, RLHF, DPO, constitutional AI — comment on passe de base model a assistant | 3h |
-| J11 | Inference optimisee | KV-cache, speculative decoding, quantization (GPTQ, AWQ), Flash Attention | 3h |
-| J12 | Multimodalite & au-dela | Vision Transformers, CLIP, modeles multimodaux, architecture encoder-decoder | 3h |
-| J13 | Emergent abilities & reasoning | Chain-of-thought, in-context learning, pourquoi ca emerge, scaling hypothesis | 3h |
-| J14 | **Capstone** | Lire et decortiquer un paper recent + reimplementer le composant cle | 4h |
+| J8 | Pre-training & Tokenization | BPE, SentencePiece, pre-training objectives (CLM, MLM), scaling laws | 5h |
+| J9 | Architecture des LLMs modernes | GPT, LLaMA, Mistral — diff architecturales (RoPE, GQA, SwiGLU, RMSNorm) | 6h |
+| J10 | Fine-tuning & Alignment | SFT, RLHF, DPO, constitutional AI — comment on passe de base model a assistant | 5h |
+| J11 | Inference optimisee | KV-cache, speculative decoding, quantization (GPTQ, AWQ), Flash Attention | 5h |
+| J12 | Multimodalite & au-dela | Vision Transformers, CLIP, modeles multimodaux, architecture encoder-decoder | 5h |
+| J13 | Emergent abilities & reasoning | Chain-of-thought, in-context learning, pourquoi ca emerge, scaling hypothesis | 5h |
+| J14 | **Capstone** | Lire et decortiquer un paper recent + reimplementer le composant cle | 6h |
 
 ### Semaine 3 (optionnelle) — Frontiere NN 2026
 
@@ -52,6 +52,14 @@ Cette semaine reste **strictement sur les reseaux de neurones** : architectures,
 | J22 | Vision-language models | ViT, CLIP, LLaVA, SigLIP, cross-attention vs token concat, image tokenization | 5h |
 
 **Prerequis pour Semaine 3** : avoir fait J1-J13 (la Semaine 2 des LLMs modernes) ou equivalent. Les lecons de frontiere supposent la maitrise des Transformers, attention, pre-training, SFT/RLHF et inference basique.
+
+## Au-dela de la theorie
+
+- **`02-code/`** : un script standalone par module theorique, runnable sans GPU.
+- **`03-exercises/`** : exercices progressifs (easy → medium → hard) + solutions, couvrant les modules 01-14 en 1:1. Les modules 15-22 n'ont pas encore d'exercices. L'espace `workspace/` (gitignore) est reserve a tes propres solutions.
+- **`04-projects/`** : espace libre pour mini-projets et capstones supplementaires lies au domaine.
+- **`05-projets-guides/`** : 3 projets guides appliques au contexte logistique LogiSim/FleetSim (voir [`shared/logistics-context.md`](../../shared/logistics-context.md)) — detection de quasi-collisions, imitation learning, rapport EOD genere par LLM.
+- **`01-theory-qd/`** : version Quarkdown enrichie de la theorie (math LaTeX, mermaid, callouts), buildable en site statique via `quarkdown/scripts/build-all.ps1`. Les `.md` de `01-theory/` restent la source-of-truth.
 
 ## Criteres de reussite
 

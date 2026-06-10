@@ -356,7 +356,90 @@ Si tu es fluent sur ces 7 points, tu as la base pour lire le code de nanoGPT, co
 
 ---
 
-## 9. Key Takeaways
+## 9. Flash Cards — Active Recall
+
+### Q1 : Pourquoi utilise-t-on un tokenizer caractere pour le mini-GPT ? Quels sont ses pros et cons ?
+
+<details>
+<summary>Reponse</summary>
+
+Parce que c'est le tokenizer le plus simple possible (5 lignes de Python) : chaque caractere unique du corpus devient un token.
+
+**Pros** : vocabulaire minuscule (60-100 tokens vs ~50K pour BPE), aucun OOV possible, implementation triviale.
+
+**Cons** : sequences beaucoup plus longues (un mot = 5-10 tokens au lieu de 1), les patterns linguistiques prennent plus de temps a apprendre, gaspillage de compute.
+
+Pour un mini-GPT pedagogique c'est le bon choix ; un vrai modele utilise BPE/SentencePiece.
+
+</details>
+
+### Q2 : Comment construit-on les paires (input, target) pour l'entrainement autoregressif ?
+
+<details>
+<summary>Reponse</summary>
+
+Le target est l'input **decale de 1 caractere** : pour `x = corpus[i : i+block_size]`, on prend `y = corpus[i+1 : i+1+block_size]`.
+
+A chaque position `t`, le modele doit predire `y[t]` (le caractere suivant) a partir de `x[0..t]`. La loss est la cross-entropy moyennee sur toutes les positions du batch :
+
+```python
+loss = F.cross_entropy(logits.view(-1, vocab_size), y.view(-1))
+```
+
+Grace au masque causal, les `block_size` predictions sont calculees **en parallele** dans une seule passe forward — c'est ce qui rend le Transformer ~100x plus rapide a entrainer qu'un RNN.
+
+</details>
+
+### Q3 : Pourquoi la loss initiale d'un mini-GPT vaut-elle environ `log(vocab_size)` ?
+
+<details>
+<summary>Reponse</summary>
+
+Avec des poids aleatoires, le modele predit une distribution quasi-uniforme : chaque caractere a une probabilite ~`1/vocab_size`.
+
+La cross-entropy vaut alors `-log(1/vocab_size) = log(vocab_size)`. Pour `vocab_size = 60` : `loss ≈ log(60) ≈ 4.09`.
+
+C'est un excellent sanity check : si la loss initiale est tres differente de `log(vocab_size)`, il y a un bug (mauvaise init, mauvais reshape des logits, targets decales...).
+
+</details>
+
+### Q4 : Quelle est la difference entre greedy decoding et sampling avec temperature ?
+
+<details>
+<summary>Reponse</summary>
+
+**Greedy** : on prend l'argmax des logits a chaque pas. Deterministe → toujours la meme suite pour le meme prompt, tendance a boucler sur des patterns courts.
+
+**Sampling avec temperature** : on echantillonne selon `softmax(logits / T)` :
+
+- `T = 1` : distribution naturelle
+- `T < 1` : distribution plus peakue (plus deterministe) ; `T → 0` equivaut au greedy
+- `T > 1` : distribution plus plate (plus aleatoire) ; `T → ∞` equivaut a l'uniforme
+
+Top-k et top-p (nucleus) coupent en plus la queue de distribution pour eviter les tokens ultra-rares qui cassent la coherence.
+
+</details>
+
+### Q5 : Pourquoi doit-on croper le contexte a `block_size` pendant la generation ?
+
+<details>
+<summary>Reponse</summary>
+
+Le modele n'a ete entraine que sur des sequences de longueur `<= block_size`, et son positional encoding n'a que `block_size` positions definies.
+
+Si le texte genere depasse `block_size`, on garde uniquement les `block_size` derniers tokens comme contexte :
+
+```python
+ids_cond = ids[:, -block_size:]
+```
+
+Consequence : le mini-GPT a une "memoire" limitee a `block_size` caracteres — tout ce qui est plus ancien est oublie. C'est l'equivalent miniature de la fenetre de contexte d'un vrai LLM.
+
+</details>
+
+---
+
+## 10. Key Takeaways
 
 1. **Un GPT = token embed + pos encoding + N transformer blocks (causal) + final LN + projection**. C'est tout.
 
