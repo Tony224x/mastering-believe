@@ -13,7 +13,7 @@ Produire un document d'architecture qui couvre :
 2. La boucle de tick synchronisee (comment tous les serveurs avancent au meme pas)
 3. La gestion des unites cross-boundary (hand-off)
 4. Le determinisme (PRNG, ordre d'application des events)
-5. La tolerance aux pannes (crash d'un worker pendant l'exercice)
+5. La tolerance aux pannes (crash d'un worker pendant le shift)
 6. Les metriques et SLOs
 
 ## Contraintes non fonctionnelles

@@ -17,11 +17,11 @@ Alternatives ecartees :
 
 ## Bundle signe
 
-Livraison : un seul fichier `sword-release-YYYY-MM.tgz`
+Livraison : un seul fichier `fleetsim-release-YYYY-MM.tgz`
 
 Contenu :
 ```
-sword-release-2026-04.tgz
+fleetsim-release-2026-04.tgz
 ├── MANIFEST.yaml           # liste images + hashes SHA-256
 ├── images/
 │   ├── sim.tar             # image docker de la simu
@@ -77,13 +77,13 @@ Le service d'auth local (Dex, Keycloak, ou custom) est la couche d'abstraction q
 
 Procedure :
 1. Nouveau bundle signe livre en USB
-2. `install.sh upgrade --target blue` cree un nouveau deploiement dans un namespace `sword-blue` (ancien : `sword-green`)
+2. `install.sh upgrade --target blue` cree un nouveau deploiement dans un namespace `fleetsim-blue` (ancien : `fleetsim-green`)
 3. Smoke test automatique (lancer un micro-scenario, verifier healthcheck)
 4. Bascule du ingress vers blue
 5. Si probleme dans les 24h, rollback = bascule ingress vers green
 6. Apres 7 jours, garbage collect green
 
-Pas de mise a jour in-place : trop risque sur un systeme critique ou la prod est en cours d'exercice.
+Pas de mise a jour in-place : trop risque sur un systeme critique ou un shift est en cours.
 
 ## Supply chain
 

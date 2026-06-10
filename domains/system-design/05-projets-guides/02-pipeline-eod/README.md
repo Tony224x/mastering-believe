@@ -10,7 +10,7 @@ Pour que ca marche, le pipeline doit :
 - Permettre des **requetes analytiques** : "quels AGV ont ete en zone B-12 ?", "combien de pickups par la flotte Alpha ?"
 - Survivre a un crash du serveur de simu (un shift = 8 heures d'activite operationnelle, pas negociable de perdre les donnees)
 
-Un shift typique : 2000 unites, 8 heures, 10 ticks/sec = 576 millions de ticks, 10-100 events par tick = **6-60 milliards d'events** par shift. En realite on stocke plutot les deltas (ce qui change), ce qui fait revenir a ~100 Go brut.
+Un shift typique : 2000 unites, 8 heures, 10 ticks/sec, ~10k events/sec en regime nominal = **plusieurs centaines de millions d'events** par shift (~288 millions sur 8 h). En realite on stocke les deltas (ce qui change), ce qui fait ~100 Go brut par shift.
 
 ## Objectif technique
 

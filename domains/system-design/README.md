@@ -22,7 +22,7 @@ Concevoir des architectures scalables, maintenables et production-ready pour des
 | J4 | Message Queues & Event-Driven | Kafka, RabbitMQ, pub/sub, event sourcing, CQRS, saga pattern | 3h |
 | J5 | Load Balancing & Networking | L4/L7 LB, reverse proxy, DNS, rate limiting, circuit breaker | 3h |
 | J6 | API Design & Patterns | REST, gRPC, GraphQL, API gateway, versioning, idempotency, pagination | 3h |
-| J7 | **Design classiques** | URL shortener, Twitter feed, Chat system — exercices chronomentres | 4h |
+| J7 | **Design classiques** | URL shortener, Twitter feed, Chat system — exercices chronometres | 4h |
 
 ### Semaine 2 — Architecture IA & Production ML
 
@@ -35,6 +35,12 @@ Concevoir des architectures scalables, maintenables et production-ready pour des
 | J12 | Agent Systems Architecture | Orchestration patterns, tool routing, memory, multi-agent coordination | 3h |
 | J13 | Observabilite & MLOps | Monitoring, drift detection, A/B testing, CI/CD ML, feature flags, Langfuse | 3h |
 | J14 | **Capstone** | Designer 2 systemes complets (1 classique + 1 IA) en conditions d'entretien | 4h |
+
+## Exercices & projets guides
+
+Les exercices de `03-exercises/` couvrent tous les modules, avec les niveaux medium et hard concentres sur les fondamentaux (modules 01-03) — la ou la pratique deliberee rapporte le plus.
+
+Le dossier [`05-projets-guides/`](05-projets-guides/) propose 3 projets appliques au contexte LogiSim (simulation logistique automatisee, voir [`shared/logistics-context.md`](../../shared/logistics-context.md)) : simulation distribuee, pipeline EOD, plateforme multi-tenant air-gapped.
 
 ## Criteres de reussite
 

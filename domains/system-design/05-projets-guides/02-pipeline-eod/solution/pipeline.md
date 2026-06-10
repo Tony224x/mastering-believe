@@ -27,12 +27,12 @@
 
 ```proto
 message SimEvent {
-  uint32 exercise_id = 1;
-  uint64 seq = 2;           // monotone per exercise, pour detect drop
+  uint32 shift_id = 1;
+  uint64 seq = 2;           // monotone per shift, pour detect drop
   double t_sim = 3;         // temps simule en secondes
   uint32 tick = 4;
   uint32 unit_id = 5;
-  EventKind kind = 6;       // FIRE, MOVE, DAMAGE, ORDER, ...
+  EventKind kind = 6;       // PICKUP, MOVE, FAULT, ORDER, ...
   bytes payload = 7;        // subfield specific a kind
 }
 ```
@@ -51,11 +51,11 @@ Le sim worker **ne parle pas directement** au store : il pousse les events dans 
 - Si le store est injoignable, l'agent buffer sur disque local (WAL), retry au retour
 - Le sim worker ne doit **jamais** bloquer sur I/O reseau
 
-Ack protocol : le sim worker ne considere un tick comme "committed" qu'apres que l'agent a fsync'e le WAL local. C'est la garantie **at-least-once**. L'idempotence est assuree par `(exercise_id, seq)` unique.
+Ack protocol : le sim worker ne considere un tick comme "committed" qu'apres que l'agent a fsync'e le WAL local. C'est la garantie **at-least-once**. L'idempotence est assuree par `(shift_id, seq)` unique.
 
 ## Hot store — DuckDB sur NVMe
 
-Pour les 48 premieres heures : DuckDB pointing sur des fichiers Parquet append-only, un fichier par `(exercise_id, hour)`.
+Pour les 48 premieres heures : DuckDB pointing sur des fichiers Parquet append-only, un fichier par `(shift_id, hour)`.
 
 Pourquoi DuckDB :
 - Embedded, pas de service a operer
@@ -68,14 +68,14 @@ Pourquoi pas Postgres :
 - Operations DBA (VACUUM, WAL bloat) lourdes sur un deploiement air-gap
 
 Pourquoi pas Kafka + Flink :
-- Kafka/Flink air-gap c'est possible mais l'equipe LogiSim n'en a pas besoin : 20 exercices paralleles c'est 200k events/sec total, un seul NVMe gere ca
+- Kafka/Flink air-gap c'est possible mais l'equipe LogiSim n'en a pas besoin : 20 shifts paralleles c'est 200k events/sec total, un seul NVMe gere ca
 - Complexite operationnelle injustifiee
 
 ## Cold store — Parquet + tape archive
 
 Apres 48 h sans acces, promotion automatique vers :
-- Parquet partitionne par `(year, month, exercise_id)` sur disque HDD ou SAN
-- Apres 2 ans : migration tape (LTO) pour retention 10 ans (norme defense)
+- Parquet partitionne par `(year, month, shift_id)` sur disque HDD ou SAN
+- Apres 2 ans : migration tape (LTO) pour retention 10 ans (archivage SOC 2 / contrat client)
 
 ## Indexation
 
@@ -88,7 +88,7 @@ Pour "tous les events d'une unite sur 30 min" : 1 partition Parquet, filtre sur 
 ## Replay avec scrubbing
 
 Le rejeu doit pouvoir sauter a `t=3h27m`. Strategie :
-- **Snapshots cles** toutes les 5 minutes = snapshot complet de l'etat simu (positions, sante, possession). ~10 Mo chaque.
+- **Snapshots cles** toutes les 5 minutes = snapshot complet de l'etat simu (positions, niveau batterie, charge transportee). ~10 Mo chaque.
 - **Deltas** entre snapshots (les events eux-memes).
 - Pour scrub a `t=3h27m` : charger snapshot a `t=3h25m`, rejouer 2 minutes d'events.
 - Couts de scrub = constant < 1s.
@@ -120,8 +120,8 @@ Row store inefficace sur scans analytiques lourds. DuckDB/Parquet donne x10-x50 
 **Suppression accidentelle ?**
 Soft-delete 30 jours, restauration via CLI admin. L'UI utilisateur ne propose pas de delete (trop risque).
 
-**Stat collisions sur 50 exercices ?**
-Query DuckDB sur la partition `hot` + `cold` : filtre `kind=FIRE AND friendly_fire=true`, aggregate par exercice. Estimation : 2-10 secondes. Pour plus rapide, materialised view calculee au commit d'exercice.
+**Stat quasi-collisions inter-flotte sur 50 shifts ?**
+Query DuckDB sur la partition `hot` + `cold` : filtre `kind=COLLISION AND cross_fleet=true`, aggregate par shift. Estimation : 2-10 secondes. Pour plus rapide, materialised view calculee au commit de shift.
 
 ## Trade-offs non choisis
 
