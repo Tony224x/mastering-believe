@@ -1,43 +1,43 @@
 """
-Solutions -- Jour 14 : Capstone
+Solutions -- Day 14 : Capstone
 
-Les 3 exercices capstone sont longs. Les solutions sont fournies comme
-walkthroughs complets dans des docstrings. Chaque solution suit le
-framework en 6 etapes : clarifier -> estimer -> HL design -> deep dive
+The 3 capstone exercises are long. The solutions are provided as
+complete walkthroughs in docstrings. Each solution follows the
+6-step framework : clarify -> estimate -> HL design -> deep dive
 -> bottlenecks -> extensions.
 """
 
 
 def solution_exercice_1() -> None:
     """
-    Exercice 1 -- Spotify Recommendations.
+    Exercise 1 -- Spotify Recommendations.
 
-    === CLARIFIER ===
+    === CLARIFY ===
     Functional :
-      - Home feed personnalisee (mix morceaux + playlists)
-      - Discover Weekly : 30 morceaux nouveaux chaque lundi
-      - Radios personnalisees a partir d'un titre / artiste
-      - Feedback (like/dislike/skip) alimente les recos
-      - Cold start pour nouveaux users
+      - Personalized home feed (mix of tracks + playlists)
+      - Discover Weekly : 30 new tracks every Monday
+      - Personalized radios from a track / artist
+      - Feedback (like/dislike/skip) feeds the recos
+      - Cold start for new users
 
     Non-functional :
       - 500M MAU, 200M DAU, peak 50-80M concurrent
-      - Latence home feed < 500 ms p95
-      - Recos mises a jour en "near real-time" (apres un like, l'effet
-        doit etre visible dans les minutes qui suivent)
-      - Cost efficace : 50 recos/user/jour = 10 G recos/jour
+      - Home feed latency < 500 ms p95
+      - Recos updated in "near real-time" (after a like, the effect
+        must be visible within minutes)
+      - Cost efficient : 50 recos/user/day = 10 G recos/day
 
     === CAPACITY ===
-      Home requests : 200M users * 10 visites / jour * 50 items = 100 G items/jour
-      Peak factor 3x -> 3.5M items/sec. Mais les items sont batches
-      cote server -> on compte plutot en "home requests" :
-      200M * 10 = 2 G home requests / jour = 23K rps avg, ~70K peak.
-      Storage recos materialisees : 200M users * 50 reco_slots * 20 B (ids)
-      = 200 GB. Rien.
+      Home requests : 200M users * 10 visits / day * 50 items = 100 G items/day
+      Peak factor 3x -> 3.5M items/sec. But the items are batched
+      server-side -> we rather count "home requests" :
+      200M * 10 = 2 G home requests / day = 23K rps avg, ~70K peak.
+      Materialized reco storage : 200M users * 50 reco_slots * 20 B (ids)
+      = 200 GB. Nothing.
       Feature store : 200M users * ~50 features = 10 G cells.
-      Vector embeddings tracks : 100M * 256 dims * 4 bytes = 100 GB.
-      Ingestion d'events (plays, skips, likes) : 200M users * 50 events/jour
-      = 10 G events/jour, stockes pour retraining.
+      Track vector embeddings : 100M * 256 dims * 4 bytes = 100 GB.
+      Event ingestion (plays, skips, likes) : 200M users * 50 events/day
+      = 10 G events/day, stored for retraining.
 
     === HIGH LEVEL DESIGN ===
                                           +-----------+
@@ -80,87 +80,87 @@ def solution_exercice_1() -> None:
     === DEEP DIVE ===
 
     1) Feature store
-      - Offline (BigQuery / Parquet) : historiques par user (avg skip rate,
+      - Offline (BigQuery / Parquet) : per-user histories (avg skip rate,
         diversity index, genre preferences 30d, listening time by time-of-day)
-      - Online (Redis / Dynamo) : latest materialised features, cle =
-        user_id, valeur = pack de features necessaires au ranker
-      - Materialisation : chaque feature batch/stream a son pipeline
+      - Online (Redis / Dynamo) : latest materialized features, key =
+        user_id, value = pack of features needed by the ranker
+      - Materialization : each batch/stream feature has its own pipeline
 
-    2) Batch Discover Weekly
-      - Job Spark hebdo qui :
-        a) joint les user embeddings (appris par 2-tower) avec les
+    2) Discover Weekly batch
+      - Weekly Spark job that :
+        a) joins the user embeddings (learned by 2-tower) with the
            track embeddings
-        b) calcule top-500 candidats par user par ANN dans l'espace
-           embedding
-        c) applique des filtres (pas deja ecoutes, diversity, freshness)
-        d) materialise 30 tracks par user dans Redis avec TTL 1 semaine
-      - Volume : 200M users * 30 = 6G ecritures -> faisable en quelques
-        heures sur un cluster Spark dimensionne
+        b) computes the top-500 candidates per user via ANN in the
+           embedding space
+        c) applies filters (not already listened, diversity, freshness)
+        d) materializes 30 tracks per user into Redis with a 1-week TTL
+      - Volume : 200M users * 30 = 6G writes -> doable in a few
+        hours on a properly sized Spark cluster
 
     3) Real-time home scoring
-      - Candidats : mix de 3 sources
-        a) Discover Weekly precompute (poids 40%)
-        b) Collaborative filtering batch (poids 30%)
-        c) Context-aware online (poids 30%) : temps de la journee,
-           device, derniere ecoute
-      - Ranker online : XGBoost ou 2-tower leger, features lues du
-        online store, latence < 30 ms
-      - Re-ranking final : diversity constraint (pas 3 morceaux du
-        meme artiste en top 5), freshness boost, A/B test variants
-      - Tout ceci tourne en < 200 ms. Avec cache Redis pour les users
-        qui reviennent, < 50 ms sur cache hit.
+      - Candidates : mix of 3 sources
+        a) Precomputed Discover Weekly (40% weight)
+        b) Batch collaborative filtering (30% weight)
+        c) Context-aware online (30% weight) : time of day,
+           device, latest listen
+      - Online ranker : XGBoost or a light 2-tower, features read from the
+        online store, latency < 30 ms
+      - Final re-ranking : diversity constraint (not 3 tracks by the
+        same artist in the top 5), freshness boost, A/B test variants
+      - All of this runs in < 200 ms. With a Redis cache for returning
+        users, < 50 ms on a cache hit.
 
     === BOTTLENECKS ===
-      B1. Feature store online : cle hot (top users) -> cache local
-          sur les ranker pods + replicas sharde par user_id.
-      B2. Ranker CPU : le peak QPS sature les ranker pods -> autoscale
-          HPA sur CPU + queue depth, ranker batch en micro-batch de 10.
-      B3. Event ingestion : Kafka -> Flink -> feature store, lag si
-          burst de likes -> buffer + retries + monitoring lag.
+      B1. Online feature store : hot key (top users) -> local cache
+          on the ranker pods + replicas sharded by user_id.
+      B2. Ranker CPU : the peak QPS saturates the ranker pods -> HPA
+          autoscale on CPU + queue depth, ranker batched in micro-batches of 10.
+      B3. Event ingestion : Kafka -> Flink -> feature store, lag on
+          like bursts -> buffer + retries + lag monitoring.
 
     === EXTENSIONS ===
-      - Real-time personnalisation + updates : apres chaque skip/like,
-        ajuster les features online sous 1 s.
-      - Generation de descriptions par LLM ("Parce que vous ecoutez
-        X, voici Y") : LLM utilise UNIQUEMENT pour le texte humain,
-        jamais pour scorer.
-      - Cold-start pour nouveaux users : onboarding avec quelques
-        preferences explicites + content-based sur la premiere
+      - Real-time personalization + updates : after each skip/like,
+        adjust the online features within 1 s.
+      - LLM-generated descriptions ("Because you listen to
+        X, here is Y") : the LLM is used ONLY for the human-facing text,
+        never for scoring.
+      - Cold-start for new users : onboarding with a few
+        explicit preferences + content-based on the first
         session.
     """
 
 
 def solution_exercice_2() -> None:
     """
-    Exercice 2 -- GitHub Copilot backend.
+    Exercise 2 -- GitHub Copilot backend.
 
-    === CLARIFIER ===
+    === CLARIFY ===
     Functional :
-      - Inline code completion pendant le user tape
+      - Inline code completion while the user types
       - Multi-line suggestions
-      - Context-aware : sait ce qui est dans le fichier courant + fichiers
-        voisins
-      - Streaming : tokens arrivent un par un
-      - Cancellation : nouvelle touche user -> annule la completion en cours
-      - Multi-langage (TS, Py, Go, Rust...)
+      - Context-aware : knows what is in the current file + neighboring
+        files
+      - Streaming : tokens arrive one by one
+      - Cancellation : a new user keystroke -> cancels the in-flight completion
+      - Multi-language (TS, Py, Go, Rust...)
 
     Non-functional :
-      - 10M devs / jour
-      - Latence p95 < 300 ms end-to-end (TTFT)
+      - 10M devs / day
+      - p95 latency < 300 ms end-to-end (TTFT)
       - Uptime 99.9%+
-      - Privacy : enterprise peut demander "don't send code out of VPC"
-      - Cost : budget hyper serre ($0.001 - $0.003 par completion)
+      - Privacy : enterprise can require "don't send code out of VPC"
+      - Cost : extremely tight budget ($0.001 - $0.003 per completion)
 
     === CAPACITY ===
-      Completions / jour : 10M * 30/hr * 8 hr = 2.4 G completions / jour
+      Completions / day : 10M * 30/hr * 8 hr = 2.4 G completions / day
       -> ~28K rps avg, peak 80K rps.
-      Tokens par call : ~2500 in + 80 out
-      -> 6T tokens in / jour. Gigantesque.
-      Cost estime (code-specialized model hosted) : $0.0015 / completion
-      -> $3.6M / jour de cost brut.
-      -> evidemment pas tenable sans routing + caching + smaller models.
-      Marge : chaque dev paye $10-20/mois -> $100M/mois revenu.
-      Cible infra : < 20% du revenu = $20M/mois budget infra.
+      Tokens per call : ~2500 in + 80 out
+      -> 6T tokens in / day. Gigantic.
+      Estimated cost (hosted code-specialized model) : $0.0015 / completion
+      -> $3.6M / day of raw cost.
+      -> obviously not sustainable without routing + caching + smaller models.
+      Margin : each dev pays $10-20/month -> $100M/month revenue.
+      Infra target : < 20% of revenue = $20M/month infra budget.
 
     === HIGH LEVEL DESIGN ===
 
@@ -199,94 +199,94 @@ def solution_exercice_2() -> None:
 
     === DEEP DIVE ===
 
-    1) Comment tenir < 300 ms p95 ?
-      - Modele principal quantise (int8) tournant sur GPUs aggressivement
-        batched (vLLM continuous batching)
-      - Streaming : renvoyer les premiers tokens des ~100 ms (TTFT)
-      - Prefix cache : si le prompt commence par le meme code que la
-        precedente requete, KV cache reutilise (gain 2-3x)
-      - Routing : 70% des requetes vont vers le small model (~100 ms
-        inference) et ne sont escaladees que si besoin
+    1) How to hold < 300 ms p95 ?
+      - Main model quantized (int8) running on aggressively batched
+        GPUs (vLLM continuous batching)
+      - Streaming : return the first tokens from ~100 ms (TTFT)
+      - Prefix cache : if the prompt starts with the same code as the
+        previous request, the KV cache is reused (2-3x gain)
+      - Routing : 70% of the requests go to the small model (~100 ms
+        inference) and are only escalated if needed
 
     2) Cache strategy
-      - Completion-level cache : cle = hash(buffer prefix). Si la meme
-        completion a deja ete servie, renvoyer directement. Hit rate
-        reel : 5-10% (beaucoup de variation) mais gratuit.
-      - KV prefix cache sur le modele : si les premiers 2000 tokens du
-        prompt sont les memes, le KV est reutilise (inferieur au modele,
-        gere par vLLM).
-      - Embedding-based cache : pour les tournures courantes ("def
-        process_" "return ..."), un cache semantique peut capter.
+      - Completion-level cache : key = hash(buffer prefix). If the same
+        completion was already served, return it directly. Real hit
+        rate : 5-10% (lots of variation) but free.
+      - KV prefix cache on the model : if the first 2000 tokens of the
+        prompt are the same, the KV is reused (below the model,
+        handled by vLLM).
+      - Embedding-based cache : for common patterns ("def
+        process_" "return ..."), a semantic cache can catch them.
 
-    3) Routing par tier
-      - Small (code-llama-7b quantise, hosted) : 70% des requetes
-        (code simple, completion 1 ligne)
-      - Medium (starcoder-15b ou dedie) : 25% (multi-ligne, logique)
-      - Frontier (GPT-5.4) : 5% (cas ambigus, ou "explain-this")
-      - Enterprise : deployed dans VPC client, modele dedie
+    3) Routing by tier
+      - Small (quantized code-llama-7b, hosted) : 70% of the requests
+        (simple code, 1-line completion)
+      - Medium (starcoder-15b or dedicated) : 25% (multi-line, logic)
+      - Frontier (GPT-5.4) : 5% (ambiguous cases, or "explain-this")
+      - Enterprise : deployed in the client's VPC, dedicated model
 
-    === CHALLENGES SPECIFIQUES ===
+    === SPECIFIC CHALLENGES ===
 
-    Streaming token-by-token :
-      - L'API doit etre SSE (Server-Sent Events) ou HTTP streaming
-      - L'IDE lit au fur et a mesure et met a jour le preview
-      - Pas de buffering cote CDN !
+    Token-by-token streaming :
+      - The API must be SSE (Server-Sent Events) or HTTP streaming
+      - The IDE reads as it goes and updates the preview
+      - No buffering on the CDN side !
 
     Cancellation :
-      - Chaque requete a un request_id
-      - Si le user tape une nouvelle touche, l'IDE envoie
+      - Each request has a request_id
+      - If the user types a new key, the IDE sends
         POST /cancel/{request_id}
-      - Cote serving : le job en cours est interrompu, le GPU passe au
-        suivant (vLLM le supporte avec abort_request)
-      - Critique pour eviter de gacher du GPU sur des requetes abandonnees
+      - On the serving side : the in-flight job is interrupted, the GPU moves on
+        to the next one (vLLM supports it with abort_request)
+      - Critical to avoid wasting GPU on abandoned requests
 
-    Privacy enterprise :
-      - Deux deploiements distincts :
-        a) Public : multi-tenant, modele centralise
-        b) Enterprise : VPC isolated, soit self-hosted, soit peered
-           avec le VPC client, logs chiffres, pas de donnees conservees
-      - Enterprise paye plus cher (2-3x) pour ce confort
+    Enterprise privacy :
+      - Two distinct deployments :
+        a) Public : multi-tenant, centralized model
+        b) Enterprise : VPC isolated, either self-hosted or peered
+           with the client VPC, encrypted logs, no data retained
+      - Enterprise pays more (2-3x) for this comfort
 
     === BOTTLENECKS ===
-      - GPU capacity : autoscale aggressif + reservation guarantee pour
+      - GPU capacity : aggressive autoscale + reservation guarantee for
         enterprise
-      - Context engine : indexation des fichiers doit etre rapide
-        (tree-sitter + embedding leger cote client)
-      - Latence reseau : deploiement multi-region (US, EU, Asia)
+      - Context engine : file indexing must be fast
+        (tree-sitter + light embedding on the client side)
+      - Network latency : multi-region deployment (US, EU, Asia)
 
     === EXTENSIONS ===
-      - Copilot Chat : meme infra mais avec un long context et des outils
-      - Multi-file editing : agentic mode qui edit plusieurs fichiers
-      - Inline tests : generer test au cote de la fonction
-      - Fine-tuning tenant : adapter le modele au code propre d'un client
-      - Telemetry pour fine-tune futurs modeles (avec consent)
+      - Copilot Chat : same infra but with a long context and tools
+      - Multi-file editing : agentic mode that edits several files
+      - Inline tests : generate a test next to the function
+      - Tenant fine-tuning : adapt the model to a client's own code
+      - Telemetry to fine-tune future models (with consent)
     """
 
 
 def solution_exercice_3() -> None:
     """
-    Exercice 3 -- Autonomous Research Agent.
+    Exercise 3 -- Autonomous Research Agent.
 
-    === CLARIFIER ===
+    === CLARIFY ===
     Functional :
-      - Input : un sujet ("etat de l'art batteries 2026")
-      - Output : rapport markdown 10-20 pages, citations verifiables
-      - Progress tracking en temps reel
+      - Input : a topic ("state of the art of batteries 2026")
+      - Output : 10-20 page markdown report, verifiable citations
+      - Real-time progress tracking
       - Interrupt / resume
 
     Non-functional :
       - Run : 5-30 minutes, async
-      - Budget : $5-20 par run en LLM cost
+      - Budget : $5-20 per run in LLM cost
       - 100-500 search queries max
-      - Robustesse aux sites en panne
+      - Robust to sites being down
 
-    Definition de "done" :
-      - Critic agent valide que le rapport couvre tous les sous-sujets
-      - Budget non depasse
+    Definition of "done" :
+      - The critic agent validates that the report covers all the sub-topics
+      - Budget not exceeded
       - Completeness score > 80%
-      - OU user interrompt
+      - OR the user interrupts
 
-    === ARCHITECTURE MULTI-AGENT (hierarchical) ===
+    === MULTI-AGENT ARCHITECTURE (hierarchical) ===
 
                               +-----------------+
                               | Orchestrator    |
@@ -319,78 +319,78 @@ def solution_exercice_3() -> None:
     === DEEP DIVE ===
 
     1) Planning
-      - Le planner utilise un LLM fort pour decomposer la question en
-        5-10 sous-questions couvrantes (coverage check)
-      - Chaque sous-question a : objectif, priorite, budget estime
-      - Le plan est versionne : on peut le modifier en cours de run
+      - The planner uses a strong LLM to decompose the question into
+        5-10 covering sub-questions (coverage check)
+      - Each sub-question has : objective, priority, estimated budget
+      - The plan is versioned : it can be modified during the run
 
     2) Source evaluation
-      - Chaque source reçoit un score de credibilite :
-        - Domain reputation (whitelist scientifique, blacklist low-qual)
-        - Date de publication
-        - Citations presentes
-        - LLM-as-a-judge : est-ce une source primaire ?
-      - Score < seuil -> rejeter
-      - Diversite : eviter d'utiliser 5 sources du meme site
+      - Each source receives a credibility score :
+        - Domain reputation (scientific whitelist, low-quality blacklist)
+        - Publication date
+        - Citations present
+        - LLM-as-a-judge : is it a primary source ?
+      - Score < threshold -> reject
+      - Diversity : avoid using 5 sources from the same site
 
     3) Citation verification
-      - Chaque claim dans le rapport est lie a un chunk source
-      - Avant d'ecrire le rapport, le writer doit fournir les chunks
-      - Apres generation, un check exact-match verifie que les quotes
-        existent dans les sources. Si non : alerter et regenerer.
-      - L'URL + le quote exact sont stockes pour permettre au user de
-        verifier.
+      - Every claim in the report is linked to a source chunk
+      - Before writing the report, the writer must provide the chunks
+      - After generation, an exact-match check verifies that the quotes
+        exist in the sources. If not : alert and regenerate.
+      - The URL + the exact quote are stored to let the user
+        verify.
 
     4) Memory management
-      - Working memory (contexte courant) : plan courant + top 5
-        sources actives + resume des recherches recentes
-      - Long-term memory : vector store indexe toutes les sources
-        lues dans ce run (permet de retrouver plus tard)
-      - Quand le contexte s'approche du max, summariser les plus
-        anciennes sources et les archiver dans le long-term
+      - Working memory (current context) : current plan + top 5
+        active sources + summary of the recent searches
+      - Long-term memory : a vector store indexes all the sources
+        read during this run (allows retrieving them later)
+      - When the context approaches the max, summarize the oldest
+        sources and archive them in the long-term store
 
     === FAILURE MODES ===
 
-    F1. Boucle infinie (l'agent cherche les memes choses)
-      - Detection : si le meme sous-objectif est retrye > 3 fois
-        sans progres -> skip + note
-      - Cap dur : max_iterations = 50
+    F1. Infinite loop (the agent searches for the same things)
+      - Detection : if the same sub-goal is retried > 3 times
+        without progress -> skip + note
+      - Hard cap : max_iterations = 50
 
     F2. Budget explosion
-      - Chaque call LLM et search est compte vs budget
-      - Warning a 70%, hard stop a 100%
-      - Le rapport peut etre "partiel" avec un disclaimer
+      - Every LLM call and search is counted against the budget
+      - Warning at 70%, hard stop at 100%
+      - The report can be "partial" with a disclaimer
 
     F3. Source hallucination
-      - Groundedness check avant ecriture : chaque citation est verifiee
-      - Un critic independant (modele different) re-lit et flag les
-        citations douteuses
-      - Si hallucination detectee -> regenerer la section OU flagger
-        "unverified" dans le rapport
+      - Groundedness check before writing : every citation is verified
+      - An independent critic (different model) re-reads and flags the
+        dubious citations
+      - If a hallucination is detected -> regenerate the section OR flag
+        "unverified" in the report
 
     === OBSERVABILITY ===
 
-    - Langfuse trace par run, avec sub-spans par agent et par step
-    - Live progress : une table "run_id -> status" est updated a chaque
-      step. Le frontend polle ou utilise SSE pour afficher "30/100
+    - Langfuse trace per run, with sub-spans per agent and per step
+    - Live progress : a "run_id -> status" table is updated at each
+      step. The frontend polls or uses SSE to display "30/100
       searches done, 5/10 sub-questions covered"
-    - Budget tracker visible en live
-    - Un mode "debug" permet de voir le prompt et la reponse de chaque
-      sous-agent
+    - Budget tracker visible live
+    - A "debug" mode shows the prompt and the response of each
+      sub-agent
 
     === EXTENSIONS ===
 
-    - Human interrupt : le user peut mettre en pause, rediriger
-      ("concentre-toi sur la chimie, pas sur les constructeurs"),
-      reprendre
-    - Collaboration entre agents : un agent peut demander de l'aide
-      a un autre agent s'il est bloque
-    - Reutilisation : les recherches deja faites sont cache-ables. Si
-      un autre user pose la meme question, on reutilise.
-    - Verification automatique : avant de livrer le rapport, un agent
-      "fact-checker" repete une partie des queries pour verifier
-      que les faits sont toujours vrais.
-    - Output formats multiples : markdown, PDF, slides
+    - Human interrupt : the user can pause, redirect
+      ("focus on the chemistry, not the manufacturers"),
+      resume
+    - Collaboration between agents : an agent can ask another
+      agent for help when it is stuck
+    - Reuse : already-performed searches are cacheable. If
+      another user asks the same question, we reuse them.
+    - Automatic verification : before delivering the report, a
+      "fact-checker" agent repeats part of the queries to verify
+      that the facts still hold.
+    - Multiple output formats : markdown, PDF, slides
     """
 
 

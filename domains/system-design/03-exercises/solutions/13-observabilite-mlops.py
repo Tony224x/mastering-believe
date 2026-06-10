@@ -1,141 +1,141 @@
 """
-Solutions -- Jour 13 : Observabilite & MLOps
+Solutions -- Day 13 : Observability & MLOps
 """
 
 
 def solution_exercice_1() -> None:
     """
-    Exercice 1 -- Dashboard LLM.
+    Exercise 1 -- LLM Dashboard.
 
-    SECTIONS DU DASHBOARD
+    DASHBOARD SECTIONS
 
     1) PERFORMANCE
-       - Latency p50, p99 (ms)                seuil : p99 > 3s -> warn, > 5s -> page
-       - TTFT (time to first token, ms)       seuil : > 1500ms -> warn
-       - Throughput (req/min)                 info / capacite
-       - Queue depth du batcher               seuil : > 50 en continu -> leading
+       - Latency p50, p99 (ms)                threshold : p99 > 3s -> warn, > 5s -> page
+       - TTFT (time to first token, ms)       threshold : > 1500ms -> warn
+       - Throughput (req/min)                 info / capacity
+       - Batcher queue depth                  threshold : > 50 sustained -> leading
 
-    2) COUTS
-       - Cost per request ($)                 seuil : x2 baseline -> warn
+    2) COSTS
+       - Cost per request ($)                 threshold : 2x baseline -> warn
        - Tokens in / out (avg)                info
-       - Daily burn ($)                       seuil : > 120% forecast -> warn
-       - Cache hit rate (%)                   seuil : chute brutale > 20% -> investigate
+       - Daily burn ($)                       threshold : > 120% forecast -> warn
+       - Cache hit rate (%)                   threshold : sharp drop > 20% -> investigate
 
-    3) QUALITE
-       - User feedback score (thumbs up/down ratio)   seuil : < 0.85 -> warn
-       - Faithfulness score (LLM-as-judge)            seuil : < 0.8 -> act
-       - JSON validation rate                         seuil : < 0.98 -> investigate
+    3) QUALITY
+       - User feedback score (thumbs up/down ratio)   threshold : < 0.85 -> warn
+       - Faithfulness score (LLM-as-judge)            threshold : < 0.8 -> act
+       - JSON validation rate                         threshold : < 0.98 -> investigate
        - Guardrail rejections rate                    info + trend
 
-    4) FIABILITE
-       - Error rate par provider                      seuil : > 2% -> warn, > 5% -> page
-       - Fallback rate                                seuil : spike > 10% -> leading indicator
+    4) RELIABILITY
+       - Error rate per provider                      threshold : > 2% -> warn, > 5% -> page
+       - Fallback rate                                threshold : spike > 10% -> leading indicator
        - Circuit breaker state                        info
-       - Drift score (PSI) sur prompt length / topic  seuil : > 0.25 -> act
+       - Drift score (PSI) on prompt length / topic   threshold : > 0.25 -> act
 
-    ALERTES
+    ALERTS
     -------
-    a) p99 latency > 5 s pendant 5 min consecutives -> PAGE on call
-    b) error rate d'un provider > 5% pendant 2 min -> PAGE (fallback declenche)
-    c) fallback rate > 10% pendant 5 min -> WARN Slack + investigate
-    d) drift PSI sur any key feature > 0.25 pendant 24h -> WARN +
-       ouverture d'un incident de quality
+    a) p99 latency > 5 s for 5 consecutive min -> PAGE on call
+    b) a provider's error rate > 5% for 2 min -> PAGE (fallback triggered)
+    c) fallback rate > 10% for 5 min -> WARN Slack + investigate
+    d) PSI drift on any key feature > 0.25 for 24h -> WARN +
+       open a quality incident
 
     LEADING vs LAGGING
     ------------------
-    Leading (detecte avant l'impact user) :
-      - Queue depth du batcher
+    Leading (detected before the user impact) :
+      - Batcher queue depth
       - Fallback rate
       - Drift score
-      - Cost per request (explosion = un bug d'inflation du contexte)
-      - Cache hit rate chute (quelqu'un a casse le cache)
+      - Cost per request (explosion = a context inflation bug)
+      - Cache hit rate drop (someone broke the cache)
 
-    Lagging (constate l'impact) :
+    Lagging (records the impact) :
       - User feedback thumbs down
-      - Customer complaints / tickets support
+      - Customer complaints / support tickets
       - Churn
-      - p99 latency (quand ca ralentit, les users le sentent deja)
+      - p99 latency (by the time it slows down, the users already feel it)
 
-    Principe : investir prioritairement dans les leading indicators. Les
-    lagging confirment, les leading previennent.
+    Principle : invest first in the leading indicators. The
+    lagging ones confirm, the leading ones prevent.
     """
 
 
 def solution_exercice_2() -> None:
     """
-    Exercice 2 -- Lecture de PSI credit scoring.
+    Exercise 2 -- Reading PSI for credit scoring.
 
-    Mois 6 :
+    Month 6 :
       monthly_income       : 0.08  -> no drift (watch)
       debt_ratio           : 0.22  -> moderate drift (borderline "act")
-      age                  : 0.01  -> stable (normal : demographic slow)
+      age                  : 0.01  -> stable (normal : demographics move slowly)
       num_late_payments    : 0.35  -> **significant drift, act NOW**
-      employment_type      : 0.11  -> moderate stable (~seuil bas)
+      employment_type      : 0.11  -> moderately stable (~low threshold)
 
-    Q2 -- La plus inquietante : **num_late_payments**.
-      Pourquoi :
-        - PSI > 0.25 = seuil d'alerte franchi
-        - TREND CROISSANT depuis le mois 2 (0.05 -> 0.35), ce n'est pas un
-          bruit : c'est une tendance de fond.
-        - C'est probablement une feature cle du credit scoring -> impact
-          direct sur les predictions.
+    Q2 -- The most worrying : **num_late_payments**.
+      Why :
+        - PSI > 0.25 = alert threshold crossed
+        - INCREASING TREND since month 2 (0.05 -> 0.35), it is not
+          noise : it is an underlying trend.
+        - It is probably a key feature of the credit scoring -> direct
+          impact on the predictions.
 
-    Q3 -- Actions immediates :
-      1. **Investiguer la cause root** avant de retrain aveuglement :
-         - Changement externe ? (crise economique, regulation)
-         - Bug pipeline ? (calcul different, nouvelle source de donnees,
-           code divergent entre training et serving -- cf J8)
-         - Changement user base ? (nouveau marche geographique)
-      2. Comparer la distribution actuelle a la baseline graphiquement.
-      3. Mesurer l'impact business : les metriques de qualite de decision
-         (approval rate, default rate) ont-elles bouge ?
-      4. Si impact confirme : retrain sur donnees recentes + re-deployer
+    Q3 -- Immediate actions :
+      1. **Investigate the root cause** before blindly retraining :
+         - External change ? (economic crisis, regulation)
+         - Pipeline bug ? (different calculation, new data source,
+           code divergence between training and serving -- cf. D8)
+         - User base change ? (new geographic market)
+      2. Compare the current distribution to the baseline graphically.
+      3. Measure the business impact : have the decision quality metrics
+         (approval rate, default rate) moved ?
+      4. If the impact is confirmed : retrain on recent data + redeploy
          via shadow -> canary.
-      5. Si impact non confirme : documenter et surveiller chaque semaine.
+      5. If the impact is not confirmed : document and monitor weekly.
 
-    Q4 -- employment_type est "borderline stable" a ~0.11.
-      Il est AU-DESSUS de 0.1 mais ne bouge pas. Deux lectures :
-        - Il y a une divergence constante entre training et prod (un bug
-          de pipeline ancien) -> a investiguer.
-        - Ou bien l'encodage categorique a naturellement un PSI de base
-          plus eleve -> baseliner apres investigation.
-      Pas d'action urgente mais c'est un bon candidat pour une
-      investigation offline.
+    Q4 -- employment_type is "borderline stable" at ~0.11.
+      It is ABOVE 0.1 but not moving. Two readings :
+        - There is a constant divergence between training and prod (an old
+          pipeline bug) -> to investigate.
+        - Or the categorical encoding naturally has a higher base
+          PSI -> re-baseline after investigation.
+      No urgent action but it is a good candidate for an
+      offline investigation.
 
-    Q5 -- Plan de rollout d'un nouveau modele :
+    Q5 -- Rollout plan for a new model :
 
-      Etape 1 : Train sur donnees recentes (3 derniers mois)
-      Etape 2 : Offline eval gate :
+      Step 1 : Train on recent data (last 3 months)
+      Step 2 : Offline eval gate :
                  - AUC >= baseline + 0.01
-                 - Test sur des hold-outs par segment (pas de regression
-                   sur un segment clé)
-                 - No unfair bias (parity check par groupe protege)
-      Etape 3 : Register en staging (MLflow)
-      Etape 4 : Shadow deploy : 100% du trafic fait tourner V2 en paralelle,
-                log les predictions. Monitor pendant 48h. Check :
-                  - disagreement_rate avec V1 < 15%
-                  - distribution des scores V2 coherente
-      Etape 5 : Canary : 1% -> 10% -> 25% -> 50% -> 100% sur 7 jours.
-                Check apres chaque etape :
+                 - Test on hold-outs per segment (no regression
+                   on a key segment)
+                 - No unfair bias (parity check per protected group)
+      Step 3 : Register in staging (MLflow)
+      Step 4 : Shadow deploy : 100% of the traffic runs V2 in parallel,
+                log the predictions. Monitor for 48h. Check :
+                  - disagreement_rate with V1 < 15%
+                  - V2 score distribution coherent
+      Step 5 : Canary : 1% -> 10% -> 25% -> 50% -> 100% over 7 days.
+                Check after each step :
                   - accuracy / approval rate
                   - business metrics (default rate, volume)
                   - latency p99
-                Si degrade : ROLLBACK auto immediat (feature flag).
-      Etape 6 : Archive V1, marquer V2 comme production.
+                If degraded : immediate auto ROLLBACK (feature flag).
+      Step 6 : Archive V1, mark V2 as production.
 
-      Strategie de rollback :
-        - Feature flag controle la version (config Redis, pas redeploy)
-        - Monitoring temps reel des metriques cles
-        - Auto-rollback si accuracy prod < threshold pendant N min
-        - Rollback manuel 1-click via le dashboard
+      Rollback strategy :
+        - A feature flag controls the version (Redis config, no redeploy)
+        - Real-time monitoring of the key metrics
+        - Auto-rollback if prod accuracy < threshold for N min
+        - 1-click manual rollback via the dashboard
     """
 
 
 def solution_exercice_3() -> None:
     """
-    Exercice 3 -- CI/CD pour un classifieur de sentiment.
+    Exercise 3 -- CI/CD for a sentiment classifier.
 
-    ARCHITECTURE GLOBALE
+    OVERALL ARCHITECTURE
 
         +--------+   +-----+   +-------+   +-------+   +----------+
         | commit |-->| CI  |-->| Data  |-->| Train |-->| Offline  |
@@ -174,68 +174,68 @@ def solution_exercice_3() -> None:
                                                     | regions       |
                                                     +---------------+
 
-    OUTILS
-      - Data versioning : DVC ou LakeFS
-      - Orchestration   : Airflow, Prefect ou Kubeflow
-      - Training        : PyTorch / sklearn selon le modele
-      - Eval            : custom + Great Expectations pour data quality
+    TOOLING
+      - Data versioning : DVC or LakeFS
+      - Orchestration   : Airflow, Prefect or Kubeflow
+      - Training        : PyTorch / sklearn depending on the model
+      - Eval            : custom + Great Expectations for data quality
       - Registry        : MLflow Model Registry
-      - Deployment      : KServe ou Seldon sur EKS, ou ECS
-      - Feature flags   : LaunchDarkly ou config Redis
+      - Deployment      : KServe or Seldon on EKS, or ECS
+      - Feature flags   : LaunchDarkly or Redis config
       - Monitoring      : Evidently (drift) + Prometheus + Grafana +
-                          Langfuse (si LLM en amont)
+                          Langfuse (if an LLM is upstream)
 
-    GATES (conditions bloquantes)
-      Etape "Data validation" :
-        - Schema match (pas de colonne manquante, types coherents)
+    GATES (blocking conditions)
+      "Data validation" step :
+        - Schema match (no missing column, coherent types)
         - Null rate < 5%
-        - No duplicate sur les IDs
-      Etape "Train" :
-        - Convergence (loss stable)
-        - Pas d'overfitting (val_loss < 1.1 * train_loss)
-      Etape "Offline eval" :
-        - Accuracy test >= baseline + 0.02
-        - F1 per class >= 0.80
-        - Benchmark latence p99 < 200ms sur 1000 inputs
-      Etape "Shadow" :
-        - 24h avec disagreement_rate < 15%
-        - Pas d'erreur
-      Etape "Canary" :
-        - Accuracy prod > 84%
+        - No duplicates on the IDs
+      "Train" step :
+        - Convergence (stable loss)
+        - No overfitting (val_loss < 1.1 * train_loss)
+      "Offline eval" step :
+        - Test accuracy >= baseline + 0.02
+        - Per-class F1 >= 0.80
+        - Latency benchmark p99 < 200ms on 1000 inputs
+      "Shadow" step :
+        - 24h with disagreement_rate < 15%
+        - No errors
+      "Canary" step :
+        - Prod accuracy > 84%
         - p99 < 200 ms
         - User feedback stable
 
-    DEPLOIEMENT MULTI-REGION (4 regions)
-      Etape 1 : Region1 avec 5% de trafic canary
-      Etape 2 : Region1 100% + Region2 canary 5%
-      Etape 3 : Region1 + 2 a 100%, Region3 canary
-      Etape 4 : Toutes a 100%
-      Delais entre etapes : 4-24h pour stabiliser metriques.
-      NEVER : deployer les 4 regions en meme temps. Un bug = impact global.
+    MULTI-REGION DEPLOYMENT (4 regions)
+      Step 1 : Region1 with 5% canary traffic
+      Step 2 : Region1 100% + Region2 canary 5%
+      Step 3 : Regions 1 + 2 at 100%, Region3 canary
+      Step 4 : All at 100%
+      Delays between steps : 4-24h to let the metrics stabilize.
+      NEVER : deploy all 4 regions at the same time. One bug = global impact.
 
-    ROLLBACK (si accuracy degrade a +72h)
-      Trigger automatique :
-        - accuracy prod < 83% pendant 30 min
-        - OU spike de user complaints
-        - OU drift PSI > 0.3 sur une feature cle
+    ROLLBACK (if accuracy degrades at +72h)
+      Automatic trigger :
+        - prod accuracy < 83% for 30 min
+        - OR a spike of user complaints
+        - OR PSI drift > 0.3 on a key feature
       Action :
         - Feature flag flip : load_model("previous_version")
-        - Alerter l'equipe
-        - Ouvrir un incident
-      Rollback = 1 commande ou 1 click, pas un redeploy Kubernetes.
+        - Alert the team
+        - Open an incident
+      Rollback = 1 command or 1 click, not a Kubernetes redeploy.
 
-    RETRAIN FORCE HORS SCHEDULE
+    FORCED OUT-OF-SCHEDULE RETRAIN
       Triggers :
-        - Drift PSI > 0.25 sur 2+ features principales
-        - Accuracy prod < 84% pendant 4h consecutives
-        - User feedback score chute > 10 points en 24h
-        - Nouveau marche / langue
-        - Changement upstream (un produit critique change de structure)
-      Un humain valide avant de lancer le retrain sauvage.
+        - PSI drift > 0.25 on 2+ main features
+        - Prod accuracy < 84% for 4 consecutive hours
+        - User feedback score drops > 10 points in 24h
+        - New market / language
+        - Upstream change (a critical product changes its structure)
+      A human validates before launching the off-cycle retrain.
 
-    Principe : **le pipeline lui-meme est un produit**. Il doit avoir des
-    tests, du versioning, du monitoring. C'est le plus gros investissement
-    long terme d'une equipe ML serieuse.
+    Principle : **the pipeline itself is a product**. It must have
+    tests, versioning, monitoring. It is the biggest long-term
+    investment of a serious ML team.
     """
 
 

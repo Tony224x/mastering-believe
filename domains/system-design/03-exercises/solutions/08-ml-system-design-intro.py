@@ -1,101 +1,99 @@
 """
-Solutions -- Jour 8 : ML System Design Intro
+Solutions -- Day 8 : ML System Design Intro
 
-Les solutions sont fournies sous forme de docstrings detaillees, comme
-dans le reste du domaine. Ce fichier est standalone et executable pour
-verification syntaxique (python 08-ml-system-design-intro.py).
+The solutions are provided as detailed docstrings, like in the rest
+of the domain. This file is standalone and executable for
+syntax verification (python 08-ml-system-design-intro.py).
 """
 
 
 def solution_exercice_1() -> None:
     """
-    Exercice 1 -- Diagnostic training-serving skew.
+    Exercise 1 -- Diagnosing training-serving skew.
 
     +-----+----------------------------+------------------------------------+
-    | Cas | Cause                      | Mitigation                         |
+    | Case| Cause                      | Mitigation                         |
     +-----+----------------------------+------------------------------------+
-    |  1  | Code divergent :           | Feature store unique. La meme      |
-    |     | Python au training, SQL    | fonction Python sert offline et    |
-    |     | au serving -> formules     | online. Si SQL obligatoire,        |
-    |     | differentes (rounding,     | generer la SQL depuis la meme      |
-    |     | NaN, cast types).          | definition (DSL / DBT / Feast).    |
+    |  1  | Divergent code :           | Single feature store. The same     |
+    |     | Python at training, SQL    | Python function serves offline and |
+    |     | at serving -> different    | online. If SQL is mandatory,       |
+    |     | formulas (rounding,        | generate the SQL from the same     |
+    |     | NaN, type casts).          | definition (DSL / DBT / Feast).    |
     +-----+----------------------------+------------------------------------+
-    |  2  | Feature drift ou concept   | Monitoring continu (PSI, KL) sur   |
-    |     | drift non detecte. Le      | les distributions des inputs et    |
-    |     | monde a change, le modele  | des outputs. Retraining automatise |
-    |     | a date gele.               | declenche par le monitoring.       |
-    |     |                            | A minima : retraining planifie     |
-    |     |                            | (hebdomadaire/mensuel).            |
+    |  2  | Undetected feature drift   | Continuous monitoring (PSI, KL) of |
+    |     | or concept drift. The      | the input and output               |
+    |     | world has changed, the     | distributions. Automated           |
+    |     | model is frozen in time.   | retraining triggered by the        |
+    |     |                            | monitoring. At minimum : scheduled |
+    |     |                            | retraining (weekly/monthly).       |
     +-----+----------------------------+------------------------------------+
-    |  3  | Data handling different.   | Implementer la logique NaN         |
-    |     | Les NaN sont traitees en   | dans la feature definition elle-   |
-    |     | training (fillna mean)     | meme. Pas dans le notebook. Ce     |
-    |     | mais pas en serving.       | qu'on fait au training = ce qu'on  |
-    |     |                            | fait au serving.                   |
+    |  3  | Different data handling.   | Implement the NaN logic            |
+    |     | NaNs are handled at        | in the feature definition itself.  |
+    |     | training (fillna mean)     | Not in the notebook. What we do    |
+    |     | but not at serving.        | at training = what we do           |
+    |     |                            | at serving.                        |
     +-----+----------------------------+------------------------------------+
-    |  4  | Data leakage / absence de  | Point-in-time correctness :        |
-    |     | point-in-time correctness. | quand on construit le dataset,     |
-    |     | Le modele a vu le futur.   | chaque exemple voit les features   |
-    |     |                            | telles qu'elles etaient a          |
-    |     |                            | l'instant de l'evenement. Les      |
-    |     |                            | reviews posterieures ne doivent    |
-    |     |                            | PAS etre incluses dans la moyenne. |
-    |     |                            | C'est LA raison d'etre du feature  |
-    |     |                            | store cote offline.                |
+    |  4  | Data leakage / lack of     | Point-in-time correctness :        |
+    |     | point-in-time correctness. | when building the dataset,         |
+    |     | The model saw the future.  | each example sees the features     |
+    |     |                            | as they were at the moment of      |
+    |     |                            | the event. Later reviews must      |
+    |     |                            | NOT be included in the average.    |
+    |     |                            | That is THE raison d'etre of the   |
+    |     |                            | feature store on the offline side. |
     +-----+----------------------------+------------------------------------+
 
-    Note : dans le monde reel, les 4 problemes cohabitent souvent. Un feature
-    store bien concu en regle 3 sur 4. Le 4e (drift) demande du monitoring.
+    Note : in the real world, the 4 problems often coexist. A well-designed
+    feature store solves 3 out of 4. The 4th (drift) requires monitoring.
     """
 
 
 def solution_exercice_2() -> None:
     """
-    Exercice 2 -- Batch vs real-time.
+    Exercise 2 -- Batch vs real-time.
 
     +-----------------+----------+---------------+-------------------------------+
-    | Produit         | Archi    | Latence cible | Justification                 |
+    | Product         | Archi    | Target latency| Justification                 |
     +-----------------+----------+---------------+-------------------------------+
-    | Netflix homepage| Hybride  | < 500 ms      | Batch quotidien pour les      |
-    |                 |          | (re-ranking)  | candidats (1M+ items).        |
-    |                 |          |               | Re-ranking online par         |
-    |                 |          |               | contexte (device, heure).     |
+    | Netflix homepage| Hybrid   | < 500 ms      | Daily batch for the           |
+    |                 |          | (re-ranking)  | candidates (1M+ items).       |
+    |                 |          |               | Online re-ranking by          |
+    |                 |          |               | context (device, time).       |
     +-----------------+----------+---------------+-------------------------------+
-    | Anti-fraude     | Real-time| p99 < 100 ms  | Refus bloquant = latence      |
-    | paiement        |          |               | critique. 1000 tx/s = infra   |
-    |                 |          |               | dimensionnee en consequence   |
+    | Payment anti-   | Real-time| p99 < 100 ms  | Blocking rejection = critical |
+    | fraud           |          |               | latency. 1000 tx/s = infra    |
+    |                 |          |               | sized accordingly             |
     |                 |          |               | (GPU + dynamic batching).     |
     +-----------------+----------+---------------+-------------------------------+
-    | Resume emails   | Batch    | Plusieurs     | Generation offline pendant    |
-    | quotidiens      |          | heures OK     | la nuit. Lu le matin depuis   |
-    |                 |          |               | une DB. Cout divise par 10+.  |
+    | Daily email     | Batch    | Several       | Offline generation during     |
+    | digests         |          | hours OK      | the night. Read in the morning|
+    |                 |          |               | from a DB. Cost divided 10+.  |
     +-----------------+----------+---------------+-------------------------------+
-    | Pricing Uber    | Real-time| p95 < 500 ms  | Depend de l'offre/demande     |
-    |                 |          |               | locale en temps reel.         |
-    |                 |          |               | Features frequemment mises    |
-    |                 |          |               | a jour.                       |
+    | Uber pricing    | Real-time| p95 < 500 ms  | Depends on the local          |
+    |                 |          |               | supply/demand in real time.   |
+    |                 |          |               | Features updated frequently.  |
     +-----------------+----------+---------------+-------------------------------+
-    | IoT anomalies   | Hybride  | 1-60 sec      | Micro-batch toutes les 10-60s |
-    | (5M capteurs)   | (micro)  |               | pour accumuler les signaux.   |
-    |                 |          |               | Volume trop eleve pour du     |
-    |                 |          |               | vrai real-time par capteur.   |
+    | IoT anomalies   | Hybrid   | 1-60 sec      | Micro-batch every 10-60s      |
+    | (5M sensors)    | (micro)  |               | to accumulate the signals.    |
+    |                 |          |               | Volume too high for true      |
+    |                 |          |               | real-time per sensor.         |
     +-----------------+----------+---------------+-------------------------------+
-    | Correcteur IDE  | Real-time| < 50 ms       | UX exige la reactivite.       |
-    |                 | (local)  |               | Souvent modele distille qui   |
-    |                 |          |               | tourne localement dans l'IDE. |
+    | IDE autocorrect | Real-time| < 50 ms       | UX demands responsiveness.    |
+    |                 | (local)  |               | Often a distilled model that  |
+    |                 |          |               | runs locally inside the IDE.  |
     +-----------------+----------+---------------+-------------------------------+
 
-    Points cles :
-    - Le volume et la frequence de changement du contexte dictent le choix.
-    - Real-time n'est pas "mieux" -- il est 10x plus cher en infra.
-    - Hybride est la norme a grande echelle : batch pour le lourd,
-      online pour la personnalisation finale.
+    Key points :
+    - The volume and the change frequency of the context dictate the choice.
+    - Real-time is not "better" -- it is 10x more expensive in infra.
+    - Hybrid is the norm at scale : batch for the heavy lifting,
+      online for the final personalization.
     """
 
 
 def solution_exercice_3() -> None:
     """
-    Exercice 3 -- Feature store pour un e-commerce de mode.
+    Exercise 3 -- Feature store for a fashion e-commerce.
 
     +----------------------------+--------+--------------+----------------+---------+
     | Feature                    | Source | Offline      | Online         | TTL     |
@@ -106,11 +104,11 @@ def solution_exercice_3() -> None:
     |                            |        | + archived   |                |         |
     | product_sales_rank_7d      | batch  | BigQuery     | Redis cluster  | 1h      |
     |                            |        |              | (hot items)    |         |
-    | user_device_type           | on-    | --           | passee dans    | --      |
-    |                            | demand |              | la requete     |         |
+    | user_device_type           | on-    | --           | passed in      | --      |
+    |                            | demand |              | the request    |         |
     +----------------------------+--------+--------------+----------------+---------+
 
-    Schema ASCII:
+    ASCII diagram:
 
         +-------------+      +------------+     +---------------+
         | Click/order |----->| Kafka topic|---->| Flink stream  |
@@ -141,34 +139,34 @@ def solution_exercice_3() -> None:
                                       + device_type from request
                                       ---> model.predict ---> response
 
-    Q3 -- Point-in-time le plus delicat :
-    C'est `product_sales_rank_7d`. Il evolue tres vite (un item viral change
-    de rang en heures). Quand on construit le dataset d'entrainement, chaque
-    ligne doit contenir le rang du produit TEL QU'IL ETAIT au moment de
-    l'evenement, pas le rang actuel. Sinon le modele apprend que "les items
-    populaires aujourd'hui etaient populaires hier", ce qui est du data leak.
+    Q3 -- Trickiest point-in-time feature :
+    It is `product_sales_rank_7d`. It evolves very fast (a viral item changes
+    rank within hours). When building the training dataset, each
+    row must contain the product's rank AS IT WAS at the moment of
+    the event, not the current rank. Otherwise the model learns that "items
+    popular today were popular yesterday", which is data leakage.
 
-    Mitigation : le feature store offline doit versionner les valeurs de
-    rang par timestamp. La generation du dataset fait un point-in-time join
-    sur la plus grande valeur <= timestamp de l'event.
+    Mitigation : the offline feature store must version the rank values
+    by timestamp. The dataset generation does a point-in-time join
+    on the largest value <= the event's timestamp.
 
-    Q4 -- Degradation si Redis online down :
-    Deux strategies combinables :
-    1. Fallback features : si Redis unreachable, utiliser des valeurs par
-       defaut (moyenne globale, 0, etc.) et logger un warning. Le modele
-       continuera a repondre, avec une precision degradee.
-    2. Fallback model : router vers un modele plus simple qui n'a pas
-       besoin des features manquantes (ex: "top sellers" rule-based).
-       C'est un pattern "graceful degradation" : on accepte un modele
-       moins bon plutot que pas de reponse.
+    Q4 -- Degradation if the online Redis is down :
+    Two combinable strategies :
+    1. Fallback features : if Redis is unreachable, use default
+       values (global mean, 0, etc.) and log a warning. The model
+       will keep responding, with degraded precision.
+    2. Fallback model : route to a simpler model that does not
+       need the missing features (e.g. rule-based "top sellers").
+       It's a "graceful degradation" pattern : we accept a worse
+       model rather than no response.
 
-    En tout cas : NE JAMAIS renvoyer une erreur 500. Une recommandation
-    degradee vaut mieux qu'une page vide.
+    In any case : NEVER return a 500 error. A degraded recommendation
+    is better than an empty page.
     """
 
 
 if __name__ == "__main__":
-    print("Jour 8 -- Solutions : voir les docstrings.")
+    print("Day 8 -- Solutions : see the docstrings.")
     for fn in (solution_exercice_1, solution_exercice_2, solution_exercice_3):
         print(f"\n--- {fn.__name__} ---")
         print(fn.__doc__)

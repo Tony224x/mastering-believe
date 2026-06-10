@@ -1,187 +1,187 @@
 """
-Solutions -- Jour 10 : RAG Architecture
+Solutions -- Day 10 : RAG Architecture
 """
 
 
 def solution_exercice_1() -> None:
     """
-    Exercice 1 -- Strategies de chunking.
+    Exercise 1 -- Chunking strategies.
 
     +--------------------------+-------------------+---------+---------+
-    | Corpus                   | Strategie         | Taille  | Overlap |
+    | Corpus                   | Strategy          | Size    | Overlap |
     +--------------------------+-------------------+---------+---------+
-    | Doc SaaS Markdown        | document-aware    | 400-800 | 10 %    |
-    | (split par H1/H2/H3)     |                   | tokens  |         |
+    | SaaS Markdown docs       | document-aware    | 400-800 | 10 %    |
+    | (split by H1/H2/H3)      |                   | tokens  |         |
     +--------------------------+-------------------+---------+---------+
-    | Transcripts support      | recursive         | 300-500 | 15 %    |
+    | Support transcripts      | recursive         | 300-500 | 15 %    |
     +--------------------------+-------------------+---------+---------+
-    | Code Python              | par fonction /    | 200-500 | 0 %     |
-    |                          | classe (tree-sit) |         |         |
+    | Python code              | per function /    | 200-500 | 0 %     |
+    |                          | class (tree-sit)  |         |         |
     +--------------------------+-------------------+---------+---------+
-    | Contrats juridiques      | document-aware    | 1000-   | 20 %    |
-    |                          | (par section /    | 1500    |         |
+    | Legal contracts          | document-aware    | 1000-   | 20 %    |
+    |                          | (per section /    | 1500    |         |
     |                          | clause)           | tokens  |         |
     +--------------------------+-------------------+---------+---------+
-    | Blog HTML (500-3000 mots)| recursive + tag-  | 400-600 | 10 %    |
+    | HTML blog (500-3000 words)| recursive + tag- | 400-600 | 10 %    |
     |                          | aware (h2, p)     |         |         |
     +--------------------------+-------------------+---------+---------+
     | Tweets / short-form      | 1 post = 1 chunk  | ~50     | 0       |
     +--------------------------+-------------------+---------+---------+
 
-    Justifications (extraits) :
-    - Markdown avec headers : la structure semantique est deja la. Il
-      serait aberrant de la couper en ignorant les H2/H3. On gagne la
-      granularite "section".
-    - Code : on chunk par fonction car une fonction est un bloc logique
-      complet. Un modele comprend mieux une fonction entiere qu'un bout
-      au milieu.
-    - Contrats : un chunk coupe au mauvais endroit peut omettre une
-      clause determinante. On prefere plus de contexte et plus d'overlap.
-    - Tweets : la taille naturelle est < 300 chars. Pas de decoupe.
+    Justifications (excerpts) :
+    - Markdown with headers : the semantic structure is already there. It
+      would be absurd to cut it while ignoring the H2/H3. We gain
+      "section" granularity.
+    - Code : we chunk per function because a function is a complete logical
+      block. A model understands a whole function better than a piece
+      from the middle.
+    - Contracts : a chunk cut at the wrong place can omit a
+      decisive clause. We prefer more context and more overlap.
+    - Tweets : the natural size is < 300 chars. No splitting.
 
-    Tradeoff rappel : plus petit = plus precis mais risque de perdre du
-    contexte. Plus grand = plus de contexte mais plus de bruit et queries
-    plus couteuses au LLM.
+    Tradeoff reminder : smaller = more precise but risks losing
+    context. Larger = more context but more noise and more expensive
+    queries for the LLM.
     """
 
 
 def solution_exercice_2() -> None:
     """
-    Exercice 2 -- Debug d'un RAG.
+    Exercise 2 -- Debugging a RAG.
 
-    Symptomes : reponses incorrectes 40%, recall@10=72%, chunks avec bons
-    mots-cles mais mauvais contexte. GPT-4, fixed 512 chunks, dense-only,
-    pas de reranker.
+    Symptoms : 40% incorrect answers, recall@10=72%, chunks with the right
+    keywords but the wrong context. GPT-4, fixed 512 chunks, dense-only,
+    no reranker.
 
-    Hypotheses de root causes + experiences :
+    Root cause hypotheses + experiments :
 
-    H1. **Absence de reranker** (le plus probable, quick win)
-        - Exp : ajouter un cross-encoder (BGE-reranker ou Cohere Rerank)
-          sur le top 20 des candidats dense, ne prendre que le top 5.
-        - Attendu : recall@5 apres rerank > 90%, faithfulness monte.
-        - Cout : ~50 ms de latence en plus, c'est acceptable.
-        - PRIORITE 1 : 1 ligne de code, resultat immediat.
+    H1. **Missing reranker** (most probable, quick win)
+        - Exp : add a cross-encoder (BGE-reranker or Cohere Rerank)
+          on the top 20 dense candidates, keep only the top 5.
+        - Expected : recall@5 after rerank > 90%, faithfulness rises.
+        - Cost : ~50 ms of extra latency, that's acceptable.
+        - PRIORITY 1 : 1 line of code, immediate result.
 
-    H2. **Absence de hybrid retrieval (BM25 manquant)**
-        - Exp : indexer un BM25 en parallele et faire RRF.
-        - Attendu : recall@10 passe de 72% a ~85%, surtout sur les
-          queries avec des noms propres ou des identifiants.
-        - PRIORITE 2 : effort moyen, gain 10-20%.
+    H2. **Missing hybrid retrieval (no BM25)**
+        - Exp : index a BM25 in parallel and do RRF.
+        - Expected : recall@10 goes from 72% to ~85%, especially on
+          queries with proper nouns or identifiers.
+        - PRIORITY 2 : medium effort, 10-20% gain.
 
-    H3. **Chunking fixed-size casse le contexte**
-        - Exp : passer a recursive chunking (separateurs paragraphes /
-          phrases) ou semantic chunking. Tester avec la meme taille.
-        - Attendu : les chunks contiennent des unites de sens completes,
-          faithfulness augmente.
-        - PRIORITE 3 : demande de reindexer (quelques heures-jours).
+    H3. **Fixed-size chunking breaks the context**
+        - Exp : switch to recursive chunking (paragraph / sentence
+          separators) or semantic chunking. Test with the same size.
+        - Expected : the chunks contain complete units of meaning,
+          faithfulness increases.
+        - PRIORITY 3 : requires reindexing (a few hours-days).
 
-    H4. **Prompt de generation faible**
-        - Exp : ajouter des instructions explicites "utilise UNIQUEMENT
-          les passages fournis, si l'info n'est pas la dis 'je ne sais
-          pas'", forcer les citations [N].
-        - Attendu : faithfulness monte (moins d'hallucinations).
-        - PRIORITE 2 : trivial, tester en priorite.
+    H4. **Weak generation prompt**
+        - Exp : add explicit instructions "use ONLY
+          the provided passages, if the info is not there say 'I don't
+          know'", force [N] citations.
+        - Expected : faithfulness rises (fewer hallucinations).
+        - PRIORITY 2 : trivial, test first.
 
-    H5. **Embedding model trop faible pour le domaine**
-        - text-embedding-3-small fait 1536 dims et est general-purpose.
-          Sur un domaine specialise (medical, legal, finance), des
-          modeles domaine-specifiques (BGE, Voyage, Cohere) performent
-          mieux.
-        - Exp : remplacer l'embedder sur un sous-ensemble du corpus et
-          comparer recall@10.
-        - PRIORITE 4 : tres impactant mais implique de reindexer tout.
+    H5. **Embedding model too weak for the domain**
+        - text-embedding-3-small is 1536 dims and general-purpose.
+          On a specialized domain (medical, legal, finance),
+          domain-specific models (BGE, Voyage, Cohere) perform
+          better.
+        - Exp : swap the embedder on a subset of the corpus and
+          compare recall@10.
+        - PRIORITY 4 : very impactful but implies reindexing everything.
 
-    H6. **Pas de query rewriting / expansion**
-        - Les queries utilisateurs sont souvent courtes et ambigues. Un
-          LLM peut les reformuler avant retrieval.
-        - Exp : HyDE (generer une reponse hypothetique et embedder
-          celle-ci) ou query expansion classique.
-        - PRIORITE 3 : gain 5-15%.
+    H6. **No query rewriting / expansion**
+        - User queries are often short and ambiguous. An
+          LLM can reformulate them before retrieval.
+        - Exp : HyDE (generate a hypothetical answer and embed
+          that) or classic query expansion.
+        - PRIORITY 3 : 5-15% gain.
 
-    Priorisation : H1 -> H4 -> H2 -> H3 -> H6 -> H5.
-    (Quick wins d'abord, changements structuraux ensuite.)
+    Prioritization : H1 -> H4 -> H2 -> H3 -> H6 -> H5.
+    (Quick wins first, structural changes afterwards.)
 
-    Metriques a mesurer apres chaque fix :
-    - Recall@10 (retrieval pur) sur le gold set
+    Metrics to measure after each fix :
+    - Recall@10 (pure retrieval) on the gold set
     - MRR
     - Faithfulness (LLM-as-a-judge)
     - Answer relevance
-    - p99 latency (verifier qu'on ne degrade pas)
+    - p99 latency (verify we are not degrading)
     - Cost per query
 
-    Regle : un seul changement a la fois. Sinon impossible d'attribuer
-    les variations de metriques.
+    Rule : one change at a time. Otherwise it's impossible to attribute
+    the metric variations.
     """
 
 
 def solution_exercice_3() -> None:
     """
-    Exercice 3 -- Dimensionnement infra RAG juridique.
+    Exercise 3 -- Sizing the infra for a legal RAG.
 
-    Hypotheses :
+    Assumptions :
       500K docs * 15 pages * 500 tokens/page = 3.75 B tokens
-      Chunks de 800 tokens, 15% overlap = taille effective ~680 tokens
+      Chunks of 800 tokens, 15% overlap = effective size ~680 tokens
       => 3.75B / 680 = ~5.5 M chunks
 
     Q1 -- Chunks : ~5.5 M
 
-    Q2 -- Memoire index vecteur :
-      5.5M * 3072 dims * 4 bytes (float32) = 67.6 Go
-      Avec HNSW overhead (~30%) : ~87 Go.
-      Avec quantization int8 : 67.6/4 = 17 Go -- option serieuse.
-      Avec quantization binaire : ~2 Go -- mais plus bruite.
+    Q2 -- Vector index memory :
+      5.5M * 3072 dims * 4 bytes (float32) = 67.6 GB
+      With HNSW overhead (~30%) : ~87 GB.
+      With int8 quantization : 67.6/4 = 17 GB -- a serious option.
+      With binary quantization : ~2 GB -- but noisier.
 
-    Q3 -- Choix de DB :
-      - pgvector : trop lent / memoire pour 5.5M * 3072 dims. Non.
-      - Pinecone : ~$70 * 5.5 = $385/mois minimum. Simple, zero ops.
-      - Qdrant Cloud : facturation memoire, ~$200-400/mois pour 17 Go
-        quantise. Bon compromis.
-      - Qdrant self-hosted : une VM 32 Go RAM ~$150/mois. Le moins cher.
-      Recommandation : **Qdrant self-hosted** si on a une equipe DevOps,
-      sinon Qdrant Cloud. Pinecone si on veut zero friction.
+    Q3 -- DB choice :
+      - pgvector : too slow / memory-hungry for 5.5M * 3072 dims. No.
+      - Pinecone : ~$70 * 5.5 = $385/month minimum. Simple, zero ops.
+      - Qdrant Cloud : memory-based billing, ~$200-400/month for 17 GB
+        quantized. Good compromise.
+      - Qdrant self-hosted : a 32 GB RAM VM ~$150/month. The cheapest.
+      Recommendation : **Qdrant self-hosted** if there is a DevOps team,
+      otherwise Qdrant Cloud. Pinecone if you want zero friction.
 
-    Q4 -- Cout d'indexation initiale :
-      Tokens a embedder : 3.75B input tokens.
+    Q4 -- Initial indexing cost :
+      Tokens to embed : 3.75B input tokens.
       text-embedding-3-large : $0.13 / 1M tokens
-      => 3750 * 0.13 = **$487.5** (one-shot, pas recurrent).
-      Astuce : si on prend text-embedding-3-small ($0.02 / 1M), c'est
-      $75. Test d'abord la qualite small avant de payer large.
+      => 3750 * 0.13 = **$487.5** (one-shot, not recurring).
+      Tip : with text-embedding-3-small ($0.02 / 1M), it's
+      $75. Test the quality of small first before paying for large.
 
-    Q5 -- Cout runtime mensuel :
-      Queries : 50 users * 5 q/min * 60 min * 8 h peak * 22 jours
-             = 2 640 000 queries / mois.
-      (hypothese aggressive -- en pratique beaucoup moins au peak reel)
+    Q5 -- Monthly runtime cost :
+      Queries : 50 users * 5 q/min * 60 min * 8 h peak * 22 days
+             = 2,640,000 queries / month.
+      (aggressive assumption -- in practice much fewer at the real peak)
 
-      Par query :
+      Per query :
         - Embed query : ~50 tokens -> 50 * $0.13/1M = $0.0000065
-        - Retrieve : couvert par l'abonnement DB
-        - LLM generation : ~3000 tokens input (5 chunks * 600 tokens
-          context) + 400 tokens output
+        - Retrieve : covered by the DB subscription
+        - LLM generation : ~3000 input tokens (5 chunks * 600 tokens
+          context) + 400 output tokens
           GPT-4o-mini : 3000*0.15/1M + 400*0.60/1M = $0.00045 + $0.00024
                      = ~$0.00069 / query
-      Total par query : ~$0.00070
-      Mensuel : 2.64M * 0.00070 = **~$1848 / mois**.
-      On est presque au budget ! Et ce scenario est pessimiste.
+      Total per query : ~$0.00070
+      Monthly : 2.64M * 0.00070 = **~$1848 / month**.
+      We are almost at the budget! And this scenario is pessimistic.
 
-      Cout DB : $200 (Qdrant Cloud) ou $150 (self-hosted).
-      => Total : ~$2000 - $2100 / mois. On est TRES serre.
+      DB cost : $200 (Qdrant Cloud) or $150 (self-hosted).
+      => Total : ~$2000 - $2100 / month. It is VERY tight.
 
-    Q6 -- Optimisations pour rester sous $2000 :
-      1. **Passer a text-embedding-3-small** : qualite souvent suffisante,
-         cout x6 inferieur a l'indexation, dimension 1536 donc index x2
-         plus petit.
-      2. **Quantization des vecteurs** (int8 dans Qdrant) : memoire /4,
-         cout DB baisse.
-      3. **Semantic caching** sur les queries frequentes : 20-40% des
-         queries sont des variations d'une meme question -> cache hit
-         evite un appel LLM.
-      4. **Reduire le top-k** passe au LLM : de 5 a 3 chunks -> input
-         tokens baisse de 40%.
-      5. **Reranker** pour gagner sur le top-k : 3 bons chunks valent
-         mieux que 5 moyens.
-      6. **Distillation du LLM** vers un modele plus petit (Haiku,
-         Llama-3-8B en self-hosted) pour le use case specifique.
-      7. **Batching des requetes** si le SLA le permet.
+    Q6 -- Optimizations to stay under $2000 :
+      1. **Switch to text-embedding-3-small** : quality often sufficient,
+         6x lower indexing cost, dimension 1536 so the index is 2x
+         smaller.
+      2. **Vector quantization** (int8 in Qdrant) : memory /4,
+         DB cost goes down.
+      3. **Semantic caching** on the frequent queries : 20-40% of the
+         queries are variations of the same question -> a cache hit
+         avoids an LLM call.
+      4. **Reduce the top-k** passed to the LLM : from 5 to 3 chunks -> input
+         tokens drop by 40%.
+      5. **Reranker** to win on the top-k : 3 good chunks are worth
+         more than 5 mediocre ones.
+      6. **LLM distillation** to a smaller model (Haiku,
+         self-hosted Llama-3-8B) for the specific use case.
+      7. **Request batching** if the SLA allows it.
     """
 
 

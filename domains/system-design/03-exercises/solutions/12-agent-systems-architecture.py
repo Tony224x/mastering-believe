@@ -1,60 +1,60 @@
 """
-Solutions -- Jour 12 : Agent Systems Architecture
+Solutions -- Day 12 : Agent Systems Architecture
 """
 
 
 def solution_exercice_1() -> None:
     """
-    Exercice 1 -- Single-agent ou multi-agent ?
+    Exercise 1 -- Single-agent or multi-agent ?
 
     +-----------------------------+---------------+------------------------------+
-    | Produit                     | Pattern       | Justification                |
+    | Product                     | Pattern       | Justification                |
     +-----------------------------+---------------+------------------------------+
-    | Coding assistant (Cursor)   | Single-agent  | Taches homogenes (code), low |
-    |                             |               | latence critique, < 20 tools.|
-    |                             |               | Un bon ReAct loop suffit.    |
+    | Coding assistant (Cursor)   | Single-agent  | Homogeneous tasks (code), low|
+    |                             |               | latency critical, < 20 tools.|
+    |                             |               | A good ReAct loop suffices.  |
     +-----------------------------+---------------+------------------------------+
-    | Recherche financiere        | Supervisor    | Taches heterogenes (read,    |
-    | + memo                      | multi-agent   | compare, write), contexte    |
-    |                             |               | long, besoin de specialistes.|
+    | Financial research          | Supervisor    | Heterogeneous tasks (read,   |
+    | + memo                      | multi-agent   | compare, write), long context|
+    |                             |               | , specialists needed.        |
     +-----------------------------+---------------+------------------------------+
-    | Bot Slack doc interne       | Single-agent  | C'est un RAG + 2-3 tools.    |
-    |                             |               | Multi-agent serait over-     |
+    | Internal docs Slack bot     | Single-agent  | It's a RAG + 2-3 tools.      |
+    |                             |               | Multi-agent would be over-   |
     |                             |               | engineered.                  |
     +-----------------------------+---------------+------------------------------+
-    | Automatisation marketing    | Supervisor    | Segment + write + send +     |
-    |                             | multi-agent   | analyze. Specialistes        |
-    |                             |               | permettent d'optimiser chaque|
-    |                             |               | etape independamment.        |
+    | Marketing automation        | Supervisor    | Segment + write + send +     |
+    |                             | multi-agent   | analyze. Specialists         |
+    |                             |               | allow optimizing each        |
+    |                             |               | step independently.          |
     +-----------------------------+---------------+------------------------------+
     | Deep research report        | Hierarchical  | Phases (planning / research /|
-    |                             |               | drafting / review) avec sous |
-    |                             |               | agents par phase. Budget     |
-    |                             |               | eleve, latence non critique. |
+    |                             |               | drafting / review) with sub- |
+    |                             |               | agents per phase. High       |
+    |                             |               | budget, non-critical latency.|
     +-----------------------------+---------------+------------------------------+
-    | Correcteur grammaire IDE    | Single-agent  | Latence < 100 ms obligatoire.|
-    |                             | (local !)     | Aucun tool, juste le modele. |
-    |                             |               | Pas de place pour un multi.  |
+    | IDE grammar checker         | Single-agent  | Latency < 100 ms mandatory.  |
+    |                             | (local !)     | No tools, just the model.    |
+    |                             |               | No room for a multi setup.   |
     +-----------------------------+---------------+------------------------------+
 
-    Principe sous-jacent : **start with the simplest thing that works**.
-    Commence single-agent. Passe a multi quand tu as la preuve que c'est
-    necessaire (contexte trop gros, specialisations distinctes, ou
-    bottleneck clair).
+    Underlying principle : **start with the simplest thing that works**.
+    Start single-agent. Move to multi when you have proof that it is
+    necessary (context too large, distinct specializations, or a
+    clear bottleneck).
 
-    Latence mentionnee pour :
-    - Coding assistant : doit repondre < 2 s -> single
-    - Correcteur grammaire : < 100 ms -> single local
-    - Bot Slack : < 5 s acceptable -> single
-    - Deep research : plusieurs minutes OK -> multi-agent hierarchical
+    Latency mentioned for :
+    - Coding assistant : must respond < 2 s -> single
+    - Grammar checker : < 100 ms -> local single
+    - Slack bot : < 5 s acceptable -> single
+    - Deep research : several minutes OK -> hierarchical multi-agent
     """
 
 
 def solution_exercice_2() -> None:
     """
-    Exercice 2 -- State et conditions d'arret d'un assistant voyage.
+    Exercise 2 -- State and stop conditions of a travel assistant.
 
-    1) State minimum (pseudo-dataclass) :
+    1) Minimum state (pseudo-dataclass) :
 
         @dataclass
         class TravelState:
@@ -85,111 +85,111 @@ def solution_exercice_2() -> None:
             done: bool
             error: Optional[str]
 
-    2) Conditions d'arret :
-       a) `done == True AND validation_status == "approved"` : tache complete
-       b) `steps_used >= max_steps` : budget epuise
-       c) `error is not None` : erreur non recuperable (API down, auth KO)
-       d) `waiting_for_user == True` : main rendue a l'utilisateur, on sort
-          de la boucle jusqu'a reveil
-       e) Detection d'une boucle (meme action 3 fois de suite) : stop
-          defensif
+    2) Stop conditions :
+       a) `done == True AND validation_status == "approved"` : task complete
+       b) `steps_used >= max_steps` : budget exhausted
+       c) `error is not None` : unrecoverable error (API down, auth KO)
+       d) `waiting_for_user == True` : control handed back to the user, we
+          exit the loop until wake-up
+       e) Loop detection (same action 3 times in a row) : defensive
+          stop
 
-    3) Si budget depasse avant completion :
-       - L'agent doit retourner un *checkpoint* au user : "voici ce que
-         j'ai trouve jusqu'ici, continue ou arrete ?"
-       - Ne PAS crasher. Ne PAS halluciner pour completer.
-       - Enregistrer les partial results dans le state.
+    3) If the budget is exceeded before completion :
+       - The agent must return a *checkpoint* to the user : "here is what
+         I found so far, continue or stop ?"
+       - Do NOT crash. Do NOT hallucinate to finish.
+       - Record the partial results in the state.
 
-    4) Human-in-the-loop sans boucle :
-       - L'agent positionne `waiting_for_user = True` et retourne un
-         message structure ("je propose itineraire X, valides-tu ?").
-       - Le state est *persistee* (checkpoint DB).
-       - L'agent ne tourne plus. Quand le user repond, on recharge le
-         state et on reprend au point suivant.
+    4) Human-in-the-loop without a loop :
+       - The agent sets `waiting_for_user = True` and returns a
+         structured message ("I propose itinerary X, do you approve ?").
+       - The state is *persisted* (DB checkpoint).
+       - The agent is no longer running. When the user answers, we reload the
+         state and resume at the next point.
        - Frameworks : LangGraph `interrupt()` + `Command(resume=...)`.
-         CrewAI a aussi ce pattern.
+         CrewAI also has this pattern.
 
-    5) Persistence entre sessions :
-       - **State structure** : DB relationnelle (PostgreSQL) pour les
-         donnees critiques (budget restant, reservations, auth). Cle =
+    5) Persistence between sessions :
+       - **Structured state** : relational DB (PostgreSQL) for the
+         critical data (remaining budget, bookings, auth). Key =
          session_id.
-       - **Checkpoint de l'agent** : store cle-valeur (Redis, DynamoDB)
-         serialise JSON, indexe par session_id.
-       - **Long-term preferences** : store separe par user_id. Peut
-         etre un vector store + une DB (ex: "aime les hotels 4 etoiles
-         avec piscine, pas de vol apres 22h").
-       - Toujours respecter le RGPD : TTL sur les PII, consent explicite.
+       - **Agent checkpoint** : key-value store (Redis, DynamoDB)
+         serialized as JSON, indexed by session_id.
+       - **Long-term preferences** : separate store per user_id. Can
+         be a vector store + a DB (e.g. "likes 4-star hotels
+         with a pool, no flights after 10pm").
+       - Always respect the GDPR : TTL on the PII, explicit consent.
     """
 
 
 def solution_exercice_3() -> None:
     """
-    Exercice 3 -- Multi-agent qui hallucine.
+    Exercise 3 -- A hallucinating multi-agent system.
 
     Hypotheses, tests, mitigations :
 
-    H1 -- **Handoff messages trop pauvres**
-      - Test : inspecter les messages passes d'un agent a l'autre. S'ils
-        contiennent juste "continue" ou "do the thing", on a trouve.
-      - Mitigation : formaliser un schema Handoff {context, done,
-        remaining, success_criteria, budget}. Refuser les handoffs qui
-        ne respectent pas le schema.
-      - Impact/effort : HIGH / LOW -> **PRIORITE 1**
+    H1 -- **Handoff messages too poor**
+      - Test : inspect the messages passed from one agent to another. If they
+        just contain "continue" or "do the thing", we found it.
+      - Mitigation : formalize a Handoff schema {context, done,
+        remaining, success_criteria, budget}. Reject the handoffs that
+        do not follow the schema.
+      - Impact/effort : HIGH / LOW -> **PRIORITY 1**
 
-    H2 -- **Context bleed / reuse sans verification**
-      - Le writer cite les resultats du search sans verifier qu'ils
-        existent vraiment dans la memoire.
-      - Test : inspecter les cites du writer et comparer au log du
-        search_agent.
-      - Mitigation : groundedness check automatique : chaque citation
-        du writer doit pointer vers un chunk_id qui existe dans le
-        state.results. Si pas trouve -> flag invalid.
-      - Impact/effort : HIGH / MEDIUM -> **PRIORITE 2**
+    H2 -- **Context bleed / reuse without verification**
+      - The writer cites the search results without verifying that they
+        actually exist in memory.
+      - Test : inspect the writer's citations and compare to the
+        search_agent's log.
+      - Mitigation : automatic groundedness check : every citation
+        by the writer must point to a chunk_id that exists in
+        state.results. If not found -> flag invalid.
+      - Impact/effort : HIGH / MEDIUM -> **PRIORITY 2**
 
-    H3 -- **Memoire stale reutilisee**
-      - Des donnees d'un step precedent sont reutilisees alors qu'elles
-        ne sont plus valides (ex: snapshot de prix 30 min plus tard).
-      - Test : timestamper toutes les entrees de state.results et
-        verifier la difference temporelle au moment de l'utilisation.
-      - Mitigation : TTL sur les entrees de memoire, et invalidation
-        explicite par etape.
-      - Impact/effort : MEDIUM / MEDIUM -> PRIORITE 4
+    H3 -- **Stale memory reused**
+      - Data from a previous step is reused even though it is
+        no longer valid (e.g. a price snapshot 30 min later).
+      - Test : timestamp all the state.results entries and
+        check the time difference at the moment of use.
+      - Mitigation : TTL on the memory entries, and explicit
+        invalidation per step.
+      - Impact/effort : MEDIUM / MEDIUM -> PRIORITY 4
 
-    H4 -- **Critic non-independant (meme modele que les agents)**
-      - Si le critic utilise le meme LLM que les executors, il valide
-        les memes hallucinations qu'il est cense detecter.
-      - Test : faire passer le critic sur 50 exemples avec erreurs
-        connues et mesurer le recall.
-      - Mitigation : utiliser un modele different pour le critic
-        (autre provider, ou plus fort, ou plus strict via prompt).
-        Idealement combine avec des verifications deterministes
-        (schema, groundedness) AVANT d'invoquer le LLM critic.
-      - Impact/effort : HIGH / MEDIUM -> **PRIORITE 3**
+    H4 -- **Non-independent critic (same model as the agents)**
+      - If the critic uses the same LLM as the executors, it validates
+        the very hallucinations it is supposed to detect.
+      - Test : run the critic over 50 examples with known errors
+        and measure the recall.
+      - Mitigation : use a different model for the critic
+        (another provider, or a stronger one, or stricter via prompt).
+        Ideally combined with deterministic checks
+        (schema, groundedness) BEFORE invoking the LLM critic.
+      - Impact/effort : HIGH / MEDIUM -> **PRIORITY 3**
 
-    H5 -- **Pas de stopping criteria explicite / supervisor trop
-          permissif**
-      - Le supervisor declare "done" alors qu'une partie du plan n'est
-        pas faite parce qu'il n'a pas de checklist.
-      - Test : comparer le plan initial avec les steps reellement
-        executes.
-      - Mitigation : le supervisor maintient une checklist, et ne
-        peut declarer "done" qu'apres avoir verifie que chaque item
-        est coche (avec proof -> chaque item est lie a un result dans
-        le state).
-      - Impact/effort : HIGH / LOW -> **PRIORITE 1bis**
+    H5 -- **No explicit stopping criteria / overly permissive
+          supervisor**
+      - The supervisor declares "done" while part of the plan is
+        not done because it has no checklist.
+      - Test : compare the initial plan with the steps actually
+        executed.
+      - Mitigation : the supervisor maintains a checklist, and may
+        only declare "done" after verifying that every item
+        is checked (with proof -> each item is linked to a result in
+        the state).
+      - Impact/effort : HIGH / LOW -> **PRIORITY 1bis**
 
-    Bonus H6 -- Pas d'observability : si on n'a pas de trace LangSmith
-    / Langfuse, debugger est impossible. Installer en priorite zero.
+    Bonus H6 -- No observability : without LangSmith / Langfuse
+    traces, debugging is impossible. Install as priority zero.
 
-    Plan de priorisation (impact/effort) :
-      1. Handoff messages structures (H1)
-      2. Checklist obligatoire du supervisor (H5)
-      3. Groundedness check automatique (H2)
-      4. Critic modele independant (H4)
-      5. Memoire timestampee et invalide-able (H3)
+    Prioritization plan (impact/effort) :
+      1. Structured handoff messages (H1)
+      2. Mandatory supervisor checklist (H5)
+      3. Automatic groundedness check (H2)
+      4. Independent critic model (H4)
+      5. Timestamped and invalidatable memory (H3)
 
-    Transverse : metrique globale = taux d'hallucination mesure sur
-    un gold set de 50 taches. Suivre apres chaque mitigation.
+    Cross-cutting : global metric = hallucination rate measured on
+    a gold set of 50 tasks. Track after each mitigation.
     """
 
 
