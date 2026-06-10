@@ -1,8 +1,8 @@
 """
-Line-of-sight symetrique par Bresenham — correction.
+Symmetric line-of-sight via Bresenham — solution.
 
-Le piege principal : Bresenham standard n'est pas symetrique sur les demi-cases.
-On canonicalise en tracant toujours depuis le Point lexicographiquement inferieur.
+The main trap: standard Bresenham is not symmetric on half-cells.
+We canonicalize by always tracing from the lexicographically smaller Point.
 """
 from __future__ import annotations
 
@@ -11,10 +11,10 @@ Grid = list[list[bool]]  # True = obstacle
 
 
 def line_of_sight(zone: Grid, a: Point, b: Point) -> bool:
-    """True si la LOS de a vers b est libre. a et b exclus du test."""
-    # Canonicalisation : garantit la symetrie LOS(a,b) == LOS(b,a).
-    # Sans ca, la ligne tracee de (0,0) vers (4,3) peut differer de celle
-    # tracee de (4,3) vers (0,0) quand la pente tombe entre deux octants.
+    """True if the LOS from a to b is clear. a and b excluded from the test."""
+    # Canonicalization: guarantees the symmetry LOS(a,b) == LOS(b,a).
+    # Without it, the line traced from (0,0) to (4,3) can differ from the one
+    # traced from (4,3) to (0,0) when the slope falls between two octants.
     if (a[0], a[1]) > (b[0], b[1]):
         a, b = b, a
 
@@ -28,7 +28,7 @@ def line_of_sight(zone: Grid, a: Point, b: Point) -> bool:
     err = dr - dc
 
     r, c = r0, c0
-    # On exclut le point de depart : on fait un "step" avant de checker.
+    # Exclude the starting point: we step once before checking.
     while (r, c) != (r1, c1):
         e2 = 2 * err
         if e2 > -dc:
@@ -37,7 +37,7 @@ def line_of_sight(zone: Grid, a: Point, b: Point) -> bool:
         if e2 < dr:
             err += dr
             c += sc
-        # Test d'obstacle sauf sur le point d'arrivee
+        # Obstacle test, except on the arrival point
         if (r, c) != (r1, c1) and zone[r][c]:
             return False
 
@@ -45,11 +45,11 @@ def line_of_sight(zone: Grid, a: Point, b: Point) -> bool:
 
 
 def bench() -> None:
-    """Benchmark : 40 000 appels sur grille 200x200."""
+    """Benchmark: 40,000 calls on a 200x200 grid."""
     import random
     import time
 
-    random.seed(42)  # determinisme du bench lui-meme
+    random.seed(42)  # determinism of the bench itself
     SIZE = 200
     zone: Grid = [[random.random() < 0.15 for _ in range(SIZE)] for _ in range(SIZE)]
 
@@ -64,16 +64,16 @@ def bench() -> None:
     elapsed = time.perf_counter() - start
 
     print(f"40 000 LOS en {elapsed*1000:.1f} ms ({visible} paires visibles)")
-    # Objectif : < 50 ms sur une machine moderne.
+    # Target: < 50 ms on a modern machine.
 
 
 if __name__ == "__main__":
-    # Test sanity : ligne libre vs bloquee
+    # Sanity test: clear line vs blocked line
     g: Grid = [[False] * 5 for _ in range(5)]
     assert line_of_sight(g, (0, 0), (4, 4))
     g[2][2] = True
     assert not line_of_sight(g, (0, 0), (4, 4))
-    # Symetrie
+    # Symmetry
     assert line_of_sight(g, (0, 0), (4, 4)) == line_of_sight(g, (4, 4), (0, 0))
     print("Tests OK")
     bench()

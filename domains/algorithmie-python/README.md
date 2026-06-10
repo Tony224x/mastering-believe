@@ -29,11 +29,19 @@ Maitriser les structures de donnees et algorithmes necessaires pour exceller en 
 |------|--------|-------|-------|
 | J8 | Trees & BST | DFS/BFS, traversals, path problems, BST properties | 3h |
 | J9 | Graphs | DFS/BFS, topological sort, shortest path, union-find | 3h |
-| J10 | Dynamic Programming | Memoization, tabulation, patterns (knapsack, LIS, zone) | 4h |
+| J10 | Dynamic Programming | Memoization, tabulation, patterns (knapsack, LIS, grid) | 4h |
 | J11 | DP avance + Greedy | Interval scheduling, state machines, optimisation | 3h |
 | J12 | Backtracking & Recursion | Permutations, combinations, constraint satisfaction | 3h |
 | J13 | Bit manipulation, Heaps, Tries | Techniques de niche a haut rendement | 3h |
 | J14 | **Mock interviews** | 3 sessions chronometrees format FAANG (45 min chacune) | 4h |
+
+## Structure du contenu
+
+- `01-theory/` — 1 module theorique par jour (source-of-truth)
+- `02-code/` — exemples executables alignes sur la theorie
+- `03-exercises/` — easy couvre tous les modules ; medium et hard se concentrent sur les modules 01-03 (fondamentaux)
+- `04-projects/` — mini-projets libres (vide pour l'instant)
+- `05-projets-guides/` — 3 projets appliques au contexte LogiSim (voir [`shared/logistics-context.md`](../../shared/logistics-context.md))
 
 ## Criteres de reussite
 

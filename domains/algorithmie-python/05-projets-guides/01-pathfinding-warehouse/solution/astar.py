@@ -1,9 +1,9 @@
 """
-Correction commentee — A* tactique pour FleetSim.
+Commented solution — tactical A* for FleetSim.
 
-Objectif : pathfinding deterministe sur grille ponderee avec couts terrain.
-Cle de lecture : chaque commentaire explique le POURQUOI (choix de design),
-pas le QUOI (lisible dans le code).
+Goal: deterministic pathfinding on a weighted grid with terrain costs.
+Reading key: every comment explains the WHY (design choice),
+not the WHAT (readable in the code).
 """
 from __future__ import annotations
 
@@ -15,20 +15,20 @@ Point = tuple[int, int]
 Grid = list[list[float]]
 
 
-# 4-connexe d'abord : deterministe, pas de probleme d'obstacle "corner cutting".
-# En 8-connexe on ajoute les diagonales. L'ordre est fixe (pas de set) pour
-# garantir le determinisme quand deux voisins ont meme f-score.
+# 4-connected first: deterministic, no "corner cutting" obstacle issue.
+# 8-connected adds the diagonals. The order is fixed (no set) to
+# guarantee determinism when two neighbors share the same f-score.
 _MOVES_4 = ((-1, 0), (1, 0), (0, -1), (0, 1))
 _MOVES_8 = _MOVES_4 + ((-1, -1), (-1, 1), (1, -1), (1, 1))
 
 
 def _heuristic(a: Point, b: Point, allow_diagonal: bool) -> float:
-    """Manhattan pour 4-connexe, Chebyshev pour 8-connexe.
+    """Manhattan for 4-connected, Chebyshev for 8-connected.
 
-    Les deux sont admissibles (ne surestiment jamais le cout reel) si le cout
-    minimal d'un pas vaut 1. Chebyshev est plus tight en 8-connexe car elle
-    prend en compte les diagonales. Octile serait encore meilleure (ajoute un
-    terme sqrt(2)-1 pour les diagonales), laissee en extension.
+    Both are admissible (never overestimate the true cost) as long as the
+    minimal step cost is 1. Chebyshev is tighter in 8-connected mode because
+    it accounts for diagonals. Octile would be even better (adds a
+    sqrt(2)-1 term for diagonals), left as an extension.
     """
     dr = abs(a[0] - b[0])
     dc = abs(a[1] - b[1])
@@ -43,11 +43,11 @@ def _in_bounds(zone: Grid, p: Point) -> bool:
 
 
 def _neighbors(zone: Grid, node: Point, allow_diagonal: bool) -> Iterable[tuple[Point, float]]:
-    """Yield (voisin, cout_arete). Cout = cout de la case d'arrivee (convention).
+    """Yield (neighbor, edge_cost). Cost = cost of the destination cell (convention).
 
-    On multiplie par sqrt(2) en diagonale : un pas diagonal couvre plus de
-    distance mais les deux cases adjacentes doivent etre franchissables
-    (evite le "diagonal corner cutting" a travers un mur).
+    We multiply by sqrt(2) on diagonals: a diagonal step covers more
+    distance, and both adjacent cells must be traversable
+    (prevents "diagonal corner cutting" through a wall).
     """
     moves = _MOVES_8 if allow_diagonal else _MOVES_4
     for dr, dc in moves:
@@ -58,7 +58,7 @@ def _neighbors(zone: Grid, node: Point, allow_diagonal: bool) -> Iterable[tuple[
         if cost == math.inf:
             continue
         if dr != 0 and dc != 0:
-            # Anti-corner-cutting : les deux cases orthogonales doivent etre libres.
+            # Anti-corner-cutting: both orthogonal cells must be free.
             if zone[node[0] + dr][node[1]] == math.inf:
                 continue
             if zone[node[0]][node[1] + dc] == math.inf:
@@ -69,42 +69,42 @@ def _neighbors(zone: Grid, node: Point, allow_diagonal: bool) -> Iterable[tuple[
 
 
 def astar(zone: Grid, start: Point, goal: Point, allow_diagonal: bool = False) -> list[Point] | None:
-    """A* sur grille ponderee. Retourne la liste des cases (start -> goal)
-    ou None si pas de chemin.
+    """A* on a weighted grid. Returns the list of cells (start -> goal)
+    or None if there is no path.
 
-    Pourquoi A* et pas Dijkstra : l'heuristique guide l'exploration vers le
-    goal et reduit drastiquement le nombre de noeuds developpes. Sur une
-    grille 500x500 ouverte, Dijkstra developpe ~O(N*M), A* developpe ~O(N)
-    ou N est la longueur du chemin.
+    Why A* and not Dijkstra: the heuristic steers the exploration toward the
+    goal and drastically reduces the number of expanded nodes. On an open
+    500x500 grid, Dijkstra expands ~O(N*M), A* expands ~O(N)
+    where N is the path length.
 
-    Pourquoi un counter dans le tuple heap : heapq compare les tuples
-    lexicographiquement. Si deux noeuds ont meme f-score, Python comparerait
-    les Points, et l'ordre dependrait de l'insertion -> non deterministe
-    quand on change les voisins. Le counter garantit un ordre strict.
+    Why a counter inside the heap tuple: heapq compares tuples
+    lexicographically. If two nodes have the same f-score, Python would
+    compare the Points, and the order would depend on insertion -> non
+    deterministic when the neighbors change. The counter guarantees a strict order.
     """
     if not _in_bounds(zone, start) or not _in_bounds(zone, goal):
         return None
     if zone[start[0]][start[1]] == math.inf or zone[goal[0]][goal[1]] == math.inf:
         return None
 
-    # g_score[node] = cout reel depuis start. On n'initialise pas toute la
-    # grille (gaspillage memoire sur 2000x2000), on utilise un dict sparse.
+    # g_score[node] = actual cost from start. We do not initialize the whole
+    # grid (memory waste on 2000x2000), we use a sparse dict instead.
     g_score: dict[Point, float] = {start: 0.0}
     came_from: dict[Point, Point] = {}
 
-    counter = 0  # tie-breaker monotone, garantit le determinisme
+    counter = 0  # monotonic tie-breaker, guarantees determinism
     open_heap: list[tuple[float, int, Point]] = [(_heuristic(start, goal, allow_diagonal), counter, start)]
 
-    # closed_set : noeuds dont on a fixe le cout optimal. On ne les redeveloppe
-    # pas. Valide parce que l'heuristique est admissible ET consistante
-    # (ce qui est le cas pour Manhattan/Chebyshev sur grille).
+    # closed_set: nodes whose optimal cost is settled. We never re-expand
+    # them. Valid because the heuristic is admissible AND consistent
+    # (which is the case for Manhattan/Chebyshev on a grid).
     closed: set[Point] = set()
 
     while open_heap:
         f, _, current = heapq.heappop(open_heap)
 
         if current == goal:
-            # Reconstruction : remonter came_from depuis goal, puis reverse.
+            # Reconstruction: walk came_from back from goal, then reverse.
             path = [current]
             while current in came_from:
                 current = came_from[current]
@@ -113,9 +113,9 @@ def astar(zone: Grid, start: Point, goal: Point, allow_diagonal: bool = False) -
             return path
 
         if current in closed:
-            # On peut avoir plusieurs entrees pour un meme noeud si on a
-            # trouve un meilleur chemin apres la premiere insertion. On skip
-            # les obsoletes (variante "lazy deletion" du heap).
+            # The same node can have several heap entries if a better path
+            # was found after the first insertion. We skip the stale ones
+            # ("lazy deletion" variant of the heap).
             continue
         closed.add(current)
 
@@ -130,11 +130,11 @@ def astar(zone: Grid, start: Point, goal: Point, allow_diagonal: bool = False) -
                 counter += 1
                 heapq.heappush(open_heap, (f_neighbor, counter, neighbor))
 
-    return None  # open vide, goal non atteint
+    return None  # open set empty, goal not reached
 
 
 if __name__ == "__main__":
-    # Demo : petite carte avec foret (cout 5), route (cout 1), obstacle (inf).
+    # Demo: small map with forest (cost 5), road (cost 1), obstacle (inf).
     INF = math.inf
     demo: Grid = [
         [1, 1, 1, 5, 5, 5],
@@ -145,4 +145,4 @@ if __name__ == "__main__":
     ]
     path = astar(demo, (0, 0), (4, 5))
     print("Chemin:", path)
-    # Le chemin optimal passe par la route (cout 1) pour eviter la foret.
+    # The optimal path follows the road (cost 1) to avoid the forest.
