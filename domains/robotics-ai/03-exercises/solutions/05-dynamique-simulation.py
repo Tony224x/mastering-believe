@@ -204,8 +204,12 @@ def simulate_2dof(
         model_for_comp = model
         data_for_comp = data  # pas besoin de duplicata si non perturbe
 
-    n_steps = int(duration / model.opt.timestep)
-    log_times = [0.0, 1.0, 2.0, 5.0]
+    n_steps = int(round(duration / model.opt.timestep))
+    # On indexe les logs par numero de step ENTIER, pas par temps flottant :
+    # int(5.0 / 0.002) == 2499 a cause de l'arrondi binaire, donc un lookup
+    # dict sur des floats accumules levait un KeyError (ex: KeyError: 5.0).
+    log_times = [tl for tl in (0.0, 1.0, 2.0, 5.0) if tl <= duration + 1e-9]
+    log_steps = {int(round(tl / model.opt.timestep)): tl for tl in log_times}
     log_q: dict[float, np.ndarray] = {0.0: q0.copy()}
 
     for k in range(1, n_steps + 1):
@@ -223,10 +227,8 @@ def simulate_2dof(
             data.qfrc_applied[:] = 0.0
 
         mujoco.mj_step(model, data)
-        t = k * model.opt.timestep
-        for tl in log_times:
-            if abs(t - tl) < model.opt.timestep / 2 and tl not in log_q:
-                log_q[tl] = data.qpos.copy()
+        if k in log_steps and log_steps[k] not in log_q:
+            log_q[log_steps[k]] = data.qpos.copy()
 
     # Energie totale finale
     energy_final = float(data.energy[0] + data.energy[1])

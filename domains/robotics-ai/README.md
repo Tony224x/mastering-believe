@@ -18,6 +18,14 @@ Maîtriser la robotique moderne au croisement des fondations classiques (cinéma
 - Algèbre linéaire (matrices, valeurs propres) et probabilités de base
 - Pas de background robotique requis — le domaine bootstrap les fondations classiques en J2-J7
 
+### Setup (dépendances J1)
+
+```bash
+pip install "gymnasium[mujoco]" mujoco torch imageio
+```
+
+> `imageio` est requis dès J1 : le script `02-code/01-vue-ensemble-setup.py` l'importe via gymnasium (enregistrement vidéo). Les modules suivants ajoutent ponctuellement `scipy` et `matplotlib`.
+
 ## Planning (4 semaines, 28 jours)
 
 | Sem | Jour | Module | Temps estimé |
@@ -77,4 +85,4 @@ Top 5 si tu ne devais en garder que 5 :
 
 ## Projets guides
 
-3 projets en contexte LogiSim/FleetSim (entrepôts robotisés, AGV, picking automatisé) dans [`05-projets-guides/`](./05-projets-guides/) — voir aussi [`shared/logistics-context.md`](../../shared/logistics-context.md).
+À venir : 3 projets en contexte LogiSim/FleetSim (entrepôts robotisés, AGV, picking automatisé) dans un futur dossier `05-projets-guides/` (pas encore créé) — voir aussi [`shared/logistics-context.md`](../../shared/logistics-context.md).

@@ -36,6 +36,10 @@ def _load_j25():
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Cannot load J25 module from {J25_PATH}")
     mod = importlib.util.module_from_spec(spec)
+    # Register in sys.modules BEFORE exec_module: dataclasses (and pickling)
+    # resolve classes through sys.modules[cls.__module__], which would
+    # otherwise fail for the dynamically loaded module.
+    sys.modules[spec.name] = mod
     spec.loader.exec_module(mod)
     return mod
 

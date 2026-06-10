@@ -270,12 +270,18 @@ class ConditionalUNet1D(nn.Module):
         self.mid_block1 = ConditionalResidualBlock1D(mid_ch, mid_ch, cond_dim_film, kernel, n_groups)
         self.mid_block2 = ConditionalResidualBlock1D(mid_ch, mid_ch, cond_dim_film, kernel, n_groups)
 
-        # Up path (mirrors down).
+        # Up path (mirrors down) — IMPORTANT: it stays at feature channels and the
+        # final_conv projects down to action_dim, as in the reference repo
+        # (real-stanford/diffusion_policy). Going down to action_dim (=2) inside a
+        # ConditionalResidualBlock1D would break GroupNorm(8, 2) since 2 % 8 != 0.
         self.up_blocks = nn.ModuleList()
-        ch_list_up = list(reversed(ch_list))  # e.g. [1024, 512, 256, action_dim]
-        for i in range(len(ch_list_up) - 1):
-            ch_a, ch_b = ch_list_up[i], ch_list_up[i + 1]
-            is_last = (i == len(ch_list_up) - 2)
+        ch_list_up = list(reversed(cfg.unet_down_channels))  # e.g. [1024, 512, 256]
+        base_ch = cfg.unet_down_channels[0]
+        for i in range(len(ch_list_up)):
+            ch_a = ch_list_up[i]
+            # Last level stays at base channels instead of dropping to action_dim.
+            ch_b = ch_list_up[i + 1] if i + 1 < len(ch_list_up) else base_ch
+            is_last = (i == len(ch_list_up) - 1)
             # After concat with skip, in-channels double.
             self.up_blocks.append(nn.ModuleList([
                 ConditionalResidualBlock1D(ch_a * 2, ch_a, cond_dim_film, kernel, n_groups),
@@ -283,8 +289,11 @@ class ConditionalUNet1D(nn.Module):
                 Upsample1D(ch_b) if not is_last else nn.Identity(),
             ]))
 
-        # Final conv to action_dim.
-        self.final_conv = nn.Conv1d(cfg.action_dim, cfg.action_dim, 1)
+        # Final conv: project base channels -> action_dim (1x1, no GroupNorm constraint).
+        self.final_conv = nn.Sequential(
+            Conv1DBlock(base_ch, base_ch, kernel, n_groups),
+            nn.Conv1d(base_ch, cfg.action_dim, 1),
+        )
 
     def forward(
         self,

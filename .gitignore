@@ -48,6 +48,9 @@ ENV/
 # --- Donnees / dossiers de demo runtime ---
 .demo_checkpoints/
 .demo_checkpoints_unit/
+artifacts/
+eval_j28/
+out_j28_solutions/
 
 # --- Espace de travail personnel des exercices (les users y mettent leurs solutions) ---
 domains/*/03-exercises/workspace/**

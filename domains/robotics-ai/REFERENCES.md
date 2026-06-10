@@ -10,23 +10,23 @@
 
 1. **Modern Robotics: Mechanics, Planning, and Control** — Lynch & Park, 2017 (Cambridge UP). http://hades.mech.northwestern.edu/index.php/Modern_Robotics
    Pourquoi : manuel canonique post-2015, formulation produit-d'exponentielles (PoE) plus propre que DH classique, livre + cours edX + code Python officiel.
-   Couvre : J1 (transformations SE(3), twists), J2 (FK via PoE), J3 (jacobiens, IK), J4 (dynamique Lagrange/Newton-Euler).
+   Couvre : J2 (transformations SE(3), twists), J3 (FK via PoE), J4 (jacobiens, IK), J5 (dynamique Lagrange/Newton-Euler).
 
 2. **Robotics: Modelling, Planning and Control** — Siciliano, Sciavicco, Villani, Oriolo, 2009 (Springer). https://link.springer.com/book/10.1007/978-1-84628-642-1
    Pourquoi : standard de fait européen, traitement rigoureux de la dynamique et du contrôle articulaire (computed torque, impedance), complémentaire à Lynch sur le contrôle.
-   Couvre : J4 (Newton-Euler récursif), J5 (PID articulaire, computed torque, impedance/force control).
+   Couvre : J5 (Newton-Euler récursif), J6 (PID articulaire, computed torque, impedance/force control).
 
 3. **Underactuated Robotics** — Russ Tedrake, MIT 6.832, édition vivante 2024. https://underactuated.csail.mit.edu/
    Pourquoi : référence ouverte sur LQR, trajectory optimization (DIRCOL, iLQR) et MPC pour systèmes non-linéaires, avec notebooks Drake exécutables.
-   Couvre : J5 (LQR, MPC), J6 (trajectory optimization, direct collocation).
+   Couvre : J6 (LQR), J8 (trajectory optimization, direct collocation), J12 (MPC).
 
 4. **Planning Algorithms** — Steven LaValle, 2006 (Cambridge UP), édition libre en ligne. http://lavalle.pl/planning/
    Pourquoi : référence fondatrice et toujours canonique pour RRT/PRM, configuration space, sampling-based planning. L'auteur a inventé RRT.
-   Couvre : J6 (motion planning, RRT/RRT*, PRM, C-space).
+   Couvre : J8 (motion planning, RRT/RRT*, PRM, C-space).
 
 5. **Stanford CS223A — Introduction to Robotics** — Oussama Khatib, lectures Stanford 2008. https://www.youtube.com/playlist?list=PL65CC0384A1798ADF
    Pourquoi : cours de référence sur les fondations cinématique/dynamique par l'auteur du operational space control ; complément vidéo aux livres.
-   Couvre : J1-J4 (rotations, FK/IK, jacobiens, dynamique).
+   Couvre : J2-J5 (rotations, FK/IK, jacobiens, dynamique).
 
 ---
 
@@ -34,31 +34,31 @@
 
 6. **Reinforcement Learning: An Introduction (2nd ed.)** — Sutton & Barto, 2018. http://incompleteideas.net/book/the-book-2nd.html
    Pourquoi : la bible canonique du RL, gratuite, indispensable pour MDPs / Bellman / TD / policy gradients.
-   Couvre : J7 (MDPs, Bellman), J8 (TD, Q-learning), J9 (policy gradients fondamentaux).
+   Couvre : J9 (MDPs, Bellman), J10 (TD, Q-learning), J11 (policy gradients fondamentaux).
 
 7. **OpenAI Spinning Up in Deep RL** — Achiam (OpenAI), 2018+. https://spinningup.openai.com/en/latest/
    Pourquoi : pont pédagogique entre Sutton & Barto et les papiers (VPG/TRPO/PPO/DDPG/TD3/SAC) avec implémentations de référence.
-   Couvre : J9 (PPO, TRPO), J10 (SAC, TD3, DDPG), J11 (actor-critic, exploration).
+   Couvre : J11 (PPO, TRPO, actor-critic, exploration), J12 (SAC, TD3, DDPG).
 
 8. **Proximal Policy Optimization Algorithms** — Schulman et al., 2017. https://arxiv.org/abs/1707.06347
    Pourquoi : papier séminal du workhorse du Deep RL appliqué à la robotique (PPO clip), prérequis direct des labs sim-to-real.
-   Couvre : J9 (policy gradients on-policy), J13 (sim-to-real), J14 (RLHF/RL fine-tuning des VLAs).
+   Couvre : J11 (policy gradients on-policy), J14 (sim-to-real), J20 (RL fine-tuning des VLAs).
 
 9. **CleanRL** — Huang et al., 2022+. https://github.com/vwxyzjn/cleanrl
    Pourquoi : implémentations single-file lisibles ligne-à-ligne, benchmarkées (PPO/SAC/DQN/TD3/DDPG/RND).
-   Couvre : J9-J11 (lecture/modif d'algos), J12 (offline RL), capstone.
+   Couvre : J10-J12 (lecture/modif d'algos DQN/PPO/SAC/TD3), capstone.
 
 10. **A Survey of Imitation Learning: Algorithms, Recent Developments, and Challenges** — Zare, Kebria, Khosravi, Nahavandi, 2024. https://arxiv.org/abs/2309.02473
     Pourquoi : survey récent et exhaustif couvrant Behavior Cloning, DAgger, IRL, GAIL, et leur combinaison avec RL.
-    Couvre : J11 (BC, DAgger), J12 (offline + IL), J13 (sim-to-real combiné IL+RL).
+    Couvre : J13 (BC, DAgger, IRL/GAIL), J14 (sim-to-real combiné IL+RL).
 
 11. **Berkeley CS285 — Deep Reinforcement Learning** — Sergey Levine, Fall 2023. https://www.youtube.com/playlist?list=PL_iWQOsE6TfVYGEGiAOMaOzzv41Jfm_Ps
     Pourquoi : référence algorithmique deep RL la plus rigoureuse côté granularité (PG, AC, Q, MBRL, offline RL, IRL, RL & LLMs).
-    Couvre : J7-J14 (toute la séquence RL).
+    Couvre : J9-J14 (toute la séquence RL + IL + sim-to-real).
 
 12. **Stanford CS224R — Deep RL** — Chelsea Finn, Spring 2025. https://www.youtube.com/playlist?list=PLoROMvodv4rPwxE0ONYRa_itZFdaKCylL
     Pourquoi : pendant Stanford robotique-first, lectures sur diffusion policy, sim-to-real, VLA.
-    Couvre : J11-J16 (IL moderne, sim2real, VLA preview).
+    Couvre : J13-J16 (IL moderne, sim2real, diffusion policy), J19-J20 (VLA).
 
 ---
 
@@ -66,27 +66,27 @@
 
 13. **OpenVLA: An Open-Source Vision-Language-Action Model** — Kim, Pertsch et al. (Stanford / Berkeley / TRI), 2024. https://arxiv.org/abs/2406.09246 — Repo : https://github.com/openvla/openvla
     Pourquoi : VLA 7B open-source de référence (Llama2 + DINOv2/SigLIP), bat RT-2-X 55B, fine-tunable sur GPU consumer — pierre angulaire pédagogique.
-    Couvre : J18 (RT-1/RT-2 lineage), J19 (architecture VLA), J20 (fine-tuning LoRA + déploiement quantizé).
+    Couvre : J19 (RT-1/RT-2 lineage, contexte VLA), J20 (architecture OpenVLA + fine-tuning LoRA + déploiement quantizé).
 
 14. **π0: A Vision-Language-Action Flow Model for General Robot Control** — Black, Brown, Driess, Finn et al. (Physical Intelligence), 2024. https://arxiv.org/abs/2410.24164 — Blog : https://www.pi.website/blog/pi0 — π0.5 : https://www.pi.website/download/pi05.pdf
     Pourquoi : SOTA generalist policy avec flow matching sur VLM pré-entraîné, multi-embodiment dexterous ; π0.5 ajoute open-world generalization ; π0-FAST tokenizer 5×.
-    Couvre : J20 (flow matching/diffusion action heads), J21 (π0/π0.5 deep dive), J24 (open-world generalization).
+    Couvre : J15 (flow matching — fondation théorique), J21 (π0/π0.5 deep dive, action heads flow matching, open-world generalization).
 
 15. **GR00T N1: An Open Foundation Model for Generalist Humanoid Robots** — NVIDIA Research, mars 2025. https://arxiv.org/abs/2503.14734 — Repo : https://github.com/NVIDIA/Isaac-GR00T
     Pourquoi : VLA dual-system (System2 VLM + System1 diffusion transformer) sur mix réel + 780k trajectoires synthétiques ; modèle ouvert, écosystème Isaac/Newton, adopté par Figure/1X/Apptronik.
-    Couvre : J22 (architectures dual-system System1/System2), J23 (synthetic data pipelines + sim-to-real), J24 (humanoid deployment).
+    Couvre : J22 (architectures dual-system System1/System2, humanoid deployment), J23 (synthetic data pipelines + sim-to-real à scale).
 
 16. **Helix: A Vision-Language-Action Model for Generalist Humanoid Control** — Figure AI, février 2025 + Helix Logistics 2025. https://www.figure.ai/news/helix — https://www.figure.ai/news/helix-logistics
     Pourquoi : premier VLA driving humanoid upper-body complet (35 DoF @ 200Hz) avec System2 7B + System1 80M ; faster-than-demonstrator en logistique réelle — résonance directe contexte LogiSim.
-    Couvre : J22 (high-rate continuous control), J23 (multi-robot coordination), J24 (capstone logistique).
+    Couvre : J22 (high-rate continuous control, dual-system), J28 (intégration LogiSim du capstone, contexte logistique).
 
 17. **Octo: An Open-Source Generalist Robot Policy** — Octo Model Team (Berkeley/Stanford/CMU/Google), RSS 2024. https://arxiv.org/abs/2405.12213 — Site : https://octo-models.github.io/
     Pourquoi : transformer policy entraîné sur 800k trajectoires Open X-Embodiment, language ou goal-image conditioned, fine-tuning rapide sur 9 plateformes — baseline open avant l'ère VLA.
-    Couvre : J18 (Open X-Embodiment & generalist policies), J19 (transformer action heads vs diffusion).
+    Couvre : J19 (Open X-Embodiment & generalist policies, Octo, transformer action heads vs diffusion).
 
 18. **Toyota Research Institute LBM — A Careful Examination of Large Behavior Models for Multitask Dexterous Manipulation** — TRI, 2024-2025. https://toyotaresearchinstitute.github.io/lbm1/
     Pourquoi : 1700h de données, ViT multimodal + transformer denoiser, 80% moins de data pour nouvelles tâches — diffusion policies industrialisées.
-    Couvre : J21-J22 (LBM + scaling diffusion policies).
+    Couvre : J22 (LBM + scaling diffusion policies).
 
 ---
 
@@ -94,23 +94,23 @@
 
 19. **Diffusion Policy: Visuomotor Policy Learning via Action Diffusion** — Chi et al. (Columbia/TRI), RSS 2023 (best paper) — IJRR 2024. https://diffusion-policy.cs.columbia.edu/ — Code : https://github.com/real-stanford/diffusion_policy
     Pourquoi : papier fondateur + repo open-source MIT-license complet (training, eval, configs, checkpoints) — base directe du capstone.
-    Couvre : J16-J17 (théorie diffusion policy, score matching), J25-J28 (capstone implémentation).
+    Couvre : J16 (Diffusion Policy deep dive), J25-J28 (capstone implémentation).
 
 20. **Mastering Diverse Domains through World Models (DreamerV3)** — Hafner, Pasukonis, Ba, Lillicrap, 2023. https://arxiv.org/abs/2301.04104
     Pourquoi : référence canonique des world models RL ; single config qui généralise sur 150+ tâches, premier à collecter des diamants dans Minecraft sans curriculum.
-    Couvre : J15 (world models RL, latent imagination, RSSM).
+    Couvre : J17 (world models RL, latent imagination, RSSM).
 
 21. **V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning** — Meta FAIR / LeCun, 2025. https://arxiv.org/abs/2506.09985 — Blog : https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/
     Pourquoi : dernière itération JEPA appliquée robotique (zero-shot pick-and-place via goal images, 62h Droid data) — incarne la vision LeCun "world models > generative pixels". Open-weights.
-    Couvre : J15-J16 (JEPA / I-JEPA / V-JEPA, prédiction dans l'espace latent vs pixel-space).
+    Couvre : J18 (JEPA / I-JEPA / V-JEPA, prédiction dans l'espace latent vs pixel-space).
 
 22. **Cosmos World Foundation Model Platform for Physical AI** — NVIDIA (Balaji et al.), Janvier 2025. https://arxiv.org/abs/2501.03575 — Code : https://github.com/nvidia-cosmos
     Pourquoi : foundation models open-weight (diffusion + autoregressive) entraînés sur 20M h de vidéo physique ; tokenizers vidéo et pipeline de curation réutilisables.
-    Couvre : J15-J17 (world models foundation-scale, video tokenizers, post-training pour Physical AI).
+    Couvre : J18 (world models foundation-scale, video tokenizers), J23 (pipeline Cosmos pour données synthétiques Physical AI).
 
 23. **MIT 6.S184 — Generative AI with Stochastic Differential Equations (Flow Matching & Diffusion Models)** — Holderrieth & Erives, IAP 2025. https://diffusion.csail.mit.edu/2025/index.html — Notes PDF : https://diffusion.csail.mit.edu/docs/lecture-notes.pdf — Vidéos : https://www.youtube.com/playlist?list=PL57nT7tSGAAUDnli1LhTOoCxlEPGS19vH
     Pourquoi : fondations mathématiques rigoureuses (SDEs → score matching → flow matching → CFG) avec exercices code — comble le gap théorique avant Diffusion Policy.
-    Couvre : J16 (théorie score matching / flow matching), J17 (mathématiques sous-jacentes du capstone).
+    Couvre : J15 (théorie score matching / flow matching), J25-J28 (mathématiques sous-jacentes du capstone).
 
 ---
 

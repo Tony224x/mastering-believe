@@ -82,7 +82,9 @@ class PhysicsRandomizer(gym.Wrapper):
         # 1. simulate latence: on applique l'action retardee, on stocke la nouvelle
         if self.latency_steps > 0:
             applied = self._action_buffer.pop(0)
-            self._action_buffer.append(float(action))
+            # .item() extracts the scalar from a shape-(1,) array
+            # (float(array) raises TypeError on NumPy >= 1.25)
+            self._action_buffer.append(np.asarray(action).item())
             applied_action = np.array([applied], dtype=np.float32)
         else:
             applied_action = action

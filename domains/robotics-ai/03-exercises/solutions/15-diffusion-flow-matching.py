@@ -394,7 +394,8 @@ def solve_hard() -> None:
 # =============================================================================
 def main() -> None:
     parser = argparse.ArgumentParser(description="Solutions J15 (easy / medium / hard)")
-    parser.add_argument("level", choices=["easy", "medium", "hard", "all"])
+    # nargs="?" + default keep the script runnable standalone (no CLI arg required).
+    parser.add_argument("level", nargs="?", default="all", choices=["easy", "medium", "hard", "all"])
     args = parser.parse_args()
     if args.level in {"easy", "all"}:
         print("\n=========================  EASY  =========================")

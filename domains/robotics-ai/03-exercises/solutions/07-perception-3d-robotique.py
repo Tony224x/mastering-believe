@@ -120,7 +120,11 @@ def exercice_medium() -> None:
 
     voxelized = voxelize(sphere, voxel_size=0.05)
     print(f"Sphere : {sphere.shape[0]} -> voxelise : {voxelized.shape[0]} points")
-    assert 200 <= voxelized.shape[0] <= 1000, \
+    # Ordre de grandeur attendu : surface de la sphere / aire d'un voxel
+    # = 4*pi*r^2 / h^2 = 4*pi*0.25 / 0.0025 ~ 1257 voxels, plus l'epaisseur
+    # de discretisation (la coquille traverse plusieurs couches de voxels),
+    # d'ou ~1600 en pratique -> borne haute a 2000.
+    assert 200 <= voxelized.shape[0] <= 2000, \
         f"Le nombre de voxels {voxelized.shape[0]} est hors de la fourchette attendue"
 
     # Normales — sur une sphere, doit s'aligner avec le rayon (signe arbitraire

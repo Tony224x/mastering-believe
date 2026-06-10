@@ -58,7 +58,9 @@ class FixedPhysicsWrapper(gym.Wrapper):
     def step(self, action):
         if self.latency_steps > 0:
             applied = self._buf.pop(0)
-            self._buf.append(float(action))
+            # .item() extracts the scalar from a shape-(1,) array
+            # (float(array) raises TypeError on NumPy >= 1.25)
+            self._buf.append(np.asarray(action).item())
             applied_action = np.array([applied], dtype=np.float32)
         else:
             applied_action = action
@@ -206,7 +208,9 @@ class DomainRandomizationWrapper(gym.Wrapper):
     def step(self, action):
         if self._latency > 0:
             applied = self._buf.pop(0)
-            self._buf.append(float(action))
+            # .item() extracts the scalar from a shape-(1,) array
+            # (float(array) raises TypeError on NumPy >= 1.25)
+            self._buf.append(np.asarray(action).item())
             applied_action = np.array([applied], dtype=np.float32)
         else:
             applied_action = action

@@ -79,7 +79,11 @@ def solution_easy() -> None:
     x = torch.linspace(-1000, 1000, 21)
     rt = symexp(symlog(x))
     err = (rt - x).abs().max().item()
-    assert err < 1e-4, f"symexp(symlog(x)) round-trip error too high: {err}"
+    # Relative tolerance: float32 has ~7 significant digits (eps ~ 1.2e-7),
+    # so at |x| = 1000 the round-trip error is ~1e-4 in absolute terms.
+    # An absolute threshold of 1e-4 would therefore fail spuriously.
+    tol = 1e-3 * max(1.0, x.abs().max().item())
+    assert err < tol, f"symexp(symlog(x)) round-trip error too high: {err}"
     print(f"symlog round-trip max abs error on [-1000,1000]: {err:.2e}  (PASS)")
 
     # 2. printed values for sanity

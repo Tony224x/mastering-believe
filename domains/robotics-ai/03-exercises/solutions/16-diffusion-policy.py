@@ -15,6 +15,7 @@ References (J16 theory): REFERENCES.md #19 (Chi 2023), #23 (MIT 6.S184).
 from __future__ import annotations
 
 import math
+import os
 import sys
 import time
 from dataclasses import dataclass
@@ -259,7 +260,9 @@ def solve_easy():
                 ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.grid(True, alpha=0.3)
         plt.suptitle("EASY — forward noising: linear vs squared-cosine schedule")
         plt.tight_layout()
-        out_path = Path("solution_easy.png")
+        # Write into artifacts/ (like the capstone scripts) instead of polluting the CWD.
+        os.makedirs("artifacts", exist_ok=True)
+        out_path = Path("artifacts") / "solution_easy.png"
         plt.savefig(out_path, dpi=80)
         plt.close()
         print(f"  -> saved {out_path.resolve()}")
@@ -342,7 +345,9 @@ def solve_medium(device="cpu"):
         plt.plot(amp * t, amp * np.sin(np.pi * t), "b--", linewidth=2, label="mode B (truth)")
         plt.legend(); plt.grid(True, alpha=0.3)
         plt.title("MEDIUM — BC collapse vs Diffusion Policy multimodality")
-        out = Path("solution_medium.png"); plt.savefig(out, dpi=80); plt.close()
+        # Write into artifacts/ (like the capstone scripts) instead of polluting the CWD.
+        os.makedirs("artifacts", exist_ok=True)
+        out = Path("artifacts") / "solution_medium.png"; plt.savefig(out, dpi=80); plt.close()
         print(f"  -> saved {out.resolve()}")
     except ImportError:
         print("  matplotlib not available, skipping plot.")
