@@ -16,5 +16,5 @@ Confirmer que la stack `gymnasium[mujoco] + mujoco + torch` est installée et co
 ## Criteres de reussite
 - Le script tourne sans crash sur Python 3.10+.
 - 10 lignes de log step + 2 lignes de shape.
-- Tu peux expliquer en une phrase la différence entre `terminated` et `truncated`.
-- Tu peux dire à voix haute la shape de `obs` pour Pendulum (indice : 3) et celle de l'action (indice : 1).
+- Le script contient `assert obs.shape == (3,)` et `assert env.action_space.sample().shape == (1,)`, et les deux assertions passent.
+- En commentaire de fin de script, tu as écrit en 1 phrase la différence `terminated` / `truncated`, en utilisant les deux notions « état terminal du MDP » et « limite de temps (TimeLimit) ».

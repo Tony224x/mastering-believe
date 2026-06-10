@@ -53,6 +53,27 @@ Maîtriser la robotique moderne au croisement des fondations classiques (cinéma
 
 Total : ~75-85h sur 28 jours, soit ~3h/jour en moyenne.
 
+## Dependances par plage de jours
+
+Ce que les scripts de `02-code/` importent réellement (vérifié sur les imports) :
+
+| Jours | Dépendances requises | Optionnel / remarques |
+|-------|----------------------|------------------------|
+| J1 | aucune (check de stack gracieux) | recommande `gymnasium[mujoco]`, `mujoco`, `torch` — sort proprement avec un rapport si absents |
+| J2, J4, J6 | `numpy`, `scipy` | — |
+| J3, J9 | `numpy` seul | — |
+| J5 | `numpy` | `mujoco` optionnel (fallback intégrateur numpy si absent) |
+| J7 | `numpy` | `open3d` optionnel (fallback numpy) |
+| J8, J24 | `numpy`, `matplotlib` | J24 volontairement sans torch |
+| J10, J11, J13 | `torch`, `gymnasium`, `numpy` | J11 sort proprement avec message d'install si absents |
+| J12 | `numpy` | `torch` et `stable-baselines3` optionnels (mode explication sinon) |
+| J14 | `gymnasium`, `numpy` | pas de torch |
+| J15-J23 | `torch` (+ `numpy` selon les jours, `matplotlib` J15/J21) | tout tourne sur CPU |
+| J25-J28 | `torch`, `numpy` | `matplotlib` pour J26-J27 |
+| `05-projets-guides/` | `numpy` seul | < 60 s CPU, ni MuJoCo ni torch |
+
+Install minimal pour tout couvrir : `pip install numpy scipy matplotlib torch "gymnasium[mujoco]" mujoco`.
+
 ## Criteres de reussite
 
 À la fin du domaine, l'apprenant doit pouvoir :

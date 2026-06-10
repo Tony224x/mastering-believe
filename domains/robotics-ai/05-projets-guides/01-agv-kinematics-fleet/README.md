@@ -65,7 +65,8 @@ Contraintes :
 
 - `body_to_wheels` puis `wheels_to_body` rend `(v, omega)` a `1e-12` pres sur 100 cas.
 - Apres un cercle complet en integration exacte (`omega` constant), la pose finale est
-  egale a la pose initiale a `1e-6` pres ; la meme manoeuvre en Euler (dt=0.05) derive de `> 1 cm`.
+  egale a la pose initiale a `1e-6` pres ; sur UN tick grossier (dt=0.5 s, v=1, omega=2),
+  Euler s'ecarte de l'arc exact de `> 0.2 m` (erreur corde-vs-arc).
 - Sur la boucle d'entrepot, **l'erreur laterale max** (cross-track error) reste `< 0.30 m`
   et l'erreur moyenne `< 0.10 m` (le couloir certifiable du cahier des charges).
 - Chaque AGV termine sa boucle : distance au point de depart `< 0.5 m` apres un tour.

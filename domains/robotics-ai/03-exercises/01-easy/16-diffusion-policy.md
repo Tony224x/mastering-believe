@@ -16,6 +16,7 @@ Comprendre concrètement le **forward process** de DDPM et l'effet du schedule (
 
 ## Criteres de reussite
 
-- Aux deux extrêmes (`k=0` et `k=K-1`), les courbes correspondent à `a^0` propre et à du pur bruit gaussien (sanity-check visuel).
-- `linear` détruit la structure plus tôt (vers `k ≈ 30-40`) ; `squared cosine` la préserve plus longtemps (jusqu'à `k ≈ 50-60`).
-- Tu peux expliquer en 2 phrases pourquoi Chi 2023 préfère squared cosine pour des **séquences d'actions courtes** (T=16) plutôt qu'une schedule linéaire conçue pour des images de taille 64×64.
+- Sanity-check numérique des extrêmes (asserts dans le script) : à `k=0`, `np.abs(a_k - a0).max() < 0.05` pour les deux schedules ; à `k=K-1`, `sqrt(ᾱ_{K-1}) < 0.05` pour la **squared cosine** (signal résiduel < 5%).
+- Piège découvert et documenté : pour la **linear** telle que donnée (`1e-4 → 0.02`, plage calibrée pour T=1000), tu imprimes `sqrt(ᾱ_{K-1})` et tu observes `≈ 0.6` — il reste ~60% de signal à la fin, ce n'est PAS du bruit pur. Note d'1 phrase dans le script : quand on réduit K, il faut rescaler `β` (≈ ×10 ici).
+- Après rescaling de la linear (`1e-3 → 0.2`), tu vérifies numériquement `sqrt(ᾱ_50)_linear < sqrt(ᾱ_50)_cosine` : la linear détruit la structure plus tôt (visible sur tes sous-plots vers `k ≈ 30-40`), la squared cosine la préserve plus longtemps (`k ≈ 50-60`).
+- En 2 phrases écrites en commentaire de fin de script, tu expliques pourquoi Chi 2023 préfère squared cosine pour des séquences d'actions courtes (T=16), en t'appuyant sur tes valeurs de `sqrt(ᾱ_k)` (la linear, calibrée pour des images 64×64, écrase le SNR trop tôt pour un signal aussi peu dimensionnel).

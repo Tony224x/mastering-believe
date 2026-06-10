@@ -24,8 +24,8 @@ Reproduire à petite échelle l'expérience d'ablation qui justifie le titre du 
 ## Criteres de reussite
 
 - Tu produis un plot 2D (recon_loss vs iteration) avec 5 courbes (baseline + 4 ablations) et bandeau d'écart-type.
-- Au moins **une** des 4 ablations dégrade visiblement la stabilité ou la convergence (sinon, tu n'as probablement pas implémenté l'ablation correctement — debug).
-- Ta page de notes identifie *avec les bons mots* (KL collapse, posterior collapse, exploding gradients, scale-invariance) ce qui se casse dans chaque variante.
+- Au moins **une** des 4 ablations dégrade mesurablement le training : son `recon_loss` final moyen est `> 1.5×` celui du baseline, OU son écart-type inter-seeds final est `> 2×` celui du baseline (sinon, tu n'as probablement pas implémenté l'ablation correctement — debug). Tu reportes le tableau `variante × (recon_final_mean, recon_final_std)`.
+- Ta page de notes contient une entrée par variante (A, B, C, D) et chaque entrée utilise au moins un des termes techniques attendus : KL collapse, posterior collapse, exploding gradients, scale-invariance.
 - Tu cites explicitement REFERENCES.md #20 (Hafner 2023, *Mastering Diverse Domains through World Models*).
 
 ## Pour aller plus loin

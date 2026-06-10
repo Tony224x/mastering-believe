@@ -1,7 +1,11 @@
 """
-Day 8 -- Solutions to the easy exercises for Agentic RAG.
+Day 8 -- Solutions to the easy and medium exercises for Agentic RAG.
 
-Each exercise is a self-contained function named solution_1 / solution_2 / solution_3.
+Easy:   solution_1 (3-level grader), solution_2 (LLM budget), solution_3 (multi-hop)
+Medium: solution_m1 (grading-driven reformulation loop),
+        solution_m2 (hybrid retrieval + Reciprocal Rank Fusion),
+        solution_m3 (cited synthesis + faithfulness check)
+
 Run the whole file to execute every solution with its test scenario.
 
     python domains/agentic-ai/03-exercises/solutions/08-rag-agentique.py
@@ -320,7 +324,294 @@ def solution_3() -> None:
             print(f"     chunk: {c[:80]}...")
 
 
+# ===========================================================================
+# MEDIUM SOLUTION 1 -- Grading-driven reformulation loop (expand + HyDE)
+# ===========================================================================
+
+STOP = {"what", "is", "the", "of", "in", "a", "an", "and", "to", "for", "acme",
+        "which", "who", "how", "does", "with"}
+
+
+def _content_words(text: str) -> set[str]:
+    return {t for t in _tokenize(text) if t not in STOP and len(t) > 1}
+
+
+def grade_chunk(query_used: str, chunk: str) -> str:
+    """Local grading: >= 2 content-word overlap -> RELEVANT."""
+    overlap = _content_words(query_used) & _content_words(chunk)
+    return "RELEVANT" if len(overlap) >= 2 else "IRRELEVANT"
+
+
+def reformulate_expand(query: str) -> str:
+    """Strategy 1: append synonyms / neighbour terms."""
+    expansions = {
+        "ca": "chiffre d'affaires revenue annual sales",
+        "staff": "team hires hiring engineer employees",
+    }
+    extra = " ".join(v for k, v in expansions.items() if k in _tokenize(query))
+    return f"{query} {extra}".strip() if extra else f"{query} details"
+
+
+def reformulate_hyde(query: str) -> str:
+    """Strategy 2 (HyDE): write a plausible hypothetical ANSWER, search with it."""
+    q = query.lower()
+    if "rival" in q or "competitor" in q:
+        return ("The main French competitor of Acme in AI consulting is a firm "
+                "such as Artefact, with hundreds of millions of euros of revenue.")
+    if "ca" in _tokenize(query) or "revenue" in q:
+        return "Acme reported revenue of several hundred thousand euros in 2025."
+    return f"A plausible answer to '{query}' would mention Acme products."
+
+
+def retrieve_with_retry(query: str, retriever, max_attempts: int = 3) -> dict:
+    strategies = [("raw", lambda q: q),
+                  ("expand", reformulate_expand),
+                  ("hyde", reformulate_hyde)]
+    attempts: list[dict] = []
+
+    for strategy_name, transform in strategies[:max_attempts]:
+        current = transform(query)
+        hits = retriever.search(current, top_k=3)
+        relevant = [(doc_id, text) for doc_id, _src, text, _s in hits
+                    if grade_chunk(current, text) == "RELEVANT"]
+        attempts.append({"strategy": strategy_name, "query": current,
+                         "chunks": len(hits), "relevant": len(relevant)})
+        if relevant:
+            return {"chunks": relevant, "attempts": attempts,
+                    "strategy_used": strategy_name}
+
+    return {"chunks": [], "attempts": attempts, "strategy_used": "none"}
+
+
+def solution_m1() -> None:
+    print("\n=== Medium 1: reformulation loop ===")
+    retriever = TinyTfIdfRetriever(CORPUS)
+
+    cases = [
+        ("What is the rate limit of the Acme API?", "raw"),
+        ("What is the CA of Acme in 2025?", "expand"),       # vocab mismatch
+        ("Which company is the biggest rival of Acme?", "hyde"),
+        ("What is the weather in Tokyo today?", "none"),     # hopeless
+    ]
+    for query, expected_strategy in cases:
+        result = retrieve_with_retry(query, retriever)
+        print(f"\n  Q: {query}")
+        for a in result["attempts"]:
+            print(f"    [{a['strategy']:6}] relevant={a['relevant']}/{a['chunks']}"
+                  f"  query={a['query'][:70]}")
+        print(f"    -> strategy_used={result['strategy_used']}")
+        assert result["strategy_used"] == expected_strategy, (
+            f"{query}: expected {expected_strategy}, got {result['strategy_used']}"
+        )
+        if result["strategy_used"] == "none":
+            answer = "Insufficient context: I cannot answer this question."
+            print(f"    honest answer: {answer}")
+            assert not any(c.isdigit() for c in answer)
+    print("\n  [Verification] PASS -- raw / expand / hyde / none all as expected")
+
+
+# ===========================================================================
+# MEDIUM SOLUTION 2 -- Hybrid retrieval + Reciprocal Rank Fusion
+# ===========================================================================
+
+HYBRID_CORPUS: list[tuple[str, str, str]] = [
+    ("c1", "blog", "Acme revenue reached 820000 euros in 2025, a strong increase."),
+    ("c2", "docs_api", "The Acme API rate limit is 60 requests per minute; "
+                       "exceeding it returns HTTP 429."),
+    ("c3", "docs_produit", "Acme launched acme-immo, a real estate price "
+                           "transparency platform, first in Conakry."),
+    ("c4", "blog", "Artefact is the main French competitor of Acme in AI consulting."),
+    # Spam-like doc designed to fool naive keyword counting:
+    ("c5", "blog", "Acme Acme Acme error error error errors guide: handling "
+                   "common errors and limits in agent systems."),
+]
+
+
+class KeywordRetriever:
+    """Naive exact-match retriever: occurrence count + x2 bonus for exact numbers."""
+
+    def __init__(self, docs: list[tuple[str, str, str]]) -> None:
+        self.docs = docs
+
+    def search(self, query: str, top_k: int = 5) -> list[tuple[str, float]]:
+        q_tokens = _tokenize(query)
+        q_numbers = {t for t in q_tokens if t.isdigit()}
+        scored = []
+        for doc_id, _src, text in self.docs:
+            d_tokens = _tokenize(text)
+            score = float(sum(d_tokens.count(t) for t in q_tokens))
+            score += sum(2.0 for n in q_numbers if n in d_tokens)  # exact-number bonus
+            if score > 0:
+                scored.append((doc_id, score))
+        scored.sort(key=lambda x: (-x[1], x[0]))
+        return scored[:top_k]
+
+
+def rrf_fuse(rankings: list[list[str]], k: int = 60) -> list[tuple[str, float]]:
+    """RRF: score(d) = sum over rankings of 1 / (k + rank), rank starts at 1."""
+    scores: dict[str, float] = {}
+    for ranking in rankings:
+        for rank, doc_id in enumerate(ranking, start=1):
+            scores[doc_id] = scores.get(doc_id, 0.0) + 1.0 / (k + rank)
+    return sorted(scores.items(), key=lambda x: (-x[1], x[0]))
+
+
+def hybrid_search(query: str, tfidf, keyword, top_k: int = 3) -> dict:
+    tfidf_rank = [doc_id for doc_id, _s, _t, _sc in
+                  [(d, s, t, sc) for d, s, t, sc in tfidf.search(query, top_k=5)]]
+    kw_rank = [doc_id for doc_id, _ in keyword.search(query, top_k=5)]
+    fused = rrf_fuse([tfidf_rank, kw_rank])[:top_k]
+    return {"tfidf": tfidf_rank, "keyword": kw_rank, "fused": [d for d, _ in fused],
+            "fused_scores": fused}
+
+
+def solution_m2() -> None:
+    print("\n=== Medium 2: hybrid retrieval + RRF ===")
+
+    # Unit-check RRF on a hand-computable case
+    fused = rrf_fuse([["a", "b"], ["b", "a"]], k=60)
+    expected_a = 1 / 61 + 1 / 62
+    assert abs(dict(fused)["a"] - expected_a) < 1e-12
+    assert abs(dict(fused)["a"] - dict(fused)["b"]) < 1e-12  # symmetric tie
+    print("  rrf_fuse unit check OK (1/61 + 1/62)")
+
+    tfidf = TinyTfIdfRetriever(HYBRID_CORPUS)
+    keyword = KeywordRetriever(HYBRID_CORPUS)
+
+    cases = [
+        # (label, query, expected best doc)
+        ("semantic", "How did Acme errors handling guide describe the rate limit?", "c2"),
+        ("exact",    "Why does the API return error 429?", "c2"),
+        ("exact-number", "Which product reached 820000 euros?", "c1"),
+    ]
+    print(f"\n  {'case':14} | {'tfidf top1':10} | {'keyword top1':12} | hybrid top1")
+    failures_single = 0
+    for label, query, expected in cases:
+        out = hybrid_search(query, tfidf, keyword)
+        t1 = out["tfidf"][0] if out["tfidf"] else "-"
+        k1 = out["keyword"][0] if out["keyword"] else "-"
+        h1 = out["fused"][0]
+        print(f"  {label:14} | {t1:10} | {k1:12} | {h1}")
+        assert h1 == expected, f"{label}: hybrid top1={h1}, expected {expected}"
+        failures_single += int(t1 != expected) + int(k1 != expected)
+
+    assert failures_single >= 1, "expected at least one single-retriever failure"
+    print(f"\n  [Verification] PASS -- hybrid top-1 correct on all cases, "
+          f"{failures_single} single-retriever failure(s)")
+
+
+# ===========================================================================
+# MEDIUM SOLUTION 3 -- Cited synthesis + faithfulness check
+# ===========================================================================
+
+CHUNKS_BY_ID = {
+    "doc_finance_01": "Acme generated EUR 50M of revenue in 2023, a record year.",
+    "doc_hr_02": "By December the Acme team grew to 85 people across 3 offices.",
+}
+
+
+def check_faithfulness(answer: str, chunks_by_id: dict[str, str]) -> dict:
+    """Verify every sentence is cited and every number is backed by its source."""
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", answer.strip()) if s.strip()]
+    violations: list[dict] = []
+    ok_count = 0
+
+    for sentence in sentences:
+        cites = re.findall(r"\[([^\]]+)\]", sentence)
+        if not cites:
+            violations.append({"type": "uncited", "sentence": sentence})
+            continue
+        bad = False
+        for cite in cites:
+            if cite not in chunks_by_id:
+                violations.append({"type": "bad_citation", "citation": cite,
+                                   "sentence": sentence})
+                bad = True
+        if bad:
+            continue
+        # Numbers in the sentence body (citations stripped) must appear in sources
+        body = re.sub(r"\[[^\]]+\]", "", sentence)
+        cited_text = " ".join(chunks_by_id[c] for c in cites)
+        for number in re.findall(r"\d+(?:\.\d+)?", body):
+            if number not in cited_text:
+                violations.append({"type": "unsupported_number", "number": number,
+                                   "sentence": sentence})
+                bad = True
+        if not bad:
+            ok_count += 1
+
+    coverage = ok_count / len(sentences) if sentences else 0.0
+    return {"faithful": not violations, "violations": violations,
+            "coverage": round(coverage, 2)}
+
+
+def mock_synthesize_cited(retry_with_violations: list | None = None) -> str:
+    """Mock 'synthesize_cited' task: a faulty draft, then a corrected one on retry."""
+    if retry_with_violations:
+        return ("Acme generated EUR 50M in 2023 [doc_finance_01]. "
+                "The team grew to 85 people [doc_hr_02].")
+    return ("Acme generated EUR 75M in 2023 [doc_finance_01]. "          # wrong number
+            "The team grew to 85 people [doc_hr_02]. "
+            "Acme plans to triple revenue next year.")                   # uncited
+
+
+def solution_m3() -> None:
+    print("\n=== Medium 3: cited synthesis + faithfulness ===")
+
+    # Case 1: fully correct answer
+    good = ("Acme generated EUR 50M in 2023 [doc_finance_01]. "
+            "The team grew to 85 people [doc_hr_02].")
+    r1 = check_faithfulness(good, CHUNKS_BY_ID)
+    print(f"  correct answer:   faithful={r1['faithful']} coverage={r1['coverage']}")
+    assert r1["faithful"] and r1["coverage"] == 1.0
+
+    # Case 2: hallucinated number
+    hallu = "Acme generated EUR 75M in 2023 [doc_finance_01]."
+    r2 = check_faithfulness(hallu, CHUNKS_BY_ID)
+    kinds2 = {v["type"] for v in r2["violations"]}
+    print(f"  hallucinated num: faithful={r2['faithful']} violations={kinds2}")
+    assert "unsupported_number" in kinds2
+
+    # Case 3: missing citation + bad citation
+    uncited = ("Acme is doing very well. "
+               "The team grew to 85 people [doc_unknown_99].")
+    r3 = check_faithfulness(uncited, CHUNKS_BY_ID)
+    kinds3 = {v["type"] for v in r3["violations"]}
+    print(f"  uncited/bad cite: faithful={r3['faithful']} violations={kinds3}")
+    assert {"uncited", "bad_citation"} <= kinds3
+
+    # Pipeline integration: faulty draft -> verify -> 1 retry -> deliver
+    draft = mock_synthesize_cited()
+    verdict = check_faithfulness(draft, CHUNKS_BY_ID)
+    print(f"\n  pipeline draft 1: faithful={verdict['faithful']} "
+          f"({len(verdict['violations'])} violations)")
+    if not verdict["faithful"]:
+        draft = mock_synthesize_cited(retry_with_violations=verdict["violations"])
+        verdict = check_faithfulness(draft, CHUNKS_BY_ID)
+        print(f"  pipeline draft 2: faithful={verdict['faithful']} "
+              f"coverage={verdict['coverage']}")
+    assert verdict["faithful"] and verdict["coverage"] == 1.0
+    print("\n  [Verification] PASS -- detection + retry produce a faithful answer")
+
+
 if __name__ == "__main__":
     solution_1()
     solution_2()
     solution_3()
+
+    solution_m1()
+    solution_m2()
+    solution_m3()
+
+    # Hard exercises are substantial projects -- key hints:
+    #
+    # Hard Ex 1 (Corrective RAG):
+    #   - Verdict from the best chunk confidence: CORRECT / AMBIGUOUS / INCORRECT
+    #   - Knowledge strips: split chunks into sentences, re-grade each strip
+    #   - Mock web search only fires on AMBIGUOUS / INCORRECT
+    #   - Every claim carries [corpus:doc] or [web:result] attribution
+    #
+    # Hard Ex 2 (multi-index router RAG):
+    #   - One TinyTfIdfRetriever per corpus (products / finance / hr)
+    #   - route_index by keyword rules; self_eval lists missing aspects
+    #   - Central call counter shared by every llm(...) call enforces the budget

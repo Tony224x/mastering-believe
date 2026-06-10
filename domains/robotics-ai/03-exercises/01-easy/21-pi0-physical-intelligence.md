@@ -39,7 +39,8 @@ Tu testes avec un `velocity_fn` factice qui retourne **toujours** `(target - A)`
 - [ ] `flow_matching_step` retourne bien un tenseur de la même shape que `A_tau`.
 - [ ] L'intégration Euler converge vers `target` à `MSE < 0.01` avec `n_steps=10`.
 - [ ] L'intégration Euler avec `n_steps=2` donne un MSE *plus grand* que `n_steps=10` (illustration du compromis vitesse/qualité).
-- [ ] Tu peux expliquer en 1 phrase pourquoi le flow matching "ODE" ne nécessite **pas** d'injecter du bruit à chaque pas, alors que DDPM "SDE" oui.
+- [ ] Vérification numérique du déterminisme ODE : deux appels à `euler_integrate` depuis le même `A_init` retournent exactement le même résultat (`np.array_equal`), sans aucun appel à un RNG dans la boucle.
+- [ ] En commentaire de fin de script, tu as écrit en 1 phrase pourquoi le flow matching "ODE" n'injecte **pas** de bruit à chaque pas alors que DDPM "SDE" oui, en utilisant les notions « champ de vitesse déterministe » et « processus stochastique de débruitage ».
 
 ## Indices
 

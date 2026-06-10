@@ -317,6 +317,201 @@ def num_islands(zone: List[List[str]]) -> int:
 
 
 # =============================================================================
+# EXERCISE 4 (Medium sprint) — PRODUCT OF ARRAY EXCEPT SELF
+# Pattern: J1/J2 prefix-suffix accumulation, no division
+# =============================================================================
+
+def product_except_self(nums: List[int]) -> List[int]:
+    """
+    Two sweeps: prefix products then suffix products.
+
+    WHY NO DIVISION:
+    - total_product / nums[i] crashes on zeros (and the problem forbids it).
+
+    KEY IDEA:
+    - answer[i] = (product of everything LEFT of i) * (product RIGHT of i).
+    - Sweep 1 fills answer with left products.
+    - Sweep 2 walks right-to-left, multiplying by a running suffix product
+      held in a single variable → O(1) extra space.
+
+    Time: O(n), Space: O(1) auxiliary (output array excluded)
+    """
+    n = len(nums)
+    answer = [1] * n
+
+    prefix = 1
+    for i in range(n):
+        answer[i] = prefix          # Product of nums[0..i-1]
+        prefix *= nums[i]
+
+    suffix = 1
+    for i in range(n - 1, -1, -1):
+        answer[i] *= suffix         # Multiply by product of nums[i+1..]
+        suffix *= nums[i]
+
+    return answer
+
+
+# =============================================================================
+# EXERCISE 5 (Medium sprint) — LONGEST CONSECUTIVE SEQUENCE
+# Pattern: J3 set membership + smart start detection
+# =============================================================================
+
+def longest_consecutive(nums: List[int]) -> int:
+    """
+    Set + only start counting from sequence STARTS.
+
+    WHY NOT SORT:
+    - Sorting gives O(n log n); the interviewer asks for O(n).
+
+    THE O(n) ARGUMENT:
+    - The inner while looks like a nested loop, but it only runs from
+      numbers whose predecessor is absent (sequence starts). Each number
+      is therefore visited at most twice (once by the outer loop, once
+      inside the walk of its own sequence) → O(n) total.
+
+    Time: O(n), Space: O(n) for the set
+    """
+    seen = set(nums)                # Also deduplicates
+    best = 0
+
+    for num in seen:
+        if num - 1 in seen:
+            continue                # Not a sequence start — skip (the key trick)
+        length = 1
+        while num + length in seen:
+            length += 1
+        best = max(best, length)
+
+    return best
+
+
+# =============================================================================
+# EXERCISE 6 (Medium sprint) — MERGE INTERVALS
+# Pattern: J6 sort by start + linear sweep
+# =============================================================================
+
+def merge_intervals(intervals: List[List[int]]) -> List[List[int]]:
+    """
+    Sort by start, then sweep and extend.
+
+    WHY SORT FIRST:
+    - After sorting, an interval can only overlap with the LAST merged one;
+      without sorting, overlaps can appear anywhere and the sweep is wrong.
+
+    THE CONTAINMENT TRAP:
+    - [1, 4] then [2, 3]: extend with max(end, current_end), never just
+      assign — otherwise the merged interval would SHRINK to [1, 3].
+
+    Time: O(n log n) for the sort, Space: O(n) for the result
+    """
+    if not intervals:
+        return []
+
+    intervals = sorted(intervals)   # Sorts by start (then end) lexicographically
+    merged = [intervals[0][:]]      # Copy: don't mutate the caller's data
+
+    for start, end in intervals[1:]:
+        if start <= merged[-1][1]:  # <= : touching bounds DO merge
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+
+    return merged
+
+
+# =============================================================================
+# EXERCISE 7 (Hard sprint) — FIRST MISSING POSITIVE
+# Pattern: J1 index-as-hash (cyclic sort), O(n) time + O(1) space
+# =============================================================================
+
+def first_missing_positive(nums: List[int]) -> int:
+    """
+    Cyclic sort: the array is its own hash map.
+
+    SUBOPTIMAL ANSWERS TO ANNOUNCE FIRST:
+    - set of values: O(n) time but O(n) space — violates the constraint.
+    - sort then scan: O(n log n) — violates the time constraint.
+
+    KEY OBSERVATION:
+    - With n elements, the answer is in [1, n+1]. Values <= 0 or > n are
+      irrelevant noise. So value v in [1, n] belongs at index v - 1.
+
+    THE DUPLICATE TRAP:
+    - Swap only while nums[i] != nums[nums[i] - 1]. Checking
+      nums[i] != i + 1 alone loops forever on [1, 1] (swapping equal
+      values back and forth).
+
+    Time: O(n) — each swap places one value at its final index forever,
+          so there are at most n swaps in total.
+    Space: O(1) — in-place mutation only.
+    """
+    n = len(nums)
+
+    for i in range(n):
+        # Keep swapping until the value here is out of range or already home
+        while 1 <= nums[i] <= n and nums[i] != nums[nums[i] - 1]:
+            target = nums[i] - 1
+            nums[i], nums[target] = nums[target], nums[i]
+
+    for i in range(n):
+        if nums[i] != i + 1:
+            return i + 1            # First slot whose owner is missing
+
+    return n + 1                    # All of [1, n] present
+
+
+# =============================================================================
+# EXERCISE 8 (Hard sprint) — REVERSE NODES IN K-GROUP
+# Pattern: J5 reversal by blocks + dummy head
+# =============================================================================
+
+def reverse_k_group(head: Optional[ListNode], k: int) -> Optional[ListNode]:
+    """
+    Reverse the list k nodes at a time; leave a short final group as is.
+
+    STRUCTURE:
+    - group_prev points to the node BEFORE the current group (starts at
+      the dummy, so the first group needs no special case).
+    - Step 1: probe k nodes ahead. Fewer than k left → done.
+    - Step 2: standard reversal of exactly k nodes, with prev initialized
+      to group_next so the reversed block is ALREADY connected to the rest.
+    - Step 3: reconnect group_prev to the new block head; the old block
+      head (now the tail) becomes the next group_prev.
+
+    Time: O(n) — each node is probed once and reversed once
+    Space: O(1)
+    """
+    dummy = ListNode(0)
+    dummy.next = head
+    group_prev = dummy
+
+    while True:
+        # Step 1: find the k-th node of the current group
+        kth = group_prev
+        for _ in range(k):
+            kth = kth.next
+            if not kth:
+                return dummy.next   # Fewer than k nodes left: keep as is
+
+        group_next = kth.next       # First node AFTER the group
+
+        # Step 2: reverse the k nodes; prev starts at group_next so the
+        # block's future tail already points to the rest of the list
+        prev, curr = group_next, group_prev.next
+        while curr is not group_next:
+            nxt = curr.next
+            curr.next = prev
+            prev = curr
+            curr = nxt
+
+        # Step 3: reconnect. The old group head is now the group tail.
+        old_head = group_prev.next
+        group_prev.next = kth       # kth is the new head of the block
+        group_prev = old_head
+
+
+# =============================================================================
 # TESTS
 # =============================================================================
 
@@ -401,5 +596,81 @@ def test_all():
     print("All 10 sprint solutions PASS")
 
 
+def test_medium_hard():
+    print("\nRunning medium/hard sprint solutions (exercises 4-8)...")
+
+    # Exercise 4 — Product of Array Except Self
+    assert product_except_self([1, 2, 3, 4]) == [24, 12, 8, 6]
+    assert product_except_self([-1, 1, 0, -3, 3]) == [0, 0, 9, 0, 0]
+    assert product_except_self([2, 3]) == [3, 2]
+    assert product_except_self([0, 0]) == [0, 0]
+    assert product_except_self([5, 0]) == [0, 5]
+    assert product_except_self([1, 1, 1, 1]) == [1, 1, 1, 1]
+    print("Exercise 4 (product_except_self): OK")
+
+    # Exercise 5 — Longest Consecutive Sequence
+    assert longest_consecutive([100, 4, 200, 1, 3, 2]) == 4
+    assert longest_consecutive([0, 3, 7, 2, 5, 8, 4, 6, 0, 1]) == 9
+    assert longest_consecutive([]) == 0
+    assert longest_consecutive([1]) == 1
+    assert longest_consecutive([1, 1, 1]) == 1
+    assert longest_consecutive([5, 3, 1]) == 1
+    assert longest_consecutive([-2, -1, 0, 1]) == 4
+    print("Exercise 5 (longest_consecutive): OK")
+
+    # Exercise 6 — Merge Intervals
+    assert merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]) == [[1, 6], [8, 10], [15, 18]]
+    assert merge_intervals([[1, 4], [4, 5]]) == [[1, 5]]
+    assert merge_intervals([[1, 4], [2, 3]]) == [[1, 4]]
+    assert merge_intervals([]) == []
+    assert merge_intervals([[1, 4]]) == [[1, 4]]
+    assert merge_intervals([[5, 6], [1, 2]]) == [[1, 2], [5, 6]]
+    assert merge_intervals([[1, 4], [0, 4]]) == [[0, 4]]
+    assert merge_intervals([[2, 2], [2, 2], [2, 2]]) == [[2, 2]]
+    print("Exercise 6 (merge_intervals): OK")
+
+    # Exercise 7 — First Missing Positive
+    assert first_missing_positive([1, 2, 0]) == 3
+    assert first_missing_positive([3, 4, -1, 1]) == 2
+    assert first_missing_positive([7, 8, 9, 11, 12]) == 1
+    assert first_missing_positive([]) == 1
+    assert first_missing_positive([1]) == 2
+    assert first_missing_positive([2]) == 1
+    assert first_missing_positive([1, 1]) == 2
+    assert first_missing_positive([2, 2, 2, 2]) == 1
+    assert first_missing_positive([1, 2, 3, 4, 5]) == 6
+    assert first_missing_positive([-1, -2, -3]) == 1
+    print("Exercise 7 (first_missing_positive): OK")
+
+    # Exercise 8 — Reverse Nodes in k-Group
+    def build(vals):
+        dummy = ListNode(0)
+        t = dummy
+        for v in vals:
+            t.next = ListNode(v)
+            t = t.next
+        return dummy.next
+
+    def to_list(h):
+        out = []
+        while h:
+            out.append(h.val)
+            h = h.next
+        return out
+
+    assert to_list(reverse_k_group(build([1, 2, 3, 4, 5]), 2)) == [2, 1, 4, 3, 5]
+    assert to_list(reverse_k_group(build([1, 2, 3, 4, 5]), 3)) == [3, 2, 1, 4, 5]
+    assert to_list(reverse_k_group(build([1, 2, 3, 4, 5]), 1)) == [1, 2, 3, 4, 5]
+    assert to_list(reverse_k_group(build([1, 2, 3, 4, 5]), 5)) == [5, 4, 3, 2, 1]
+    assert to_list(reverse_k_group(build([1, 2]), 3)) == [1, 2]
+    assert to_list(reverse_k_group(build([]), 2)) == []
+    assert to_list(reverse_k_group(build([1, 2, 3, 4, 5, 6]), 2)) == [2, 1, 4, 3, 6, 5]
+    assert to_list(reverse_k_group(build([1, 2, 3, 4, 5, 6, 7]), 3)) == [3, 2, 1, 6, 5, 4, 7]
+    print("Exercise 8 (reverse_k_group): OK")
+
+    print("All medium/hard sprint solutions PASS")
+
+
 if __name__ == "__main__":
     test_all()
+    test_medium_hard()

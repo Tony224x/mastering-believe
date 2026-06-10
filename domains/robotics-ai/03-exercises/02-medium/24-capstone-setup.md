@@ -36,11 +36,11 @@ C'est l'exercice qui matérialise la promesse de la théorie (key takeaway #2 du
 
 ## Criteres de reussite
 
-- [ ] Le script tourne en < 5 secondes.
-- [ ] Histogrammes globaux affichés ; tu commentes 1 ligne sur la forme (souvent : symétrique en x autour de 0, biais positif en y vu que la target est en haut, ou similaire selon la seed).
-- [ ] Au moins 1 bucket exhibe **clairement** au moins 2 clusters dans le scatter (visible à l'œil).
-- [ ] Le score de multimodalité (BIC ou dist/std) confirme que le bucket d'alignement est plus multimodal que celui de poussée.
-- [ ] Tu rédiges en 3-4 phrases l'interprétation : "voilà pourquoi BC unimodal échouera et pourquoi diffusion va aider".
+- [ ] Le script tourne en < 5 secondes et le bucket choisi contient entre 50 et 200 transitions (imprimé).
+- [ ] Histogrammes globaux sauvegardés dans `exo_medium_global.png` ; le rapport imprime mean/std/min/max par dimension d'action, avec 1 ligne de commentaire sur la forme.
+- [ ] Multimodalité quantifiée : sur le bucket d'alignement, ton score `dist_centroids / mean_intra_std > 2.5` (ou le BIC du mélange à 2 gaussiennes est inférieur à celui d'1 gaussienne) — la valeur est imprimée, et le scatter `exo_medium_bucket.png` montre les 2 clusters.
+- [ ] Comparaison alignement vs poussée : le score de multimodalité du bucket d'alignement est strictement supérieur à celui du bucket de poussée (les deux valeurs sont imprimées côte à côte).
+- [ ] Le rapport se termine par 3-4 phrases d'interprétation qui citent tes deux scores et concluent sur pourquoi BC unimodal échouera et pourquoi la diffusion va aider.
 
 ## Pièges classiques
 

@@ -21,8 +21,9 @@ Pour chacune des 3 variantes, mesure :
 ## Criteres de reussite
 
 - Variantes A et B atteignent une accuracy > 0.85 sur le dataset non-ambigu.
-- Sur le dataset ambigu (variante C), tu observes que la **régression MSE collapse** (prédit le delta moyen, ~ (0,0), perdant tout signal directionnel) tandis que la **tokenization conserve un softmax multimodal** (chaque appel argmax peut tomber sur un mode différent, surtout avec sampling stochastique).
-- Tu sais ré-expliquer le tableau "Tokenization vs Regression" du §4 du cours en t'appuyant sur tes chiffres.
+- Collapse de la régression mesuré : sur le dataset ambigu, la norme du delta prédit par B pour `"go"` est `< 0.3 ×` la norme moyenne des deltas cibles (il prédit ~ la moyenne (0,0)) — tu imprimes les deux normes.
+- Multimodalité de la tokenization mesurée : sur 100 inférences `"go"` avec sampling softmax (température 1.0), la variante A couvre **au moins 3 des 4 directions**, là où B n'en couvre qu'une (toujours la même prédiction déterministe).
+- Tu produis un tableau Markdown `variante × (accuracy, MSE, n_directions_couvertes)` pour les 3 variantes, suivi de 3-4 phrases qui relisent le tableau "Tokenization vs Regression" du §4 du cours à la lumière de tes chiffres.
 
 ## Indices
 

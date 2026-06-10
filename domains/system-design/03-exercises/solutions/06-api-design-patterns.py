@@ -1,7 +1,7 @@
 """
 Solutions -- Exercices Jour 6 : API Design & Patterns
 
-Solutions detaillees des 3 exercices Easy.
+Solutions detaillees des exercices Easy, Medium et Hard.
 
 Usage:
     python 06-api-design-patterns.py

@@ -20,5 +20,6 @@ Reproduire empiriquement la **thèse centrale** du papier Chi 2023 (REFERENCES.m
 
 - BC produit **une seule trajectoire** au milieu des deux modes (pas une cardioïde, plutôt un mélange aplati).
 - Diffusion Policy produit un nuage couvrant **les deux modes** (visuellement on distingue 2 groupes).
-- La variance de l'argmax pour BC ≈ 0, pour Diffusion Policy >> 0.
-- Tu peux expliquer en 3 phrases pourquoi BC échoue (perte MSE = log-vraisemblance d'une gaussienne unimodale), et pourquoi DDPM ne rencontre pas ce problème (apprend à débruiter, pas à régresser).
+- Quantifié : la variance de l'argmax pour Diffusion Policy est au moins 10× celle de BC (qui est ≈ 0 puisque les 64 prédictions BC sont identiques). Tu imprimes les deux valeurs.
+- Test de bimodalité : en classant les 64 samples Diffusion Policy par mode le plus proche (distance L2 aux deux ground truths A et B), chaque mode reçoit entre 20% et 80% des samples.
+- En 3 phrases écrites en commentaire de fin de script, tu expliques pourquoi BC échoue (perte MSE = log-vraisemblance d'une gaussienne unimodale → prédiction = moyenne des modes) et pourquoi DDPM ne rencontre pas ce problème (apprend à débruiter un échantillon du mélange, pas à régresser sa moyenne).

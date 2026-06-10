@@ -17,4 +17,4 @@ Faire tourner un env MuJoCo (`HalfCheetah-v4`) avec une policy aléatoire, colle
 - 5 épisodes tournent sans crash sur HalfCheetah-v4.
 - La reward moyenne d'une policy random est **négative** (typiquement ~-300 à -100 sur HalfCheetah). Si tu vois +1000, tu mesures autre chose.
 - Le script échoue proprement (avec message d'install) sur une machine sans MuJoCo.
-- Tu peux expliquer pourquoi `truncated=True` est attendu plus souvent que `terminated=True` sur HalfCheetah (indice : TimeLimit wrapper, 1000 steps par défaut, et le robot ne tombe pas vraiment dans un état terminal MDP).
+- Le tableau récapitulatif montre `truncated` comme raison de fin pour les 5 épisodes (et `length == 1000` partout) ; un commentaire d'1 phrase dans le script explique pourquoi (HalfCheetah n'a pas d'état terminal MDP — c'est le TimeLimit wrapper à 1000 steps qui coupe).

@@ -16,8 +16,9 @@ Tu disposes d'une plage continue `[-0.05, +0.05]` (mètres) que tu veux discrét
 ## Criteres de reussite
 
 - Les fonctions sont pures (pas de side effect), pas de dépendance hors stdlib + numpy/torch.
-- `undiscretize(discretize(v))` est à moins d'un demi-bin de `v` pour toute valeur dans `[lo, hi]`.
-- Tu sais expliquer pourquoi `N=256` est typiquement suffisant pour le pick-and-place mais pas pour la chirurgie.
+- Asserts qui passent : `discretize(lo) == 0`, `discretize(hi) == n_bins - 1`, et `abs(undiscretize(discretize(v)) - v) <= (hi - lo) / (2 * (n_bins - 1))` pour 1000 valeurs aléatoires dans `[lo, hi]`.
+- Le script imprime la résolution en millimètres pour `N=256` (~0.39 mm/bin sur `[-0.05, 0.05]`) et pour `N=16` (~6.7 mm/bin).
+- En commentaire de fin de script, tu as écrit en 1-2 phrases pourquoi `N=256` suffit pour le pick-and-place mais pas pour la chirurgie, en t'appuyant sur tes résolutions calculées (≈ 0.4 mm vs la précision sub-0.1 mm requise en chirurgie).
 
 ## Indices
 

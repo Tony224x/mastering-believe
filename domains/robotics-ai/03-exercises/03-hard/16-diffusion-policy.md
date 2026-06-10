@@ -41,7 +41,7 @@ Implémenter trois optimisations clés du repo `real-stanford/diffusion_policy` 
 
 ## Criteres de reussite
 
-- DDIM 16 steps produit visuellement les **deux modes** comme DDPM 100 steps, avec un facteur de speedup d'environ 5-7×.
-- L'agent receding horizon résout l'env jouet avec >70% de success rate.
-- L'ablation `T_p=1` montre une dégradation **mesurable** (paper Chi 2023 §6 : -20 à -30 points). Si tu observes -10 à -30 points, c'est cohérent.
-- Tu peux expliquer pourquoi `T_p=1` dégrade : sans chunking, chaque sample peut switcher de mode entre deux pas (incohérence temporelle, voir théorie §3.1).
+- DDIM 16 steps produit les **deux modes** comme DDPM 100 steps : en classant 64 samples par mode le plus proche, chaque mode reçoit entre 20% et 80% des samples pour les DEUX samplers ; le speedup mesuré (latence batch 1) est `>= 4×`.
+- L'agent receding horizon (`T_p=16, T_a=8`) atteint `> 70%` de success rate sur 50 rollouts.
+- L'ablation `T_p=1` perd entre **10 et 40 points** de success rate vs `T_p=16` sur les mêmes 50 seeds de rollout (paper Chi 2023 §6 : -20 à -30 points) — tu reportes les deux taux dans un mini-tableau.
+- Diagnostic du mode switching mesuré : sur un rollout `T_p=1` échoué, tu comptes le nombre de changements de signe de la composante latérale de l'action entre pas consécutifs, et tu vérifies qu'il est strictement supérieur à celui d'un rollout `T_p=16` réussi (l'incohérence temporelle, théorie §3.1).

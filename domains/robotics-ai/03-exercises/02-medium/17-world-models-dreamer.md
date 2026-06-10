@@ -17,7 +17,7 @@ Mesurer empiriquement comment la qualité du *latent imagination rollout* dépen
 
 ## Criteres de reussite
 
-- Ta fonction `imagination_drift` tourne sans erreur et produit un tenseur de la bonne forme.
-- Le plot montre une dérive monotone croissante avec `H` (sinon, ton modèle imagine ou observe mal — debug d'abord).
-- Tu peux verbaliser *pourquoi* `kl_weight` faible aggrave la dérive : prior mal aligné sur le posterior → l'imagination part en sucette.
-- Tu fais le lien avec la théorie §6 (« model bias »).
+- `imagination_drift(wm, env, H, n_runs=20)` retourne un array de shape exactement `(H,)`, sans NaN, avec `drift[0] >= 0`.
+- Monotonie vérifiée numériquement : pour `H = 20`, `drift[-1] > drift[0]` et la dérive moyenne sur les 5 derniers steps est strictement supérieure à celle des 5 premiers (sinon, ton modèle imagine ou observe mal — debug d'abord).
+- Le plot montre les 5 valeurs de `H ∈ {1, 2, 5, 10, 20}` et tu as noté par écrit le `H` à partir duquel la dérive dépasse 2× la dérive à `H=1`.
+- Bonus quantifié : avec `kl_weight=0.1`, la dérive à `H=20` est strictement supérieure à celle du baseline (`kl_weight` par défaut) — et ta note d'1-2 phrases l'explique avec les mots « prior mal aligné sur le posterior » et fait le lien avec la théorie §6 (« model bias »).

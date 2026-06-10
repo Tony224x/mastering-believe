@@ -39,6 +39,6 @@ def sample_cfg(model, schedule, n, c_target: int, w: float):
 
 - Précision croît avec `w` (de ~50% à `w=0`, vers >85% à `w=3`).
 - Diversité décroît avec `w` (variance baisse).
-- À `w=7`, on observe du **mode collapse** : les samples se concentrent sur une partie de la distribution. Documente.
+- À `w=7`, on observe du **mode collapse**, mesuré : la variance totale par classe à `w=7` est inférieure à 50% de celle à `w=0`. Tu reportes les 4 valeurs de variance (`w ∈ {0, 1, 3, 7}`) dans un tableau.
 - Le code doit gérer proprement les 3 cas de `c` (0, 1, null) sans branche if/else dans le forward (utilise un seul `nn.Embedding(3, ...)`).
 - Bonus : reproduis l'effet *guidance trick* — montre une figure 2x4 (mode x w) qui rend l'effet visible.

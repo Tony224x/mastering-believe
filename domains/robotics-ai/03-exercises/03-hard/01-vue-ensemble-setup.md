@@ -21,6 +21,7 @@ Construire un environnement Gymnasium minimal **from scratch** qui respecte le c
 ## Criteres de reussite
 - `gymnasium.utils.env_checker.check_env(OneDPointEnv())` passe sans warning fatal.
 - Le main tourne, imprime les deux moyennes ± std.
-- Tu peux justifier pourquoi `dtype=np.float32` est important pour la compatibilité avec PyTorch en aval (J11+).
+- Le script contient `assert env.reset()[0].dtype == np.float32` (et l'assertion passe), avec un commentaire d'1 phrase sur la compatibilité PyTorch (dtype par défaut des tensors, pas de cast en J11+).
 - `gym.make("OneDPoint-v0")` fonctionne après `register`.
-- Tu peux expliquer pourquoi cet env minimal sera trivial à apprendre pour PPO (réponse attendue : reward dense quadratique, dim faible, dynamique linéaire — exactement le cas où PG converge en quelques minutes).
+- Sur 10 rollouts random de `OneDPointEnv` : `total_reward < 0` pour chaque rollout (la reward est une pénalité quadratique, jamais positive) et `steps <= 200` partout (le TimeLimit coupe) — sinon ta dynamique ou ton compteur est faux.
+- En commentaire de fin de script, tu as noté en 1-2 phrases pourquoi cet env sera trivial pour PPO, en citant au moins 2 des 3 raisons : reward dense quadratique, dimension faible, dynamique linéaire.

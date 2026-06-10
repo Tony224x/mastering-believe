@@ -40,9 +40,9 @@ Tu vas implémenter la **trajectory deviation** : pour chaque rollout, on mesure
 
 ## Criteres de reussite
 
-- [ ] La fonction `trajectory_deviation` retourne un float positif.
-- [ ] `deviation(expert_policy)` est sensiblement plus faible que `deviation(random_policy)`.
-- [ ] Tu peux nommer 1 cas où cette métrique trompe (ex : policy qui prend un meilleur chemin que l'expert sera punie alors qu'elle est meilleure).
+- [ ] La fonction `trajectory_deviation` retourne un float `>= 0`, et `deviation(expert_policy) < 1e-9` (la copie parfaite suit exactement la même trajectoire depuis le même seed).
+- [ ] `deviation(random_policy) > 10 × deviation(lazy_policy)`... ou pas : tu reportes les deux valeurs mesurées sur N=15 rollouts et le rang observé entre les 3 policies, avec 1 phrase justifiant le rang.
+- [ ] Ta discussion écrite (3-5 phrases) contient au moins 1 cas concret où cette métrique trompe (ex : policy qui prend un meilleur chemin que l'expert est punie alors qu'elle est meilleure).
 - [ ] Tu produis un mini-tableau Markdown avec les 3 policies × `deviation_mean ± std`.
 - [ ] Bonus : tu ajoutes la corrélation entre `deviation` et `success_rate` sur les 3 policies. Est-elle parfaite ? Pourquoi pas ?
 

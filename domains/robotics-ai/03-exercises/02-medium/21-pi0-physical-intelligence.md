@@ -36,8 +36,10 @@ Reproduire un mécanisme clé de π0 : le **padding multi-embodiment**. Tu vas i
 
 - [ ] Le code tourne sans crash, fait au moins 1000 étapes d'entraînement.
 - [ ] Pour chaque embodiment, la MSE sur les dimensions valides converge à `< 0.05`.
-- [ ] La MSE sur les dimensions paddées peut être *quelconque* (le modèle a le droit d'y produire n'importe quoi puisqu'elles sont masquées) — mais la masked loss à la fin doit être ≈ 0.
-- [ ] Tu peux expliquer en 2 phrases pourquoi cette approche permet à π0 d'entraîner un seul checkpoint sur 7 robots avec des espaces d'action différents.
+- [ ] La MSE sur les dimensions paddées peut être *quelconque* (le modèle a le droit d'y produire n'importe quoi puisqu'elles sont masquées) — mais la masked loss finale est `< 0.05`.
+- [ ] Le tableau d'évaluation `embodiment × (MSE-valid-dims, MSE-padded-dims)` est imprimé pour les 3 embodiments (6 valeurs).
+- [ ] Contre-expérience : tu réentraînes 200 steps avec la MSE **non masquée** et tu vérifies que les prédictions sur les dimensions paddées tendent vers 0 (`|pred_padded|.mean() < 0.1`) — le comportement que le masking évite.
+- [ ] En commentaire de fin de script, tu as écrit en 2 phrases pourquoi ce mécanisme permet à π0 d'entraîner un seul checkpoint sur 7 robots, en mentionnant « dim_max partagé » et « gradient nul sur les dimensions invalides ».
 
 ## Pièges classiques
 

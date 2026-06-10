@@ -17,8 +17,10 @@ Reprendre le code du module (`02-code/19-vla-introduction.py`) et l'étendre pou
 ## Criteres de reussite
 
 - Le code passe `python -m py_compile`.
-- Après ~5 epochs, la **per-token accuracy** sur la val depasse 0.85.
-- Tu sais expliquer pourquoi le chunking (Octo prédit 4 actions, Diffusion Policy 8-16) améliore la stabilité par rapport à une prédiction step-par-step (indice : moins de re-planification, plus de cohérence temporelle, distribution shift atténuée).
+- Après ~5 epochs, la **per-token accuracy** sur la val depasse 0.85 (imprimée à chaque epoch).
+- Le décodage affiché pour 2 échantillons de val montre une séquence de K=4 actions **cohérente** : les 4 pas vont dans la même direction (hors clipping en bord de grille), et correspondent à l'instruction.
+- La loss imprimée est bien la moyenne de `K * 2 = 8` cross-entropies (vérifiable : shape des logits `(batch, K, N_ACTION_DIMS, N_BINS)` ou équivalent, assert dans le code).
+- En commentaire de fin de script, tu as écrit en 2 phrases pourquoi le chunking améliore la stabilité, en citant au moins 2 des 3 mécanismes : moins de re-planification, cohérence temporelle, distribution shift atténué.
 
 ## Indices
 

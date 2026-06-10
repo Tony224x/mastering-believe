@@ -33,10 +33,10 @@ Tu dois écrire un petit script Python (ou directement dans un REPL) qui :
 
 ## Criteres de reussite
 
-- [ ] Tu reportes correctement `success_rate = X.XX +/- Y.YY` pour cette policy.
-- [ ] Tu peux expliquer en 1-2 phrases pourquoi `mean_across_seeds == mean_across_all_rollouts` quand chaque seed a le même nombre de rollouts.
-- [ ] Tu peux expliquer pourquoi `std_across_seeds` peut être PLUS GRAND que `σ_binom` théorique (parce que les seeds capturent une variance *systémique* de plus que la variance binomiale par-rollout : initialisation, ordre des batches, etc.).
-- [ ] Bonus : avec ces 60 rollouts, peux-tu rejeter avec confiance > 95% l'hypothèse "la vraie success rate est 50%" ? (Test simple : 1.96 * σ_binom comparé à |p - 0.5|.)
+- [ ] Ton script imprime `success_rate = 0.73 +/- 0.02` (mean ± std across seeds, `ddof=0`) — les taux par seed attendus sont `[0.75, 0.70, 0.75]`.
+- [ ] Assert dans le script : `mean_across_seeds == mean_across_all_rollouts` (à 1e-12 près), suivi d'1 phrase en commentaire expliquant pourquoi l'égalité tient quand chaque seed a le même nombre de rollouts (moyenne de moyennes à poids égaux).
+- [ ] Tu imprimes `σ_binom` (≈ 0.057 avec p=0.733, N=60) à côté de `std_across_seeds`, avec 1-2 phrases en commentaire sur ce que chacune mesure (variance binomiale par-rollout vs variance systémique entre seeds : initialisation, ordre des batches, etc.).
+- [ ] Bonus : le script imprime le verdict du test "vraie success rate = 50%" en comparant `|p - 0.5|` à `1.96 * σ_binom`, et conclut explicitement (rejeté ou non à 95%).
 
 ## Indices
 

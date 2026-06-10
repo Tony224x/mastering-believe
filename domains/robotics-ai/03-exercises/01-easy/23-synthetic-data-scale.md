@@ -42,7 +42,8 @@ Puis écris une mini-démo qui :
 - [ ] `lighting_augment` retourne une image strictement entre `0` et `1` (pas de NaN, pas de dépassement).
 - [ ] Avec `gain=0.6, temperature=[0.1, 0, 0]`, le canal R du pixel central reste **strictement supérieur** au canal R du fond (l'augmentation préserve la séparabilité objet/fond).
 - [ ] `background_swap` modifie **exactement** les pixels gris (pas le pixel central rouge).
-- [ ] Tu peux expliquer en 1 phrase pourquoi le **lighting** est l'augmentation préférée des labos quand le compute est limité.
+- [ ] Le compteur de pixels modifiés par `background_swap` imprime exactement `63` sur l'image jouet 8×8 (64 pixels − 1 pixel rouge central préservé).
+- [ ] En commentaire de fin de script, tu as écrit en 1 phrase pourquoi le **lighting** est l'augmentation préférée quand le compute est limité, en mentionnant son coût (une multiplication-addition par pixel, pas de re-rendering).
 
 ## Indices
 

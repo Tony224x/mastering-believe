@@ -32,6 +32,6 @@ def my_ddim_sample(model, schedule, n_samples: int, n_steps: int) -> torch.Tenso
 ## Criteres de reussite
 
 - À 50 steps, la qualité (mean/std proches du réel à ±10%) doit être comparable à l'ancestral 200-step.
-- À 10 steps, la dégradation doit être **observable** (mean/std s'écartent davantage). Documente-le.
+- À 10 steps, la dégradation est mesurée : l'écart relatif mean/std au réel dépasse celui du 50-step. Tu produis un tableau `n_steps × (mean_err%, std_err%, % bonne lune)` pour 10/50/200 qui le montre.
 - Le sampler tourne en `torch.no_grad()` mode, pas de fuite mémoire grad.
 - Reproductibilité : même seed → mêmes échantillons (DDIM est déterministe).

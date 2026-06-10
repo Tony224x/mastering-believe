@@ -52,7 +52,8 @@ rejected    : XX (XX.X%)
 - [ ] Le taux de rejet observé est **proche de 40%** (à ±5% près, dépend du seed).
 - [ ] Les 4 catégories de défauts sont **chacune** détectées par la fonction de filtre (au moins 1 occurrence chacune).
 - [ ] Le tableau de stats est lisible et inclut les **noms exacts** des raisons de rejet.
-- [ ] Tu peux expliquer en 2 phrases pourquoi **GR00T rejette ~30%** de ses trajectoires synthétiques en pratique (REFERENCES.md #15).
+- [ ] Aucune trajectoire n'est comptée deux fois : `kept + rejected == 100` et la somme des compteurs par raison vaut exactement `rejected`.
+- [ ] En commentaire de fin de script, tu as écrit en 2 phrases pourquoi GR00T rejette ~30% de ses trajectoires synthétiques (REFERENCES.md #15), en mentionnant au moins 2 causes concrètes (IK divergente, artefacts de rendering, états non physiques, collisions).
 
 ## Pièges classiques
 

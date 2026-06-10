@@ -1,7 +1,7 @@
 """
 Solutions — Jour 4 : Sequence Modeling (RNN, LSTM, GRU)
 ========================================================
-Solutions for the 3 easy exercises.
+Solutions for the 8 exercises (easy, medium, hard).
 
 Run: python 03-exercises/solutions/04-sequence-modeling-rnn.py
 """
@@ -248,6 +248,482 @@ print("""
   The LSTM creates a "gradient highway" through the cell state.
 """)
 
+# ============================================================================
+# EXERCISE 4 (MEDIUM): Batched RNN forward — predict then verify shapes
+# ============================================================================
+
+print("=" * 70)
+print("EXERCISE 4 (MEDIUM): Batched RNN forward + shape discipline")
+print("=" * 70)
+
+# Config: batch=3, T=5, input_dim=4, hidden_dim=6, output_dim=2
+# Predicted shapes (done on paper first):
+#   X     : (3, 5, 4)      h_t : (3, 6)       W_xh : (4, 6)
+#   W_hh  : (6, 6)         W_hy: (6, 2)
+#   H     : (3, 5, 6)      Y   : (3, 5, 2)
+rng4 = np.random.default_rng(42)
+B4, T4, D_in4, D_h4, D_out4 = 3, 5, 4, 6, 2
+
+X4 = rng4.standard_normal((B4, T4, D_in4))
+h0_4 = rng4.standard_normal((B4, D_h4)) * 0.5
+W_xh4 = rng4.standard_normal((D_in4, D_h4)) * 0.5
+W_hh4 = rng4.standard_normal((D_h4, D_h4)) * 0.5
+W_hy4 = rng4.standard_normal((D_h4, D_out4)) * 0.5
+b_h4 = np.zeros(D_h4)
+b_y4 = np.zeros(D_out4)
+
+# Shape predictions verified by assert
+assert X4.shape == (3, 5, 4) and W_xh4.shape == (4, 6) and W_hh4.shape == (6, 6)
+assert W_hy4.shape == (6, 2) and h0_4.shape == (3, 6)
+
+
+def rnn_forward_batched(X, h0, W_xh, W_hh, W_hy, b_h, b_y):
+    """Batched RNN: only loop over time, batch handled by matmul."""
+    B, T, _ = X.shape
+    H = np.zeros((B, T, W_hh.shape[0]))
+    Y = np.zeros((B, T, W_hy.shape[1]))
+    h = h0
+    for t in range(T):
+        # (B, D_in) @ (D_in, D_h) + (B, D_h) @ (D_h, D_h) -> (B, D_h)
+        h = np.tanh(X[:, t] @ W_xh + h @ W_hh + b_h)
+        H[:, t] = h
+        Y[:, t] = h @ W_hy + b_y
+    return H, Y
+
+
+def rnn_forward_naive(X, h0, W_xh, W_hh, W_hy, b_h, b_y):
+    """Reference: one sample, one timestep at a time (slow, but obviously right)."""
+    B, T, _ = X.shape
+    H = np.zeros((B, T, W_hh.shape[0]))
+    Y = np.zeros((B, T, W_hy.shape[1]))
+    for b in range(B):
+        h = h0[b]
+        for t in range(T):
+            h = np.tanh(X[b, t] @ W_xh + h @ W_hh + b_h)
+            H[b, t] = h
+            Y[b, t] = h @ W_hy + b_y
+    return H, Y
+
+
+H4, Y4 = rnn_forward_batched(X4, h0_4, W_xh4, W_hh4, W_hy4, b_h4, b_y4)
+H4n, Y4n = rnn_forward_naive(X4, h0_4, W_xh4, W_hh4, W_hy4, b_h4, b_y4)
+
+assert H4.shape == (3, 5, 6) and Y4.shape == (3, 5, 2)
+diff_H = np.abs(H4 - H4n).max()
+diff_Y = np.abs(Y4 - Y4n).max()
+print(f"\n  H shape: {H4.shape}  Y shape: {Y4.shape}  (as predicted)")
+print(f"  Batched vs naive: max diff H = {diff_H:.2e}, Y = {diff_Y:.2e}")
+assert diff_H < 1e-12 and diff_Y < 1e-12
+
+# h0 dependency: changing h0 must change H[:, 0]
+H4b, _ = rnn_forward_batched(X4, h0_4 + 1.0, W_xh4, W_hh4, W_hy4, b_h4, b_y4)
+delta_h0 = np.abs(H4b[:, 0] - H4[:, 0]).max()
+print(f"  h0 dependency: max |H[:,0] change| after h0 shift = {delta_h0:.4f} (> 0)")
+assert delta_h0 > 1e-3
+print("  [PASS] all shape and equivalence checks")
+
+
+# ============================================================================
+# EXERCISE 5 (MEDIUM): Gradient check of a single RNN cell
+# ============================================================================
+
 print("\n" + "=" * 70)
-print("All 3 exercises completed.")
+print("EXERCISE 5 (MEDIUM): RNN cell backward + gradient check")
+print("=" * 70)
+
+rng5 = np.random.default_rng(7)
+D_in5, D_h5 = 3, 4
+x5 = rng5.standard_normal(D_in5) * 0.5
+hprev5 = rng5.standard_normal(D_h5) * 0.5
+Wxh5 = rng5.standard_normal((D_in5, D_h5)) * 0.5
+Whh5 = rng5.standard_normal((D_h5, D_h5)) * 0.5
+bh5 = rng5.standard_normal(D_h5) * 0.5
+
+
+def cell_loss(x, hprev, Wxh, Whh, bh):
+    """L = 0.5 * sum(h^2) with h = tanh(x@Wxh + hprev@Whh + bh)."""
+    h = np.tanh(x @ Wxh + hprev @ Whh + bh)
+    return 0.5 * np.sum(h ** 2)
+
+
+def rnn_cell_backward(x, hprev, Wxh, Whh, bh):
+    """Analytical gradients of L = 0.5*sum(h^2) w.r.t. all 5 inputs.
+
+    Chain rule, step by step:
+      dL/dh = h                       (derivative of 0.5*h^2)
+      dh/dz = 1 - h^2                 (tanh')
+      dz    = dL/dh * dh/dz           (elementwise)
+      dWxh  = outer(x, dz)            (z = x @ Wxh + ...)
+      dWhh  = outer(hprev, dz)
+      dbh   = dz
+      dx    = Wxh @ dz                (z is linear in x)
+      dhprev= Whh @ dz
+    """
+    z = x @ Wxh + hprev @ Whh + bh
+    h = np.tanh(z)
+    dh = h                       # dL/dh for L = 0.5*sum(h^2)
+    dz = dh * (1.0 - h ** 2)     # through tanh
+    dWxh = np.outer(x, dz)
+    dWhh = np.outer(hprev, dz)
+    dbh = dz
+    dx = Wxh @ dz
+    dhprev = Whh @ dz
+    return dWxh, dWhh, dbh, dx, dhprev
+
+
+def numerical_grad(f, arr, eps=1e-6):
+    """Central finite differences, element by element."""
+    g = np.zeros_like(arr)
+    it = np.nditer(arr, flags=['multi_index'])
+    while not it.finished:
+        idx = it.multi_index
+        old = arr[idx]
+        arr[idx] = old + eps
+        lp = f()
+        arr[idx] = old - eps
+        lm = f()
+        arr[idx] = old
+        g[idx] = (lp - lm) / (2 * eps)
+        it.iternext()
+    return g
+
+
+def rel_err(a, n):
+    return np.abs(a - n) / (np.abs(a) + np.abs(n) + 1e-8)
+
+
+grads_analytic = rnn_cell_backward(x5, hprev5, Wxh5, Whh5, bh5)
+loss_fn5 = lambda: cell_loss(x5, hprev5, Wxh5, Whh5, bh5)
+names5 = ['dW_xh', 'dW_hh', 'db_h', 'dx', 'dh_prev']
+arrays5 = [Wxh5, Whh5, bh5, x5, hprev5]
+
+print(f"\n  {'grad':>8} | {'max rel err':>12} | status")
+worst5 = 0.0
+for name, arr, ga in zip(names5, arrays5, grads_analytic):
+    gn = numerical_grad(loss_fn5, arr)
+    e = rel_err(ga, gn).max()
+    worst5 = max(worst5, e)
+    print(f"  {name:>8} | {e:>12.2e} | {'PASS' if e < 1e-6 else 'FAIL'}")
+assert worst5 < 1e-6
+print(f"  [PASS] all 5 gradients verified element-wise (worst: {worst5:.2e})")
+
+
+# ============================================================================
+# EXERCISE 6 (MEDIUM): Debug a broken LSTM cell
+# ============================================================================
+
+print("\n" + "=" * 70)
+print("EXERCISE 6 (MEDIUM): Debugging a broken LSTM cell")
+print("=" * 70)
+
+# The 3 bugs and their training symptoms:
+#  BUG 1: f = tanh(...) -> forget gate in [-1, 1]. A NEGATIVE forget gate
+#         FLIPS the sign of the memory instead of attenuating it.
+#         Symptom: cell state oscillates, long-term memory is unusable.
+#  BUG 2: c = f * g     -> c_prev never enters the new cell state.
+#         There is NO memory pathway at all: the LSTM degenerates into a
+#         feedforward gate on the current candidate.
+#         Symptom: trains fine on short-range patterns, total failure on
+#         any task requiring memory of more than 1 step.
+#  BUG 3: h = o * c     -> h is unbounded (c can grow linearly over time
+#         since c = f*c_prev + i*g accumulates).
+#         Symptom: hidden state magnitude drifts upward, downstream
+#         activations saturate, training becomes unstable on long sequences.
+
+rng6 = np.random.default_rng(42)
+D_in6, D_h6 = 3, 4
+Wf6 = rng6.standard_normal((D_h6, D_h6 + D_in6)) * 0.5
+Wi6 = rng6.standard_normal((D_h6, D_h6 + D_in6)) * 0.5
+Wg6 = rng6.standard_normal((D_h6, D_h6 + D_in6)) * 0.5
+Wo6 = rng6.standard_normal((D_h6, D_h6 + D_in6)) * 0.5
+bf6, bi6, bg6, bo6 = (np.zeros(D_h6) for _ in range(4))
+params6 = (Wf6, Wi6, Wg6, Wo6, bf6, bi6, bg6, bo6)
+
+
+def lstm_cell_buggy(x, h_prev, c_prev, params):
+    Wf, Wi, Wg, Wo, bf, bi, bg, bo = params
+    z = np.concatenate([h_prev, x])
+    f = np.tanh(Wf @ z + bf)        # BUG 1: should be sigmoid
+    i = sigmoid(Wi @ z + bi)
+    g = np.tanh(Wg @ z + bg)
+    o = sigmoid(Wo @ z + bo)
+    c = f * g                        # BUG 2: should be f*c_prev + i*g
+    h = o * c                        # BUG 3: should be o * tanh(c)
+    return h, c
+
+
+def lstm_cell_fixed(x, h_prev, c_prev, params, forced_gates=None):
+    """Standard LSTM equations. forced_gates lets tests pin f and i."""
+    Wf, Wi, Wg, Wo, bf, bi, bg, bo = params
+    z = np.concatenate([h_prev, x])
+    f = sigmoid(Wf @ z + bf)         # FIX 1: sigmoid keeps f in [0, 1]
+    i = sigmoid(Wi @ z + bi)
+    g = np.tanh(Wg @ z + bg)
+    o = sigmoid(Wo @ z + bo)
+    if forced_gates is not None:     # test hook: pin f and i to constants
+        f, i = forced_gates
+    c = f * c_prev + i * g           # FIX 2: additive memory pathway
+    h = o * np.tanh(c)               # FIX 3: bound h through tanh(c)
+    return h, c, (f, i, o)
+
+
+x6 = rng6.standard_normal(D_in6)
+h6 = rng6.standard_normal(D_h6) * 0.5
+c6 = rng6.standard_normal(D_h6) * 2.0  # large c_prev to make memory visible
+
+h_fix, c_fix, (f6, i6, o6) = lstm_cell_fixed(x6, h6, c6, params6)
+print(f"\n  fixed gates f = {np.round(f6, 4)}")
+print(f"  fixed gates i = {np.round(i6, 4)}")
+print(f"  fixed gates o = {np.round(o6, 4)}")
+assert np.all((f6 >= 0) & (f6 <= 1)) and np.all((i6 >= 0) & (i6 <= 1)) \
+    and np.all((o6 >= 0) & (o6 <= 1))
+print("  [PASS] all gates in [0, 1]")
+
+# Forced-gate tests: f=1, i=0 -> perfect memory ; f=0, i=1 -> overwrite
+ones6, zeros6 = np.ones(D_h6), np.zeros(D_h6)
+_, c_keep, _ = lstm_cell_fixed(x6, h6, c6, params6, forced_gates=(ones6, zeros6))
+assert np.abs(c_keep - c6).max() < 1e-12
+print(f"  [PASS] f=1, i=0  ->  c == c_prev exactly (max diff {np.abs(c_keep - c6).max():.1e})")
+
+_, c_over, _ = lstm_cell_fixed(x6, h6, c6, params6, forced_gates=(zeros6, ones6))
+g_expected = np.tanh(Wg6 @ np.concatenate([h6, x6]) + bg6)
+assert np.abs(c_over - g_expected).max() < 1e-12
+print("  [PASS] f=0, i=1  ->  c == candidate g exactly")
+
+h_bug, c_bug = lstm_cell_buggy(x6, h6, c6, params6)
+print(f"  buggy vs fixed: |h diff| = {np.abs(h_bug - h_fix).max():.4f}, "
+      f"|c diff| = {np.abs(c_bug - c_fix).max():.4f}")
+print("  -> the buggy cell silently computes something completely different")
+
+
+# ============================================================================
+# EXERCISE 7 (HARD): LSTM from scratch + long-range gradient measurement
+# ============================================================================
+
+print("\n" + "=" * 70)
+print("EXERCISE 7 (HARD): LSTM vs RNN — long-range gradient survival")
+print("=" * 70)
+
+rng7 = np.random.default_rng(0)
+D_in7, D_h7 = 4, 8
+
+# --- RNN init: spectral radius forced to 0.5 to expose vanishing ---
+W_raw = rng7.standard_normal((D_h7, D_h7))
+rho = np.abs(np.linalg.eigvals(W_raw)).max()
+Whh7 = 0.5 * W_raw / rho          # spectral radius exactly 0.5
+Wxh7 = rng7.standard_normal((D_in7, D_h7)) * 0.5
+bh7 = np.zeros(D_h7)
+
+# --- LSTM init: small weights, forget bias = +1.0 ---
+# The +1 forget bias means f ~ sigmoid(1) ~ 0.73 at init: the LSTM starts
+# in "mostly remember" mode, which keeps the c-pathway gradient alive.
+Wl7 = {k: rng7.standard_normal((D_h7, D_h7 + D_in7)) * 0.3 for k in 'figo'}
+bl7 = {k: np.zeros(D_h7) for k in 'figo'}
+bl7['f'] += 1.0                    # forget bias trick
+
+
+def rnn_loss_from_seq(X):
+    h = np.zeros(D_h7)
+    for t in range(X.shape[0]):
+        h = np.tanh(X[t] @ Wxh7 + h @ Whh7 + bh7)
+    return np.sum(h ** 2)
+
+
+def lstm_loss_from_seq(X):
+    h, c = np.zeros(D_h7), np.zeros(D_h7)
+    for t in range(X.shape[0]):
+        z = np.concatenate([h, X[t]])
+        f = sigmoid(Wl7['f'] @ z + bl7['f'])
+        i = sigmoid(Wl7['i'] @ z + bl7['i'])
+        g = np.tanh(Wl7['g'] @ z + bl7['g'])
+        o = sigmoid(Wl7['o'] @ z + bl7['o'])
+        c = f * c + i * g
+        h = o * np.tanh(c)
+    return np.sum(h ** 2)
+
+
+def grad_wrt_x0(loss_fn, X, eps=1e-4):
+    """Finite differences on x_0 only: 2*input_dim forwards. Cheap and
+    framework-free. Note: values below ~1e-12 are at the float64 noise
+    floor of the finite-difference estimate."""
+    g = np.zeros(X.shape[1])
+    for j in range(X.shape[1]):
+        Xp, Xm = X.copy(), X.copy()
+        Xp[0, j] += eps
+        Xm[0, j] -= eps
+        g[j] = (loss_fn(Xp) - loss_fn(Xm)) / (2 * eps)
+    return g
+
+
+print(f"\n  Loss = sum(h_T^2). Measuring ||dL/dx_0|| by finite differences.")
+print(f"  {'T':>4} | {'||dL/dx0|| RNN':>16} | {'||dL/dx0|| LSTM':>16} | {'ratio LSTM/RNN':>15}")
+print(f"  {'-'*4} | {'-'*16} | {'-'*16} | {'-'*15}")
+
+results7 = {}
+for T in [5, 20, 40]:
+    X = rng7.standard_normal((T, D_in7)) * 0.5
+    g_rnn = np.linalg.norm(grad_wrt_x0(rnn_loss_from_seq, X))
+    g_lstm = np.linalg.norm(grad_wrt_x0(lstm_loss_from_seq, X))
+    ratio = g_lstm / max(g_rnn, 1e-300)
+    results7[T] = (g_rnn, g_lstm, ratio)
+    print(f"  {T:>4} | {g_rnn:>16.3e} | {g_lstm:>16.3e} | {ratio:>15.3e}")
+
+assert results7[40][0] < 1e-6, "RNN gradient should have vanished at T=40"
+assert results7[40][2] > 1e3, "LSTM should retain >1000x more gradient at T=40"
+print("\n  [PASS] at T=40: RNN gradient < 1e-6 and LSTM/RNN ratio > 1e3")
+print("""
+  WHY the LSTM wins: the cell pathway is c_t = f_t * c_{t-1} + i_t * g_t.
+  Going back one step multiplies the gradient by f_t (elementwise, ~0.73
+  here) — no W_hh matrix product, no tanh saturation stacked T times.
+  The RNN pathway multiplies by diag(1-h^2) @ W_hh^T at EVERY step:
+  with spectral radius 0.5 that is at best (0.5)^T -> 9e-13 at T=40.""")
+
+
+# ============================================================================
+# EXERCISE 8 (HARD): Full BPTT + exploding gradients + clipping
+# ============================================================================
+
+print("=" * 70)
+print("EXERCISE 8 (HARD): BPTT from scratch, explosion, clipping")
+print("=" * 70)
+
+rng8 = np.random.default_rng(3)
+D_in8, D_h8 = 2, 8
+
+
+def init_params8(spectral_radius):
+    W = rng8.standard_normal((D_h8, D_h8))
+    W = spectral_radius * W / np.abs(np.linalg.eigvals(W)).max()
+    return {
+        'Wxh': rng8.standard_normal((D_in8, D_h8)) * 0.3,
+        'Whh': W,
+        'bh': np.zeros(D_h8),
+        'Why': rng8.standard_normal((D_h8, 1)) * 0.3,
+        'by': np.zeros(1),
+    }
+
+
+def rnn_bptt(X, target, p):
+    """Forward + full BPTT for loss L = (y - target)^2, y = h_T @ Why + by.
+    Returns (loss, grads). Weights are SHARED across time: gradients are
+    ACCUMULATED at every timestep."""
+    T = X.shape[0]
+    hs = [np.zeros(D_h8)]
+    for t in range(T):
+        hs.append(np.tanh(X[t] @ p['Wxh'] + hs[-1] @ p['Whh'] + p['bh']))
+    y = hs[-1] @ p['Why'] + p['by']
+    loss = float(((y - target) ** 2).sum())
+
+    g = {k: np.zeros_like(v) for k, v in p.items()}
+    dy = 2.0 * (y - target)                    # scalar-ish (1,)
+    g['Why'] = np.outer(hs[-1], dy)
+    g['by'] = dy.copy()
+    dh = p['Why'] @ dy                          # dL/dh_T
+    for t in range(T - 1, -1, -1):
+        dz = dh * (1.0 - hs[t + 1] ** 2)        # through tanh
+        g['Wxh'] += np.outer(X[t], dz)          # accumulate (shared weights!)
+        g['Whh'] += np.outer(hs[t], dz)
+        g['bh'] += dz
+        dh = p['Whh'] @ dz                      # recurrent term to h_{t-1}
+    return loss, g
+
+
+# --- 1+2. Gradient check on T=6 ---
+p8 = init_params8(spectral_radius=0.9)
+X8 = rng8.standard_normal((6, D_in8)) * 0.5
+target8 = 1.0
+_, grads8 = rnn_bptt(X8, target8, p8)
+
+worst8 = 0.0
+for name in ['Wxh', 'Whh', 'bh']:
+    f8 = lambda: rnn_bptt(X8, target8, p8)[0]
+    gn = numerical_grad(f8, p8[name], eps=1e-5)
+    e = rel_err(grads8[name], gn).max()
+    worst8 = max(worst8, e)
+    print(f"  gradient check {name:>4}: max rel err = {e:.2e}")
+assert worst8 < 1e-5
+print(f"  [PASS] BPTT gradient check (worst {worst8:.2e})")
+
+# --- 3. Provoke explosion: spectral radius 1.5, tiny inputs (linear regime) ---
+# With tiny inputs the hidden state stays in tanh's quasi-linear zone, so the
+# backward Jacobian is ~W_hh^T at every step -> gradient grows like 1.5^T.
+print("\n  Exploding gradients with spectral radius 1.5 (inputs * 0.01):")
+p_exp = init_params8(spectral_radius=1.5)
+print(f"  {'T':>4} | {'||dWhh||':>14}")
+norms8 = {}
+for T in [3, 6, 9, 12, 40]:
+    Xe = rng8.standard_normal((T, D_in8)) * 0.01   # tiny inputs: tanh linear zone
+    _, ge = rnn_bptt(Xe, target8, p_exp)
+    norms8[T] = np.linalg.norm(ge['Whh'])
+    print(f"  {T:>4} | {norms8[T]:>14.4e}")
+print(f"  growth ||dWhh||(12) / ||dWhh||(3) = {norms8[12] / norms8[3]:.1f}x")
+assert norms8[12] > 20 * norms8[3], "expected exponential-ish growth in linear regime"
+# At T=40 the state has saturated tanh (|h| ~ 1): the derivative (1-h^2) ~ 0
+# CAPS the explosion. In real training, explosions show up as intermittent
+# spikes precisely when trajectories cross the linear zone.
+print(f"  note: at T=40 the norm is {norms8[40]:.3e} — tanh saturation caps the")
+print("  explosion; in practice explosions appear as intermittent spikes.")
+
+
+# --- 4. Global-norm clipping ---
+def clip_gradients(grads, max_norm):
+    """Rescale ALL gradients by a single factor if global norm > max_norm.
+    Preserves the gradient DIRECTION (unlike per-element clipping)."""
+    total = np.sqrt(sum(float(np.sum(g ** 2)) for g in grads.values()))
+    if total > max_norm:
+        scale = max_norm / total
+        return {k: g * scale for k, g in grads.items()}, total
+    return grads, total
+
+
+_, gbig = rnn_bptt(rng8.standard_normal((30, D_in8)) * 0.05, target8, p_exp)
+clipped, norm_before = clip_gradients(gbig, max_norm=1.0)
+norm_after = np.sqrt(sum(float(np.sum(g ** 2)) for g in clipped.values()))
+print(f"\n  clipping: norm {norm_before:.3e} -> {norm_after:.6f} (target 1.0)")
+assert abs(norm_after - 1.0) < 1e-9
+# Direction preserved: clipped gradient is colinear with original
+cos = np.sum(gbig['Whh'] * clipped['Whh']) / (
+    np.linalg.norm(gbig['Whh']) * np.linalg.norm(clipped['Whh']))
+assert abs(cos - 1.0) < 1e-12
+print(f"  direction preserved: cos(original, clipped) = {cos:.12f}")
+# No-op below threshold
+small = {k: v * 1e-6 for k, v in gbig.items()}
+same, _ = clip_gradients(small, max_norm=1.0)
+assert all(np.array_equal(same[k], small[k]) for k in small)
+print("  below threshold: gradients unchanged  [PASS]")
+
+# --- 5. Training with vs without clipping on a toy task: y = sum(X) ---
+print("\n  Toy task: predict sum(X) over T=10 (exploding init, lr=0.01)")
+
+
+def train8(use_clip, steps=200, lr=0.01):
+    rng_t = np.random.default_rng(11)
+    p = init_params8(spectral_radius=1.5)
+    first = last = None
+    for s in range(steps):
+        X = rng_t.standard_normal((10, D_in8)) * 0.3
+        tgt = X.sum()
+        loss, g = rnn_bptt(X, tgt, p)
+        if first is None:
+            first = loss
+        if not np.isfinite(loss) or loss > 1e3:
+            return first, float('inf')           # diverged
+        if use_clip:
+            g, _ = clip_gradients(g, max_norm=1.0)
+        for k in p:
+            p[k] -= lr * g[k]
+        last = loss
+    return first, last
+
+
+loss0_nc, lossF_nc = train8(use_clip=False)
+loss0_c, lossF_c = train8(use_clip=True)
+print(f"  without clipping: first loss {loss0_nc:.3f} -> {'DIVERGED' if not np.isfinite(lossF_nc) else f'{lossF_nc:.4f}'}")
+print(f"  with    clipping: first loss {loss0_c:.3f} -> {lossF_c:.4f}")
+assert not np.isfinite(lossF_nc) or lossF_nc > 1e3, "unclipped run should diverge"
+assert lossF_c < loss0_c / 10, "clipped run should converge (loss / 10)"
+print("  [PASS] clipping turns a divergent run into a convergent one")
+
+print("\n" + "=" * 70)
+print("All 8 exercises completed.")
 print("=" * 70)

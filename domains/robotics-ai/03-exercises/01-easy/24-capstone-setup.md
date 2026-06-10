@@ -46,10 +46,10 @@ Ce qui crée `artifacts/pusht_demos/data.npz`, `artifacts/pusht_demos/meta.json`
 
 ## Criteres de reussite
 
-- [ ] Le script s'exécute sans erreur sur le dataset par défaut (200 épisodes).
-- [ ] Les 3 vérifications de cohérence passent (assertions vraies).
-- [ ] La figure montre clairement 8 trajectoires distinctes, agent en plein, block en pointillés.
-- [ ] Tu peux dire en 1 phrase ce que tu observes : par exemple "les trajectoires d'agent contournent visiblement le block, pas en ligne droite".
+- [ ] Le script s'exécute sans erreur sur le dataset par défaut et le rapport imprime `n_episodes == 200` et `sum(ep_length) == obs.shape[0] == action.shape[0]`.
+- [ ] Les 3 vérifications de cohérence sont des `assert` dans le script (pas des prints), et elles passent : `ep_start` strictement croissant avec `ep_start[0] == 0`, comptage des transitions, borne sur la norme des actions (`<= a_max + epsilon`, `a_max` lu depuis `meta.json`).
+- [ ] La figure `exo_easy_trajectories.png` est créée et montre 8 trajectoires distinctes, agent en trait plein, block en pointillés, une couleur par épisode.
+- [ ] Tu as écrit en 1 phrase (commentaire de fin de script) une observation qualitative vérifiable sur la figure, par exemple "les trajectoires d'agent contournent le block au lieu d'aller en ligne droite" — et la figure la confirme.
 
 ## Indices
 
