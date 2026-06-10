@@ -307,22 +307,52 @@ Faux. Les modeles edge/on-device (Phi-4, Gemma 3, les variantes 3B-8B) restent *
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Quelle est la promesse fondamentale de MoE ?
-> Decoupler **params totaux** (capacite de stockage) et **compute par token** (FLOPs). Un MoE 47B peut tourner avec le compute d'un 13B en routant chaque token vers seulement 2 experts sur 8.
+### Q1 : Quelle est la promesse fondamentale de MoE ?
 
-**Q2** — Pourquoi Mixtral 8x7B fait 47B et pas 56B ?
-> Les "8 experts" sont uniquement les FFN. L'attention, les embeddings et les LayerNorm sont partages entre les experts. Ils ne sont pas 8 modeles independants.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — A quoi sert la load balancing loss de Shazeer ?
-> Empecher le routeur de favoriser 2-3 experts en collapse. Penalise un routage desequilibre via `N * sum(f_i * P_i)`, pousse vers une utilisation uniforme.
+Decoupler **params totaux** (capacite de stockage) et **compute par token** (FLOPs). Un MoE 47B peut tourner avec le compute d'un 13B en routant chaque token vers seulement 2 experts sur 8.
 
-**Q4** — Quelle est la difference entre token-choice et expert-choice routing ?
-> Token-choice : chaque token choisit ses k experts (peut faire deborder un expert → token drops). Expert-choice : chaque expert choisit ses M tokens (equilibre garanti, mais certains tokens ne recoivent aucun expert).
+</details>
 
-**Q5** — Quand ne PAS utiliser MoE ?
-> Sur un seul GPU avec VRAM limitee (RTX 4090, edge, mobile) : MoE consomme la VRAM des experts dormants pour rien. En fine-tuning sur petit dataset : le routing equilibre se degrade. Pour des taches tres specialisees ou un dense fine-tune fait mieux.
+### Q2 : Pourquoi Mixtral 8x7B fait 47B et pas 56B ?
+
+<details>
+<summary>Reponse</summary>
+
+Les "8 experts" sont uniquement les FFN. L'attention, les embeddings et les LayerNorm sont partages entre les experts. Ils ne sont pas 8 modeles independants.
+
+</details>
+
+### Q3 : A quoi sert la load balancing loss de Shazeer ?
+
+<details>
+<summary>Reponse</summary>
+
+Empecher le routeur de favoriser 2-3 experts en collapse. Penalise un routage desequilibre via `N * sum(f_i * P_i)`, pousse vers une utilisation uniforme.
+
+</details>
+
+### Q4 : Quelle est la difference entre token-choice et expert-choice routing ?
+
+<details>
+<summary>Reponse</summary>
+
+Token-choice : chaque token choisit ses k experts (peut faire deborder un expert → token drops). Expert-choice : chaque expert choisit ses M tokens (equilibre garanti, mais certains tokens ne recoivent aucun expert).
+
+</details>
+
+### Q5 : Quand ne PAS utiliser MoE ?
+
+<details>
+<summary>Reponse</summary>
+
+Sur un seul GPU avec VRAM limitee (RTX 4090, edge, mobile) : MoE consomme la VRAM des experts dormants pour rien. En fine-tuning sur petit dataset : le routing equilibre se degrade. Pour des taches tres specialisees ou un dense fine-tune fait mieux.
+
+</details>
 
 ---
 

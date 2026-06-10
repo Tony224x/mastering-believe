@@ -280,22 +280,52 @@ Contexte typique > 128k tokens ET throughput critique ?
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Pourquoi l'attention transformer est dite quadratique et ou ca pose probleme ?
-> Pour une sequence de N tokens, l'attention calcule une matrice N x N de scores. Cout = O(N^2) compute et memoire. Pour N > 32k, la matrice ne tient plus en VRAM. C'est le mur asymptotique qui motive les SSM.
+### Q1 : Pourquoi l'attention transformer est dite quadratique et ou ca pose probleme ?
 
-**Q2** — Quelle est la propriete miracle des SSM lineaires ?
-> Equivalence entre mode recurrent (O(N) inference, O(1) memoire par step) et mode convolutionnel (O(N log N) parallele au training via FFT). On a la rapidite RNN a l'inference + le parallelisme transformer au training.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — Quelle est l'innovation cle de Mamba par rapport a S4 ?
-> La selectivite : B, C et le pas de discretisation Delta dependent du token courant (Linear(x_t)). Le SSM peut alors "decider" d'absorber ou ignorer un token, ce que S4 ne pouvait pas faire. C'est l'equivalent fonctionnel d'un gate dynamique.
+Pour une sequence de N tokens, l'attention calcule une matrice N x N de scores. Cout = O(N^2) compute et memoire. Pour N > 32k, la matrice ne tient plus en VRAM. C'est le mur asymptotique qui motive les SSM.
 
-**Q4** — Pourquoi Mamba est connu pour echouer sur le recall associatif ?
-> L'etat cache h_t a une taille fixe (16-64 dims). Tout l'historique y est compresse de facon lossy. Pour repondre "what was the password X gave 50k tokens ago", Mamba doit avoir conserve cette info dans h_t — ce qui est statistiquement difficile en presence de bruit. Un transformer y accede directement via la KV-cache. Benchmark de reference : MQAR.
+</details>
 
-**Q5** — Pourquoi Jamba garde 1 layer d'attention sur 8 et pas zero ?
-> Les rares layers d'attention sauvent le recall ponctuel (associatif dense) que Mamba seul rate. Les 7 autres layers Mamba font le gros du travail en O(N). On obtient ~95% des benefices Mamba (memoire, throughput, long context) tout en gardant la qualite recall d'un transformer. Le ratio empirique "1 attention pour 7 Mamba dans un bloc de 8 layers" vient de l'experimentation interne d'AI21.
+### Q2 : Quelle est la propriete miracle des SSM lineaires ?
+
+<details>
+<summary>Reponse</summary>
+
+Equivalence entre mode recurrent (O(N) inference, O(1) memoire par step) et mode convolutionnel (O(N log N) parallele au training via FFT). On a la rapidite RNN a l'inference + le parallelisme transformer au training.
+
+</details>
+
+### Q3 : Quelle est l'innovation cle de Mamba par rapport a S4 ?
+
+<details>
+<summary>Reponse</summary>
+
+La selectivite : B, C et le pas de discretisation Delta dependent du token courant (Linear(x_t)). Le SSM peut alors "decider" d'absorber ou ignorer un token, ce que S4 ne pouvait pas faire. C'est l'equivalent fonctionnel d'un gate dynamique.
+
+</details>
+
+### Q4 : Pourquoi Mamba est connu pour echouer sur le recall associatif ?
+
+<details>
+<summary>Reponse</summary>
+
+L'etat cache h_t a une taille fixe (16-64 dims). Tout l'historique y est compresse de facon lossy. Pour repondre "what was the password X gave 50k tokens ago", Mamba doit avoir conserve cette info dans h_t — ce qui est statistiquement difficile en presence de bruit. Un transformer y accede directement via la KV-cache. Benchmark de reference : MQAR.
+
+</details>
+
+### Q5 : Pourquoi Jamba garde 1 layer d'attention sur 8 et pas zero ?
+
+<details>
+<summary>Reponse</summary>
+
+Les rares layers d'attention sauvent le recall ponctuel (associatif dense) que Mamba seul rate. Les 7 autres layers Mamba font le gros du travail en O(N). On obtient ~95% des benefices Mamba (memoire, throughput, long context) tout en gardant la qualite recall d'un transformer. Le ratio empirique "1 attention pour 7 Mamba dans un bloc de 8 layers" vient de l'experimentation interne d'AI21.
+
+</details>
 
 ---
 

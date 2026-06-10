@@ -324,7 +324,97 @@ Si tu es fluent sur ces 7 points, tu as la base pour lire le code de nanoGPT, co
 
 ---
 
-## 9. Key Takeaways
+## 9. Flash Cards — Active Recall
+
+### Q1 : Quels sont les composants, dans l'ordre, d'un mini-GPT decoder-only ?
+
+<details>
+<summary>Reponse</summary>
+
+1. **Token embedding** `(vocab_size, n_embed)` — convertit les IDs en vecteurs
+2. **Positional encoding** `(max_len, n_embed)` — ajoute l'information de position
+3. **N blocs Transformer decoder** — chacun : MHA causale + Add & Norm + FFN + Add & Norm
+4. **Final LayerNorm**
+5. **Projection lineaire** `n_embed → vocab_size` — produit les logits
+
+Sortie : `(batch, seq_len, vocab_size)`, puis softmax + cross-entropy contre les targets. C'est exactement la meme architecture que GPT-2/GPT-3/Claude, juste des millions de fois plus petite.
+
+</details>
+
+### Q2 : Comment construit-on les paires (input, target) pour l'entrainement autoregressif ?
+
+<details>
+<summary>Reponse</summary>
+
+On echantillonne un chunk aleatoire du corpus de longueur `block_size`, et le target est **le meme chunk decale de 1** :
+
+```
+x = corpus[i     : i + block_size]
+y = corpus[i + 1 : i + block_size + 1]
+```
+
+A chaque position `t`, le modele doit predire `y[t]` (le caractere suivant) a partir de `x[0..t]`. Grace au masquage causal, les `block_size` predictions sont calculees **en parallele** dans une seule passe forward — c'est ce qui rend l'entrainement ~100x plus rapide qu'un RNN.
+
+La loss est la cross-entropy moyennee sur toutes les positions : `F.cross_entropy(logits.view(-1, vocab_size), y.view(-1))`.
+
+</details>
+
+### Q3 : Quels sont les pros et cons d'un tokenizer caractere par rapport a BPE ?
+
+<details>
+<summary>Reponse</summary>
+
+**Pros** :
+- Vocabulaire minuscule (60-100 tokens vs ~50K pour GPT)
+- Aucun OOV possible — tout caractere connu se tokenize
+- Implementation triviale (5 lignes de Python : `char_to_idx` / `idx_to_char`)
+
+**Cons** :
+- Sequences beaucoup plus longues (un mot = 5-10 tokens au lieu de 1)
+- Les patterns linguistiques prennent plus de temps a apprendre
+- Gaspillage de compute (le modele doit "reconstruire" les mots a chaque fois)
+
+Pour un mini-GPT pedagogique : bon choix. Pour un vrai modele : BPE/SentencePiece.
+
+</details>
+
+### Q4 : Quelle est la difference entre greedy decoding et sampling avec temperature ?
+
+<details>
+<summary>Reponse</summary>
+
+**Greedy** : `argmax` sur les logits du dernier token. Deterministe — meme prompt → meme sortie. Tendance a boucler sur des patterns courts.
+
+**Sampling avec temperature** : on echantillonne selon `softmax(logits / T)` :
+
+- `T = 1` : distribution naturelle
+- `T < 1` : plus peakue (plus deterministe) ; `T → 0` ≈ greedy
+- `T > 1` : plus plate (plus aleatoire) ; `T → ∞` ≈ uniforme
+
+Extensions : **top-k** (garder les k tokens les plus probables, renormaliser) et **top-p / nucleus** (garder les tokens jusqu'a une masse cumulee p, ex 0.9) pour eviter de tirer des tokens ultra-rares qui cassent la coherence.
+
+</details>
+
+### Q5 : Piege — quelle loss attend-on a l'initialisation, et pourquoi ? Que se passe-t-il si la generation depasse block_size ?
+
+<details>
+<summary>Reponse</summary>
+
+**Loss initiale** : avec des poids aleatoires, le modele predit quasi-uniformement, donc chaque caractere a ~`1/vocab_size` de probabilite :
+
+```
+loss_initial ≈ -log(1/vocab_size) = log(vocab_size)   (≈ 4.09 pour vocab_size = 60)
+```
+
+C'est un sanity check classique : si la loss de depart est tres differente de `log(vocab_size)`, il y a un bug.
+
+**Au-dela de block_size** : le positional encoding n'a que `block_size` positions — le modele ne peut pas traiter une sequence plus longue. Solution en generation : **croper le contexte** aux `block_size` derniers tokens (`ids[:, -block_size:]`) avant chaque forward.
+
+</details>
+
+---
+
+## 10. Key Takeaways
 
 1. **Un GPT = token embed + pos encoding + N transformer blocks (causal) + final LN + projection**. C'est tout.
 

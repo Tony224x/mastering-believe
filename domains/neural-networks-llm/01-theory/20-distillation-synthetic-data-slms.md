@@ -239,25 +239,61 @@ La majorite des equipes **sautent l'etape 3** et vont directement a distiller. R
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Quelle est la methode de distillation dominante en 2026 pour les API fermees ?
-> Distillation par donnees synthetiques : generer un dataset avec le frontier model (prompt, reponse complete), puis SFT un petit modele dessus. Pas besoin d'acces aux logits du teacher.
+### Q1 : Quelle est la methode de distillation dominante en 2026 pour les API fermees ?
 
-**Q2** — Pourquoi un SLM specialise peut-il battre un frontier generaliste sur une tache ?
-> Il alloue ses parametres a la tache au lieu de tout le monde. Cout 10-50x plus bas, latence 5-20x. Payer la difference en maintenance/infra si volume eleve.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — Quelle est l'etape la plus importante du pipeline synthetic ?
-> Le filtrage (rule-based, verifiable, LLM judge, dedup, safety). 30-60% des generations passent. La qualite finale du student en depend directement.
+Distillation par donnees synthetiques : generer un dataset avec le frontier model (prompt, reponse complete), puis SFT un petit modele dessus. Pas besoin d'acces aux logits du teacher.
 
-**Q4** — Quand la distillation devient-elle economiquement justifiee ?
-> Break-even typique : 10-50M tokens/mois sur la tache. En dessous, rester sur API frontier + Haiku/Gemma en routeur.
+</details>
 
-**Q5** — Pourquoi le DeepSeek R1 Distill 14B peut-il battre DeepSeek V3 non-reasoning ?
-> Le student herite des traces reasoning completes. Test-time compute + heritage reasoning fait que 14B + thinking bat 236B sans thinking.
+### Q2 : Pourquoi un SLM specialise peut-il battre un frontier generaliste sur une tache ?
 
-**Q6** — Quels sont les 3 principaux pieges de la distillation ?
-> (1) Data contamination (ton eval est dans le teacher), (2) mode collapse (perte de diversite), (3) forgetting (ecrase les capacites generales si pas de data mix).
+<details>
+<summary>Reponse</summary>
+
+Il alloue ses parametres a la tache au lieu de tout le monde. Cout 10-50x plus bas, latence 5-20x. Payer la difference en maintenance/infra si volume eleve.
+
+</details>
+
+### Q3 : Quelle est l'etape la plus importante du pipeline synthetic ?
+
+<details>
+<summary>Reponse</summary>
+
+Le filtrage (rule-based, verifiable, LLM judge, dedup, safety). 30-60% des generations passent. La qualite finale du student en depend directement.
+
+</details>
+
+### Q4 : Quand la distillation devient-elle economiquement justifiee ?
+
+<details>
+<summary>Reponse</summary>
+
+Break-even typique : 10-50M tokens/mois sur la tache. En dessous, rester sur API frontier + Haiku/Gemma en routeur.
+
+</details>
+
+### Q5 : Pourquoi le DeepSeek R1 Distill 14B peut-il battre DeepSeek V3 non-reasoning ?
+
+<details>
+<summary>Reponse</summary>
+
+Le student herite des traces reasoning completes. Test-time compute + heritage reasoning fait que 14B + thinking bat 236B sans thinking.
+
+</details>
+
+### Q6 : Quels sont les 3 principaux pieges de la distillation ?
+
+<details>
+<summary>Reponse</summary>
+
+(1) Data contamination (ton eval est dans le teacher), (2) mode collapse (perte de diversite), (3) forgetting (ecrase les capacites generales si pas de data mix).
+
+</details>
 
 
 ---

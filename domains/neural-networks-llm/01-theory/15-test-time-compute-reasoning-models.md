@@ -205,25 +205,61 @@ Budget total = Training + Inference
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Quelle est la deuxieme scaling law decouverte en 2024 ?
-> Test-time compute scaling : augmenter les tokens depenses a l'inference (chaine de raisonnement) ameliore la performance comme augmenter la taille du modele, sur les taches verifiables.
+### Q1 : Quelle est la deuxieme scaling law decouverte en 2024 ?
 
-**Q2** — Quelle est l'innovation cle de DeepSeek R1 par rapport a o1 ?
-> Le pipeline est public et utilise RL pur (GRPO) sur une reward verifiable (reponse correcte) sans SFT prealable. Les capacites reasoning emergent spontanement.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — Pourquoi distiller un reasoning model dans un 7B marche mieux que de l'entrainer par RL directement ?
-> Le petit modele n'a pas la base de connaissances pour decouvrir les strategies reasoning par exploration RL. La distillation lui transmet les patterns deja decouverts par le gros modele.
+Test-time compute scaling : augmenter les tokens depenses a l'inference (chaine de raisonnement) ameliore la performance comme augmenter la taille du modele, sur les taches verifiables.
 
-**Q4** — Quand preferer Claude 4.5 Sonnet a Claude 4.5 Opus thinking ?
-> Tache structuree/extractive/creative (pas de verification objective), latence user-facing critique, ou cout/volume eleve. Sonnet donne 80% du resultat pour 10% du cout et 20x la vitesse.
+</details>
 
-**Q5** — Qu'est-ce que le pattern "Planner-Executor" ?
-> Un reasoning model genere le plan une fois, puis un LLM rapide execute chaque etape. Optimise qualite/cout/latence vs utiliser un reasoning model en boucle.
+### Q2 : Quelle est l'innovation cle de DeepSeek R1 par rapport a o1 ?
 
-**Q6** — Pourquoi ne pas auditer la securite via le CoT ?
-> Le CoT visible n'est pas necessairement le vrai processus de decision (faithfulness). Un modele peut rationaliser post-hoc une decision prise par un biais cache. Audit = evaluations comportementales, pas lecture du CoT.
+<details>
+<summary>Reponse</summary>
+
+Le pipeline est public et utilise RL pur (GRPO) sur une reward verifiable (reponse correcte) sans SFT prealable. Les capacites reasoning emergent spontanement.
+
+</details>
+
+### Q3 : Pourquoi distiller un reasoning model dans un 7B marche mieux que de l'entrainer par RL directement ?
+
+<details>
+<summary>Reponse</summary>
+
+Le petit modele n'a pas la base de connaissances pour decouvrir les strategies reasoning par exploration RL. La distillation lui transmet les patterns deja decouverts par le gros modele.
+
+</details>
+
+### Q4 : Quand preferer Claude 4.5 Sonnet a Claude 4.5 Opus thinking ?
+
+<details>
+<summary>Reponse</summary>
+
+Tache structuree/extractive/creative (pas de verification objective), latence user-facing critique, ou cout/volume eleve. Sonnet donne 80% du resultat pour 10% du cout et 20x la vitesse.
+
+</details>
+
+### Q5 : Qu'est-ce que le pattern "Planner-Executor" ?
+
+<details>
+<summary>Reponse</summary>
+
+Un reasoning model genere le plan une fois, puis un LLM rapide execute chaque etape. Optimise qualite/cout/latence vs utiliser un reasoning model en boucle.
+
+</details>
+
+### Q6 : Pourquoi ne pas auditer la securite via le CoT ?
+
+<details>
+<summary>Reponse</summary>
+
+Le CoT visible n'est pas necessairement le vrai processus de decision (faithfulness). Un modele peut rationaliser post-hoc une decision prise par un biais cache. Audit = evaluations comportementales, pas lecture du CoT.
+
+</details>
 
 
 ---

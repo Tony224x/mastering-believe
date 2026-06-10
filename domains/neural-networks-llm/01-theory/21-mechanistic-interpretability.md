@@ -269,22 +269,52 @@ Etat de l'art honnete :
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Quelle est la difference entre probing et activation patching ?
-> Probing montre qu'une info est *presente* (correlation) dans les activations. Activation patching montre qu'elle est *causalement utilisee* pour la prediction (substitution + mesure de l'effet).
+### Q1 : Quelle est la difference entre probing et activation patching ?
 
-**Q2** — Qu'est-ce qu'un induction head et pourquoi est-il fondamental ?
-> Un circuit a 2 layers (previous-token head + induction head) qui implemente "j'ai deja vu A suivi de B, donc apres A je predis B". C'est le mecanisme algorithmique de l'in-context learning, et il apparait par phase transition pendant le training.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — Pourquoi les neurones d'un LLM sont-ils polysemantiques ?
-> Superposition. Quand les features sont sparses, le modele les compresse dans un nombre de dimensions inferieur en acceptant un peu d'interference. C'est mathematiquement optimal sous sparsity.
+Probing montre qu'une info est *presente* (correlation) dans les activations. Activation patching montre qu'elle est *causalement utilisee* pour la prediction (substitution + mesure de l'effet).
 
-**Q4** — Quel est l'apport principal des SAEs ?
-> Decomposer les activations dans un espace plus large ou les features redeviennent mono-semantiques et sparses, ce qui permet de nommer/visualiser/steerer chaque feature individuellement.
+</details>
 
-**Q5** — Pourquoi mech interp ne resout-elle pas l'alignment a 2026 ?
-> Scalabilite limitee (circuits verifies sur GPT-2 small, pas sur frontier), polysemy residuelle dans les SAEs, manque de comprehension de la composition, et gap entre base models et models RLHF/reasoning. C'est un outil de diagnostic, pas une solution complete.
+### Q2 : Qu'est-ce qu'un induction head et pourquoi est-il fondamental ?
+
+<details>
+<summary>Reponse</summary>
+
+Un circuit a 2 layers (previous-token head + induction head) qui implemente "j'ai deja vu A suivi de B, donc apres A je predis B". C'est le mecanisme algorithmique de l'in-context learning, et il apparait par phase transition pendant le training.
+
+</details>
+
+### Q3 : Pourquoi les neurones d'un LLM sont-ils polysemantiques ?
+
+<details>
+<summary>Reponse</summary>
+
+Superposition. Quand les features sont sparses, le modele les compresse dans un nombre de dimensions inferieur en acceptant un peu d'interference. C'est mathematiquement optimal sous sparsity.
+
+</details>
+
+### Q4 : Quel est l'apport principal des SAEs ?
+
+<details>
+<summary>Reponse</summary>
+
+Decomposer les activations dans un espace plus large ou les features redeviennent mono-semantiques et sparses, ce qui permet de nommer/visualiser/steerer chaque feature individuellement.
+
+</details>
+
+### Q5 : Pourquoi mech interp ne resout-elle pas l'alignment a 2026 ?
+
+<details>
+<summary>Reponse</summary>
+
+Scalabilite limitee (circuits verifies sur GPT-2 small, pas sur frontier), polysemy residuelle dans les SAEs, manque de comprehension de la composition, et gap entre base models et models RLHF/reasoning. C'est un outil de diagnostic, pas une solution complete.
+
+</details>
 
 ---
 

@@ -285,22 +285,52 @@ Conclusion pratique : **Q4 est le point sweet**. En dessous, la qualite chute no
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Pourquoi la quantization accelere-t-elle l'inference, alors qu'il faut quand meme dequantizer ?
-> Parce qu'on est memory-bound : lire 4 bits au lieu de 16 bits depuis la VRAM est 4x plus rapide, et la dequantization est gratuite (kernel fuse) ou faite directement dans des unites matricielles INT4.
+### Q1 : Pourquoi la quantization accelere-t-elle l'inference, alors qu'il faut quand meme dequantizer ?
 
-**Q2** — Pourquoi un dataset de calibration est crucial ?
-> Il permet de mesurer les vraies statistiques d'activation et de choisir des scales qui ne gaspillent pas la plage entiere sur des outliers rares. Sans calibration, INT8 perd 5-10pts de perplexite ; avec, moins de 1pt.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — Quelle est la difference entre GPTQ et AWQ ?
-> GPTQ quantize colonne par colonne et compense l'erreur sur les colonnes suivantes via la Hessienne (approche OBS). AWQ identifie les ~1% de canaux d'activation a forte magnitude et protege les colonnes de poids correspondantes via un re-scaling pre-quantization. AWQ est plus rapide a calibrer, GPTQ legerement plus precis.
+Parce qu'on est memory-bound : lire 4 bits au lieu de 16 bits depuis la VRAM est 4x plus rapide, et la dequantization est gratuite (kernel fuse) ou faite directement dans des unites matricielles INT4.
 
-**Q4** — Pourquoi un seul outlier casse-t-il INT8 naif ?
-> Le scale est calcule sur le max absolu : un outlier 100x plus grand ecrase tous les autres elements vers q=0 ou q=±1, detruisant la precision relative sur 99% des donnees. Solutions : LLM.int8() (decomposition mixte INT8 + FP16) ou SmoothQuant (migrer les outliers des activations vers les poids).
+</details>
 
-**Q5** — Pourquoi NF4 bat INT4 lineaire pour les poids LLM ?
-> Les poids d'un LLM bien entraine suivent une distribution gaussienne. INT4 lineaire repartit ses 16 niveaux uniformement, ce qui gaspille de la resolution dans les queues vides et en manque au centre dense. NF4 utilise les quantiles de la normale standard : plus de resolution la ou les valeurs se concentrent. Gain ~30% d'erreur en moins, meme nombre de bits.
+### Q2 : Pourquoi un dataset de calibration est crucial ?
+
+<details>
+<summary>Reponse</summary>
+
+Il permet de mesurer les vraies statistiques d'activation et de choisir des scales qui ne gaspillent pas la plage entiere sur des outliers rares. Sans calibration, INT8 perd 5-10pts de perplexite ; avec, moins de 1pt.
+
+</details>
+
+### Q3 : Quelle est la difference entre GPTQ et AWQ ?
+
+<details>
+<summary>Reponse</summary>
+
+GPTQ quantize colonne par colonne et compense l'erreur sur les colonnes suivantes via la Hessienne (approche OBS). AWQ identifie les ~1% de canaux d'activation a forte magnitude et protege les colonnes de poids correspondantes via un re-scaling pre-quantization. AWQ est plus rapide a calibrer, GPTQ legerement plus precis.
+
+</details>
+
+### Q4 : Pourquoi un seul outlier casse-t-il INT8 naif ?
+
+<details>
+<summary>Reponse</summary>
+
+Le scale est calcule sur le max absolu : un outlier 100x plus grand ecrase tous les autres elements vers q=0 ou q=±1, detruisant la precision relative sur 99% des donnees. Solutions : LLM.int8() (decomposition mixte INT8 + FP16) ou SmoothQuant (migrer les outliers des activations vers les poids).
+
+</details>
+
+### Q5 : Pourquoi NF4 bat INT4 lineaire pour les poids LLM ?
+
+<details>
+<summary>Reponse</summary>
+
+Les poids d'un LLM bien entraine suivent une distribution gaussienne. INT4 lineaire repartit ses 16 niveaux uniformement, ce qui gaspille de la resolution dans les queues vides et en manque au centre dense. NF4 utilise les quantiles de la normale standard : plus de resolution la ou les valeurs se concentrent. Gain ~30% d'erreur en moins, meme nombre de bits.
+
+</details>
 
 ---
 

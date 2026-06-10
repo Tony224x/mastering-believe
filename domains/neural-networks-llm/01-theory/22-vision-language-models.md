@@ -339,22 +339,52 @@ Aussi pour preserver les capacites. Si on fine-tune trop le LLM dans LLaVA, on d
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Quelle est l'idee centrale de ViT ?
-> Decouper l'image en patches, traiter chaque patch comme un token, et appliquer un transformer encoder. La self-attention relie tous les patches des la premiere couche.
+### Q1 : Quelle est l'idee centrale de ViT ?
 
-**Q2** — Pourquoi SigLIP est-il preferable a CLIP a tres grande echelle ?
-> SigLIP utilise une sigmoid loss par paire au lieu d'une softmax globale. Ca elimine la normalization cross-batch, permet des batches massifs (1M+) et facilite le sharding multi-GPU. A batch egal, SigLIP egale CLIP ; a tres grand batch, SigLIP depasse.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — Quelle est la difference fondamentale entre LLaVA-style et Flamingo-style ?
-> LLaVA concatene les tokens visuels dans le contexte du LLM via un MLP projecteur (LLM voit l'image comme du texte). Flamingo insere des couches de cross-attention dans le LLM, qui restent attentives aux features visuelles externes (LLM ne consomme pas son contexte texte). LLaVA est plus simple et a gagne.
+Decouper l'image en patches, traiter chaque patch comme un token, et appliquer un transformer encoder. La self-attention relie tous les patches des la premiere couche.
 
-**Q4** — Combien de tokens pour une image 1024x1024 avec patch 14 ?
-> 5 329 tokens (1024/14 = 73, 73*73 = 5329 patches). C'est equivalent a 4-5 pages de texte. C'est pour cette raison que les images coutent cher en API et que la resolution dynamique a ete inventee.
+</details>
 
-**Q5** — Que resout AnyRes / la resolution dynamique ?
-> Le compromis entre voir le detail (haute res necessaire) et tenir dans le budget tokens (basse res necessaire). On decoupe l'image en tuiles de resolution fixe + un thumbnail global, on encode chacune separement. Permet une resolution effective elevee sans modifier l'encodeur ViT pretrain.
+### Q2 : Pourquoi SigLIP est-il preferable a CLIP a tres grande echelle ?
+
+<details>
+<summary>Reponse</summary>
+
+SigLIP utilise une sigmoid loss par paire au lieu d'une softmax globale. Ca elimine la normalization cross-batch, permet des batches massifs (1M+) et facilite le sharding multi-GPU. A batch egal, SigLIP egale CLIP ; a tres grand batch, SigLIP depasse.
+
+</details>
+
+### Q3 : Quelle est la difference fondamentale entre LLaVA-style et Flamingo-style ?
+
+<details>
+<summary>Reponse</summary>
+
+LLaVA concatene les tokens visuels dans le contexte du LLM via un MLP projecteur (LLM voit l'image comme du texte). Flamingo insere des couches de cross-attention dans le LLM, qui restent attentives aux features visuelles externes (LLM ne consomme pas son contexte texte). LLaVA est plus simple et a gagne.
+
+</details>
+
+### Q4 : Combien de tokens pour une image 1024x1024 avec patch 14 ?
+
+<details>
+<summary>Reponse</summary>
+
+5 329 tokens (1024/14 = 73, 73*73 = 5329 patches). C'est equivalent a 4-5 pages de texte. C'est pour cette raison que les images coutent cher en API et que la resolution dynamique a ete inventee.
+
+</details>
+
+### Q5 : Que resout AnyRes / la resolution dynamique ?
+
+<details>
+<summary>Reponse</summary>
+
+Le compromis entre voir le detail (haute res necessaire) et tenir dans le budget tokens (basse res necessaire). On decoupe l'image en tuiles de resolution fixe + un thumbnail global, on encode chacune separement. Permet une resolution effective elevee sans modifier l'encodeur ViT pretrain.
+
+</details>
 
 ---
 

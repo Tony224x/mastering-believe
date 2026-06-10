@@ -293,22 +293,52 @@ Les chiffres "contexte effectif" ci-dessous sont des **estimations communautaire
 
 ---
 
-## Key takeaways (flashcards)
+## Flash Cards — Active Recall
 
-**Q1** — Pourquoi Flash Attention est-il rapide alors que les FLOPs sont identiques au vanilla ?
-> Le bottleneck reel n'est pas le compute mais les transferts memoire HBM <-> SRAM. Flash tile la matrice d'attention pour qu'elle tienne en SRAM, evitant la materialisation N^2 en HBM. Bandwidth SRAM est 10-15x celle de HBM.
+### Q1 : Pourquoi Flash Attention est-il rapide alors que les FLOPs sont identiques au vanilla ?
 
-**Q2** — Quelle est la difference fondamentale entre Position Interpolation et NTK-aware scaling pour etendre un RoPE ?
-> PI comprime les positions (divise m par L_target/L_train). NTK-aware modifie la base de RoPE (10 000 -> ~86 800 pour d=64, scale=8 via `new_base = base * scale^(d/(d-2))`) pour preserver les hautes frequences (resolution locale) et n'etaler que les basses frequences. NTK demande moins de fine-tuning et preserve la qualite locale.
+<details>
+<summary>Reponse</summary>
 
-**Q3** — Pourquoi enlever les premiers tokens d'un KV cache fait collapse le modele ?
-> Les premiers tokens servent de "sinks" pour l'attention residuelle (le softmax doit sommer a 1, l'attention non-utilisee se depose la). Les retirer force le softmax a redistribuer cette masse sur des tokens significatifs, corrompant leurs representations. Solution : toujours garder ~4 sinks + fenetre glissante.
+Le bottleneck reel n'est pas le compute mais les transferts memoire HBM <-> SRAM. Flash tile la matrice d'attention pour qu'elle tienne en SRAM, evitant la materialisation N^2 en HBM. Bandwidth SRAM est 10-15x celle de HBM.
 
-**Q4** — Quand prefererais-tu attention sliding window vs full attention ?
-> Sliding pour streaming long, latence stricte, ou modeles avec contexte deep mais cout VRAM contraint. Full pour tasks de comprehension longue precise (Q&A doc, code review long, math multi-step). Le pattern hybride (couches alternees) est le standard 2026.
+</details>
 
-**Q5** — Quelle est la difference entre contexte annonce et contexte effectif ?
-> Le contexte annonce est la longueur max techniquement supportee. Le contexte effectif (mesure par RULER, LongBench) est la longueur ou le modele recupere fiablement >80% des informations. Typiquement le contexte effectif est ~30-50% du annonce. Au-dela, RAG est preferable.
+### Q2 : Quelle est la difference fondamentale entre Position Interpolation et NTK-aware scaling pour etendre un RoPE ?
+
+<details>
+<summary>Reponse</summary>
+
+PI comprime les positions (divise m par L_target/L_train). NTK-aware modifie la base de RoPE (10 000 -> ~86 800 pour d=64, scale=8 via `new_base = base * scale^(d/(d-2))`) pour preserver les hautes frequences (resolution locale) et n'etaler que les basses frequences. NTK demande moins de fine-tuning et preserve la qualite locale.
+
+</details>
+
+### Q3 : Pourquoi enlever les premiers tokens d'un KV cache fait collapse le modele ?
+
+<details>
+<summary>Reponse</summary>
+
+Les premiers tokens servent de "sinks" pour l'attention residuelle (le softmax doit sommer a 1, l'attention non-utilisee se depose la). Les retirer force le softmax a redistribuer cette masse sur des tokens significatifs, corrompant leurs representations. Solution : toujours garder ~4 sinks + fenetre glissante.
+
+</details>
+
+### Q4 : Quand prefererais-tu attention sliding window vs full attention ?
+
+<details>
+<summary>Reponse</summary>
+
+Sliding pour streaming long, latence stricte, ou modeles avec contexte deep mais cout VRAM contraint. Full pour tasks de comprehension longue precise (Q&A doc, code review long, math multi-step). Le pattern hybride (couches alternees) est le standard 2026.
+
+</details>
+
+### Q5 : Quelle est la difference entre contexte annonce et contexte effectif ?
+
+<details>
+<summary>Reponse</summary>
+
+Le contexte annonce est la longueur max techniquement supportee. Le contexte effectif (mesure par RULER, LongBench) est la longueur ou le modele recupere fiablement >80% des informations. Typiquement le contexte effectif est ~30-50% du annonce. Au-dela, RAG est preferable.
+
+</details>
 
 ---
 
