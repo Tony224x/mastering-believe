@@ -64,7 +64,7 @@ Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore*
 - **Numbering**: All folders and files are numbered (`01-`, `02-`, ...) to enforce learning order
 - **Theory files**: Markdown with clear headings, key takeaways boxed, mnemonics highlighted
 - **Code files** (when the domain has code): runnable standalone. Every non-obvious line has a comment explaining WHY, not WHAT
-- **Exercises**: Each exercise file starts with `## Objectif`, `## Consigne`, `## Criteres de reussite`
+- **Exercises**: un fichier d'exercices regroupe 2-3 exercices ; chaque exercice a ses sections `### Objectif`, `### Consigne`, `### Criteres de reussite` (sous un `## Exercice N`)
 - **Solutions**: Separate folder, never mixed with exercise files
 - **Workspace**: `03-exercises/workspace/` est gitignore — l'apprenant y ecrit ses solutions sans polluer le repo
 - **Naming coherence**: pour un module N, `01-theory/NN-x.md`, `02-code/NN-x.py`, `01-theory-qd/NN-x.qd` et les exercices/solutions partagent le meme slug numerote
@@ -104,7 +104,7 @@ Voie manuelle :
 
 **Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
 
-**Quarkdown** : seuls `agentic-ai` et `neural-networks-llm` ont un `01-theory-qd/` pour l'instant (3 chapitres enrichis cote agentic-ai, le reste en placeholders generes par le scaffolder). Les `.md` de `01-theory/` restent la source-of-truth lisible sur GitHub ; les `.qd` sont des versions enrichies (math LaTeX, mermaid, callouts).
+**Quarkdown** : seuls `agentic-ai` et `neural-networks-llm` ont un `01-theory-qd/` pour l'instant. Les `.md` de `01-theory/` restent la source-of-truth lisible sur GitHub ; les `.qd` sont des versions enrichies (math LaTeX, mermaid, callouts). **Toute correction d'un `.md` de theorie doit etre repercutee dans le `.qd` miroir s'il existe.**
 
 ## Commands
 
@@ -112,7 +112,7 @@ Code examples are standalone scripts — run them directly (Python 3.11+ recomma
 - **Python**: `python domains/<domain>/02-code/<file>.py`
 - **PyTorch**: `python domains/neural-networks-llm/02-code/<file>.py` (requires `torch`)
 - **LangGraph**: `python domains/agentic-ai/02-code/<file>.py` (requires `langgraph`, `langchain` — mocks LLM fournis, pas de cle API obligatoire)
-- **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (requires `mujoco`, `gymnasium`, `torch` selon le module)
+- **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (requires `"gymnasium[mujoco]"`, `mujoco`, `torch`, `imageio` selon le module ; headless : `MUJOCO_GL=osmesa`)
 - Algorithmie & System Design : stdlib seulement
 - Pas de suite de tests ni de linter au niveau repo — verifier un exemple = le lancer
 
