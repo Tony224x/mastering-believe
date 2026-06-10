@@ -94,7 +94,7 @@ Soit un mini-LLaMA avec ces hyperparameters :
 
 9. **Grand total** : token_embedding + stack + final_norm + lm_head = ?
 
-10. **Bonus** : si on tiait lm_head avec token_embedding (weight sharing, comme LLaMA), combien gagne-t-on ?
+10. **Bonus** : si on liait lm_head avec token_embedding (weight tying, comme certains LLaMA), combien gagne-t-on ?
 
 ### Criteres de reussite
 

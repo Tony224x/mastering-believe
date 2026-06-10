@@ -115,6 +115,12 @@ class FiLMBlock1D(nn.Module):
         residual = self.skip(x)
         h = self.conv1(F.mish(self.norm1(x)))
         gamma_beta = self.film(cond)  # [B, 2*out_ch]
+        # chunk(2) silently truncates on odd sizes — fail loudly instead, so a
+        # misconfigured FiLM projection is caught here and not as a shape bug later.
+        assert gamma_beta.shape[-1] % 2 == 0, (
+            f"FiLM projection must output an even last dim (2*out_ch) to split "
+            f"into (gamma, beta), got {gamma_beta.shape[-1]}"
+        )
         gamma, beta = gamma_beta.chunk(2, dim=-1)
         # FiLM = feature-wise affine modulation, broadcast over time axis.
         h = h * (1.0 + gamma[:, :, None]) + beta[:, :, None]

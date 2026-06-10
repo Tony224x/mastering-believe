@@ -19,15 +19,28 @@ Sources :
 
 from __future__ import annotations
 
+import sys
 import time
 from dataclasses import dataclass
 
-import gymnasium as gym
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.distributions import Categorical
+
+# Graceful imports: torch + gymnasium are hard requirements for the PPO demo,
+# but a student on a fresh machine deserves a clear install message rather than
+# a raw ImportError traceback (same philosophy as 12-sac-mpc-model-based.py).
+try:
+    import gymnasium as gym
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    from torch.distributions import Categorical
+except ImportError as exc:  # pragma: no cover - depends on the local env
+    print("[J11 PPO] Dependance manquante :", exc)
+    print("Ce script a besoin de PyTorch et Gymnasium :")
+    print("    pip install torch gymnasium")
+    print("Le fichier reste lisible sans les installer : la theorie (GAE, clip")
+    print("objective) est commentee inline et detaillee dans 01-theory/.")
+    sys.exit(0)
 
 
 # ---------------------------------------------------------------------------

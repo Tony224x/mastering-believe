@@ -202,6 +202,12 @@ class ConditionalResidualBlock1D(nn.Module):
     def forward(self, x: torch.Tensor, cond: torch.Tensor) -> torch.Tensor:
         out = self.block1(x)
         film = self.cond_encoder(cond)              # (B, 2*out_ch)
+        # chunk(2) silently truncates on odd sizes — fail loudly instead, so a
+        # misconfigured FiLM projection is caught here and not as a shape bug later.
+        assert film.shape[-1] % 2 == 0, (
+            f"FiLM projection must output an even last dim (2*out_ch) to split "
+            f"into (gamma, beta), got {film.shape[-1]}"
+        )
         gamma, beta = film.chunk(2, dim=-1)         # each (B, out_ch)
         out = gamma.unsqueeze(-1) * out + beta.unsqueeze(-1)
         out = self.block2(out)
