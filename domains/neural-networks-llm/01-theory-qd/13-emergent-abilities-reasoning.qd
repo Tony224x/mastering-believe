@@ -326,7 +326,7 @@ DeepSeek R1 est la reponse open-source a o1, avec une recette **completement pub
 
 **Recette R1 simplifiee** :
 ```
-1. Base model (DeepSeek V3, 236B MoE)
+1. Base model (DeepSeek V3, 671B MoE)
 2. SFT court : 800k traces de raisonnement (OK readability)
 3. RL avec GRPO :
    - Pour chaque prompt math/code, sampler 16 reponses

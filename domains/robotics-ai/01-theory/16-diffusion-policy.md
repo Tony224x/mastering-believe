@@ -123,8 +123,10 @@ Soit : "le réseau apprend à prédire le bruit qu'on a ajouté".
 Reverse (inference) : on part de `a^K ~ N(0,I)` et on itère :
 
 ```
-a^{k-1} = (a^k - σ_k · ε_θ(a^k, k, c)) / √(1 - β_k) + bruit
+a^{k-1} = (1/√(α_k)) · (a^k - (β_k / √(1 - ᾱ_k)) · ε_θ(a^k, k, c)) + σ_k · z
 ```
+
+avec `α_k = 1 - β_k`, `z ~ N(0, I)` pour `k > 1` (et `z = 0` au dernier pas). Attention : le coefficient devant `ε_θ` est `β_k / √(1 - ᾱ_k)` — `σ_k` est l'écart-type du bruit qu'on rajoute **ensuite** (mêmes notations que la formule DDPM du J15).
 
 En pratique on remplace DDPM par **DDIM** (Song 2020) en eval pour passer de 100 → 10-16 steps sans perte de qualité — critique pour la latence (10-20Hz contrôle).
 

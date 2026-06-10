@@ -145,7 +145,7 @@ C'est la que la preference learning devient necessaire.
 
 ## 3. RLHF — Reinforcement Learning from Human Feedback
 
-RLHF (Christiano et al., 2017 ; adapte a LLMs par OpenAI 2022) est la methode qui a rendu ChatGPT possible. Elle est en 3 etapes :
+RLHF (Christiano et al., 2017 ; premieres applications aux LLMs des 2019-2020 avec Ziegler et al. 2019 et Stiennon et al. 2020, puis recette popularisee par InstructGPT en 2022) est la methode qui a rendu ChatGPT possible. Elle est en 3 etapes :
 
 ### Etape 1 — SFT (deja vu)
 
@@ -302,7 +302,7 @@ Pas de value model. Le "baseline" pour le calcul de l'avantage est la moyenne du
 **IPO** : remplace le sigmoid de DPO par une fonction identite, en bornant la probabilite cible a une constante (ex: tau = 0.1). Empeche le modele de "surenthousiasmer" sur une preference.
 
 ```
-L_IPO = E[ (log(pi_theta(y_w) / pi_ref(y_w)) - log(pi_theta(y_l) / pi_ref(y_l)) - tau)^2 ]
+L_IPO = E[ (log(pi_theta(y_w) / pi_ref(y_w)) - log(pi_theta(y_l) / pi_ref(y_l)) - 1/(2*tau))^2 ]
 ```
 
 Resultat : plus robuste au bruit dans les preferences, moins d'overfitting. Utilise dans HuggingFace TRL comme alternative DPO.
@@ -322,13 +322,13 @@ Resultat : plus robuste au bruit dans les preferences, moins d'overfitting. Util
 **Idee SimPO** : supprime completement le reference model. Le reward implicite est la log-probabilite moyennee par la longueur de la reponse.
 
 ```
-r_simpo(x, y) = (1 / |y|) * log pi_theta(y | x) - gamma   # length-normalized
-L_SimPO = -log sigma(beta * (r_simpo(y_w) - r_simpo(y_l)))
+r_simpo(x, y) = (beta / |y|) * log pi_theta(y | x)              # length-normalized
+L_SimPO = -log sigma(r_simpo(x, y_w) - r_simpo(x, y_l) - gamma)  # gamma = marge cible
 ```
 
 **Avantages** :
 - Pas de reference model (economie memoire 50%)
-- Normalisation par la longueur (operation le biais DPO vers les reponses longues)
+- Normalisation par la longueur (compense le biais DPO vers les reponses longues)
 - Performances equivalentes ou superieures a DPO sur AlpacaEval 2.0
 
 Utilise dans plusieurs modeles Llama 3 / Qwen 2.5 community fine-tunes.
@@ -352,7 +352,7 @@ C'est un signal **tres propre** qu'on peut utiliser avec PPO ou GRPO, sans rewar
 **Modeles l'utilisant** :
 - **OpenAI o1** (sept 2024), **o3** (dec 2024) : RLVR sur math, code, science (details non publics mais confirme par les papers techniques)
 - **DeepSeek R1** (jan 2025) : open-source, GRPO + RLVR sur 800k problemes math/code. Le papier R1-Zero montre que le reasoning **emerge sans SFT**, directement du RL sur des recompenses verifiables
-- **Llama 4 Reasoning** (Meta, 2025) : utilise des variantes RLVR
+- **Tulu 3** (Allen Institute for AI, Lambert et al. 2024) : recette post-training open-source qui a formalise le terme RLVR (voir aussi DeepSeek-R1, module 15)
 
 **Difference avec RLHF classique** : RLHF utilise un reward **appris** (subjectif, aproxime par des humains), vulnerable au reward hacking. RLVR utilise un reward **deterministe** (test suite, calculator, verifier formel), incorruptible.
 
@@ -448,6 +448,7 @@ Pour un LLaMA 7B complet :
 ```python
 class LoRALinear(nn.Module):
     def __init__(self, linear, r=8, alpha=16):
+        super().__init__()
         self.linear = linear  # frozen
         self.A = nn.Parameter(torch.randn(r, linear.in_features) * 0.01)
         self.B = nn.Parameter(torch.zeros(linear.out_features, r))  # init zero!

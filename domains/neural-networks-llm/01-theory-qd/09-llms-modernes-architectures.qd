@@ -48,7 +48,7 @@ Le Transformer original (Vaswani et al., 2017) a tenu 5 ans avec peu de modifica
 6. **MoE fine-grained** (Mixture of Experts) decouple params totaux et flops actifs
 7. **SSM hybrides** (Mamba + attention) pour le tres long contexte
 
-Les 4 premieres sont le standard 2024 (Llama 3, Mistral, Qwen 2.5). Les 3 dernieres definissent la frontiere 2025-2026 (Llama 4, DeepSeek V3/R1, Qwen 3, Jamba, rumored Gemini 2 et GPT-5).
+Les 4 premieres sont le standard 2024 (Llama 3, Mistral, Qwen 2.5). Les 3 dernieres definissent la frontiere 2025-2026 (Llama 4, DeepSeek V3/R1, Qwen 3, Jamba ; les familles fermees comme Gemini et GPT-5 sont presumees utiliser des recettes MoE similaires, sans details publics).
 
 ### Vue d'ensemble des differences
 
@@ -62,7 +62,7 @@ Les 4 premieres sont le standard 2024 (Llama 3, Mistral, Qwen 2.5). Les 3 dernie
 | Dense vs MoE | Dense | Dense | Dense | **MoE fine-grained** (256 experts, top-8) |
 | Vocab size | 50 257 | 32 000 | 128 256 | 129 280 (DeepSeek V3) |
 
-**Modeles SOTA 2025-2026** : Llama 4 (Meta, 2025, MoE), DeepSeek V3 (dec 2024, 236B/21B actifs) et R1 (jan 2025, reasoning), Qwen 3 (Alibaba, 2025), Gemini 2 (Google, 2025), GPT-5 (OpenAI, 2025), Claude 4 (Anthropic, 2025). GPT-3 et LLaMA 2 servent encore de repere historique mais ne sont plus SOTA.
+**Modeles SOTA 2025-2026** : Llama 4 (Meta, 2025, MoE), DeepSeek V3 (dec 2024, 671B totaux/37B actifs) et R1 (jan 2025, reasoning), Qwen 3 (Alibaba, 2025), Gemini 2 (Google, 2025), GPT-5 (OpenAI, 2025), Claude 4 (Anthropic, 2025). GPT-3 et LLaMA 2 servent encore de repere historique mais ne sont plus SOTA.
 
 ---
 
@@ -114,7 +114,7 @@ Paire j de q, a la position m:
   [q_2j+1] -> [sin(angle)  cos(angle)] * [q_2j+1]
 ```
 
-Chaque paire tourne a une vitesse differente : les premieres paires tournent lentement (capturent les relations longues), les dernieres tournent vite (relations courtes).
+Chaque paire tourne a une vitesse differente : avec theta_j = 10000^(-2j/d), les premieres paires (j petit) tournent vite (capturent les relations locales, courtes distances), les dernieres tournent lentement (relations longues).
 
 ### Avantages de RoPE
 
@@ -332,7 +332,7 @@ Le vecteur latent `c_kv` est compresse ~10x par rapport au KV cache GQA equivale
 
 ### Impact concret
 
-DeepSeek V3 : 236B params totaux, 21B actifs (grace au MoE, voir section 7), MLA pour le KV cache. Resultat : le modele tient en inference sur 8 x H100 alors qu'un equivalent dense GQA demanderait le double. Ouvre la voie au long contexte 128k+ sur des modeles open-source.
+DeepSeek V3 : 671B params totaux, 37B actifs (grace au MoE, voir section 7), MLA pour le KV cache. Resultat : le modele tient en inference sur 8 x H100 alors qu'un equivalent dense GQA demanderait le double. Ouvre la voie au long contexte 128k+ sur des modeles open-source.
 
 ### Le flow MHA -> MQA -> GQA -> MLA
 
@@ -378,7 +378,7 @@ Chaque token n'active que k experts sur N (ex: k=2, N=8 pour Mixtral ; k=8, N=25
 ### Exemples SOTA 2024-2025
 
 - **Mixtral 8x22B** (Mistral, avril 2024) : 8 experts, top-2 actifs -> 176B totaux, ~39B actifs
-- **DeepSeek V3** (dec 2024) : 256 experts **fine-grained** + 1 expert partage, top-8 actifs -> 236B totaux, **21B actifs**. "Fine-grained" = experts plus petits mais plus nombreux, meilleur balance
+- **DeepSeek V3** (dec 2024) : 256 experts **fine-grained** + 1 expert partage, top-8 actifs -> 671B totaux, **37B actifs**. "Fine-grained" = experts plus petits mais plus nombreux, meilleur balance
 - **Qwen 3 MoE** (Alibaba, 2025) : variantes 30B et 235B avec MoE fine-grained
 - **Llama 4** (Meta, 2025) : architecture MoE confirmee, plusieurs tailles
 - **GPT-5** et **Claude 4** : rumored MoE (architecture non publique mais indices par la tarification et les patterns de latence)
@@ -610,7 +610,7 @@ Bonus : LLaMA utilise aussi **pre-norm** (RMSNorm avant la layer) au lieu de pos
 
 **Idee** : au lieu de cacher `K` et `V` pleine dimension comme MHA/GQA, MLA projette l'input dans un vecteur latent `c_kv` de petite dimension (ex: 512) et ne cache QUE ce vecteur. Au decoding, `K` et `V` sont reconstruits a la volee par decompression (`K = W_UK @ c_kv`, `V = W_UV @ c_kv`).
 
-**Gain** : KV cache divise par **~10x** par rapport a GQA. DeepSeek V3 (236B params, 21B actifs MoE) tient en inference sur 8 x H100.
+**Gain** : KV cache divise par **~10x** par rapport a GQA. DeepSeek V3 (671B params, 37B actifs MoE) tient en inference sur 8 x H100.
 
 **Cout** : calcul supplementaire par token (decompression). Mais le decode est memory-bound, donc ce cout compute est gratuit en wall-clock.
 
@@ -638,7 +638,7 @@ Utilise par : DeepSeek V2, V3, R1. C'est une des innovations architecturales maj
 - Meilleur load balancing (la variance de charge est plus faible)
 - Meilleure qualite par param actif
 
-**DeepSeek V3** : 236B params totaux, **21B actifs** par token (grace au MoE + 1 shared expert). On a le savoir d'un 236B mais le cout d'inference d'un 21B.
+**DeepSeek V3** : 671B params totaux, **37B actifs** par token (grace au MoE + 1 shared expert). On a le savoir d'un 671B mais le cout d'inference d'un 37B.
 
 **Challenges** : load balancing (eviter qu'un expert prenne toute la charge), expert parallelism (distribuer les experts sur plusieurs GPUs), inference batching. DeepSeek V3 utilise un auxiliary-loss-free balancing par bias adaptatif.
 

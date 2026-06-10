@@ -1,7 +1,7 @@
 # J20 — OpenVLA : architecture detaillee + fine-tuning LoRA
 
 > Module-jour 20 (45-60 min de lecture). Source principale : REFERENCES.md #13 (OpenVLA, Kim, Pertsch et al., 2024 — https://arxiv.org/abs/2406.09246 + repo https://github.com/openvla/openvla).
-> Prerequis : J18 (RT-1/RT-2/Octo, action tokenization), J15 (diffusion/flow matching), notions Transformer.
+> Prerequis : J19 (RT-1/RT-2/Octo, action tokenization), J15 (diffusion/flow matching), notions Transformer.
 
 ---
 
@@ -31,7 +31,7 @@ Ton objectif aujourd'hui : savoir dessiner l'architecture au tableau, comprendre
    |                      |                |
    +----[SigLIP ViT-L]----+         [Llama2 tokenizer]
          |                                 |
-   concat patches (256 tokens, 2048-d)     |
+   concat patches (256 tokens, 2176-d)     |
          |                                 |
          +-----> [projector MLP] -----> Llama2 7B decoder ---> 7 action tokens
                                                                    |
@@ -110,7 +110,7 @@ PaLI-X 55B a beaucoup de capacite linguistique inutilisee (poemes, code, math). 
 - Predit bien la sequence suivante de tokens
 - N'a pas ete RLHF-isolated
 
-Llama2 7B coche ces 3 cases avec **8x moins de params**. Le surplus de PaLI-X 55B n'aide pas la tache action — il ralentit l'inference (15 Hz pour OpenVLA quantize, ~3 Hz pour RT-2-X) sans gain.
+Llama2 7B coche ces 3 cases avec **8x moins de params**. Le surplus de PaLI-X 55B n'aide pas la tache action — il ralentit l'inference (~6 Hz pour OpenVLA sur RTX 4090, chiffre du papier ; ~3 Hz pour RT-2-X) sans gain.
 
 ### 3.4 Recette d'entrainement : full finetuning end-to-end
 
@@ -124,7 +124,7 @@ OpenVLA fait du **full finetuning** des trois blocs (vision, projector, LLM) en 
 
 Tu as OpenVLA pretraine. Tu veux qu'il maitrise une tache specifique : **vider un panier de linge dans une machine a laver** (jamais vue dans Open X-Embodiment). Full finetuning sur RTX 4090 ? **Impossible**, 7B params en fp16 = 14 GB juste pour les poids, plus l'optimizer (Adam = 28 GB de moments), plus les activations. Tu as besoin de ~80 GB VRAM.
 
-**LoRA** (Low-Rank Adaptation, Hu 2021) fige le modele entier et apprend uniquement de **petites matrices low-rank** sur certaines couches. Le papier OpenVLA (section 5, REFERENCES.md #13) montre que LoRA r=32 sur les couches `q_proj` et `v_proj` du Llama2 atteint **97% de la performance du full finetuning** avec **27x moins de params trainables**.
+**LoRA** (Low-Rank Adaptation, Hu 2021) fige le modele entier et apprend uniquement de **petites matrices low-rank** sur certaines couches. Le papier OpenVLA (section 5, REFERENCES.md #13) applique LoRA a **toutes les couches lineaires** du modele (pas seulement `q_proj`/`v_proj`) : avec `r=32`, seuls **~1,4 % des parametres** sont entrainables, pour une performance **equivalente au full fine-tuning** sur les taches de fine-tuning testees.
 
 ### 4.2 Mathematiques en 30 secondes
 
@@ -138,13 +138,15 @@ ou :
 - `A` est `(r, d_in)`, initialisee Gaussian
 - `B` est `(d_out, r)`, initialisee a zero (donc au depart `BA = 0` et le modele est intact)
 - `r` est le rang (typiquement 8, 16, 32, 64)
-- `alpha` est un facteur d'echelle (souvent `alpha = 2*r`)
+- `alpha` est un facteur d'echelle (la recette OpenVLA utilise `r=32, alpha=16`, cf. §4.3)
 - **Seules `A` et `B` recoivent des gradients**, `W` est frozen
 
-Pour Llama2 7B, `q_proj` et `v_proj` ont `d_in = d_out = 4096`. Avec `r=32` :
+Exemple de calcul sur les seules `q_proj` et `v_proj` de Llama2 7B (`d_in = d_out = 4096`), avec `r=32` :
 - Params LoRA par couche : `2 * 32 * 4096 = 262 144` (vs `4096*4096 = 16M` pour `W`)
 - Llama2 7B a 32 couches, donc 32 * 2 (q et v) = 64 cibles
 - Total LoRA params : `64 * 262k = 16,7M` (vs 7B = **0,24% du modele**)
+
+La recette OpenVLA cible en fait les **7 projections** (attention + MLP, cf. §4.3), ce qui monte a **~1,4 % du modele** de params entrainables — toujours negligeable devant un full fine-tuning.
 
 ### 4.3 Ou inserer LoRA dans OpenVLA ?
 
@@ -153,8 +155,8 @@ Pour Llama2 7B, `q_proj` et `v_proj` ont `d_in = d_out = 4096`. Avec `r=32` :
 | DINOv2 | Non | Deja generaliste, geler |
 | SigLIP | Non | Idem |
 | Projector MLP | Optionnel | Petit (~10M params), peut etre full-trained |
-| Llama2 q_proj, v_proj | **Oui** | Cibles canoniques, recette du papier original LoRA |
-| Llama2 mlp gate/up/down | Optionnel | Augmente l'expressivite, +50% de params LoRA |
+| Llama2 q_proj, k_proj, v_proj, o_proj | **Oui** | Recette OpenVLA : toutes les projections attention |
+| Llama2 mlp gate/up/down | **Oui** | Recette OpenVLA : toutes les couches lineaires du LLM |
 | Action vocabulary embedding | Possible | Si la tache change le distribution d'actions |
 
 **Recette safe par defaut** (donnee dans le repo openvla) : LoRA r=32, alpha=16, dropout=0.05, sur `q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj`. Tu peux tenir sur **24 GB VRAM** (RTX 4090) avec quantization 4-bit du base + LoRA fp16.
@@ -164,7 +166,7 @@ Pour Llama2 7B, `q_proj` et `v_proj` ont `d_in = d_out = 4096`. Avec `r=32` :
 Une fois fine-tune, tu veux deployer sur un robot dont l'embedded GPU est une RTX 3060 (12 GB). OpenVLA supporte **bitsandbytes 4-bit (NF4)** : chaque poids 16-bit devient 4-bit (4x compression).
 
 - **Memoire** : 7B * 0.5 octet = **3.5 GB de poids** + ~2-3 GB activations = tient en 6-7 GB.
-- **Latence** : ~5-7 Hz sur RTX 4090 quantize vs ~15 Hz fp16. Pour du contrôle 5-10 Hz (manipulation lente), c'est suffisant.
+- **Latence** : ~6 Hz sur RTX 4090 (chiffre du papier) ; la quantization 4-bit reduit la memoire, pas la latence. Pour du contrôle a quelques Hz (manipulation lente), c'est suffisant.
 - **Cout en performance** : -1 a -3 points de success rate (Table 8 du papier). Acceptable.
 
 > **Convention** : tu fine-tunes en bfloat16 + LoRA, puis tu **mergeais LoRA dans le base** (`peft.merge_and_unload()`), puis tu quantizes en NF4 pour l'inference. Jamais l'inverse.
@@ -182,8 +184,8 @@ Open X-Embodiment est **majoritairement** single-arm (WidowX 250, Google Robot, 
 ### 5.2 Frequence de controle basse
 
 L'action head autoregressive predit 7 tokens un par un. Sur RTX 4090 :
-- fp16 : ~15 Hz max
-- 4-bit : ~5-7 Hz
+- bf16 : ~6 Hz (chiffre du papier OpenVLA)
+- 4-bit : du meme ordre (la quantization economise la memoire, pas la latence)
 
 C'est suffisant pour **picking, placing, push** mais **insuffisant** pour :
 - Manipulation contact-rich (insertion de cle, peg-in-hole) : ~50 Hz necessaire
@@ -222,7 +224,7 @@ Meme avec LoRA, fine-tune sur RTX 4090 prend **~10-20 heures** pour ~50k steps s
 > R : 7 tokens (3 translation + 3 rotation + 1 gripper). Chaque token est un index parmi 256 bins reutilisant les 256 derniers tokens du vocabulaire Llama2. La detokenization regarde la table de quantiles (1%-99% du dataset OXE) et retourne la valeur reelle correspondante.
 
 **Q3** — Tu as une RTX 4090 (24 GB). Tu veux fine-tuner OpenVLA sur ta tache. Quel hyperparams LoRA poses-tu (rang, alpha, cibles) ?
-> R : Recette par defaut : `r=32, alpha=16, dropout=0.05`, cibles `q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj`. Quantization 4-bit du base model. Pas de LoRA sur DINOv2/SigLIP (figes). Total ~17M params trainables, tient en 24 GB.
+> R : Recette par defaut : `r=32, alpha=16, dropout=0.05`, cibles `q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj`. Quantization 4-bit du base model. Pas de LoRA sur DINOv2/SigLIP (figes). Total ~1,4 % du modele en params trainables, tient en 24 GB.
 
 **Q4** — Pourquoi LoRA initialise-t-on `B` a zero et `A` Gaussian ? Que se passerait-il si on initialisait les deux Gaussian ?
 > R : Avec `B=0`, on a `BA = 0` donc au depart `W_effective = W` exactement. Le modele commence par etre identique au pretraine, et LoRA "decale" progressivement. Si on initialisait les deux Gaussian, on injecterait du bruit aleatoire dans le forward pass des le step 0 — la loss exploserait au depart et on perdrait le benefice du pretraining.

@@ -1,7 +1,7 @@
 # J21 — π0 / π0.5 (Physical Intelligence)
 
 > Durée d'étude : 45-60 min
-> Prérequis : J15 (diffusion + flow matching), J16 (Diffusion Policy), J17 (theorie SDE/ODE), J18-J20 (RT-2 → OpenVLA → architectures VLA).
+> Prérequis : J15 (diffusion + flow matching, theorie SDE/ODE), J16 (Diffusion Policy), J18-J20 (RT-2 → OpenVLA → architectures VLA).
 > Source principale : REFERENCES.md #14 — Black et al. (Physical Intelligence), "π0: A Vision-Language-Action Flow Model for General Robot Control" (2024) + π0.5 (2025) + blog https://www.pi.website/blog/pi0.
 
 ---
@@ -150,7 +150,7 @@ Hypothèse de Physical Intelligence (validée empiriquement) : **les compétence
 Conséquence dataset : 10 000 heures de démos hétérogènes >> 1 000 heures par robot dédiées. Power scaling = power generalization.
 
 > **Key takeaway #4**
-> Multi-embodiment training n'est PAS du multi-task naïf. C'est un pari sur la **transférabilité géométrique** des skills. Compatible avec Open X-Embodiment (J18) et la philosophie "RT-X".
+> Multi-embodiment training n'est PAS du multi-task naïf. C'est un pari sur la **transférabilité géométrique** des skills. Compatible avec Open X-Embodiment (J19) et la philosophie "RT-X".
 
 ---
 

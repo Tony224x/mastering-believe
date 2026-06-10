@@ -180,7 +180,7 @@ Au-dela des logits finaux, faire matcher les activations des couches intermediai
 
 Le truc trouve en 2025 : distiller les **traces completes** (`<think>...</think>` + reponse finale). Le student herite de la capacite reasoning via l'imitation des tokens de reflexion. Ca marche etonnamment bien meme a 7B.
 
-DeepSeek R1 Distill 14B bat DeepSeek V3 (236B non-reasoning) sur AIME 2024. C'est la puissance du test-time compute + distillation.
+DeepSeek R1 Distill 14B bat DeepSeek V3 (671B non-reasoning) sur AIME 2024. C'est la puissance du test-time compute + distillation.
 
 ### Distillation multi-teacher
 
@@ -286,7 +286,7 @@ La majorite des equipes **sautent l'etape 3** et vont directement a distiller. R
 > Break-even typique : 10-50M tokens/mois sur la tache. En dessous, rester sur API frontier + Haiku/Gemma en routeur.
 
 **Q5** — Pourquoi le DeepSeek R1 Distill 14B peut-il battre DeepSeek V3 non-reasoning ?
-> Le student herite des traces reasoning completes. Test-time compute + heritage reasoning fait que 14B + thinking bat 236B sans thinking.
+> Le student herite des traces reasoning completes. Test-time compute + heritage reasoning fait que 14B + thinking bat 671B sans thinking.
 
 **Q6** — Quels sont les 3 principaux pieges de la distillation ?
 > (1) Data contamination (ton eval est dans le teacher), (2) mode collapse (perte de diversite), (3) forgetting (ecrase les capacites generales si pas de data mix).

@@ -133,7 +133,7 @@ Un reasoning model qui "reflechit" peut construire 10 pages de raisonnement **co
 
 ### Piege 3 — Faithfulness du CoT
 
-Anthropic (2024, Turpin et al.) a montre que le CoT d'un modele n'est pas toujours le vrai processus de decision. Le modele peut ecrire "donc X" mais avoir "decide" X a cause d'un biais dans le prompt. **Ne jamais auditer la securite d'une decision uniquement via le CoT visible** — c'est de la rationalisation post-hoc.
+Turpin et al. (2023, "Language Models Don't Always Say What They Think") et l'etude Anthropic sur la faithfulness du CoT (Lanham et al., 2023) ont montre que le CoT d'un modele n'est pas toujours le vrai processus de decision. Le modele peut ecrire "donc X" mais avoir "decide" X a cause d'un biais dans le prompt. **Ne jamais auditer la securite d'une decision uniquement via le CoT visible** — c'est de la rationalisation post-hoc.
 
 ### Piege 4 — Reward hacking en RL
 

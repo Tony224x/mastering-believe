@@ -70,7 +70,7 @@ Un quaternion unitaire `q = (w, x, y, z)` avec `w^2 + x^2 + y^2 + z^2 = 1` repr�
 q = (cos(θ/2),  ω̂_x sin(θ/2),  ω̂_y sin(θ/2),  ω̂_z sin(θ/2))
 ```
 
-La composition de deux rotations s'écrit `q_total = q_1 ⊗ q_2` (produit de Hamilton), 16 multiplications/8 additions — moins coûteux qu'un produit matriciel 27/18 et numériquement plus stable. C'est pour ça que les contrôleurs et les estimateurs d'état (EKF, UKF) parlent quaternions en interne.
+La composition de deux rotations s'écrit `q_total = q_1 ⊗ q_2` (produit de Hamilton), 16 multiplications/12 additions — moins coûteux qu'un produit matriciel 27/18 et numériquement plus stable. C'est pour ça que les contrôleurs et les estimateurs d'état (EKF, UKF) parlent quaternions en interne.
 
 > **Mnémo** : R coûte 9 floats à stocker, quaternion 4. Pour des milliers de transformations (un trajectoire IK, un nuage de points), la différence se voit.
 

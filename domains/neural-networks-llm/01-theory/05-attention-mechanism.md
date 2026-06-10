@@ -53,10 +53,10 @@ Query (Q)    : "chat"
 Keys (K)     : ["chat", "chien", "maison", "voiture", ...]
 Values (V)   : ["cat",  "dog",   "house",  "car",     ...]
 
-Similarity(Q, K) → [0.95, 0.40, 0.10, 0.05, ...]  (softmax)
+Similarity(Q, K) → [0.63, 0.26, 0.07, 0.04, ...]  (softmax, somme = 1)
                     ↓
 Output : weighted sum of V
-       = 0.95*"cat" + 0.40*"dog" + 0.10*"house" + ...
+       = 0.63*"cat" + 0.26*"dog" + 0.07*"house" + ...
        ≈ "cat"
 ```
 
@@ -224,14 +224,14 @@ Attention autorisee pour chaque position :
 On l'implemente avec une **matrice de mask triangulaire inferieure** :
 
 ```
-mask = 1 -∞  -∞  -∞  -∞
-       1  1  -∞  -∞  -∞
-       1  1   1  -∞  -∞
-       1  1   1   1  -∞
-       1  1   1   1   1
+mask = 0 -∞  -∞  -∞  -∞
+       0  0  -∞  -∞  -∞
+       0  0   0  -∞  -∞
+       0  0   0   0  -∞
+       0  0   0   0   0
 ```
 
-On ajoute ce mask aux scores AVANT le softmax. `-inf + score = -inf`, et `softmax([-inf, ...]) = 0`. Les positions futures recoivent 0% d'attention.
+On ajoute ce mask aux scores AVANT le softmax : `0` laisse le score intact (position autorisee), `-inf + score = -inf` (position interdite), et `softmax([-inf, ...]) = 0`. Les positions futures recoivent 0% d'attention.
 
 ### Masking de padding
 
