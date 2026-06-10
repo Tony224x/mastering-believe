@@ -1,15 +1,15 @@
 """
-Jour 4 -- Message Queues & Event-Driven Architecture
-Demonstrations interactives en Python.
+Day 4 -- Message Queues & Event-Driven Architecture
+Interactive demonstrations in Python.
 
 Usage:
     python 04-message-queues-event-driven.py
 
-Ce fichier implemente un mini-broker inspire de Kafka : topics, partitions,
-consumer groups, offsets, rebalance, DLQ. Le but est de *montrer* comment
-fonctionne en interne un systeme comme Kafka, sans les 200 Mo de Scala.
+This file implements a mini-broker inspired by Kafka: topics, partitions,
+consumer groups, offsets, rebalance, DLQ. The goal is to *show* how
+a system like Kafka works internally, without the 200 MB of Scala.
 
-Chaque section est independante et peut etre executee via main().
+Each section is independent and can be executed via main().
 """
 
 import time
@@ -24,73 +24,73 @@ SEPARATOR = "=" * 70
 
 
 # =============================================================================
-# SECTION 1 : Message, Partition, Topic -- les primitives de Kafka
+# SECTION 1 : Message, Partition, Topic -- the Kafka primitives
 # =============================================================================
 
 
 @dataclass
 class Message:
-    """Un message dans le broker.
+    """A message in the broker.
 
-    WHY key ? La cle sert a choisir la partition (hash(key) % n_partitions).
-    Les messages avec la meme cle vont toujours dans la meme partition,
-    ce qui garantit leur ordre. Ex : key = user_id pour garder l'ordre
-    des evenements d'un user.
+    WHY key? The key is used to choose the partition (hash(key) % n_partitions).
+    Messages with the same key always go to the same partition,
+    which guarantees their ordering. E.g. key = user_id to keep the order
+    of a user's events.
 
-    WHY offset ? Position du message dans la partition. Le consumer stocke
-    l'offset du dernier message traite pour pouvoir reprendre apres un crash.
+    WHY offset? Position of the message within the partition. The consumer stores
+    the offset of the last processed message so it can resume after a crash.
     """
 
     key: Optional[str]
     value: Any
-    offset: int = -1  # Assigne par la partition lors du append
+    offset: int = -1  # Assigned by the partition during the append
     timestamp: float = field(default_factory=time.time)
 
 
 class Partition:
-    """Une partition = un log append-only ordonne.
+    """A partition = an ordered append-only log.
 
-    WHY append-only ? C'est l'idee centrale de Kafka : on n'edite jamais
-    les messages, on ne fait qu'ajouter a la fin. Cela permet :
-    1) des writes sequentielles tres rapides (disque mechanical friendly),
-    2) une lecture concurrente par plusieurs consumers sans locks,
-    3) la possibilite de rejouer l'historique (replay).
+    WHY append-only? It is Kafka's central idea: we never edit
+    messages, we only append at the end. This allows:
+    1) very fast sequential writes (mechanical-disk friendly),
+    2) concurrent reading by multiple consumers without locks,
+    3) the ability to replay history (replay).
     """
 
     def __init__(self, partition_id: int):
         self.partition_id = partition_id
         self.log: list[Message] = []
-        self._lock = threading.Lock()  # Protege les appends concurrents
+        self._lock = threading.Lock()  # Protects concurrent appends
 
     def append(self, msg: Message) -> int:
-        """Append un message et retourne son offset."""
+        """Appends a message and returns its offset."""
         with self._lock:
             msg.offset = len(self.log)
             self.log.append(msg)
             return msg.offset
 
     def read(self, from_offset: int, max_messages: int = 10) -> list[Message]:
-        """Lit N messages a partir d'un offset donne.
+        """Reads N messages starting from a given offset.
 
-        WHY from_offset ? Le consumer gere lui-meme son offset. Plusieurs
-        consumers peuvent lire la meme partition a des offsets differents
-        (ex : un consumer rapide en tete, un consumer de replay historique).
+        WHY from_offset? The consumer manages its own offset. Multiple
+        consumers can read the same partition at different offsets
+        (e.g. a fast consumer at the head, a historical replay consumer).
         """
         with self._lock:
             return self.log[from_offset:from_offset + max_messages]
 
     def high_watermark(self) -> int:
-        """Le prochain offset a ecrire = nombre total de messages."""
+        """The next offset to write = total number of messages."""
         return len(self.log)
 
 
 class Topic:
-    """Un topic = un ensemble de partitions.
+    """A topic = a set of partitions.
 
-    WHY partitioning ? Un seul log serait limite par le CPU/disque d'une
-    machine. Avec N partitions, on peut paralleliser sur N machines et
-    avoir N consumers en parallele. Le prix : l'ordre global disparait,
-    on a seulement l'ordre par partition.
+    WHY partitioning? A single log would be limited by the CPU/disk of one
+    machine. With N partitions, we can parallelize across N machines and
+    have N consumers in parallel. The price: global ordering disappears,
+    we only have per-partition ordering.
     """
 
     def __init__(self, name: str, num_partitions: int):
@@ -99,20 +99,20 @@ class Topic:
         self.partitions = [Partition(i) for i in range(num_partitions)]
 
     def _partition_for(self, key: Optional[str]) -> int:
-        """Choisit la partition pour une cle donnee.
+        """Chooses the partition for a given key.
 
-        WHY hashing ? On veut une distribution uniforme ET deterministe :
-        meme cle -> meme partition, meme si on redemarre le producer.
+        WHY hashing? We want a uniform AND deterministic distribution:
+        same key -> same partition, even if the producer restarts.
         """
         if key is None:
-            # Pas de cle : round-robin aleatoire (simplification)
+            # No key: random round-robin (simplification)
             return random.randint(0, self.num_partitions - 1)
-        # hash stable via sha1 (pas python hash() qui est randomise)
+        # Stable hash via sha1 (not python hash() which is randomized)
         h = int(hashlib.sha1(key.encode()).hexdigest(), 16)
         return h % self.num_partitions
 
     def publish(self, key: Optional[str], value: Any) -> tuple[int, int]:
-        """Publie un message et retourne (partition_id, offset)."""
+        """Publishes a message and returns (partition_id, offset)."""
         pid = self._partition_for(key)
         msg = Message(key=key, value=value)
         offset = self.partitions[pid].append(msg)
@@ -120,54 +120,54 @@ class Topic:
 
 
 # =============================================================================
-# SECTION 2 : Consumer Group -- le coeur du modele pub/sub + load balancing
+# SECTION 2 : Consumer Group -- the heart of the pub/sub + load balancing model
 # =============================================================================
 
 
 class ConsumerGroup:
-    """Un consumer group se partage les partitions d'un topic.
+    """A consumer group shares a topic's partitions.
 
-    WHY groups ? Ils permettent deux choses a la fois :
-    1) Load balancing A L'INTERIEUR d'un groupe : les partitions sont
-       reparties entre les consumers du groupe (chaque partition a UN seul
-       consumer dans le groupe).
-    2) Pub/sub ENTRE groupes : chaque groupe consomme independamment le
-       meme flux. Le groupe "email" et le groupe "analytics" recoivent
-       tous les deux chaque message.
+    WHY groups? They enable two things at once:
+    1) Load balancing WITHIN a group: the partitions are
+       distributed among the group's consumers (each partition has a SINGLE
+       consumer within the group).
+    2) Pub/sub ACROSS groups: each group consumes the
+       same stream independently. The "email" group and the "analytics" group
+       both receive every message.
 
-    L'offset est stocke PAR (group, partition), pas par consumer individuel.
-    Si un consumer tombe, un autre reprend a l'offset sauvegarde.
+    The offset is stored PER (group, partition), not per individual consumer.
+    If a consumer goes down, another one resumes from the saved offset.
     """
 
     def __init__(self, group_id: str, topic: Topic):
         self.group_id = group_id
         self.topic = topic
-        # offsets[partition_id] = prochain offset a lire
+        # offsets[partition_id] = next offset to read
         self.offsets: dict[int, int] = {p: 0 for p in range(topic.num_partitions)}
         self.consumers: list["Consumer"] = []
         self.assignment: dict[str, list[int]] = {}  # consumer_id -> [partitions]
         self._lock = threading.Lock()
 
     def join(self, consumer: "Consumer"):
-        """Ajoute un consumer et declenche un rebalance."""
+        """Adds a consumer and triggers a rebalance."""
         with self._lock:
             self.consumers.append(consumer)
             self._rebalance()
 
     def leave(self, consumer: "Consumer"):
-        """Retire un consumer et declenche un rebalance."""
+        """Removes a consumer and triggers a rebalance."""
         with self._lock:
             self.consumers.remove(consumer)
             self._rebalance()
 
     def _rebalance(self):
-        """Repartit les partitions entre les consumers actifs.
+        """Redistributes the partitions among the active consumers.
 
-        WHY rebalance ? Chaque fois qu'un consumer arrive ou part, il faut
-        redistribuer les partitions. Algorithme simple : round-robin.
-        En vrai Kafka, il y a RangeAssignor, RoundRobinAssignor, StickyAssignor...
-        Pendant le rebalance, la consommation est pausee : c'est un point
-        douloureux a minimiser.
+        WHY rebalance? Every time a consumer joins or leaves, the
+        partitions must be redistributed. Simple algorithm: round-robin.
+        In real Kafka, there are RangeAssignor, RoundRobinAssignor, StickyAssignor...
+        During the rebalance, consumption is paused: it is a pain point
+        to minimize.
         """
         self.assignment = {c.consumer_id: [] for c in self.consumers}
         if not self.consumers:
@@ -178,32 +178,32 @@ class ConsumerGroup:
         print(f"  [REBALANCE group={self.group_id}] assignment = {self.assignment}")
 
     def commit(self, partition_id: int, offset: int):
-        """Valide l'offset traite.
+        """Commits the processed offset.
 
-        WHY commit APRES traitement ? C'est le at-least-once pattern :
-        si le consumer crash entre read et commit, un autre consumer
-        reprendra au dernier offset committe et retraitera les messages.
-        -> Le consumer DOIT etre idempotent.
+        WHY commit AFTER processing? It's the at-least-once pattern:
+        if the consumer crashes between read and commit, another consumer
+        will resume from the last committed offset and reprocess the messages.
+        -> The consumer MUST be idempotent.
         """
         with self._lock:
-            # On ne regresse jamais un offset (evite les corner cases)
+            # We never move an offset backwards (avoids corner cases)
             if offset + 1 > self.offsets[partition_id]:
                 self.offsets[partition_id] = offset + 1
 
 
 # =============================================================================
-# SECTION 3 : Consumer -- boucle de consommation avec DLQ et retries
+# SECTION 3 : Consumer -- consumption loop with DLQ and retries
 # =============================================================================
 
 
 class Consumer:
-    """Un consumer qui poll les partitions qui lui sont assignees.
+    """A consumer that polls the partitions assigned to it.
 
-    WHY polling ? Kafka utilise un modele pull : le consumer demande
-    au broker "donne-moi les messages depuis l'offset X". Cela permet
-    au consumer d'aller a son rythme sans etre submerge (backpressure).
-    Push serait plus simple mais impose au broker de gerer la vitesse
-    de chaque consumer.
+    WHY polling? Kafka uses a pull model: the consumer asks
+    the broker "give me the messages since offset X". This lets
+    the consumer go at its own pace without being overwhelmed (backpressure).
+    Push would be simpler but would force the broker to manage the speed
+    of each consumer.
     """
 
     def __init__(
@@ -236,10 +236,10 @@ class Consumer:
 
     def _poll_loop(self):
         while self.running:
-            # Recupere les partitions assignees a ce consumer
+            # Fetch the partitions assigned to this consumer
             assigned = self.group.assignment.get(self.consumer_id, [])
             for pid in assigned:
-                # Lire a partir de l'offset actuel du groupe pour cette partition
+                # Read from the group's current offset for this partition
                 offset = self.group.offsets[pid]
                 msgs = self.group.topic.partitions[pid].read(offset, max_messages=5)
                 for msg in msgs:
@@ -247,12 +247,12 @@ class Consumer:
             time.sleep(0.05)  # poll interval
 
     def _process(self, partition_id: int, msg: Message):
-        """Traite un message avec retry et DLQ.
+        """Processes a message with retry and DLQ.
 
-        WHY retry + DLQ ? Un bug transitoire (DB momentanement down) ne doit
-        pas perdre le message. On retry N fois avec backoff, puis si ca
-        continue, on envoie en DLQ pour inspection manuelle. Sans DLQ, un
-        "poison message" bloquerait la partition indefiniment.
+        WHY retry + DLQ? A transient bug (DB momentarily down) must not
+        lose the message. We retry N times with backoff, then if it
+        keeps failing, we send it to the DLQ for manual inspection. Without a DLQ, a
+        "poison message" would block the partition indefinitely.
         """
         for attempt in range(1, self.max_retries + 1):
             try:
@@ -262,8 +262,8 @@ class Consumer:
             except Exception as e:
                 print(f"    [{self.consumer_id}] p{partition_id}@{msg.offset} "
                       f"retry {attempt}/{self.max_retries} : {e}")
-                time.sleep(0.02 * attempt)  # backoff lineaire (en prod : exponentiel)
-        # Echec definitif : envoyer en DLQ et committer pour debloquer
+                time.sleep(0.02 * attempt)  # linear backoff (in prod: exponential)
+        # Definitive failure: send to the DLQ and commit to unblock
         if self.dlq:
             self.dlq.push(msg, reason="max retries exceeded")
         print(f"    [{self.consumer_id}] p{partition_id}@{msg.offset} -> DLQ")
@@ -276,7 +276,7 @@ class Consumer:
 
 
 class DLQ:
-    """Dead Letter Queue : messages qui ont echoue malgre les retries."""
+    """Dead Letter Queue: messages that failed despite the retries."""
 
     def __init__(self):
         self.messages: list[tuple[Message, str]] = []
@@ -296,24 +296,24 @@ class DLQ:
 
 
 def demo_ordering_by_key():
-    """Montre que les messages avec la meme cle vont dans la meme partition
-    et sont donc ordonnes."""
-    print(f"\n{SEPARATOR}\n  DEMO 1 : Ordering par cle de partition\n{SEPARATOR}")
+    """Shows that messages with the same key go to the same partition
+    and are therefore ordered."""
+    print(f"\n{SEPARATOR}\n  DEMO 1 : Ordering by partition key\n{SEPARATOR}")
     topic = Topic("orders", num_partitions=3)
-    # On envoie 5 events pour user-A et 5 pour user-B, entrelaces
+    # We send 5 events for user-A and 5 for user-B, interleaved
     for i in range(5):
         topic.publish(key="user-A", value=f"A-event-{i}")
         topic.publish(key="user-B", value=f"B-event-{i}")
     for pid, p in enumerate(topic.partitions):
         vals = [m.value for m in p.log]
         print(f"  Partition {pid} : {vals}")
-    print("  Observe : tous les events de user-A sont sur la meme partition,")
-    print("  dans l'ordre. Pareil pour user-B. L'ordre global n'existe pas,")
-    print("  mais l'ordre par cle est garanti.")
+    print("  Observe: all of user-A's events are on the same partition,")
+    print("  in order. Same for user-B. Global ordering does not exist,")
+    print("  but per-key ordering is guaranteed.")
 
 
 def demo_consumer_group_load_balancing():
-    """Deux consumers dans un groupe se partagent 4 partitions."""
+    """Two consumers in a group share 4 partitions."""
     print(f"\n{SEPARATOR}\n  DEMO 2 : Consumer group & load balancing\n{SEPARATOR}")
     topic = Topic("events", num_partitions=4)
     for i in range(20):
@@ -331,18 +331,18 @@ def demo_consumer_group_load_balancing():
     c2 = Consumer("C2", group, handler_factory("C2"))
     c1.start()
     c2.start()
-    time.sleep(0.4)  # laisser le temps de consommer
+    time.sleep(0.4)  # allow time to consume
     c1.stop()
     c2.stop()
     for cid, msgs in processed.items():
-        print(f"  {cid} a traite {len(msgs)} messages : {msgs[:5]}...")
+        print(f"  {cid} processed {len(msgs)} messages : {msgs[:5]}...")
     total = sum(len(v) for v in processed.values())
-    print(f"  Total : {total}/20 (exactly-once au sein du groupe)")
+    print(f"  Total : {total}/20 (exactly-once within the group)")
 
 
 def demo_pubsub_multiple_groups():
-    """Deux groupes lisent le meme topic independamment."""
-    print(f"\n{SEPARATOR}\n  DEMO 3 : Pub/sub entre groupes\n{SEPARATOR}")
+    """Two groups read the same topic independently."""
+    print(f"\n{SEPARATOR}\n  DEMO 3 : Pub/sub across groups\n{SEPARATOR}")
     topic = Topic("order-events", num_partitions=2)
     for i in range(6):
         topic.publish(key=f"order-{i}", value=f"OrderPlaced#{i}")
@@ -362,11 +362,11 @@ def demo_pubsub_multiple_groups():
 
     print(f"  email-service    : {len(email_received)} messages -> {email_received}")
     print(f"  analytics-service: {len(analytics_received)} messages -> {analytics_received}")
-    print("  Les deux groupes ont recu tous les messages : c'est du pub/sub.")
+    print("  Both groups received all the messages: that's pub/sub.")
 
 
 def demo_dlq_with_poison_message():
-    """Un message qui plante systematiquement finit en DLQ."""
+    """A message that systematically crashes ends up in the DLQ."""
     print(f"\n{SEPARATOR}\n  DEMO 4 : Dead Letter Queue\n{SEPARATOR}")
     topic = Topic("payments", num_partitions=1)
     topic.publish(key=None, value={"amount": 100, "ok": True})
@@ -387,14 +387,14 @@ def demo_dlq_with_poison_message():
     time.sleep(0.5)
     c.stop()
 
-    print(f"  Messages processes OK : {processed}")
+    print(f"  Messages processed OK : {processed}")
     print(f"  DLQ size : {dlq.size()}")
     print(f"  DLQ content : {[m.value for m, _ in dlq.messages]}")
 
 
 def demo_rebalance():
-    """On ajoute un consumer en plein traitement : rebalance."""
-    print(f"\n{SEPARATOR}\n  DEMO 5 : Rebalance au join\n{SEPARATOR}")
+    """We add a consumer mid-processing: rebalance."""
+    print(f"\n{SEPARATOR}\n  DEMO 5 : Rebalance on join\n{SEPARATOR}")
     topic = Topic("stream", num_partitions=4)
     for i in range(8):
         topic.publish(key=None, value=f"m{i}")
@@ -402,17 +402,17 @@ def demo_rebalance():
 
     c1 = Consumer("C1", group, lambda m: None)
     c1.start()
-    print("  Etat apres C1 seul : tout sur C1")
+    print("  State after C1 alone : everything on C1")
     time.sleep(0.1)
 
     c2 = Consumer("C2", group, lambda m: None)
     c2.start()
-    print("  Etat apres ajout de C2 :")
+    print("  State after adding C2 :")
     time.sleep(0.1)
 
     c3 = Consumer("C3", group, lambda m: None)
     c3.start()
-    print("  Etat apres ajout de C3 :")
+    print("  State after adding C3 :")
     time.sleep(0.1)
 
     c1.stop()
@@ -427,7 +427,7 @@ def main():
     demo_pubsub_multiple_groups()
     demo_dlq_with_poison_message()
     demo_rebalance()
-    print(f"\n{SEPARATOR}\n  Fin des demos.\n{SEPARATOR}")
+    print(f"\n{SEPARATOR}\n  End of demos.\n{SEPARATOR}")
 
 
 if __name__ == "__main__":
