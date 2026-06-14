@@ -1,0 +1,52 @@
+.doctype {docs}
+.docname {Mastering Believe — System Design}
+.docauthor {mastering-believe}
+.doclang {fr}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Principes fondamentaux du System Design](01-principes-fondamentaux.qd)
+        - [2. Stockage & Databases](02-stockage-databases.qd)
+        - [3. Caching & CDN](03-caching-cdn.qd)
+        - [4. Message Queues & Event-Driven Architecture](04-message-queues-event-driven.qd)
+        - [5. Load Balancing & Networking](05-load-balancing-networking.qd)
+        - [6. API Design & Patterns](06-api-design-patterns.qd)
+        - [7. Design classiques (entretiens systemes)](07-design-classiques.qd)
+        - [8. ML System Design](08-ml-system-design-intro.qd)
+        - [9. Inference at Scale](09-inference-at-scale.qd)
+        - [10. RAG Architecture](10-rag-architecture.qd)
+        - [11. LLM Infrastructure](11-llm-infrastructure.qd)
+        - [12. Agent Systems Architecture](12-agent-systems-architecture.qd)
+        - [13. Observabilite & MLOps](13-observabilite-mlops.qd)
+        - [14. Capstone : 2 designs en 45 minutes chacun](14-capstone.qd)
+
+# Mastering Believe — System Design
+
+Cours communautaire d'apprentissage accelere — theorie, code applique,
+exercices progressifs.
+
+## Plan du module
+
+1. [Principes fondamentaux du System Design](01-principes-fondamentaux.qd)
+2. [Stockage & Databases](02-stockage-databases.qd)
+3. [Caching & CDN](03-caching-cdn.qd)
+4. [Message Queues & Event-Driven Architecture](04-message-queues-event-driven.qd)
+5. [Load Balancing & Networking](05-load-balancing-networking.qd)
+6. [API Design & Patterns](06-api-design-patterns.qd)
+7. [Design classiques (entretiens systemes)](07-design-classiques.qd)
+8. [ML System Design](08-ml-system-design-intro.qd)
+9. [Inference at Scale](09-inference-at-scale.qd)
+10. [RAG Architecture](10-rag-architecture.qd)
+11. [LLM Infrastructure](11-llm-infrastructure.qd)
+12. [Agent Systems Architecture](12-agent-systems-architecture.qd)
+13. [Observabilite & MLOps](13-observabilite-mlops.qd)
+14. [Capstone : 2 designs en 45 minutes chacun](14-capstone.qd)
+
+## Approche pedagogique
+
+- **Pareto-first** : 20% qui donne 80% du resultat en premier
+- **Concret avant abstrait** : exemple, puis principe
+- **Spaced repetition** : flash-cards en fin de chapitre
+- **Capstone reel** : projet ship-able a la fin du module

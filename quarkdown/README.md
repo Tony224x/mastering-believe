@@ -15,12 +15,21 @@ Ce dossier contient le pipeline qui transforme les sources `.qd`
 
 ## Statut
 
-- **agentic-ai** : 3 chapitres enrichis (`01-anatomie-agent`,
-  `02-tool-use-function-calling`, `05-langgraph-fondamentaux`)
-  + 11 placeholders. Site buildable de bout en bout.
-- **neural-networks-llm** : 22 placeholders, scaffold initial.
-- Les autres domaines n'ont pas encore de `01-theory-qd/` — utiliser
-  le scaffolder pour en creer un (cf. ci-dessous).
+Les **5 domaines actifs** ont un `01-theory-qd/` buildable de bout en
+bout (validation CI a chaque build) :
+
+| Domaine | Chapitres | Etat |
+|---------|-----------|------|
+| **agentic-ai** | 14 | 3 enrichis (`01-anatomie-agent`, `02-tool-use-function-calling`, `05-langgraph-fondamentaux`) + 11 placeholders |
+| **neural-networks-llm** | 22 | placeholders (scaffold) |
+| **algorithmie-python** | 14 | placeholders (scaffold) |
+| **system-design** | 14 | placeholders (scaffold) |
+| **robotics-ai** | 28 | placeholders (scaffold) |
+
+Les placeholders sont des copies enrichissables des `.md` source-of-truth
+(preambule + sidebar nav + contenu). L'enrichissement (mermaid, callouts
+denses, math, exemples chiffres) se fait ensuite chapitre par chapitre.
+Tout nouveau domaine se cree avec le scaffolder (cf. ci-dessous).
 
 ## Prerequis
 
@@ -80,6 +89,48 @@ Output : `quarkdown/output-site/<domain>/` par domaine. Gitignored.
 > **Note** : un domaine sans `01-theory-qd/` est silencieusement
 > ignore. Pour scaffolder un nouveau domaine, voir la section
 > suivante.
+
+### Equivalent bash (Linux / macOS / CI)
+
+`build-all.ps1` est Windows-first. Sur Linux/macOS (et dans la CI),
+utiliser `build-all.sh`, qui a la meme logique (build all ou `--domain`,
+post-process, recap, code de sortie) en assumant `java` et `quarkdown`
+dans le PATH :
+
+```bash
+# Tous les domaines
+bash quarkdown/scripts/build-all.sh
+
+# Un seul domaine
+bash quarkdown/scripts/build-all.sh --domain agentic-ai
+
+# Base de sortie custom (utile en CI)
+bash quarkdown/scripts/build-all.sh --out /tmp/site
+```
+
+Le mode watch reste cote PowerShell (commodite de dev) ou via
+`quarkdown c <main.qd> -p -w` directement.
+
+## Publication : CI GitHub Actions (livraison KaView)
+
+Le workflow `.github/workflows/quarkdown-release.yml` automatise la
+livraison des bundles :
+
+- **Tag `v*`** : installe le CLI Quarkdown (version pinnee via
+  `QUARKDOWN_VERSION`), build tous les domaines avec `build-all.sh`,
+  empaquette un `dist/<domain>-bundle.tar.gz` par domaine (racine de
+  l'archive = racine du site, `index.html` au top → chargeable en
+  `file://` dans WKWebView), puis cree/met a jour la **GitHub Release**
+  du tag avec ces bundles en assets.
+- **Pull request** touchant `domains/**/01-theory-qd/**` ou
+  `quarkdown/**` : build de validation (sans Release) — garantit que
+  tous les sites compilent.
+- **`workflow_dispatch`** : build manuel, bundles telechargeables comme
+  artefacts du run.
+
+Cote app (KaView) : fetch `releases/latest/download/<domain>-bundle.tar.gz`,
+cache local (ETag), dezip, charger `index.html` dans la WebView. Maj des
+cours sans repasser par les stores.
 
 ## Lire les sites compiles (apres build)
 
@@ -145,9 +196,10 @@ Workflow type :
    d'autorisation de lecture sur la **racine du bundle** (sinon
    CSS/JS/sous-pages refusent silencieusement de charger).
 
-Pour automatiser : un workflow GitHub Actions sur tag `v*` qui build
-tous les domaines + zip + upload comme asset de GitHub Release est
-l'approche standard. L'app fetch alors
+L'automatisation est en place : le workflow
+`.github/workflows/quarkdown-release.yml` build tous les domaines sur tag
+`v*` + zip + upload comme assets de GitHub Release (cf. section
+*Publication* plus haut). L'app fetch alors
 `releases/latest/download/<domain>-bundle.tar.gz` et cache localement
 (ETag pour eviter les re-DL inutiles). Avantage : maj des cours sans
 passer par les stores.
@@ -245,9 +297,12 @@ mastering-believe (repo, source-of-truth)
     README.md (ce fichier)
     scripts/
       scaffold-domain.py   ← scaffold + sync sidebar
-      build-all.ps1        ← build wrapper (JAVA_HOME, post-process, watch)
+      build-all.ps1        ← build wrapper Windows (JAVA_HOME, post-process, watch)
+      build-all.sh         ← build wrapper Linux/macOS/CI (meme logique)
     post-build-fix-links.py ← rewrite liens pour bundle portable
     output-site/<domain>/  ← build artifacts (gitignored)
+       ▲
+  .github/workflows/quarkdown-release.yml  ← CI : build + Release sur tag v*
        │
        └─→ deployable :
             - GitHub Pages (site web public)

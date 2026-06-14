@@ -33,7 +33,7 @@ DOMAIN_TITLE_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 CHAPTER_TITLE_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
 
-CHAPTER_PREFIX_RE = re.compile(r"^J\d+\s*[—\-:]\s*", re.IGNORECASE)
+CHAPTER_PREFIX_RE = re.compile(r"^J(?:our)?\s*\d+\s*[—\-:]\s*", re.IGNORECASE)
 
 
 def _strip_subtitle(title: str) -> str:
