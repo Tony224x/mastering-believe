@@ -1,0 +1,316 @@
+.doctype {docs}
+.docname {Sandboxing & execution sure}
+.docauthor {mastering-believe}
+.doclang {fr}
+.theme {paperwhite} layout:{hyperlegible}
+
+.pagemargin {lefttop}
+    .navigation role:{pagelist}
+        - [Accueil](main.qd)
+        - [1. Anatomie d'un Agent IA](01-anatomie-agent.qd)
+        - [2. Tool Use & Function Calling](02-tool-use-function-calling.qd)
+        - [3. Memory & State](03-memory-state.qd)
+        - [4. Planning & Reasoning](04-planning-reasoning.qd)
+        - [5. LangGraph fondamentaux](05-langgraph-fondamentaux.qd)
+        - [6. LangGraph avance](06-langgraph-avance.qd)
+        - [7. Build : un agent de recherche+analyse complet (capstone semaine 1)](07-agent-complet.qd)
+        - [8. RAG Agentique](08-rag-agentique.qd)
+        - [9. Multi-Agent Patterns](09-multi-agent-patterns.qd)
+        - [10. MCP (Model Context Protocol)](10-mcp.qd)
+        - [11. Evaluation & Testing](11-evaluation-testing.qd)
+        - [12. Production & Observabilite](12-production-observabilite.qd)
+        - [13. Securite & Robustesse](13-securite-robustesse.qd)
+        - [14. Capstone : assistant de recherche autonome production-ready](14-capstone.qd)
+        - [15. Context engineering](15-context-engineering-compaction.qd)
+        - [16. Memoire long-horizon](16-memoire-long-horizon.qd)
+        - [17. Verifiers & self-improvement](17-verifiers-self-improvement.qd)
+        - [18. Orchestration comparee](18-orchestration-comparee-failure-modes.qd)
+        - [19. Protocoles inter-agents](19-protocoles-inter-agents.qd)
+        - [20. Durable & event-driven agents](20-durable-event-driven-agents.qd)
+        - [21. Architecture des coding agents](21-coding-agents-architecture.qd)
+        - [22. Computer use & GUI agents](22-computer-use-gui-agents.qd)
+        - [23. Sandboxing & execution sure](23-sandboxing-execution-sure.qd)
+        - [24. Inference engineering](24-inference-engineering.qd)
+        - [25. Serving stateful & sessions](25-serving-stateful-sessions.qd)
+        - [26. Benchmarking pratique](26-benchmarking-pratique.qd)
+        - [27. Capstone (architecture & setup)](27-capstone-architecture.qd)
+        - [28. Capstone (build & eval)](28-capstone-build-eval.qd)
+
+# Sandboxing & execution sure
+
+> **Temps estime** : 3h | **Prerequis** : J1-J22
+> **Objectif** : comprendre les technologies d'isolation systeme utilisees pour executer du code d'agent en securite — gVisor, microVMs, sandbox-runtime, capability-based access, et egress filtering — et savoir choisir le bon niveau d'isolation selon le contexte.
+
+---
+
+> **Delimitation** : J13 (securite & robustesse) couvre les **principes** de sandboxing — tools dangereux en subprocess/container, whitelists OWASP, human-in-the-loop. Ce module J23 descend au niveau **infra** : comment sont implementees les isolations OS, quels mecanismes noyau entrent en jeu, et comment combiner les couches pour une defense en profondeur. Si tu n'as pas lu J13, commence par la.
+
+---
+
+## 1. Pourquoi l'isolation process classique ne suffit pas
+
+Un agent IA qui execute du code dynamique est expose a une categorie de risques differente de l'injection LLM : il s'agit d'une **execution arbitraire**, potentiellement generee par le modele lui-meme ou injectee via les donnees qu'il lit.
+
+Les defenses classiques (subprocess Python, `os.system`, `eval` protege) souffrent des limites suivantes :
+
+| Mecanisme | Isolation filesystem | Isolation reseau | Isolation syscalls | Protection cgroup |
+|-----------|---------------------|------------------|--------------------|------------------|
+| `eval` / `exec` | Aucune | Aucune | Aucune | Aucune |
+| `subprocess.run` | Partielle (meme UID) | Aucune | Aucune | Non |
+| Docker container | Oui (namespace) | Oui (veth) | Partielle (seccomp) | Oui |
+| gVisor (`runsc`) | Oui | Oui | Complete (interception) | Oui |
+| Firecracker microVM | Oui (block device) | Oui (TAP virtio) | Complete (noyau isole) | Oui |
+
+La surface d'attaque augmente avec la privilegiation : un agent qui peut lire `/etc/passwd`, ouvrir des sockets, ou appeler `ptrace` sur d'autres process est un agent qui peut etre transforme en vecteur d'attaque.
+
+> **Analogie** : imagine un stagiaire (l'agent) dans un open-space. Sans isolation, il a acces a tous les tiroirs, peut ecouter toutes les conversations, et peut sortir librement. Un container Docker, c'est lui donner un bureau avec une porte — mais la porte est en carton. gVisor, c'est lui mettre un interphone avec filtrage des appels. Firecracker, c'est lui installer dans un autre batiment avec un seul tunnel de communication.
+
+---
+
+## 2. sandbox-runtime Anthropic : isolation OS sans conteneur complet
+
+Le depot `anthropic-experimental/sandbox-runtime` (2025) fournit un runtime d'isolation legere qui ne necessite pas Docker ou une image OCI complete.
+
+### 2.1 Principe
+
+`sandbox-runtime` s'appuie sur des primitives OS natives :
+- **macOS** : `sandbox-exec` avec profil SBPL (Sandbox Profile Language). Bloque les syscalls par defaut, allowlist pour les acces fichiers et reseau indispensables.
+- **Linux** : `bubblewrap` (`bwrap`) — outil de namespace userspace (pas root requis avec `newuidmap`/`newgidmap`). Combine `user namespaces`, `mount namespaces`, et `network namespaces`.
+- **Proxy de filtrage reseau** : un proxy local (HTTP/HTTPS) que le processus sandboxe doit traverser ; le proxy valide les domaines destination contre une allowlist.
+
+### 2.2 Modele de capacites
+
+Plutot que d'accorder un acces "tout ou rien", `sandbox-runtime` utilise des **capability tokens** qui encapsulent :
+- Les **chemins filesystem** accessibles (lecture, ecriture, execution)
+- Les **domaines reseau** autorisés
+- Les **syscalls** permis (via seccomp-BPF sur Linux)
+
+Un agent recoit uniquement les capacites dont il a besoin pour sa tache immediate. C'est le principe du **moindre privilege** applique au niveau infra.
+
+### 2.3 Avantages et limites
+
+| Avantage | Limite |
+|----------|--------|
+| Pas d'image Docker a builder | Moins isole qu'une VM |
+| Faible overhead (quelques ms) | macOS : sandbox-exec deprecie dans les nouvelles SDK, comportement non documente |
+| Pas de droits root | Linux : `bubblewrap` doit etre installe et les user namespaces actives |
+| Transparent pour l'agent | Le proxy reseau peut etre contourne si le binary cible a ses propres TLS |
+
+---
+
+## 3. gVisor : noyau applicatif userspace
+
+gVisor est developpe par Google et livre en open source depuis 2018. Son objectif : fournir une **couche de compatibilite noyau en userspace** qui intercepte tous les appels systeme d'une application.
+
+### 3.1 Architecture
+
+```
+Application (code de l'agent)
+        |
+        | syscall (ex: read, write, socket)
+        v
+  Sentry (noyau gVisor, userspace)
+        |
+        | acces aux ressources reelles filtres
+        v
+  Gofer (daemon de fichiers, process separe)
+        |
+        v
+  Noyau Linux hote
+```
+
+- **Sentry** : le "noyau de substitution" ecrit en Go. Il intercepte les syscalls via `ptrace` (mode KVM) ou `seccomp` (mode systrap). Il reimplemente les semantiques POSIX sans jamais laisser passer un syscall directement.
+- **Gofer** : un process separe qui gere les acces filesystem. L'application n'a jamais acces direct aux fichiers de l'hote.
+- **Runtime OCI `runsc`** : gVisor s'integre dans la chaine Docker/Kubernetes comme un runtime alternatif. `docker run --runtime=runsc ...`
+
+### 3.2 Modele de securite
+
+La surface d'attaque exposee au noyau Linux hote est reduite a quelques dizaines de syscalls (appels Sentry→hote) contre les 300+ disponibles. Une faille dans l'application sandboxee ne peut exploiter que les syscalls exposes par Sentry.
+
+### 3.3 Overhead et trade-offs
+
+| Dimension | Impact |
+|-----------|--------|
+| CPU (syscall-intensive) | +5% a +30% selon la charge |
+| CPU (compute-only) | Negligeable |
+| Memoire | +~50MB par conteneur (Sentry) |
+| Compatibilite | ~95% des apps Linux, quelques incompatibilites (raw sockets, eBPF, /proc avance) |
+| Securite | Nettement superieure a seccomp seul |
+
+> **Analogie** : gVisor, c'est comme embaucher un traducteur entre l'agent et le systeme. L'agent parle au traducteur (Sentry), qui ne transmet au vrai systeme que les messages autorises, reformates.
+
+---
+
+## 4. Firecracker : microVMs pour l'isolation maximale
+
+Firecracker est un Virtual Machine Monitor (VMM) open source developpe par AWS, utilise en production pour AWS Lambda et Fargate.
+
+### 4.1 Principe
+
+Contrairement a un hyperviseur complet (QEMU), Firecracker expose uniquement les **peripheriques virtio minimaux** :
+- `virtio-net` : reseau
+- `virtio-blk` : stockage
+- Horloge, entropie, serial
+
+Chaque microVM demarre en **~125ms** et consomme **~5MB de memoire overhead**. L'isolation est celle d'une VM complete — deux microVMs ne peuvent pas interagir directement, meme si elles tournent sur le meme hote physique.
+
+### 4.2 Positionnement dans la chaine agentic
+
+```
+Orchestrateur agent (trusted)
+        |
+        | API REST locale (firecracker management)
+        v
+  microVM (1 par task d'execution)
+        |  code de l'agent execute ici
+        |  filesystem read-only sauf /tmp
+        |  reseau: seulement vers allowlist
+        v
+  Destruction automatique apres la task
+```
+
+Ce modele — une VM par execution — est celui qu'AWS Lambda utilise. Il garantit qu'une execution compromise ne peut pas affecter les executions suivantes ni l'orchestrateur.
+
+### 4.3 Comparaison des niveaux d'isolation
+
+| Technologie | Isolation | Overhead demarrage | Cas d'usage agent |
+|-------------|-----------|-------------------|-------------------|
+| subprocess Python | Minimale | ~0ms | Dev local, scripts de confiance |
+| Docker (runc) | Moyenne | ~100-500ms | CI, tools non-critiques |
+| Docker + gVisor (runsc) | Haute | ~150-800ms | Production, tools avec I/O fichier |
+| Firecracker microVM | Maximale | ~125ms (kernel boot) | Execution code arbitraire, multi-tenant |
+| sandbox-runtime | Legere-Moyenne | ~5-50ms | Agents locaux, dev sans Docker |
+
+---
+
+## 5. Capability-based access aux tools
+
+Le **modele de capacites** (capability-based security) remplace les ACL classiques ("l'agent X peut appeler le tool Y") par des **tokens d'autorisation non-ambiants**.
+
+### 5.1 Principe
+
+Un token de capacite est un objet opaque qui :
+- Represente le droit d'effectuer une operation specifique
+- Ne peut etre transmis qu'explicitement (pas de heritage automatique)
+- Peut etre revoque
+- Est controle par l'emetteur, pas par le receveur
+
+```
+Orchestrateur
+  -- emet CapabilityToken(tool="read_file", paths=["/data/reports/*.csv"]) --> Agent A
+  -- emet CapabilityToken(tool="send_email", domains=["@company.com"]) --> Agent B
+  -- Agent A ne peut PAS lire /etc/passwd
+  -- Agent B ne peut PAS envoyer vers des domaines externes
+```
+
+### 5.2 Implémentation pratique
+
+Dans les frameworks existants, cela prend plusieurs formes :
+- **Anthropic computer use** : des "scopes" de capacite (fichiers, applications) specifies au moment de la creation de la session
+- **LangGraph** : injection de `RunnableConfig` avec des contraintes par noeud
+- **MCP** : le serveur MCP definit quels tools sont exposes, le client ne peut appeler que ceux-la
+
+Le token doit etre **non-falsifiable** (signe cryptographiquement ou stocke cote serveur) et **a duree limitee**.
+
+---
+
+## 6. Egress filtering : filtrer ce qui sort
+
+L'isolation entree (ce que l'agent peut lire/executer) est necessaire mais pas suffisante. Un agent compromis pourrait **exfiltrer des donnees** via des connexions reseau sortantes.
+
+### 6.1 Allowlist de domaines
+
+Le principe : bloquer tout par defaut, autoriser uniquement les destinations connues.
+
+```
+# Exemple d'allowlist pour un agent de recherche
+ALLOWED_EGRESS = [
+    "api.anthropic.com",
+    "api.openai.com",
+    "*.wikipedia.org",
+    "arxiv.org",
+]
+# Toute autre destination -> refuse
+```
+
+L'implementation se fait a differents niveaux :
+1. **DNS sinkhole** : les noms non-autorises ne sont pas resolus
+2. **Proxy HTTP/HTTPS** : toutes les connexions passent par un proxy qui valide la destination
+3. **iptables/nftables** : regles firewall au niveau kernel
+4. **Network namespace Linux** : l'agent n'a acces qu'a une interface veth vers un proxy
+
+### 6.2 Limites de l'egress filtering
+
+- **DNS over HTTPS** : un agent peut contourner le DNS sinkhole en utilisant DoH
+- **Encodage steganographique** : des donnees peuvent etre cachees dans des requetes vers des domaines autorises
+- **Tunnels** : si un domaine autorise heberge un tunnel (ex: ngrok)
+
+La defense en profondeur recommande de combiner egress filtering + monitoring du volume de requetes + inspection des payloads.
+
+---
+
+## 7. Defense en profondeur : les couches
+
+Une architecture d'execution sure pour agents combine plusieurs couches independantes. La compromission d'une couche ne suffit pas a compromettre le systeme.
+
+```
+Couche 7 : Audit log immuable (J13)
+Couche 6 : Egress filtering (domaines, volume)
+Couche 5 : Capability tokens (droits minimaux)
+Couche 4 : Sandbox runtime / gVisor / microVM (isolation OS)
+Couche 3 : Resource limits (CPU, mem, temps)
+Couche 2 : Input/output guardrails (J13)
+Couche 1 : Prompt engineering defensif (J13)
+```
+
+Chaque couche a un adversaire different qu'elle arrete :
+- Couche 1-2 : prompt injection
+- Couche 3 : epuisement de ressources (DoS)
+- Couche 4 : escalade de privileges OS
+- Couche 5 : acces non autorise aux tools
+- Couche 6 : exfiltration de donnees
+- Couche 7 : effacement des traces
+
+---
+
+## Flash-cards
+
+**Q1 :** Quelle est la difference fondamentale entre gVisor et un container Docker standard ?
+> **R :** Docker (runc) utilise seccomp pour bloquer certains syscalls mais laisse les syscalls autorises passer directement au noyau hote. gVisor (runsc) intercepte TOUS les syscalls et les reimplemente en userspace dans Sentry — le noyau hote ne recoit que les syscalls filtres de Sentry, pas ceux de l'application.
+
+**Q2 :** Pourquoi Firecracker peut-il demarrer en ~125ms alors qu'une VM classique met des minutes ?
+> **R :** Firecracker ne propose que 5 types de peripheriques virtio minimalistes (net, blk, horloge, entropie, serial). Il n'y a pas d'emulation BIOS, pas de USB, pas de GPU. Le kernel Linux invite est un kernel specialise (stripped) qui boot directement en userspace sans initialiser ces sous-systemes inutiles.
+
+**Q3 :** Qu'est-ce qu'un capability token et en quoi differe-t-il d'une ACL classique ?
+> **R :** Un capability token est un objet que le detenteur possede et presente pour acceder a une ressource. Il n'est pas lie a l'identite — quiconque a le token peut l'utiliser (mais le transfert est explicite). Une ACL verifie l'identite du demandeur contre une liste. Les tokens sont plus flexibles (delegation, revocation granulaire) mais necessitent de ne pas les laisser fuiter.
+
+**Q4 :** Cite deux techniques qu'un agent compromis pourrait utiliser pour contourner un egress filter DNS.
+> **R :** (1) DNS over HTTPS (DoH) — envoie les requetes DNS comme du HTTP normal vers un resolver DoH autorise ou via un canal HTTPS vers un domaine autorise. (2) DNS tunneling — encode les donnees dans les labels de noms de domaine vers un domaine controle par l'attaquant (ex: `data.evil.com` ou `data` encode les donnees).
+
+**Q5 :** Dans un systeme multi-couches, pourquoi est-il important que les couches soient independantes ?
+> **R :** Si les couches partagent un composant (ex: un meme daemon de validation), compromettre ce composant contourne toutes les couches simultanement. L'independance garantit que l'attaquant doit exploiter N vulnerabilites distinctes, dans des systemes differents, ce qui est exponentiellement plus difficile.
+
+---
+
+## Points cles a retenir
+
+- **subprocess Python = securite illusoire** pour du code arbitraire ; utiliser au minimum des resource limits (timeout, cgroups) et pas d'acces reseau.
+- **sandbox-runtime** Anthropic est un compromis leger : bubblewrap + proxy, pas de droits root, overhead faible. Bon pour agents locaux.
+- **gVisor** intercepte les syscalls en userspace ; overhead modere, compatibilite ~95%, recommande pour production avec I/O.
+- **Firecracker** donne l'isolation d'une VM complete en ~125ms et ~5MB overhead — choix pour l'execution de code arbitraire en multi-tenant.
+- **Capability tokens** : donner uniquement les droits dont l'agent a besoin pour la tache en cours, pas plus.
+- **Egress filtering** : allowlist de domaines, pas de blocklist. Bloquer par defaut, autoriser explicitement.
+- **Defense en profondeur** : les couches sont independantes et arretent des attaquants differents. Ne jamais compter sur une seule couche.
+
+---
+
+## Pour aller plus loin
+
+- **anthropic-experimental, "sandbox-runtime"** (2025) — implementation de reference : https://github.com/anthropic-experimental/sandbox-runtime
+- **Google, gVisor — Application Kernel for Containers** — documentation architecture, runsc, integration Kubernetes : https://gvisor.dev/ — https://github.com/google/gvisor
+- **OpenAI, "Operator System Card"** (2025) — description du systeme d'isolation utilise par OpenAI Operator pour l'execution de code : https://cdn.openai.com/operator_system_card.pdf
+- **Firecracker design** : https://github.com/firecracker-microvm/firecracker/blob/main/docs/design.md
+- **bubblewrap** (bwrap) : https://github.com/containers/bubblewrap
+- **Linux user namespaces** (man 7 user_namespaces) — mecanisme sous-jacent de bubblewrap
+- **seccomp-BPF** (man 2 seccomp) — filtrage des syscalls au niveau kernel
+

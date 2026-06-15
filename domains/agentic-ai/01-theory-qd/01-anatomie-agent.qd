@@ -21,6 +21,20 @@
         - [12. Production & Observabilite](12-production-observabilite.qd)
         - [13. Securite & Robustesse](13-securite-robustesse.qd)
         - [14. Capstone : assistant de recherche autonome production-ready](14-capstone.qd)
+        - [15. Context engineering](15-context-engineering-compaction.qd)
+        - [16. Memoire long-horizon](16-memoire-long-horizon.qd)
+        - [17. Verifiers & self-improvement](17-verifiers-self-improvement.qd)
+        - [18. Orchestration comparee](18-orchestration-comparee-failure-modes.qd)
+        - [19. Protocoles inter-agents](19-protocoles-inter-agents.qd)
+        - [20. Durable & event-driven agents](20-durable-event-driven-agents.qd)
+        - [21. Architecture des coding agents](21-coding-agents-architecture.qd)
+        - [22. Computer use & GUI agents](22-computer-use-gui-agents.qd)
+        - [23. Sandboxing & execution sure](23-sandboxing-execution-sure.qd)
+        - [24. Inference engineering](24-inference-engineering.qd)
+        - [25. Serving stateful & sessions](25-serving-stateful-sessions.qd)
+        - [26. Benchmarking pratique](26-benchmarking-pratique.qd)
+        - [27. Capstone (architecture & setup)](27-capstone-architecture.qd)
+        - [28. Capstone (build & eval)](28-capstone-build-eval.qd)
 
 # J1 — Anatomie d'un Agent IA
 
