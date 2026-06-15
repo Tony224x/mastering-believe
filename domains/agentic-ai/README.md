@@ -10,7 +10,9 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 - Experience avec les APIs LLM (au moins avoir fait des appels API)
 - Notions de prompting (system prompt, few-shot)
 
-## Planning (2 semaines)
+## Planning (4 semaines)
+
+Le parcours se fait en deux temps : **S1-S2 = fondations** (J1-J14, du single-agent au multi-agent en production), puis **S3-S4 = niveau avance/frontier 2025-2026** (J15-J28 : context engineering, memoire long-horizon, verifiers, protocoles inter-agents, durabilite, coding & computer-use agents, serving a l'echelle, capstone avance). Les S3-S4 supposent les S1-S2 acquises.
 
 ### Semaine 1 — Fondations Agent
 
@@ -36,6 +38,30 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 | J13 | Securite & Robustesse | Prompt injection, tool abuse, sandboxing, rate limiting, human oversight | 3h |
 | J14 | **Capstone** | Systeme multi-agent production-ready (ex: assistant de recherche autonome) | 5h |
 
+### Semaine 3 — Frontier patterns & orchestration avancee
+
+| Jour | Module | Focus | Temps |
+|------|--------|-------|-------|
+| J15 | Context engineering & compaction | Curation du context window, compaction/offloading, deep-agent scratchpad/virtual FS, token & cost budgeting | 3h |
+| J16 | Memoire long-horizon | Episodique/semantique/procedurale, MemGPT/Letta, consolidation, decay & scoring de pertinence | 3h |
+| J17 | Verifiers & self-improvement | Verifiers / process reward models, best-of-N, self-improvement persiste, expo RL/fine-tuning | 3h |
+| J18 | Orchestration comparee & failure modes | LangGraph vs CrewAI vs AutoGen vs OpenAI SDK vs Swarm, quand le multi-agent casse | 3h |
+| J19 | Protocoles inter-agents | A2A, agent cards, ACP, complementarite MCP, interop multi-vendor | 3h |
+| J20 | Durable & event-driven agents | Durable execution (Temporal), reprise sur crash, event-driven, HITL avance (interrupt/resume) | 3h |
+| J21 | Architecture des coding agents | SWE-agent & ACI, boucle edit/search/run, SWE-bench, Aider | 3h |
+
+### Semaine 4 — Computer-use, production a l'echelle & capstone
+
+| Jour | Module | Focus | Temps |
+|------|--------|-------|-------|
+| J22 | Computer use & GUI/browser agents | Claude computer use, CUA/Operator, browser-use, set-of-marks, action grounding | 3h |
+| J23 | Sandboxing & execution sure (infra) | gVisor/microVM, sandbox-runtime, egress filtering, capability-based access | 3h |
+| J24 | Inference engineering | Structured outputs/constrained decoding, model routing (RouteLLM), prompt caching | 3h |
+| J25 | Serving stateful & sessions a l'echelle | Backends checkpointer (SQLite/Postgres/Redis), scaling horizontal, online eval/drift | 3h |
+| J26 | Benchmarking pratique | Harness d'eval sur SON agent, pass^k, rapport de regression | 3h |
+| J27 | Capstone avance — architecture | Deep ops agent durable : conception, contrats, setup | 4h |
+| J28 | **Capstone avance — build & eval** | Implementation runnable de bout en bout + harness d'evaluation | 5h |
+
 ## Criteres de reussite
 
 - [ ] Implementer un agent ReAct from scratch (sans framework) en < 100 lignes
@@ -44,6 +70,21 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 - [ ] Deployer un serveur MCP fonctionnel avec resources + tools
 - [ ] Mettre en place un pipeline d'evaluation qui detecte les regressions
 - [ ] Designer l'architecture d'un systeme agentique complet sur whiteboard
+
+### Avance (S3-S4, J15-J28)
+
+- [ ] Maitriser le context engineering : compaction, offloading, budgeting tokens par sous-agent
+- [ ] Implementer une memoire long-horizon (episodique/semantique/procedurale) avec consolidation
+- [ ] Construire une boucle verifier/PRM (best-of-N) et un agent qui s'ameliore entre runs
+- [ ] Comparer 5 frameworks d'orchestration et expliquer les multi-agent failure modes
+- [ ] Decrire A2A (agent cards, JSON-RPC) et sa complementarite avec MCP
+- [ ] Implementer un agent durable qui reprend apres un crash du process
+- [ ] Dissequer la boucle edit/search/run d'un coding agent (ACI) sur un repo
+- [ ] Expliquer set-of-marks et la fragilite des GUI/computer-use agents
+- [ ] Choisir un niveau de sandboxing (subprocess/gVisor/microVM) selon la menace
+- [ ] Mettre en place routing multi-modele + prompt caching et chiffrer le gain
+- [ ] Choisir un backend de checkpointer et scaler horizontalement des sessions
+- [ ] Construire un harness d'eval sur son agent avec metrique pass^k et regression
 
 ## Au-dela des 14 jours
 
