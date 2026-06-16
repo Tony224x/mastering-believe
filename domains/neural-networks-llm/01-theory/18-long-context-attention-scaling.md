@@ -2,6 +2,8 @@
 
 > **Temps estime** : 5h | **Prerequis** : J5-J6 (attention, transformer), J9 (RoPE)
 
+> **[AVANCE — optionnel]** Module de frontiere (bloc J15-J22). Le core du domaine est J1-J14 ; cette lecon est un approfondissement, a faire apres avoir solidement maitrise le core.
+
 ---
 
 ## 1. Le mur memoire : pourquoi 1M tokens c'est dur

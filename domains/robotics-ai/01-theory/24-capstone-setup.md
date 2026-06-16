@@ -2,7 +2,7 @@
 
 > Durée d'étude : 45-60 min
 > Prérequis : J13 (imitation learning, BC vs DAgger), J15 (diffusion + flow matching), J16 (Diffusion Policy deep dive), J23 (synthetic data + sim-to-real à scale).
-> Sources principales : REFERENCES.md #19 (Diffusion Policy repo — environment PushT), #27 (LeRobot v0.4 + LeRobotDataset v3.0), #24 (MuJoCo Documentation 3.x).
+> Sources principales : REFERENCES.md #19 (Diffusion Policy repo — environment PushT), #27 (LeRobot v0.5.1 + LeRobotDataset v3.0), #24 (MuJoCo Documentation 3.x).
 
 Tu es **jour 1/5** du capstone. Sur 5 jours (J24→J28) on construit Diffusion Policy from scratch sur la tâche canonique **PushT**. Aujourd'hui : produire le **dataset de démos expertes** que les jours suivants vont consommer pour entraîner et évaluer la policy. Pas de réseau de neurones aujourd'hui — du code "monde + expert + logging" propre.
 
@@ -268,7 +268,7 @@ J24 — Capstone Day 1 — Setup PushT + dataset
 ## 8. Sources citées (REFERENCES.md)
 
 - **#19** — Chi et al. (Columbia/TRI), *Diffusion Policy: Visuomotor Policy Learning via Action Diffusion*, RSS 2023, https://diffusion-policy.cs.columbia.edu/. Repo : https://github.com/real-stanford/diffusion_policy. **Source de l'environnement PushT** (pusht_env.py) et du format de démos. C'est notre référence directe pour la sémantique de la tâche, la définition du success (IoU 0.95), et la structure des trajectoires expertes.
-- **#27** — Hugging Face, *LeRobot v0.4 + LeRobotDataset v3.0*, 2025-2026, https://huggingface.co/docs/lerobot/index. **Source du format de dataset cible** (Parquet + MP4 streamable). On en adopte la philosophie schema-first et la convention episode-level dans une version simplifiée `.npz` adaptée au capstone.
+- **#27** — Hugging Face, *LeRobot v0.5.1 (avr. 2026) + LeRobotDataset v3.0*, https://huggingface.co/docs/lerobot/index. **Source du format de dataset cible** (Parquet + MP4 streamable). On en adopte la philosophie schema-first et la convention episode-level dans une version simplifiée `.npz` adaptée au capstone.
 - **#24** — Google DeepMind, *MuJoCo Documentation 3.x*, 2026, https://mujoco.readthedocs.io/. Contexte stack physique pour la suite ; pas utilisé directement aujourd'hui (on simule en 2D pur numpy) mais cité pour expliquer pourquoi on simplifie : MuJoCo serait surdimensionné pour une tâche 2D collision-only.
 
 ---

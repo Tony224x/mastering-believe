@@ -35,7 +35,7 @@ Les agents LLM complementent AutonomyAI SDK sans le remplacer. Dans la realite, 
 
 - **LangGraph** pour la structure agentique (Graph API + prebuilt helpers)
 - **LangChain** pour les tools et les messages
-- **LLM** : claude-haiku-4-5 pour la v0 (rapide et bon marche), upgrade vers claude-opus-4-6 si les decisions demandent du reasoning lourd
+- **LLM** : claude-haiku-4-5 pour la v0 (rapide et bon marche), upgrade vers un modele Opus recent si les decisions demandent du reasoning lourd
 - **Observabilite** : les projets incluent des prints structures pour tracer les decisions — en prod on brancherait LangSmith ou un logger equivalent
 
 ## Requirements

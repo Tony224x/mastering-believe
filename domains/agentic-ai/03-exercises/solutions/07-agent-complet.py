@@ -369,7 +369,7 @@ def make_planner_llm() -> tuple[Callable[[str], list[str]], str]:
         def real_planner(question: str) -> list[str]:
             try:
                 response = client.messages.create(
-                    model="claude-opus-4-6",
+                    model="claude-sonnet-4-6",
                     max_tokens=512,
                     messages=[{
                         "role": "user",

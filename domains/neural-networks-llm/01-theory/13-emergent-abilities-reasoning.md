@@ -30,7 +30,7 @@ Cette **transition brusque** (aussi appelee "phase transition" ou "grokking") a 
 
 ### Le paper fondateur
 
-Wei et al. (2022) "Emergent Abilities of Large Language Models" (Google DeepMind) documente 137 taches BIG-Bench ou l'emergence est observee. Le paper definit :
+Wei et al. (2022) "Emergent Abilities of Large Language Models" (Google Research / Brain) documente 137 taches BIG-Bench ou l'emergence est observee. Le paper definit :
 
 > "Une capacite est emergente si elle n'est pas presente dans les plus petits modeles mais l'est dans les plus grands. L'emergence ne peut pas etre predite simplement en extrapolant la performance des modeles plus petits."
 

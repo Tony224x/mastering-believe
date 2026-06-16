@@ -347,7 +347,7 @@ HARD_ROADMAP_MD = dedent("""\
     **Livrables** :
     - Setup robosuite v1.5 (REFERENCES.md #26) + Franka Panda via MuJoCo Menagerie.
     - Dataset de 500 demos sur la tache `lift` ou `square` (benchmark Diffusion
-      Policy paper, REFERENCES.md #19) au format LeRobotDataset v0.4 (REFERENCES.md #27).
+      Policy paper, REFERENCES.md #19) au format LeRobotDataset v3.0 (REFERENCES.md #27).
     - Re-entrainement Diffusion Policy avec action_dim = 7 + gripper.
     - Tableau success rate Diffusion Policy vs Behavior Cloning, 50 rollouts.
 
@@ -369,7 +369,7 @@ HARD_ROADMAP_MD = dedent("""\
     - Setup teleoperation (joystick ou Quest VR) couple a un mock FleetSim.
     - Collecte de 300-500 demos sur 3-5 SKU canoniques (carton standard, sac
       souple, colis volumineux).
-    - Conversion vers LeRobotDataset v0.4 (REFERENCES.md #27) avec respect du
+    - Conversion vers LeRobotDataset v3.0 (REFERENCES.md #27) avec respect du
       schema event canonique LogiSim (`shared/logistics-context.md`) : top-level
       stable, donnees specifiques dans `payload`.
     - Pipeline de quality control : labels operateurs, rejection demos echec.

@@ -130,13 +130,19 @@ if HAS_TORCH:
             k = self.W_K(x).view(B, T, self.n_heads, self.d_head).transpose(1, 2)
             v = self.W_V(x).view(B, T, self.n_heads, self.d_head).transpose(1, 2)
 
-            # Let PyTorch's kernel compute attention efficiently
-            # is_causal=True applies the triangular mask automatically
+            # Let PyTorch's kernel compute attention efficiently.
+            # We pass causality EXCLUSIVELY through the additive `mask` argument
+            # (attn_mask). When mask is None, attention is bidirectional.
+            # WHY no is_causal here: combining is_causal=True with a non-None
+            # attn_mask is undefined behaviour in SDPA, and the previous
+            # `is_causal=(mask is None and False)` was dead code (always False),
+            # which silently produced bidirectional attention whenever a caller
+            # forgot to pass a causal mask. To get a causal decoder, build a
+            # triangular additive mask and pass it as `mask`.
             out = F.scaled_dot_product_attention(
                 q, k, v,
                 attn_mask=mask,
                 dropout_p=self.dropout if self.training else 0.0,
-                is_causal=(mask is None and False),  # we handle causal via mask
             )
             # out shape: (B, n_heads, T, d_head)
 

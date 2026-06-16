@@ -1,5 +1,7 @@
 # J21 — π0 / π0.5 (Physical Intelligence)
 
+> **[AVANCÉ — optionnel]** Bloc *frontier* (J17-J23), hors chemin critique. Skippable en parcours express (cf README, "Parcours express vs complet").
+
 > Durée d'étude : 45-60 min
 > Prérequis : J15 (diffusion + flow matching, theorie SDE/ODE), J16 (Diffusion Policy), J18-J20 (RT-2 → OpenVLA → architectures VLA).
 > Source principale : REFERENCES.md #14 — Black et al. (Physical Intelligence), "π0: A Vision-Language-Action Flow Model for General Robot Control" (2024) + π0.5 (2025) + blog https://www.pi.website/blog/pi0.
@@ -11,14 +13,14 @@
 En avril 2025, Physical Intelligence publie une vidéo : un robot mobile à deux bras entre dans une **chambre d'inconnu** (jamais vue à l'entraînement), ouvre les tiroirs, replie un t-shirt, range les chaussettes. Pas de re-tuning, pas de démos sur cette pièce. Le modèle s'appelle **π0.5** et il est l'évolution directe de π0 — première vraie démonstration de "open-world generalization" sur des tâches mobiles dexterous.
 
 Le truc à retenir : **π0 n'est pas un modèle "en plus" comme RT-2 ou OpenVLA. C'est le premier qui combine :**
-1. un **VLM pré-entraîné** (PaliGemma 3B, gelé puis fine-tuné) — backbone vision-langage classique vu en J19/J20,
+1. un **VLM pré-entraîné** (PaliGemma 3B, **fine-tuné** pendant l'entraînement robotique — pas gelé) — backbone vision-langage classique vu en J19/J20,
 2. une **flow matching action head** (au lieu de DDPM ou de tokens discrets) — c'est le saut conceptuel du jour,
 3. un **entraînement multi-embodiment** sur 7 robots différents (single-arm UR5e, ALOHA, Trossen Mobile, etc.) avec **10 000 heures** de démos.
 
 Le résultat : un seul checkpoint qui contrôle un single-arm, un bi-bras et un mobile manipulator avec la même policy. Plus précis que diffusion policy et plus rapide que RT-2 grâce au tokenizer **π0-FAST** (5× plus rapide).
 
 > **Key takeaway #1**
-> π0 = recette VLA moderne 2024-2025 = (VLM gelé + LoRA partiel) + (flow matching action head qui génère 50 actions futures à 50 Hz) + (mix multi-embodiment massif). Tout le reste du module explique pourquoi chaque ingrédient compte.
+> π0 = recette VLA moderne 2024-2025 = (VLM PaliGemma **fine-tuné**, pas gelé) + (flow matching action head qui génère 50 actions futures à 50 Hz) + (mix multi-embodiment massif). Tout le reste du module explique pourquoi chaque ingrédient compte.
 
 ---
 
@@ -52,7 +54,7 @@ Le résultat : un seul checkpoint qui contrôle un single-arm, un bi-bras et un 
 
 Décomposition :
 
-- **VLM backbone** : PaliGemma 3B (Google, 2024). C'est un classique vision-langage — pas spécifique robotique. Il fournit une représentation jointe images+text qui n'est PAS dégradée pendant l'entraînement robotique grâce à un trick : **mixed gradient flow** (les gradients de la action head ne traversent que partiellement le VLM).
+- **VLM backbone** : PaliGemma 3B (Google, 2024). C'est un classique vision-langage — pas spécifique robotique. Il est **fine-tuné** (pas gelé) pendant l'entraînement robotique, mais sa représentation jointe images+text n'est pas dégradée grâce à un trick : **mixed gradient flow** (les gradients de la action head ne traversent que partiellement le VLM — fine-tuning ménagé plutôt que freeze total).
 - **Action expert** : un *petit* transformer (300M) attaché en parallèle. C'est lui qui apprend la flow matching. Reçoit le bruit + un timestep + les tokens du VLM, prédit une vélocité.
 - **Action chunk** : on ne prédit pas 1 action mais **un chunk de H=50 actions** (concept ré-emprunté à ACT/Diffusion Policy J16). Permet le receding-horizon control à haute fréquence sans replanifier à chaque pas.
 
@@ -61,7 +63,7 @@ Décomposition :
 Trade-off pratique : le VLM PaliGemma est lent à inférer (3B params). Si on le fait re-rouler à chaque step de l'ODE flow matching (5-10 steps), c'est ingérable @ 50 Hz. **Solution π0** : faire passer l'image + instruction UNE FOIS dans le VLM (calcul cher), puis l'ODE solve ne tourne QUE l'action expert (300M, rapide). On amortit le VLM sur les 50 actions générées.
 
 > **Key takeaway #2**
-> Pattern "frozen-ish VLM + lightweight action expert" = clé de l'inférence haute fréquence. Le VLM contribue la sémantique long-terme (1 forward pass), l'action expert contribue la dynamique court-terme (5-10 forward passes mais cheap).
+> Pattern "VLM fine-tuné + lightweight action expert" = clé de l'inférence haute fréquence. Le VLM contribue la sémantique long-terme (1 forward pass), l'action expert contribue la dynamique court-terme (5-10 forward passes mais cheap).
 
 ---
 
@@ -80,7 +82,7 @@ Diffusion Policy (J16) utilise DDPM avec T=100 steps de denoising par inférence
 
 ### 3.2 Flow matching π0 : ODE plutôt que SDE
 
-**Flow matching** (Lipman, Chen et al. 2023) reformule le problème comme un **transport optimal** entre une distribution simple (gaussienne) et la distribution cible (actions expertes). On n'apprend plus du bruit — on apprend un **champ de vélocité** :
+**Flow matching** (Lipman, Chen et al. 2022, arXiv 2210.02747) reformule le problème comme un **transport optimal** entre une distribution simple (gaussienne) et la distribution cible (actions expertes). On n'apprend plus du bruit — on apprend un **champ de vélocité** :
 
 ```
 v_θ(A_τ, τ) ≈ A* - A_0       où A_τ = (1-τ)·A_0 + τ·A*    (interpolation linéaire)
@@ -156,7 +158,7 @@ Conséquence dataset : 10 000 heures de démos hétérogènes >> 1 000 heures pa
 
 ## 5. π0.5 (2025) — open-world generalization
 
-π0 fait du multi-embodiment dans **des environnements vus à l'entraînement** (même cuisines, mêmes labos). π0.5 (Intrator et al., Physical Intelligence, avril 2025, REFERENCES.md #14, https://www.pi.website/download/pi05.pdf) ajoute :
+π0 fait du multi-embodiment dans **des environnements vus à l'entraînement** (même cuisines, mêmes labos). π0.5 (Physical Intelligence / Black et al., avril 2025, arXiv 2504.16054, REFERENCES.md #14, https://www.pi.website/download/pi05.pdf) ajoute :
 
 1. **Co-training avec données web** : on mixe les démos robotiques avec des **descriptions sémantiques** ("ouvre le tiroir du haut") issues du web → capacité high-level reasoning préservée.
 2. **Hierarchical inference** : le VLM produit d'abord un **plan de sous-tâches** en langage naturel (ex : "1. ouvrir tiroir, 2. trouver chaussette, 3. la poser"), puis chaque sous-tâche conditionne l'action expert.
@@ -297,7 +299,7 @@ Trajectoire 2025+ → System1/System2 (J22), foundation policies, deployment
 - **#13** — Kim, Pertsch et al., *"OpenVLA"*, 2024 (comparaison J20).
 - **#17** — Octo Model Team, *"Octo"*, RSS 2024 (comparaison J19).
 - **#19** — Chi et al., *"Diffusion Policy"*, RSS 2023 (rappel J16, baseline DDPM).
-- **#23** — Holderrieth & Erives, MIT 6.S184 (théorie flow matching, J17).
+- **#23** — Holderrieth & Erives, MIT 6.S184 (théorie flow matching, J15).
 
 ---
 

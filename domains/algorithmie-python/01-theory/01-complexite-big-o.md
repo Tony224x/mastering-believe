@@ -269,6 +269,8 @@ for i in range(n):
 - 1% des appends : O(n) (reallocation + copie)
 - **En moyenne sur n appends** : O(1) par append → complexite **amortie O(1)**
 
+> **Attention — ce 1.125x concerne la `list`, pas le `dict`.** La sur-allocation de la liste CPython est volontairement douce (~9/8 = 1.125x). Le `dict` (et le `set`), eux, **multiplient leur table par 2 ou 4** lors d'un resize (cf module 03). Le point commun qui garantit le O(1) amorti est que la croissance est **geometrique** (facteur multiplicatif constant), pas le facteur lui-meme. Une croissance *additive* (ex: +1 a chaque fois) donnerait du O(n) amorti — c'est le piege a connaitre.
+
 Autre exemple : l'union-find avec path compression + union by rank → O(alpha(n)) amorti ≈ O(1) en pratique.
 
 ---
@@ -336,7 +338,7 @@ def process(arr):
 > **R1** : `list` → O(n), `set` → O(1) en moyenne. Toujours convertir en set si on fait des lookups repetes.
 
 **Q2** : Pourquoi `list.append()` est O(1) alors qu'il doit parfois reallouer ?
-> **R2** : Complexite amortie. La reallocation agrandit la capacite d'un facteur ~1.125x (croissance sous-exponentielle de CPython), donc le cout de copie est "dilue" sur les prochains appends. En moyenne : O(1) amorti par operation.
+> **R2** : Complexite amortie. La reallocation agrandit la capacite d'un facteur **geometrique** (~1.125x pour la `list` CPython), donc le cout de copie est "dilue" sur les prochains appends. En moyenne : O(1) amorti par operation. (Le `dict`/`set` utilise le meme principe geometrique mais avec un facteur x2/x4 — le facteur differe, le raisonnement amorti est identique.)
 
 **Q3** : Tu vois deux boucles `for` imbriquees sur un tableau de taille n. Complexite ?
 > **R3** : O(n^2). Multiplier les bornes des boucles imbriquees. Attention : si la boucle interne est sur un autre tableau de taille m, c'est O(n*m).

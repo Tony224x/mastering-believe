@@ -191,6 +191,37 @@ def lcs(s1, s2):
     return dp[m][n]
 
 
+def lcs_rolling(s1, s2):
+    """
+    Space-optimized LCS in O(min(m, n)) space.
+
+    Key insight: dp[i][j] only depends on the previous row (i-1) and the current
+    row being built. So we keep just TWO 1D arrays instead of the full m x n grid.
+
+    Two extra tricks:
+      - We index the inner array over the SHORTER string so the width is min(m,n).
+      - dp[i-1][j-1] is the "diagonal" value: it lives in `prev[j-1]`, which we
+        must read BEFORE we overwrite it for the current row.
+
+    Returns the same length as lcs(); only the memory footprint differs.
+    """
+    # Ensure b is the shorter string -> inner dimension = min(m, n).
+    a, b = (s1, s2) if len(s1) >= len(s2) else (s2, s1)
+    n = len(b)
+    prev = [0] * (n + 1)            # row i-1
+    curr = [0] * (n + 1)           # row i (being built)
+    for i in range(1, len(a) + 1):
+        for j in range(1, n + 1):
+            if a[i - 1] == b[j - 1]:
+                curr[j] = prev[j - 1] + 1          # diagonal + 1
+            else:
+                curr[j] = max(prev[j], curr[j - 1])  # up vs left
+        prev, curr = curr, prev    # roll: reuse the old buffer, no realloc
+        # curr will be overwritten next iteration; its stale values don't leak
+        # because every cell j>=1 is recomputed before being read.
+    return prev[n]
+
+
 # =============================================================================
 # SECTION 6: LONGEST INCREASING SUBSEQUENCE
 # =============================================================================
@@ -281,7 +312,13 @@ if __name__ == "__main__":
     print("Coin change combinations for 5 with [1,2,5]:",
           coin_change_combinations(5, [1, 2, 5]))
 
-    print("\nLCS('abcde', 'ace'):", lcs("abcde", "ace"))
+    print("\nLCS('abcde', 'ace'):", lcs("abcde", "ace"),
+          "| rolling O(min(m,n)) space:", lcs_rolling("abcde", "ace"))
+    # Cross-check the two LCS implementations agree on a few cases.
+    _lcs_cases = [("abcde", "ace"), ("AGGTAB", "GXTXAYB"), ("", "abc"),
+                  ("same", "same"), ("xyz", "abc"), ("a" * 7, "a" * 4)]
+    assert all(lcs(a, b) == lcs_rolling(a, b) for a, b in _lcs_cases), "LCS impls disagree!"
+    print("  (lcs == lcs_rolling on all sanity cases: OK)")
 
     print("\nLIS([10,9,2,5,3,7,101,18]):")
     print("  DP       :", lis_dp([10, 9, 2, 5, 3, 7, 101, 18]))

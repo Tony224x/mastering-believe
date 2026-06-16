@@ -3,6 +3,15 @@
 > Manipuler des poses rigides en 3D (rotation + translation), composer des transformations le long d'une chaîne cinematique, comprendre les twists et pourquoi la formulation Product of Exponentials (PoE) supplante Denavit-Hartenberg.
 > Sources : `[Lynch & Park, 2017, ch. 3]`, `[Khatib CS223A, L2-3]`.
 
+> **Pont d'accessibilité — 4 réflexes avant le mur maths**
+> Ce module manipule beaucoup de matrices et de quaternions. Garde ces 4 idées en tête, le reste en découle :
+> 1. **Une rotation = une matrice 3×3 orthonormale** `R` (colonnes = axes du repère tourné, `Rᵀ = R⁻¹`, `det R = 1`). Tourner un vecteur = `R·v`.
+> 2. **Une pose rigide = rotation + translation**, empaquetées dans une matrice 4×4 homogène `T = [[R, p], [0, 1]]`. Multiplier deux `T` = **composer** deux déplacements (l'ordre compte : `T_AB · T_BC`).
+> 3. **Un quaternion `(w, x, y, z)`** n'est qu'une autre écriture de la même rotation, en 4 nombres au lieu de 9. On l'utilise parce qu'il n'a **pas de gimbal lock** et s'interpole proprement (slerp). Mentalement : "axe + angle compressés".
+> 4. **`SE(3)` / `SO(3)`** = juste les noms savants de "l'ensemble des poses rigides" / "l'ensemble des rotations". Pas de panique : ce sont des collections d'objets que tu sais déjà manipuler (les `T` et les `R`).
+>
+> Si ces 4 points sont clairs, tu peux lire le reste linéairement. Sinon, relis-les après le premier exemple ci-dessous — il les rend concrets.
+
 ---
 
 ## 1. Exemple concret : composer 2 transformations sur un bras 2-DOF planaire

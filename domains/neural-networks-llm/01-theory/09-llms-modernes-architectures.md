@@ -6,6 +6,12 @@
 
 ## 1. Pourquoi l'architecture du Transformer a evolue
 
+> **Pont / ordre de lecture** — ce module empile 7-8 innovations. Ne cherche pas a tout absorber d'un coup. Lis-le en deux passes :
+> - **Core (a maitriser absolument)** : RoPE (§2), RMSNorm (§3), SwiGLU (§4), GQA (§5). Ces 4 briques sont le standard 2024 (Llama 3, Mistral, Qwen 2.5) — c'est le minimum vital pour lire un paper SOTA.
+> - **Approfondissement (frontiere, 2e passe)** : MLA (§6), MoE fine-grained (§7), SSM hybrides (§8). Ces 3 definissent la frontiere 2025-2026 ; elles sont creusees en profondeur dans les modules dedies J16 (MoE) et J17 (SSM). Survole-les ici, reviens-y avec ces modules.
+>
+> Strategie : fais d'abord les 4 sections core en comprenant le *pourquoi* de chaque remplacement, puis attaque la frontiere.
+
 Le Transformer original (Vaswani et al., 2017) a tenu 5 ans avec peu de modifications. Mais entre 2022 et 2025, **7 innovations** sont devenues standard dans les LLMs SOTA :
 
 1. **RoPE** (Rotary Position Embedding) remplace les positional embeddings sinusoidaux
@@ -31,6 +37,8 @@ Les 4 premieres sont le standard 2024 (Llama 3, Mistral, Qwen 2.5). Les 3 dernie
 | Vocab size | 50 257 | 32 000 | 128 256 | 129 280 (DeepSeek V3) |
 
 **Modeles SOTA 2025-2026** : Llama 4 (Meta, 2025, MoE), DeepSeek V3 (dec 2024, 671B totaux/37B actifs) et R1 (jan 2025, reasoning), Qwen 3 (Alibaba, 2025), Gemini 2 (Google, 2025), GPT-5 (OpenAI, 2025), Claude 4 (Anthropic, 2025). GPT-3 et LLaMA 2 servent encore de repere historique mais ne sont plus SOTA.
+
+> **Note sur les tailles** : seules les tailles des modeles open-weight (DeepSeek, Qwen, Llama) sont confirmees. Pour les modeles fermes (GPT-4/GPT-5, Claude, Gemini), aucune taille n'est officielle — les chiffres qui circulent sont **non confirmes, estimations**.
 
 ---
 

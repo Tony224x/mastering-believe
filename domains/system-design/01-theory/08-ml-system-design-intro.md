@@ -1,5 +1,15 @@
 # Jour 8 — ML System Design : Introduction
 
+> **Le pont Semaine 1 → Semaine 2.** Ce module est la charniere du domaine : tu arretes de designer des systemes "qui deplacent des octets" (Semaine 1 : caches, queues, DB, LB) pour designer des systemes "qui apprennent des donnees" (Semaine 2 : feature stores, serving, RAG, agents). **Bonne nouvelle** : 90% des fondations de la Semaine 1 restent vraies. Un feature store est une DB + un cache (J2-J3). Un pipeline de retraining est une chaine de message queues (J4). Le serving de modeles passe par un load balancer (J5) et une API (J6). Ce qui change : 3 contraintes nouvelles que les systemes classiques ignorent — **(1)** les donnees evoluent toutes seules (drift), **(2)** train et serving doivent calculer les features a l'identique (skew), **(3)** la "correctness" inclut le temps (point-in-time). Garde la Semaine 1 en tete : tu ne repars pas de zero, tu ajoutes une couche.
+
+> **Prerequis vocabulaire Semaine 2** — 5 termes qui reviennent sans arret. Lis-les avant tout le reste.
+>
+> - **Embedding** : representation d'une donnee (texte, image, user) en vecteur de nombres ou la proximite = similarite de sens. C'est ce qui rend la recherche semantique possible (J10).
+> - **Inference** : utiliser un modele deja entraine pour produire une prediction sur une nouvelle entree (par opposition a l'entrainement). C'est l'equivalent ML d'une "requete" — ce qu'on doit scaler (J9).
+> - **Feature** : variable d'entree d'un modele, derivee des donnees brutes (ex : `nb_commandes_30j` calcule depuis la table commandes). La qualite des features pese plus que le choix du modele.
+> - **Drift** : derive dans le temps de la distribution des donnees (data drift) ou de la relation donnees→cible (concept drift). Le modele se degrade silencieusement : d'ou le monitoring (J13).
+> - **Point-in-time correctness** : garantir qu'un exemple d'entrainement ne voit que les features telles qu'elles existaient a l'instant de l'evenement, jamais des valeurs "du futur". Sa violation = data leakage = un modele excellent en test, nul en prod.
+
 ## Pourquoi le ML en production n'a presque rien a voir avec le ML en notebook
 
 **Exemple d'abord** : Tu entraines un modele de scoring de credit qui atteint 92% d'AUC sur ton jeu de test. Tu es content. Tu le deploies. Une semaine plus tard, les commerciaux se plaignent : le modele refuse 40% des bons clients. Pourquoi ? Parce qu'en production, la feature `revenu_net_mensuel` est calculee a partir du champ `salary`, alors qu'en entrainement tu utilisais `monthly_income` (apres un `groupby().mean()`). Resultat : des inputs legerement decales, une distribution differente, un modele qui explose.

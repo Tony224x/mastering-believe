@@ -377,7 +377,7 @@ Entre 2022 et 2024, la communaute a optimise l'**entrainement** (scaling de para
 - **Septembre 2024** : OpenAI sort `o1-preview` / `o1` — le modele depense des "reasoning tokens" internes avant de produire sa reponse. Breakthrough sur AIME, Codeforces, GPQA.
 - **Decembre 2024** : OpenAI annonce `o3`, gains encore plus nets sur le reasoning.
 - **Janvier 2025** : DeepSeek publie **R1**, un modele open-weight avec extended thinking. Premier open qui rivalise avec o1.
-- **2026** : Claude Opus 4.6 propose un **extended thinking** natif, accessible via l'API. Le modele peut "reflechir" avant de parler, avec un budget de thinking configurable.
+- **2026** : les modeles frontiere d'Anthropic (famille Claude Opus/Sonnet 4.x) proposent un **extended thinking** natif, accessible via l'API. Le modele peut "reflechir" avant de parler ; sur les modeles recents, le thinking est *adaptatif* (le modele decide combien reflechir), pilote par un parametre `effort`.
 
 ### Le concept en une phrase
 
@@ -389,9 +389,10 @@ Entre 2022 et 2024, la communaute a optimise l'**entrainement** (scaling de para
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-6",
+    model="claude-sonnet-4-6",
     max_tokens=2048,
-    thinking={"type": "enabled", "budget_tokens": 8000},  # 8K tokens de reflexion
+    thinking={"type": "adaptive"},        # thinking adaptatif (le modele dose lui-meme)
+    output_config={"effort": "high"},     # profondeur du raisonnement : low | medium | high | max
     messages=[{"role": "user", "content": "Prouve l'irrationalite de sqrt(2)"}],
 )
 
@@ -439,7 +440,7 @@ Les agents modernes **mixent** les modeles selon le role :
 
 ```
 Agent supervisor :
-  - Planning initial : claude-opus-4-6 avec extended thinking (decomposition critique)
+  - Planning initial : le modele Opus le plus recent avec extended thinking (decomposition critique)
   - Execution des steps : claude-haiku-4-5 (rapide, cheap, pas de thinking)
   - Synthese finale : claude-sonnet-4-6 (qualite correcte, cout raisonnable)
 ```

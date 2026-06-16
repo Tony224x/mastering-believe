@@ -1,5 +1,7 @@
 # J19 — VLA introduction : RT-1, RT-2, Open X-Embodiment, Octo
 
+> **[AVANCÉ — optionnel]** Bloc *frontier* (J17-J23), hors chemin critique. Skippable en parcours express (cf README, "Parcours express vs complet").
+
 > Durée d'étude : 45-60 min. Objectif : comprendre ce qu'est un Vision-Language-Action (VLA), suivre la généalogie RT-1 → RT-2 → Open X-Embodiment → Octo, et savoir distinguer **action tokenization** (discrétisation + classification) de **action regression** (sortie continue).
 
 ---

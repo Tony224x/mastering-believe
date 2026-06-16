@@ -164,10 +164,11 @@ def make_llm() -> Callable[[str, float], str]:
         client = anthropic.Anthropic()
 
         def anthropic_call(prompt: str, temperature: float = 0.0) -> str:
+            # Note: recent Claude models (Opus 4.7+) no longer accept the
+            # `temperature` param — steer behaviour via prompting instead.
             resp = client.messages.create(
-                model="claude-opus-4-6",
+                model="claude-sonnet-4-6",
                 max_tokens=1024,
-                temperature=temperature,
                 messages=[{"role": "user", "content": prompt}],
             )
             return resp.content[0].text  # type: ignore
@@ -180,7 +181,7 @@ def make_llm() -> Callable[[str, float], str]:
 
         def openai_call(prompt: str, temperature: float = 0.0) -> str:
             resp = client.chat.completions.create(
-                model="gpt-5.4",
+                model="gpt-5.5",
                 temperature=temperature,
                 messages=[{"role": "user", "content": prompt}],
             )

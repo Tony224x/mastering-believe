@@ -2,6 +2,8 @@
 
 > **Temps estime** : 5h | **Prerequis** : J1-J9 (transformers, FFN, MLP)
 
+> **[AVANCE — optionnel]** Module de frontiere (bloc J15-J22). Le core du domaine est J1-J14 ; cette lecon est un approfondissement, a faire apres avoir solidement maitrise le core.
+
 ---
 
 ## 1. Pourquoi MoE existe — le probleme du FFN dense

@@ -2,6 +2,8 @@
 
 > **Temps estime** : 5h | **Prerequis** : J5-J9 (attention, transformer, LLMs modernes), J12 (multimodalite intro)
 
+> **[AVANCE — optionnel]** Module de frontiere (bloc J15-J22). Le core du domaine est J1-J14 ; cette lecon est un approfondissement, a faire apres avoir solidement maitrise le core.
+
 ---
 
 ## 1. ViT : un transformer pour les images (Dosovitskiy 2020)

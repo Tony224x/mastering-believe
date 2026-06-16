@@ -2,6 +2,16 @@
 
 > Lecture : 45-60 min. Pré-requis : J13 (Imitation Learning, Behavior Cloning, distribution shift) et J15 (DDPM, score matching, sampling). Source principale : **REFERENCES.md #19** (Chi et al., RSS 2023, best paper) — site et repo `real-stanford/diffusion_policy`. Background mathématique : **REFERENCES.md #23** (MIT 6.S184).
 
+> **Pont d'accessibilité — récap express DDPM (le saut J15 → J16)**
+> J15 t'a donné DDPM sur des données génériques ; J16 l'applique aux **actions d'un robot**. Si J15 est un peu loin, voici le strict minimum pour suivre :
+> - **DDPM en une phrase** : on apprend à **débruiter**. On prend une donnée propre `x₀`, on y ajoute du bruit gaussien par étapes jusqu'au bruit pur `x_T`, et on entraîne un réseau à **prédire le bruit** ajouté à chaque étape.
+> - **Génération = débruitage inverse** : on part de bruit pur et on retire le bruit pas à pas → on obtient un échantillon de la distribution apprise.
+> - **La loss** est juste un MSE : `‖ε − ε_θ(x_t, t)‖²` (bruit vrai vs bruit prédit). Rien de plus.
+> - **Le déclic de J16** : ici `x₀` n'est plus une image mais une **séquence d'actions futures** (un "chunk"), et le débruitage est **conditionné par l'observation** du robot. Générer une trajectoire = débruiter un chunk d'actions conditionné sur ce que le robot voit.
+> - **Pourquoi diffusion plutôt que BC** : parce que débruiter peut produire **plusieurs modes** (gauche OU droite), là où un régresseur BC moyenne les deux et obtient un chemin médian invalide. C'est exactement l'exemple ci-dessous.
+>
+> Avec ça, la section suivante (multimodalité du push-T) coule de source.
+
 ---
 
 ## 0. Exemple concret avant la théorie

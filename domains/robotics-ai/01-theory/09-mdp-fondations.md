@@ -2,6 +2,15 @@
 
 > Source unique : Sutton & Barto, *Reinforcement Learning: An Introduction*, 2e ed., MIT Press, 2018, ch. 3-4 [Sutton & Barto, 2018, ch. 3-4]. Lectures CS285 L4 (Levine, Berkeley 2023) pour la perspective robotique-RL.
 
+> **Pont d'accessibilité — bascule mentale "contrôle → apprentissage"**
+> Jusqu'ici (J2-J8) on connaissait le modèle physique et on calculait des commandes. À partir d'ici, le robot **apprend par essai-erreur** sans qu'on lui donne la solution. Le vocabulaire minimal pour ne pas décrocher :
+> - **MDP** = la formalisation du problème : un **état** `s` (où on est), une **action** `a` (ce qu'on fait), une **récompense** `r` (le feedback chiffré), et une **transition** `P(s'|s,a)` (où on atterrit). C'est tout.
+> - **Politique `π(a|s)`** = la stratégie : "dans tel état, fais telle action". C'est ce qu'on cherche à optimiser.
+> - **Valeur `V(s)` / `Q(s,a)`** = "combien de récompense future j'espère, à partir d'ici". L'équation de Bellman dit juste : *valeur d'aujourd'hui = récompense immédiate + valeur (escomptée) de demain*. Tout le RL tourne autour de ça.
+> - **`γ` (gamma)** = facteur d'escompte ∈ [0,1[ : un euro demain vaut moins qu'un euro aujourd'hui. Évite les sommes infinies.
+>
+> Ce module n'utilise **pas** encore de gradient ni de réseau : value/policy iteration sont des calculs de tableau. Les gradients arrivent à J11 (et un rappel dédié t'y attend). Garde juste : *un MDP = (S, A, P, R, γ), et on cherche la politique qui maximise la récompense cumulée escomptée.*
+
 ## 1. Le problème, en concret
 
 Imagine un robot dans une grille **4x4**. Le robot occupe une case `(i, j)`. À chaque pas de temps, il choisit une action parmi `{haut, bas, gauche, droite}` :

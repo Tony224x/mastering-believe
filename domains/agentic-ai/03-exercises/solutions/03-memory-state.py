@@ -22,7 +22,33 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
-import numpy as np
+# numpy is optional here: the vector math only needs array/dot/norm, which we
+# can do in pure Python. Try numpy first, fall back to a tiny shim so the file
+# RUNS OFFLINE with zero dependencies (see 02-code/03-memory-state.py).
+try:
+    import numpy as np  # type: ignore
+    _HAS_NUMPY = True
+except ModuleNotFoundError:  # pragma: no cover - exercised only without numpy
+    _HAS_NUMPY = False
+
+    class _NumpyShim:
+        ndarray = list
+        float64 = float
+
+        @staticmethod
+        def array(seq, dtype=float):
+            return [dtype(x) for x in seq]
+
+        @staticmethod
+        def dot(a, b):
+            return sum(x * y for x, y in zip(a, b))
+
+        class linalg:
+            @staticmethod
+            def norm(v):
+                return sum(x * x for x in v) ** 0.5
+
+    np = _NumpyShim()  # type: ignore
 
 
 # ==========================================================================
@@ -45,7 +71,10 @@ def mock_embed(text: str, dim: int = 64) -> np.ndarray:
         h += hashlib.sha256(h).digest()
     raw = np.array([(b / 127.5) - 1.0 for b in h[:dim]], dtype=np.float64)
     norm = np.linalg.norm(raw)
-    return raw / norm if norm > 0 else raw
+    if norm <= 0:
+        return raw
+    # Scalar division on numpy arrays; elementwise on the pure-Python fallback.
+    return raw / norm if _HAS_NUMPY else [x / norm for x in raw]
 
 
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:

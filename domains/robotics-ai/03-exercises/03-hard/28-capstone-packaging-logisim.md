@@ -36,7 +36,7 @@ Les 5 phases attendues (tu peux affiner les titres mais respecter la progression
    Passer de PushT 2D a une tache `lift` ou `square` du benchmark Diffusion Policy sur robosuite + Franka (REFERENCES.md #19, #26). Contrainte : aucun changement metier, juste valider que le pipeline marche en 3D haute-DOF.
 
 2. **Phase 2 — Adaptation au contexte LogiSim avec dataset interne (4-6 semaines)**
-   Collecter des demos teleoperees par operateurs LogiSim (joystick ou VR), formatter en LeRobotDataset v0.4 (REFERENCES.md #27), entrainer une Diffusion Policy sur 3-5 SKU canoniques.
+   Collecter des demos teleoperees par operateurs LogiSim (joystick ou VR), formatter en LeRobotDataset v3.0 (lib LeRobot v0.5.1, REFERENCES.md #27), entrainer une Diffusion Policy sur 3-5 SKU canoniques.
 
 3. **Phase 3 — Conditioning textuel via Work Order + safety filter (3-4 semaines)**
    Ajouter le tokenizer de texte (CLIP ou T5) pour conditionner sur le Work Order. Implementer un safety filter classique qui wrap la sortie : reject si `Pcollision` > seuil + emission d'un event `FAULT` au schema canonique LogiSim. Garantir la traceabilite (chaque action emise est loggee avec son hash de checkpoint).
@@ -67,6 +67,6 @@ Les 5 phases attendues (tu peux affiner les titres mais respecter la progression
 ## Pour aller plus loin
 
 - Ajouter une **vue financiere** : combien de demos faut-il collecter (cout), combien d'heures GPU pour training, cout du pilote site.
-- Ajouter une **carte des decisions reversibles vs irreversibles** (ex : choisir LeRobot v0.4 = reversible ; signer un contrat pilote = peu reversible).
+- Ajouter une **carte des decisions reversibles vs irreversibles** (ex : choisir LeRobot v0.5.1 = reversible ; signer un contrat pilote = peu reversible).
 - Ajouter un schema Mermaid de l'architecture cible apres Phase 5 (Diffusion Policy + safety filter + planner classique fallback + OCC monitoring).
 - Aligner avec la roadmap industrielle reelle : Helix Logistics 2025 (REFERENCES.md #16) et TRI LBM (REFERENCES.md #18) pour la vision long-terme.

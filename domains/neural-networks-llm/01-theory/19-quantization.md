@@ -2,6 +2,8 @@
 
 > **Temps estime** : 5h | **Prerequis** : J2 (MLP, weights), J6 (transformer)
 
+> **[AVANCE — optionnel]** Module de frontiere (bloc J15-J22). Le core du domaine est J1-J14 ; cette lecon est un approfondissement, a faire apres avoir solidement maitrise le core.
+
 ---
 
 ## 1. Pourquoi quantizer
@@ -81,6 +83,8 @@ Pour les activations, on utilise **per-token** dynamique : a chaque forward pass
 
 ## 4. PTQ : GPTQ et AWQ
 
+> **Approfondissement (optionnel)** — detail algorithmique des deux methodes PTQ. Pour une premiere lecture, retiens juste : PTQ = quantizer sans re-entrainer, GPTQ et AWQ sont les deux standards. Reviens sur les details quand tu dois choisir/implementer concretement.
+
 **Post-Training Quantization (PTQ)** = quantizer un modele deja entraine, sans le re-entrainer. Beaucoup moins cher que QAT. Deux familles dominantes en 2024-2026.
 
 ### Calibration : pourquoi un dataset
@@ -158,6 +162,8 @@ LoRA par-dessus : on ne touche pas aux poids quantizes. On ajoute des adapters L
 
 ## 6. Outliers : pourquoi ils cassent INT8 naif
 
+> **Approfondissement (optionnel)** — section technique sur le phenomene des outliers d'activation. Idee a retenir au minimum : quelques dimensions a tres forte magnitude obligent a les traiter a part (mixed-precision). Le detail empirique peut attendre une 2e passe.
+
 Dettmers et al. (LLM.int8(), 2022) ont publie **la** decouverte clef : on observe empiriquement une **phase transition autour de 6.7B parametres** ou les modeles transformers developpent des **features outliers** systematiques — quelques dimensions d'activation (sur des milliers) avec des magnitudes 20-100x au-dessus de la moyenne. Ces dimensions sont **critiques** : les zeroer detruit le modele. Nuance importante : les modeles plus petits (<6.7B) ont aussi des outliers, juste moins systematiques et moins concentres sur les memes dimensions tout au long de la profondeur — le seuil 6.7B marque le moment ou ces outliers deviennent persistants couche par couche.
 
 Probleme avec INT8 naif : si une seule activation a magnitude 80 et les autres ~3, le scale = 80/127 = 0.63. Tous les ~3 sont mappes vers q = round(3/0.63) = 5, puis dequantize a 5*0.63 = 3.15. La precision relative sur 99.9% des activations est detruite.
@@ -189,6 +195,8 @@ Resultat : INT8 sur tout (poids + activations) sans degradation, kernel ultra-si
 ---
 
 ## 7. GGUF / k-quants : l'ecosysteme llama.cpp
+
+> **Approfondissement (optionnel)** — details d'un ecosysteme outillage (llama.cpp / GGUF). Utile en pratique pour servir des modeles locaux, mais non essentiel a la comprehension conceptuelle de la quantization. A garder sous la main comme reference.
 
 GGUF (successeur de GGML) = format de fichier de Georgi Gerganov pour `llama.cpp`. C'est le standard de la quantization grand-public (LM Studio, Ollama, Jan, Open WebUI). Tout le monde sert ses modeles locaux en GGUF.
 

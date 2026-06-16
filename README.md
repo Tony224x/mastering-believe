@@ -74,14 +74,14 @@ Le dossier `domains/<domain>/03-exercises/workspace/` est **ignore par git** : s
 
 ```bash
 # Exemple : faire le premier exercice d'algorithmie
-cat domains/algorithmie-python/03-exercises/01-easy/01-two-sum.md
+cat domains/algorithmie-python/03-exercises/01-easy/01-complexite-big-o.md
 # Coder la solution
-$EDITOR domains/algorithmie-python/03-exercises/workspace/01-easy/01-two-sum.py
+$EDITOR domains/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py
 # Executer
-python domains/algorithmie-python/03-exercises/workspace/01-easy/01-two-sum.py
+python domains/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py
 # Comparer avec la correction
-diff domains/algorithmie-python/03-exercises/workspace/01-easy/01-two-sum.py \
-     domains/algorithmie-python/03-exercises/solutions/01-two-sum.py
+diff domains/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py \
+     domains/algorithmie-python/03-exercises/solutions/01-complexite-big-o.py
 ```
 
 ## Installation
@@ -93,7 +93,7 @@ git clone <ce-repo>
 cd mastering-believe
 
 # Selon le domaine aborde :
-pip install torch                       # Neural Networks & LLMs
+pip install numpy                       # Neural Networks & LLMs (02-code en numpy ; torch seulement pour certains 05-projets-guides)
 pip install langgraph langchain         # Agentic AI
 # Algorithmie & System Design : stdlib seulement
 ```

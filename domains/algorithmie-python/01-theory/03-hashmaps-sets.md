@@ -50,9 +50,15 @@ Python utilise le **open addressing** (probing) et non le chainage :
 
 ```python
 # Python redimensionne le dict quand il est rempli a 2/3 (load factor = 0.66)
-# Le redimensionnement double (environ) la taille du tableau
+# Le redimensionnement multiplie la taille du tableau interne : en CPython,
+# x4 tant que le dict est petit (< 50 000 entrees), puis x2 au-dela.
 # C'est pourquoi insert est O(1) AMORTI : la plupart des inserts sont O(1),
-# mais de temps en temps un insert declenche un resize O(n)
+# mais de temps en temps un insert declenche un resize O(n).
+
+# /!\ Ne pas confondre avec la liste : une `list` Python sur-alloue de
+# facon beaucoup plus douce (~1.125x, cf module 01). Le dict, lui, multiplie
+# par 2 ou 4 — la croissance "geometrique" est ce qui garantit le O(1) amorti
+# dans les deux cas, mais le facteur n'est PAS le meme.
 
 # En pratique : ne JAMAIS mentionner le worst case O(n) en entretien
 # sauf si l'interviewer demande. Dire "O(1) lookup amorti" est suffisant.

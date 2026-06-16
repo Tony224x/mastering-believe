@@ -1,7 +1,7 @@
 # J1 — Vue d'ensemble robotique moderne + setup stack
 
 ## Pourquoi ce module
-La robotique 2026 vit deux mondes simultanés : la pile classique (modèles physiques + contrôleurs) et la vague IA générative (policies apprises bout-en-bout). Avant de coder quoi que ce soit, il faut une carte mentale du pipeline et un environnement de simulation qui tourne. Ce module pose les deux : on installe la stack `MuJoCo + Gymnasium + PyTorch` puis on fait tourner un premier env `HalfCheetah-v4` avec une policy aléatoire.
+La robotique 2026 vit deux mondes simultanés : la pile classique (modèles physiques + contrôleurs) et la vague IA générative (policies apprises bout-en-bout). Avant de coder quoi que ce soit, il faut une carte mentale du pipeline et un environnement de simulation qui tourne. Ce module pose les deux : on installe la stack `MuJoCo + Gymnasium + PyTorch` puis on fait tourner un premier env `HalfCheetah-v5` avec une policy aléatoire.
 
 ---
 
@@ -96,7 +96,7 @@ obs, reward, terminated, truncated, info = env.step(action)
 
 La distinction `terminated` vs `truncated` est cruciale pour le RL : on bootstrap la value function quand `truncated=True` mais pas quand `terminated=True`. Un bug courant pré-Gymnasium 1.0 était de confondre les deux.
 
-Pour `HalfCheetah-v4` : observation = 17 dims (pos + vel articulaires), action = 6 dims (couples normalisés [-1, 1]), reward = vitesse vers l'avant - coût énergétique.
+Pour `HalfCheetah-v5` : observation = 17 dims (pos + vel articulaires), action = 6 dims (couples normalisés [-1, 1]), reward = vitesse vers l'avant - coût énergétique.
 
 > **Key takeaway** — Le step renvoie 5 valeurs, pas 4. `terminated` et `truncated` sont distincts et le distinguo affecte les algos de RL [Gymnasium docs, Env API].
 
@@ -113,7 +113,7 @@ Sur Windows, MuJoCo 3.x s'installe via wheel `pip` sans configuration manuelle (
 
 ```python
 import gymnasium as gym
-env = gym.make("HalfCheetah-v4")
+env = gym.make("HalfCheetah-v5")
 obs, _ = env.reset(seed=0)
 for _ in range(100):
     obs, r, term, trunc, _ = env.step(env.action_space.sample())

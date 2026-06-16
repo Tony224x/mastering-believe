@@ -183,10 +183,9 @@ class BudgetExceeded(Exception):
 
 MODEL_PRICING: dict[str, tuple[float, float]] = {
     # price per 1K tokens (input, output) as of 2026 (example values)
-    "claude-opus-4-6": (0.015, 0.075),
     "claude-sonnet-4-6": (0.003, 0.015),
-    "gpt-5.4": (0.005, 0.015),
-    "gpt-5.4-mini": (0.0005, 0.0015),
+    "gpt-5.5": (0.005, 0.015),
+    "gpt-5.5-mini": (0.0005, 0.0015),
     "mock": (0.0001, 0.0003),
 }
 
@@ -292,7 +291,7 @@ def mock_primary_llm(prompt: str) -> tuple[str, dict]:
     """Reliable mock LLM -- a deterministic transformation."""
     out = f"[primary] processed: {prompt[:40]}..."
     meta = {"tokens_in": len(prompt) // 4, "tokens_out": 20, "cost_usd": 0.0}
-    meta["cost_usd"] = compute_cost("claude-opus-4-6", meta["tokens_in"], meta["tokens_out"])
+    meta["cost_usd"] = compute_cost("claude-sonnet-4-6", meta["tokens_in"], meta["tokens_out"])
     return out, meta
 
 
@@ -306,7 +305,7 @@ def make_flaky_llm(fail_n_times: int) -> Callable[[str], tuple[str, dict]]:
             raise TransientError("simulated 503")
         out = f"[flaky-ok] {prompt[:30]}..."
         meta = {"tokens_in": 20, "tokens_out": 15, "cost_usd": 0.0}
-        meta["cost_usd"] = compute_cost("gpt-5.4-mini", 20, 15)
+        meta["cost_usd"] = compute_cost("gpt-5.5-mini", 20, 15)
         return out, meta
 
     return flaky
@@ -315,7 +314,7 @@ def make_flaky_llm(fail_n_times: int) -> Callable[[str], tuple[str, dict]]:
 def mock_secondary_llm(prompt: str) -> tuple[str, dict]:
     out = f"[secondary] cheaper answer for: {prompt[:30]}..."
     meta = {"tokens_in": 15, "tokens_out": 12, "cost_usd": 0.0}
-    meta["cost_usd"] = compute_cost("gpt-5.4-mini", 15, 12)
+    meta["cost_usd"] = compute_cost("gpt-5.5-mini", 15, 12)
     return out, meta
 
 
@@ -345,7 +344,7 @@ class ProdAgent:
         return plan, {"tokens_in": 10, "tokens_out": 5, "cost_usd": 0.0}
 
     @traced("llm_step")
-    def llm_step(self, prompt: str, model: str = "claude-opus-4-6") -> tuple[str, dict]:
+    def llm_step(self, prompt: str, model: str = "claude-sonnet-4-6") -> tuple[str, dict]:
         out, meta = self.llm_chain(prompt)
         # Attribute cost to the budget
         self.budget.charge(model, meta["tokens_in"], meta["tokens_out"])

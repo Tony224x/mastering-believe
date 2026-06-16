@@ -17,6 +17,7 @@ Everything is in-memory, runnable without external dependencies.
 import time
 import uuid
 import random
+import hashlib
 from bisect import insort
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
@@ -110,7 +111,13 @@ class ShardedKVStore:
         self.shards: list[dict] = [{} for _ in range(num_shards)]
 
     def _shard_for(self, key: str) -> int:
-        return hash(key) % self.num_shards
+        # WHY hashlib and not the builtin hash()? hash() is salted per
+        # process (PYTHONHASHSEED) since Python 3.3, so the shard for a
+        # given key changes between runs -> non-reproducible distribution.
+        # A real sharded store needs a STABLE hash so a key always maps
+        # to the same shard. md5 is fine here (not security-sensitive).
+        digest = hashlib.md5(key.encode()).hexdigest()
+        return int(digest, 16) % self.num_shards
 
     def put(self, key: str, value: Any):
         self.shards[self._shard_for(key)][key] = value

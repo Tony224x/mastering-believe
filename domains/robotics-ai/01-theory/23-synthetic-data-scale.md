@@ -1,16 +1,23 @@
 # J23 — Synthetic data + sim-to-real à scale
 
+> **[AVANCÉ — optionnel]** Fin du bloc *frontier* (J17-J23), hors chemin critique. Skippable en parcours express (cf README, "Parcours express vs complet"). J24 reprend le chemin critique (capstone).
+
 > Durée d'étude : 45-60 min
 > Prérequis : J14 (sim-to-real, domain randomization), J18 (NVIDIA Cosmos), J19 (Open X-Embodiment), J20-J21 (VLA OpenVLA / π0).
 > Sources principales : REFERENCES.md #22 (NVIDIA Cosmos), #15 (GR00T N1 + data pipeline), #27 (LeRobotDataset format).
 
 ---
 
-## 1. Hook — pourquoi NVIDIA a fabriqué 780 000 trajectoires synthétiques pour GR00T N1
+## 1. Hook — comment NVIDIA démultiplie ses données pour GR00T N1
 
-Quand NVIDIA publie GR00T N1 en mars 2025 (REFERENCES.md #15), une ligne du papier saute aux yeux : le modèle est entraîné sur **88h de téléopération réelle** + **780 000 trajectoires synthétiques générées en simulation**. Le ratio est ~9 000:1 en faveur du synthétique. C'est l'inverse complet de l'idée naïve "le réel domine, la sim est un fallback".
+Quand NVIDIA publie GR00T N1 en mars 2025 (REFERENCES.md #15), le pari sur la donnée synthétique saute aux yeux. Mais attention aux chiffres : ils recouvrent **deux mécanismes distincts** qu'on lit souvent (à tort) comme un seul ratio géant.
 
-Pourquoi ce pari ? Parce que **collecter 1 démonstration réelle coûte ~5 minutes de téléopérateur humain** sur un robot Apptronik / 1X / Figure (mouvement bras + gripper, scène à filmer, étiquetage). À 100 demos/heure et un humanoïde par opérateur, atteindre 1 million de trajectoires demanderait 10 000 heures-humain — soit ~5 ans-personne à temps plein, sans compter le coût hardware. **En sim parallélisée sur 1 GPU node** (Isaac Lab + Cosmos), on génère 780 000 trajectoires variées (objets, lighting, distractors) en quelques jours.
+1. **Augmentation neurale (~10×)** : à partir de **88h de téléopération réelle** sur GR-1, un modèle vidéo (Cosmos) synthétise des variations → **~827h de trajectoires "neurales"**. C'est un facteur ~10, *pas* un facteur de plusieurs milliers.
+2. **Génération en simulation (Isaac Sim)** : séparément, le pipeline DexMimicGen produit de l'ordre de **780 000 trajectoires en ~11h de calcul GPU**. C'est un chiffre de *débit de simulation*, **à ne pas fusionner** avec le compte d'heures réelles/neurales en un ratio "sim:réel" de plusieurs milliers pour 1.
+
+La thèse tient sans gonfler les chiffres : c'est l'inverse de l'idée naïve "le réel domine, la sim est un fallback", mais le levier est **complémentaire** (augmentation neurale + simulation massive), pas un ratio unique.
+
+Pourquoi ce pari ? Parce que **collecter 1 démonstration réelle coûte ~5 minutes de téléopérateur humain** sur un robot Apptronik / 1X / Figure (mouvement bras + gripper, scène à filmer, étiquetage). À 100 demos/heure et un humanoïde par opérateur, atteindre 1 million de trajectoires demanderait 10 000 heures-humain — soit ~5 ans-personne à temps plein, sans compter le coût hardware. **En sim parallélisée sur 1 GPU node** (Isaac Lab / Isaac Sim), on génère des centaines de milliers de trajectoires variées (objets, lighting, distractors) en quelques heures à quelques jours.
 
 Le problème : **le reality gap reste**. Une policy entraînée 100% en sim s'effondre sur un robot réel. La recette industrielle 2025 mélange donc :
 1. **Beaucoup de synthétique** pour la couverture (skills, objets, scènes),
@@ -95,8 +102,9 @@ C'est le pipeline le plus documenté — autant prendre celui-là comme cas conc
         │    (Hugging Face)  │     (REFERENCES.md #27)
         └────────────────────┘
                   ▼
-              780k trajectoires augmentées synthétiques
+              ~827h de trajectoires neurales (≈10× les 88h réelles)
               + 88h réelles (gardées telles quelles)
+              [+ trajectoires Isaac Sim, pipeline séparé]
 ```
 
 ### 3.1 Étape critique : le retargeting
@@ -105,7 +113,7 @@ Une démo réelle est captée sur le robot A (ex. Fourier GR1, 32 DoF). Pour dé
 
 ### 3.2 Étape critique : le filtering
 
-Sans filtrage, ton dataset sera pollué par des trajectoires impossibles : la cinématique inverse a divergé, le bras passe à travers la table, le gripper ferme à vide. **GR00T N1 rejette ~30% de ses trajectoires** générées (chiffre du papier). Les filtres types :
+Sans filtrage, ton dataset sera pollué par des trajectoires impossibles : la cinématique inverse a divergé, le bras passe à travers la table, le gripper ferme à vide. les pipelines de ce type **rejettent typiquement 20-40% des trajectoires** générées. Les filtres types :
 
 - **Contact validity** : la pénétration objet-objet < 1cm pendant la trajectoire.
 - **Goal completion** : à la fin, l'état du monde matche bien le but (objet sur cible).
@@ -194,7 +202,7 @@ GR00T N1 et Helix l'utilisent comme **base réelle**, puis ajoutent leur propre 
 
 ## 6. LeRobotDataset v3.0 — le format standard 2026 (REFERENCES.md #27)
 
-Hugging Face `lerobot` (v0.4, 2025-2026) a standardisé le format pour les datasets robotique modernes. C'est le format **de fait** pour publier un dataset VLA en 2026.
+Hugging Face `lerobot` (v0.5.1, avr. 2026) a standardisé le format pour les datasets robotique modernes. C'est le format **de fait** pour publier un dataset VLA en 2026.
 
 ### 6.1 Layout disque
 
@@ -312,7 +320,7 @@ Synthetic data + sim-to-real à scale
 │  ├─ Replay multi-embodiment + DR
 │  ├─ Multi-camera rendering
 │  ├─ Cosmos relight (REFERENCES.md #22)
-│  ├─ Filtering 30% rejet
+│  ├─ Filtering 20-40% rejet
 │  └─ Export LeRobotDataset (REFERENCES.md #27)
 ├─ Augmentation 4 axes
 │  ├─ Background (anti-scene-overfit)
@@ -332,8 +340,8 @@ Synthetic data + sim-to-real à scale
 
 ## 10. Q&A spaced repetition
 
-**Q1.** Pourquoi 780k trajectoires synthétiques + seulement 88h réelles dans GR00T N1 ?
-**R.** Parce que collecter du réel coûte ~5 min de téléopération humaine par démo, donc 1M démos = 10 000 heures-humain inatteignable. Le synthétique parallélisé (Isaac Lab + Cosmos) génère le même volume en quelques jours-GPU. Le réel sert d'**ancre dynamique** ; le synthétique sert de **volume de couverture**.
+**Q1.** Pourquoi seulement 88h réelles dans GR00T N1, et qu'apporte la donnée synthétique par-dessus ?
+**R.** Parce que collecter du réel coûte ~5 min de téléopération humaine par démo, donc 1M démos = 10 000 heures-humain inatteignable. NVIDIA empile deux leviers complémentaires : (1) **augmentation neurale ~10×** des 88h réelles via Cosmos → ~827h de trajectoires neurales ; (2) **génération massive en simulation** (Isaac Sim, ~780k trajectoires en ~11h GPU, pipeline distinct). Le réel sert d'**ancre dynamique** ; le synthétique sert de **volume de couverture**. (Ne pas additionner les deux chiffres en un ratio sim:réel unique.)
 
 **Q2.** Qu'apporte Cosmos (REFERENCES.md #22) à un pipeline de génération synthétique par rapport à de la sim "classique" Isaac Lab ?
 **R.** Cosmos prend une démo simulée (visuellement "moche" mais physiquement correcte) et la **reskin** en photoreal (background swap, relighting) **tout en préservant les actions ground-truth**. Cela découple la **vérité physique** (sim) de la **vérité visuelle** (Cosmos), et multiplie arbitrairement la diversité visuelle sans modéliser de nouvelles scènes 3D.
@@ -356,7 +364,7 @@ Synthetic data + sim-to-real à scale
 
 - **#22** — NVIDIA (Balaji et al.), *"Cosmos World Foundation Model Platform for Physical AI"*, janvier 2025, https://arxiv.org/abs/2501.03575 ; code https://github.com/nvidia-cosmos. **Source principale pour la curation/augmentation vidéo.**
 - **#15** — NVIDIA Research, *"GR00T N1: An Open Foundation Model for Generalist Humanoid Robots"*, mars 2025, https://arxiv.org/abs/2503.14734 ; repo https://github.com/NVIDIA/Isaac-GR00T. **Source principale pour le pipeline 780k trajectoires.**
-- **#27** — Hugging Face, *"LeRobot v0.4 + LeRobotDataset v3.0"*, 2025-2026, https://huggingface.co/docs/lerobot/index. **Source principale pour le format dataset standard.**
+- **#27** — Hugging Face, *"LeRobot v0.5.1 (avr. 2026) + LeRobotDataset v3.0"*, https://huggingface.co/docs/lerobot/index. **Source principale pour le format dataset standard.**
 - **#16** — Figure AI, *"Helix Logistics"*, 2025, https://www.figure.ai/news/helix-logistics (mention fine-tune réel post-deploy).
 - **#11** — Berkeley CS285 Lecture 13 — Sergey Levine (sim-to-real, domain randomization).
 

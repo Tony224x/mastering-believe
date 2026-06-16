@@ -1,8 +1,8 @@
-# J11 — Exercice difficile : PPO continu sur HalfCheetah-v4
+# J11 — Exercice difficile : PPO continu sur HalfCheetah-v5
 
 ## Objectif
 
-Adapter le PPO discret du cours (`02-code/11-policy-gradients-ppo.py`) au cas **action continue** et le faire tourner sur **HalfCheetah-v4** (MuJoCo). Tu dois atteindre un retour moyen > 1500 en moins de 1M steps.
+Adapter le PPO discret du cours (`02-code/11-policy-gradients-ppo.py`) au cas **action continue** et le faire tourner sur **HalfCheetah-v5** (MuJoCo). Tu dois atteindre un retour moyen > 1500 en moins de 1M steps.
 
 ## Consigne
 
@@ -29,7 +29,7 @@ Adapter le PPO discret du cours (`02-code/11-policy-gradients-ppo.py`) au cas **
 ## Criteres de reussite
 
 - Le script tourne en moins de 30 minutes sur CPU 8 cores (ou GPU si dispo).
-- Le retour moyen depasse 1500 sur HalfCheetah-v4 a 1M steps.
+- Le retour moyen depasse 1500 sur HalfCheetah-v5 a 1M steps.
 - Le `clip_fraction` reste typiquement entre 0.1 et 0.3 — sinon le clip eps est trop large ou trop strict.
 - Le `approx_kl` reste sous 0.02 — sinon les updates sont trop violents.
 

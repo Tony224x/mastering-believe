@@ -35,12 +35,17 @@ from torch.utils.data import DataLoader, Dataset
 
 
 # ---------------------------------------------------------------------------
-# 1. Dataset jouet : sequences d'actions 2D conditionnees par etat 2D
+# 1. Dataset jouet BIMODAL : sequences d'actions 2D conditionnees par etat 2D
 # ---------------------------------------------------------------------------
 # On simule un "PushT simplifie" : etat = position courante (x, y), action =
-# une sequence de 8 increments (dx, dy) pour rejoindre une cible. Cela suffit
-# a illustrer la training loop ; la nature multimodale serait obtenue avec un
-# dataset plus riche, mais pour un script CPU rapide on reste minimaliste.
+# une sequence de `horizon` increments (dx, dy) pour rejoindre une cible.
+#
+# Point pedagogique CENTRAL : pour un meme etat, il existe DEUX chemins valides
+# vers la cible — un contournement par la GAUCHE et un par la DROITE. Le dataset
+# est donc *multimodal*. C'est precisement ce que la diffusion policy sait
+# modeliser et qu'un regresseur naif (BC/MSE) ne peut pas : ce dernier moyenne
+# les deux modes et produit un chemin median qui traverse l'obstacle implicite.
+# Un toy *unimodal* (chemin lineaire unique) n'illustrerait PAS cette these.
 
 
 class ToyTrajectoryDataset(Dataset):
@@ -50,13 +55,43 @@ class ToyTrajectoryDataset(Dataset):
         self.states = rng.uniform(-1.0, 1.0, size=(n_samples, 2)).astype(np.float32)
         # Cible aleatoire dans [-1, 1]^2.
         targets = rng.uniform(-1.0, 1.0, size=(n_samples, 2)).astype(np.float32)
-        # Sequence d'actions = chemin lineaire bruite vers la cible, decoupe en
-        # `horizon` increments. Resultat shape (N, horizon, 2).
-        deltas = (targets - self.states) / horizon  # (N, 2)
-        deltas = deltas[:, None, :].repeat(horizon, axis=1)  # (N, horizon, 2)
+
+        # Chemin de base = ligne droite etat -> cible, decoupee en `horizon`
+        # increments. Shape (N, horizon, 2).
+        base = (targets - self.states) / horizon  # (N, 2)
+        base = base[:, None, :].repeat(horizon, axis=1)  # (N, horizon, 2)
+
+        # Direction perpendiculaire (normale a etat->cible) le long de laquelle
+        # on courbe le chemin a gauche ou a droite. (dx, dy) -> (-dy, dx).
+        direction = targets - self.states  # (N, 2)
+        norm = np.linalg.norm(direction, axis=1, keepdims=True) + 1e-6
+        perp = np.stack([-direction[:, 1], direction[:, 0]], axis=1) / norm  # (N, 2)
+
+        # Profil de courbure en cloche (0 aux extremites, max au milieu) pour que
+        # les deux modes partent et arrivent au meme endroit, ne divergeant qu'en
+        # cours de route. Shape (horizon,).
+        s = np.linspace(0.0, 1.0, horizon, dtype=np.float32)
+        bell = np.sin(np.pi * s)  # (horizon,)
+
+        # Choix du mode par sample : +1 (gauche) ou -1 (droite), 50/50.
+        # MODE LATENT non observe -> ambiguite irreductible = multimodalite.
+        sign = rng.choice([-1.0, 1.0], size=(n_samples, 1)).astype(np.float32)
+        amp = 0.35  # amplitude du contournement
+        # Increments de courbure : on derive la cloche pour rester dans l'espace
+        # des increments (le cumul des increments reconstitue le deplacement en
+        # cloche). diff garde shape (horizon,) via prepend d'un 0.
+        bell_delta = np.diff(bell, prepend=0.0).astype(np.float32)  # (horizon,)
+        curve = (
+            sign[:, :, None]                       # (N, 1, 1)
+            * amp
+            * bell_delta[None, :, None]            # (1, horizon, 1)
+            * perp[:, None, :]                     # (N, 1, 2)
+        )  # (N, horizon, 2)
+
+        deltas = base + curve
         # Ajout d'un peu de bruit pour rendre la regression non triviale.
         deltas += rng.normal(0.0, 0.02, size=deltas.shape).astype(np.float32)
-        self.actions = deltas
+        self.actions = deltas.astype(np.float32)
 
     def __len__(self) -> int:
         return len(self.states)
@@ -209,6 +244,12 @@ def train(
     # Modele + EMA + scheduler de bruit.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = TinyDiffusionPolicy(action_dim=2, horizon=horizon, cond_dim=2).to(device)
+    # EMA decay : la theorie (J16, section 6) recommande 0.9999 en regime
+    # nominal. On reduit volontairement a 0.999 ICI parce que ce run est tres
+    # court (~1500 steps) : 0.9999 a une constante de temps ~10000 steps, donc
+    # le shadow bougerait a peine sur 1500 steps et l'EMA ne refleterait que
+    # l'init. 0.999 (constante ~1000 steps) suit le modele sur ce run jouet.
+    # Pour un vrai entrainement (>>100k steps), repasser a 0.9999.
     ema = EMA(model, decay=0.999, warmup=50)
     noise_sched = DDPMScheduler(num_steps=num_diffusion_steps)
 

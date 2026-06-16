@@ -27,7 +27,7 @@ def astar(zone: Grid, start: Point, goal: Point, allow_diagonal: bool = False) -
 Contraintes :
 - Tie-breaker deterministe (deux cases a meme f-score doivent etre traitees dans un ordre reproductible)
 - Pas de recursion (grilles jusqu'a 2000x2000)
-- Test sur `tests/` fourni
+- Valide ton implementation avec la suite de tests fournie (`tests/test_astar.py`, stdlib only)
 
 ## Etapes guidees
 
@@ -40,14 +40,16 @@ Contraintes :
 
 ## Criteres de reussite
 
-- Tous les tests de `tests/test_astar.py` passent
-- Sur `benchmarks/bench_large.py`, A* est au moins **5x plus rapide** que Dijkstra naif sur une grille 500x500
+- Tous les tests de `tests/test_astar.py` passent (`python tests/test_astar.py`)
+- Sur `benchmarks/bench_large.py` (grille 500x500 a couts varies), A* trouve **le meme cout optimal** que Dijkstra naif tout en **etendant moins de noeuds** et en etant plus rapide (compter ~2x sur ce terrain ; le gain depend fortement du type de grille — voir `solution/analyse.md`)
 - Les chemins sont **reproductibles** entre deux executions (pas de randomness)
 - Gere une grille sans solution en retournant `None` (pas d'exception)
 
+> **Piege a comprendre** : sur une grille *uniforme* parfaitement ouverte, l'heuristique Manhattan est exactement tendue et A* etend quand meme un losange complet — speedup proche de 1x. Le gros gain d'A* apparait sur les grilles a murs/couloirs ou a couts varies. La metrique honnete est le **nombre de noeuds etendus**, pas seulement le wall-clock.
+
 ## Solution
 
-Voir `solution/astar.py` pour la correction commentee ligne par ligne, et `solution/analyse.md` pour la discussion des choix (pourquoi pas Dijkstra bidirectionnel, pourquoi pas JPS, etc.).
+Voir `solution/astar.py` pour la correction commentee ligne par ligne, et `solution/analyse.md` pour la discussion des choix (complexite, determinisme, lecture honnete du benchmark, pourquoi pas Dijkstra bidirectionnel / JPS / HPA*).
 
 ## Pour aller plus loin
 

@@ -242,6 +242,29 @@ def lcs(s1, s2):
 # Time: O(m * n), Space: O(m * n)
 ```
 
+### Optimisation espace — rolling array O(min(m, n))
+
+`dp[i][j]` ne depend que de la ligne precedente (`i-1`) et de la ligne courante. On garde donc **deux lignes 1D** au lieu de toute la grille. Astuce : indexer sur la **plus courte** des deux chaines pour que la largeur soit `min(m, n)`, et lire la diagonale `dp[i-1][j-1]` (= `prev[j-1]`) **avant** de l'ecraser.
+
+```python
+def lcs_rolling(s1, s2):
+    a, b = (s1, s2) if len(s1) >= len(s2) else (s2, s1)  # b = la plus courte
+    n = len(b)
+    prev = [0] * (n + 1)
+    curr = [0] * (n + 1)
+    for i in range(1, len(a) + 1):
+        for j in range(1, n + 1):
+            if a[i - 1] == b[j - 1]:
+                curr[j] = prev[j - 1] + 1            # diagonale + 1
+            else:
+                curr[j] = max(prev[j], curr[j - 1])  # haut vs gauche
+        prev, curr = curr, prev                       # roll, pas de realloc
+    return prev[n]
+# Time: O(m * n), Space: O(min(m, n))
+```
+
+> **Limite** : cette version 1D donne la **longueur** de la LCS, pas la sous-sequence elle-meme. Reconstruire la chaine exige soit de garder la grille complete O(m*n), soit l'algorithme de Hirschberg (diviser-pour-regner, O(m*n) temps mais O(min(m,n)) espace). Le code executable est dans `02-code/10-dynamic-programming.py` (`lcs_rolling`, verifie egal a `lcs`).
+
 ### Variante — Edit Distance (Levenshtein)
 
 ```python

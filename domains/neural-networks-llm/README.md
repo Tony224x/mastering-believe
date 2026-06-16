@@ -4,6 +4,18 @@
 
 Comprendre les mecanismes internes des LLMs, du neurone unique jusqu'aux architectures SOTA. Objectif : pouvoir lire un paper ArXiv sur une nouvelle architecture, comprendre chaque choix, et reimplementer les blocs cles from scratch en Python/PyTorch.
 
+## Carte d'entree — par ou commencer
+
+**3 questions d'auto-diagnostic** (reponds avant de te lancer) :
+
+1. *Sais-tu deriver une backpropagation a la main sur un mini-reseau ?* Non → commence a **J1**. Oui → tu peux survoler J1-J2.
+2. *Peux-tu expliquer QKV + softmax scaling et coder une self-attention ?* Non → ton point d'entree reel est **J5-J6**. Oui → vise directement **J8+** (LLMs modernes).
+3. *Veux-tu juste les fondations solides, ou la frontiere 2026 (MoE, SSM, quantization, interpretabilite) ?* Fondations → **J1-J14 suffit**. Frontiere → enchaine sur le **bloc J15-J22 (avance, optionnel)**.
+
+**Prerequis minimaux** : Python courant, algebre lineaire de base (matrices, produit scalaire), notions de derivees/regle de la chaine. Pas besoin de GPU : tout le code `02-code/` tourne en CPU (numpy + stdlib).
+
+**Budget temps** : core **J1-J14 ≈ 75-80h** (≈ 3 semaines a temps partiel). Bloc frontiere **J15-J22 ≈ 38h** supplementaires (optionnel).
+
 ## Prerequisites
 
 - Python courant
@@ -11,6 +23,15 @@ Comprendre les mecanismes internes des LLMs, du neurone unique jusqu'aux archite
 - Notions de calcul differentiel (derivees, chaine)
 
 ## Planning (3 semaines)
+
+### Parcours express vs complet
+
+- **Parcours express (core, obligatoire)** : **J1-J14**. Du neurone au Transformer complet, puis LLMs modernes, fine-tuning/RLHF, inference, reasoning, et un capstone. C'est le coeur du domaine : il suffit a atteindre tous les criteres de reussite ci-dessous.
+- **Parcours complet (core + frontiere)** : J1-J14 **puis** le bloc **J15-J22 (avance, optionnel)** — MoE, SSM, long-context, quantization, distillation, interpretabilite, VLMs. A faire seulement apres avoir solidement digere le core, ou en piochant a la carte les sujets qui t'interessent.
+
+> **Navigation linéaire** : ne traite PAS J15-J22 comme la suite obligatoire de J14. Le domaine est *fini* a J14 ; le bloc 15-22 est une extension frontiere. Chaque module 15-22 porte le marqueur `[AVANCE — optionnel]` dans son en-tete.
+
+> **Note d'etat (honnete)** : les exercices `03-exercises/` (easy/medium/hard + solutions) ne couvrent pour l'instant que **J1-J3** au niveau medium/hard ; les modules **J4-J14** ont la theorie + le code mais une couverture d'exercices partielle, et **J15-J22 n'ont pas encore d'exercices** (extension prevue). La theorie et le code de tous les modules sont, eux, complets.
 
 ### Semaine 1 — Des fondations aux Transformers
 
@@ -36,7 +57,9 @@ Comprendre les mecanismes internes des LLMs, du neurone unique jusqu'aux archite
 | J13 | Emergent abilities & reasoning | Chain-of-thought, in-context learning, pourquoi ca emerge, scaling hypothesis | 5h |
 | J14 | **Capstone** | Lire et decortiquer un paper recent + reimplementer le composant cle | 6h |
 
-### Semaine 3 (optionnelle) — Frontiere NN 2026
+### Semaine 3 — Frontiere NN 2026 — **[AVANCE — optionnel]**
+
+> Bloc **J15-J22 : avance et optionnel**. Hors du parcours core (J1-J14). A aborder une fois le core maitrise, ou a la carte. Pas d'exercices a ce stade.
 
 Cette semaine reste **strictement sur les reseaux de neurones** : architectures, training, mecanique interne. Pas d'agentique, pas de RAG, pas de serving — ces sujets sont couverts dans les domaines `agentic-ai` et `system-design`. Ici on creuse les blocs neuronaux qui definissent l'etat de l'art en 2026. Chaque lecon a son code standalone runnable sans GPU.
 

@@ -1,5 +1,17 @@
 # Algorithmie & Data Structures — Live Coding Python
 
+> ### Carte d'entree — "Peux-tu commencer ?"
+>
+> Reponds honnetement a ces 3 questions avant de te lancer :
+>
+> 1. **Peux-tu lire et ecrire une fonction Python avec boucles, conditions et une `list`/`dict` sans chercher la syntaxe ?** (sinon : revois les bases de Python d'abord)
+> 2. **Sais-tu ce que veut dire O(n) vs O(n^2) intuitivement** (« deux boucles imbriquees = plus lent ») ? (sinon : pas grave, le module 01 part de zero la-dessus)
+> 3. **As-tu un objectif concret** — entretien tech, competition, ou solidifier tes fondations ? (ca determine ton parcours, voir ci-dessous)
+>
+> **Prerequis reels** : Python courant (fonctions, classes simples, list/dict comprehensions). Aucune connaissance algo prealable requise — le module 01 reprend la complexite depuis le debut.
+>
+> **Temps** : ~3-4h par module. Parcours complet ~45h sur 2 semaines (planning ci-dessous), ou etale a ton rythme. Un module seul = une session de 3h autonome.
+
 ## Scope
 
 Maitriser les structures de donnees et algorithmes necessaires pour exceller en live coding (entretiens tech, competitions). Objectif : resoudre un probleme medium LeetCode en < 15 min, un hard en < 30 min, en Python, avec une complexite optimale et un code propre.
@@ -34,6 +46,18 @@ Maitriser les structures de donnees et algorithmes necessaires pour exceller en 
 | J12 | Backtracking & Recursion | Permutations, combinations, constraint satisfaction | 3h |
 | J13 | Bit manipulation, Heaps, Tries | Techniques de niche a haut rendement | 3h |
 | J14 | **Mock interviews** | 3 sessions chronometrees format FAANG (45 min chacune) | 4h |
+
+## Parcours express vs complet
+
+Tu n'as pas toujours 2 semaines. Voici comment prioriser selon ton temps :
+
+| Parcours | Modules | Pour qui |
+|----------|---------|----------|
+| **Express (~5 modules core)** | 01 Complexite · 02 Arrays/Strings · 03 Hash Maps · 08 Trees · 10 DP | Tu as peu de temps avant un entretien, ou tu veux le **20% qui couvre 80%** des questions. Ces 5 patterns reviennent dans la grande majorite des problemes medium. |
+| **Solide (+4 modules)** | + 04 Stacks/Queues · 05 Linked Lists · 06 Sorting/Searching · 09 Graphs | Tu vises des entretiens FAANG/scale-up serieusement : il te faut aussi BFS/DFS, binary search et les graphes. |
+| **Complet (14 modules)** | Tout, dans l'ordre | Maitrise complete, competition, ou tu construis une vraie memoire musculaire. Les modules 11-13 (DP avance, backtracking, bit/heap/trie) sont les patterns de niche a haut rendement ; le 14 est la mise en situation finale. |
+
+> **Regle simple** : commence toujours par 01 (la complexite est le langage commun de tous les autres modules), puis fais 02-03 (les structures les plus utilisees), puis branche-toi sur 08 et 10 si le temps presse. Les modules de patterns avances supposent les fondations en place.
 
 ## Structure du contenu
 

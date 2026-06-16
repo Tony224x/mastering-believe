@@ -151,6 +151,8 @@ Ce que tu ferais si tu avais plus de temps. Ca montre que tu as une vision produ
 - Probleme : besoin d'un compteur global, single point of failure.
 - Solution : range allocation. Chaque serveur reserve un batch (ex : 100K ids) et les consomme localement.
 
+> **Pourquoi compteur + range allocation > hash MD5 a l'echelle (birthday paradox)** : on cree ici 18B URLs/an (50M/jour * 365). Le birthday paradox dit que la probabilite de collision devient non negligeable bien avant d'epuiser l'espace : sur N codes possibles, on attend une premiere collision apres ~`sqrt(N)` tirages. Avec 62^7 ≈ 3.5e12, `sqrt(N)` ≈ 1.9M codes — soit moins d'une journee de trafic. Le hash MD5→base62 force donc des collisions frequentes a gerer (verif + retry avec salt), ce qui ajoute une lecture KV par ecriture. Le compteur + range allocation garantit l'unicite par construction (zero collision), sans round-trip de verification : c'est le choix prefere a cette echelle.
+
 **Schema de table** (Cassandra) :
 ```
 urls (short_code PRIMARY KEY, long_url, created_by, created_at, expires_at)

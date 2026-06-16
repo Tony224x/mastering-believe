@@ -11,7 +11,7 @@
   - Pile complète robotique : capteurs → perception → planning → contrôle → actuation
   - Deux ères : classique (Khatib/Tedrake/Abbeel) vs IA générative (Finn/Levine/Chi)
   - Pourquoi MuJoCo+Gymnasium+PyTorch est le stack 2026 dominant
-  - Premier env MuJoCo qui tourne (HalfCheetah-v4 ou Pendulum)
+  - Premier env MuJoCo qui tourne (HalfCheetah-v5 ou Pendulum)
   - Anatomie d'un step Gymnasium (`reset`, `step`, observation, reward, terminated, truncated)
 - **Acquis fin de jour** : MuJoCo+Gymnasium installés, premier env qui tourne avec policy random, vision globale du domaine.
 - **Sources autorisées** :

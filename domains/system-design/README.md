@@ -4,11 +4,41 @@
 
 Concevoir des architectures scalables, maintenables et production-ready pour des systemes backend et IA. Couvre le system design classique (entretiens senior/staff) ET les patterns specifiques aux systemes ML/IA en production.
 
+## Carte d'entree
+
+> **Peux-tu commencer ?** Reponds a ces 3 questions :
+> 1. **Sais-tu ce qu'est une API REST et une base de donnees relationnelle ?** (tu as deja ecrit un endpoint qui lit/ecrit en DB)
+> 2. **As-tu deja deploye quelque chose ?** (un container, une VM, un service cloud — meme un simple `docker run`)
+> 3. **Sais-tu, en une phrase, ce qu'est un modele ML et une inference ?** (un modele entraine qui produit une prediction)
+>
+> - **3 oui** → tu es pret pour le parcours complet (S1 + S2).
+> - **Oui aux questions 1-2, non a la 3** → fais la Semaine 1 (parcours generaliste), la Semaine 2 viendra apres une remise a niveau IA.
+> - **Non a 1 ou 2** → commence par consolider les bases backend/cloud avant ce domaine.
+>
+> **Prerequis** : backend (REST + SQL), notions cloud (containers/deploiement), et pour la S2 seulement, des bases ML.
+> **Temps** : ~3h par module. Parcours express ≈ 12-15h, parcours complet ≈ 40-45h (voir ci-dessous).
+
 ## Prerequisites
 
 - Experience backend (API REST, bases de donnees relationnelles)
 - Notions de cloud (containers, deploiement)
-- Bases ML/IA (savoir ce qu'est un modele, une inference)
+- Bases ML/IA (savoir ce qu'est un modele, une inference) — **uniquement pour la Semaine 2**
+
+## Deux parcours : express vs complet
+
+Ce domaine a un **double palier** : la Semaine 1 (fondations system design, autonome) et la Semaine 2 (architecture IA, qui s'appuie sur la S1). Selon ton objectif, suis l'un des deux parcours.
+
+| | **Parcours generaliste** (Semaine 1) | **Parcours IA avancee** (Semaine 1 + 2) |
+|---|---|---|
+| **Pour qui** | Entretien backend/infra, fondations solides | Entretien ML/IA senior-staff, plateformes ML en prod |
+| **Modules** | J1 → J7 | J1 → J14 |
+| **Charniere** | termine au capstone classique (J7) | le **module J8 est le pont** vers l'IA |
+| **Temps** | ~21h (7 modules x 3h) | ~43h (14 modules) |
+| **Sortie** | designer URL shortener / Twitter / chat en 45 min | + designer RAG + agents production-ready |
+
+> **Parcours express (12-15h, revision avant entretien)** : J1 (principes) → J2 (storage) → J3 (caching) → J5 (load balancing) → J7 (designs classiques). On saute J4/J6 en premiere passe et on les recupere via les exercices. Objectif : couvrir le 20% le plus interroge en entretien.
+
+> **Le module J8 est le maillon S1↔S2.** Si tu enchaines vers l'IA, ne saute pas J8 : il traduit le vocabulaire et les patterns de la Semaine 1 vers le monde ML (feature store = DB + cache, retraining = message queue, serving = LB + API). Il pose aussi les 5 termes-cles de la S2 (embedding, inference, feature, drift, point-in-time correctness).
 
 ## Planning (2 semaines)
 

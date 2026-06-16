@@ -2,6 +2,16 @@
 
 > **Temps estime** : 60 min de lecture active | **Objectif** : maitriser les arbres binaires et les BST, les 3 parcours DFS et le BFS par niveaux, et 5 patterns recurrents en entretien
 
+> ### Pont — avant de plonger
+>
+> Ce module est dense : il introduit le **raisonnement recursif sur structure** apres 7 modules surtout iteratifs. Quelques reperes pour ne pas decrocher :
+>
+> - **Prerequis** : etre a l'aise avec la **recursion** (une fonction qui s'appelle elle-meme, un cas de base, un cas recursif). Si c'est flou, le module 12 (Backtracking & Recursion) detaille le mecanisme — mais tu peux survivre ici avec l'intuition « je traite le noeud, je delegue ses sous-arbres a un appel recursif ».
+> - **Le lien avec ce que tu connais deja** : un arbre n'est qu'une **liste chainee qui se ramifie** (un noeud = une valeur + des pointeurs, comme au module 05, mais 2 pointeurs au lieu d'1). Et le **DFS recursif utilise implicitement une pile** d'appels — la meme pile que tu manipulais explicitement au module 04. BFS, lui, utilise une **file** (module 04 aussi). Tu ne pars donc pas de zero.
+> - **Core vs avance** : sections **2 a 6** (TreeNode, DFS, BFS, calculs recursifs, BST) sont le **cœur indispensable** — si tu maitrises DFS + BFS, tu resous la majorite des mediums. Les sections au-dela — **7 (LCA)** et **8 (serialize/deserialize)** — sont **importantes mais secondaires** : reviens-y dans un second passage si le temps presse.
+>
+> **Strategie de lecture** : lis 2-6 lentement et code chaque parcours toi-meme ; survole 7-8 une premiere fois, approfondis au second passage.
+
 ---
 
 ## 1. Pourquoi les arbres sont incontournables
