@@ -113,9 +113,9 @@ Voie manuelle :
 
 Code examples are standalone scripts — run them directly (Python 3.11+ recommande):
 - **Python**: `python domains/<domain>/02-code/<file>.py`
-- **PyTorch**: `python domains/neural-networks-llm/02-code/<file>.py` (requires `torch`)
+- **Neural Networks & LLMs**: `python domains/neural-networks-llm/02-code/<file>.py` (les `02-code/` sont en **numpy** + stdlib, pas de torch ; `torch` n'est requis que pour certains `05-projets-guides/`)
 - **LangGraph**: `python domains/agentic-ai/02-code/<file>.py` (requires `langgraph`, `langchain` — mocks LLM fournis, pas de cle API obligatoire)
-- **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (requires `"gymnasium[mujoco]"`, `mujoco`, `torch`, `imageio` selon le module ; headless : `MUJOCO_GL=osmesa`)
+- **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (deps **selon le module** : `numpy` partout, `torch` + `gymnasium` pour les modules RL/learning — classic-control `CartPole`/`Pendulum` + `PushT`, `matplotlib`/`scipy` ponctuels ; `mujoco` est **optionnel**, utilise seulement par quelques modules — voir l'entete `# requires:` de chaque fichier ; headless mujoco : `MUJOCO_GL=osmesa`)
 - Algorithmie & System Design : stdlib seulement
 - Pas de suite de tests ni de linter au niveau repo — verifier un exemple = le lancer
 
