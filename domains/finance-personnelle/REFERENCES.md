@@ -2,6 +2,8 @@
 
 > Sources tier-1 verifiees, groupees par module. Toutes verifiees via recherche web (titre, auteur/organisme, annee, URL) en juin 2026.
 >
+> **Cursus etendu J1-J14** : les sources des modules ajoutes (bases de l'investissement, fiscalite/enveloppes, assurance, immobilier vs location, revenus & negociation, actifs numeriques/robo-advisors) sont detaillees dans `shared/track-vie/finance-personnelle-j14-sources.md`. Chaque module porte aussi ses sources dans sa section *« Pour aller plus loin »*.
+>
 > **Rappel** : ce contenu est educatif, pas un conseil financier personnalise. Les performances passees ne prejugent pas des performances futures.
 
 ---

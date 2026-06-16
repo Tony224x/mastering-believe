@@ -2,6 +2,8 @@
 
 > Sources tier-1 verifiees, classees par module.
 > Toutes les URLs ont ete controlees lors de la constitution du dossier de recherche (`shared/track-vie/`).
+>
+> **Cursus etendu J1-J14** : les sources des modules ajoutes (non-verbal & voix, feedback, prise de parole, ecrit pro & async, conversations difficiles, influence/facilitation, communiquer a l'ere de l'IA) sont detaillees dans `shared/track-vie/communication-persuasion-j14-sources.md`. Chaque module porte aussi ses sources dans sa section *« Pour aller plus loin »*.
 
 ---
 

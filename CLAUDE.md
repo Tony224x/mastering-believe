@@ -109,7 +109,7 @@ Voie manuelle :
 
 ## Domaines actifs (Track Vie — l'ecole de la vie)
 
-Ces domaines elargissent le repo au-dela de la tech : memes conventions, meme structure, mais **sans code ou a code leger** (capstone = livrable portfolio : plan, dossier, essai, oeuvre). Chacun a ete construit a partir de **dossiers de recherche tier-1 verifies** (`shared/track-vie/<slug>-references.md` + `-curricula-evidence.md`) avec une **posture anti-clivant** explicite (poser la donnee, exemples neutres, disclaimers, honnetete sur la preuve). Format : 6 modules + capstone (~45 min/module) ; **`rationalite-decision` et `apprendre-a-apprendre` sont passes en cursus complet J1-J14** (14 modules), les autres suivront par lots via le skill `mastering-domain-creator`.
+Ces domaines elargissent le repo au-dela de la tech : memes conventions, meme structure, mais **sans code ou a code leger** (capstone = livrable portfolio : plan, dossier, essai, oeuvre). Chacun a ete construit a partir de **dossiers de recherche tier-1 verifies** (`shared/track-vie/<slug>-references.md` + `-curricula-evidence.md`) avec une **posture anti-clivant** explicite (poser la donnee, exemples neutres, disclaimers, honnetete sur la preuve). Format : 6 modules + capstone (~45 min/module) ; **`rationalite-decision`, `apprendre-a-apprendre`, `finance-personnelle` et `communication-persuasion` sont passes en cursus complet J1-J14** (14 modules ; dossiers d'extension `shared/track-vie/<slug>-j14-sources.md`), les autres suivront par lots via le skill `mastering-domain-creator`.
 
 | Domaine | Folder | Pilier | Focus | Garde-fou |
 |---------|--------|--------|-------|-----------|
