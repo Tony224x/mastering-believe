@@ -232,11 +232,11 @@ Aujourd'hui tu vas faire **3 mocks complets** (easy, medium, hard). Pour chacun 
 
 ## 8bis. Entretiens tech en 2026 : l'impact des LLM
 
-Depuis 2024, la majorite des FAANG et des scale-ups utilisent une de ces postures :
+Depuis 2024, les pratiques varient fortement d'une boite a l'autre — et **changent vite** : ne considere aucune politique comme figee, verifie toujours la consigne donnee par ton recruteur avant l'entretien. On observe grosso modo trois postures :
 
-1. **LLM interdit** (Meta, Google onsite) : live coding sans assistance, tu dois vraiment savoir coder
-2. **LLM autorise, evalue sur le thinking** (Anthropic, OpenAI) : tu as acces a Claude/ChatGPT, l'entretien evalue ta capacite a critiquer, debugger, et diriger l'IA — pas a copier-coller
-3. **Take-home + review en live** : tu codes chez toi (LLM ok), tu defends tes choix en live
+1. **LLM interdit** : live coding sans assistance, tu dois vraiment savoir coder. C'est encore la posture la plus repandue pour les rounds algorithmiques classiques.
+2. **LLM autorise, evalue sur le thinking** : certaines equipes autorisent un assistant (Claude/ChatGPT) et evaluent ta capacite a critiquer, debugger et diriger l'IA — pas a copier-coller. Cette approche se developpe, mais reste loin d'etre universelle, y compris chez les labos d'IA eux-memes.
+3. **Take-home + review en live** : tu codes chez toi (souvent LLM ok), puis tu defends tes choix en live.
 
 **Consequences pour ta preparation** :
 - **Entraine-toi SANS IA pour les mocks** : tu dois avoir les patterns en memoire musculaire, sinon tu es handicape si le LLM est interdit
