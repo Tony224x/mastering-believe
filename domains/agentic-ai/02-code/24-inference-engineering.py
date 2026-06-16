@@ -94,7 +94,9 @@ def validate_json(raw: str, schema: dict) -> tuple[bool, dict | None, str]:
         expected_type = spec.get("type")
         if expected_type == "string" and not isinstance(value, str):
             return False, None, f"field '{key}' must be a string"
-        if expected_type == "integer" and not isinstance(value, int):
+        # bool is a subclass of int in Python: reject True/False for integer fields
+        # so a "schema-valid" tool call cannot smuggle a boolean into an int slot.
+        if expected_type == "integer" and (isinstance(value, bool) or not isinstance(value, int)):
             return False, None, f"field '{key}' must be an integer"
         if "enum" in spec and value not in spec["enum"]:
             return False, None, f"field '{key}'={value!r} not in enum {spec['enum']}"

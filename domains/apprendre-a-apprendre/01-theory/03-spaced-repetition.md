@@ -161,4 +161,4 @@ Le moment optimal : juste *avant* d'oublier. En pratique, en debut de session d'
 - Anki (open-source SRS) : https://apps.ankiweb.net/
 - Code : `02-code/03-spaced-repetition.py` — implemention SM-2 stdlib pur
 
-**Module precedent :** [02 — Retrieval practice](02-retrieval-practice.md) | **Prochain module :** 04 — Difficultes desirables (Agent B)
+**Module precedent :** [02 — Retrieval practice](02-retrieval-practice.md) | **Prochain module :** [04 — Difficultes desirables](04-difficultes-desirables.md)

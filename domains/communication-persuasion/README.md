@@ -93,13 +93,9 @@ communication-persuasion/
 │   ├── 05-principes-persuasion.md
 │   ├── 06-negociation.md
 │   └── 07-capstone-convaincre-honnetement.md
-└── 03-exercises/
-    ├── 01-easy/
-    │   ├── 01-fondations-ethique.md
-    │   ├── 02-ecouter-dabord.md
-    │   └── 03-clarte-ecriture.md
-    └── solutions/
-        ├── 01-fondations-ethique.md
-        ├── 02-ecouter-dabord.md
-        └── 03-clarte-ecriture.md
+├── 03-exercises/
+│   ├── 01-easy/          # 01..07 (un fichier d'exercices par module)
+│   └── solutions/        # 01..07 (corriges modeles)
+└── 04-projects/
+    └── README.md         # gabarit portfolio du capstone
 ```

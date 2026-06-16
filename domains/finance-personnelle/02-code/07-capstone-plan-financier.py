@@ -263,8 +263,10 @@ def afficher_plan(budget: dict, fonds: dict, allocation: dict,
     print(f"  {'-'*10} {'-'*13} {'-'*13} {'-'*12} {'-'*12}")
 
     for p in projection:
-        jalon_fi_partielle = "← 10× dépenses (IF partielle)" if abs(p['multiple_depenses'] - 10) < 0.8 else ""
-        jalon_fi_totale = "← 25× dépenses (IF totale)" if abs(p['multiple_depenses'] - 25) < 1.5 else ""
+        # Tag seulement quand le seuil est REELLEMENT atteint (>= 10× / >= 25×),
+        # pas dans une bande symetrique qui labelliserait une ligne sous le seuil.
+        jalon_fi_partielle = "← 10× dépenses (IF partielle)" if 0 <= p['multiple_depenses'] - 10 < 1.5 else ""
+        jalon_fi_totale = "← 25× dépenses (IF totale)" if 0 <= p['multiple_depenses'] - 25 < 2.5 else ""
         jalon = jalon_fi_partielle or jalon_fi_totale
         print(
             f"  {p['annees']:<3} ans    "

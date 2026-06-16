@@ -63,15 +63,16 @@ def capital_final(
     total = capital_initial * facteur
 
     # Contribution des versements reguliers (si present)
-    if versement_mensuel > 0 and r > 0:
-        # Convertir le versement mensuel en versement par periode
-        # (si n != 12, on recalcule la periode correspondante)
-        # Ici on suppose versements MENSUELS, capitalisation mensuelle ou autre.
-        # Pour simplifier et rester exact : on force n=12 pour les versements.
+    if versement_mensuel > 0:
         n_v = 12  # versements mensuels
-        facteur_v = (1 + r / n_v) ** (n_v * t)
-        # Valeur future d'une annuite ordinaire
-        total += versement_mensuel * ((facteur_v - 1) / (r / n_v))
+        if r > 0:
+            # Valeur future d'une annuite ordinaire (formule fermee).
+            facteur_v = (1 + r / n_v) ** (n_v * t)
+            total += versement_mensuel * ((facteur_v - 1) / (r / n_v))
+        else:
+            # Cas limite r == 0 : pas d'interets, on additionne simplement les
+            # versements (sinon la formule ci-dessus divise par zero / serait ignoree).
+            total += versement_mensuel * n_v * t
 
     return total
 

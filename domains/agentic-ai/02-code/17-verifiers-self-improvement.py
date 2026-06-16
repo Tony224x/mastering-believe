@@ -622,21 +622,21 @@ if __name__ == "__main__":
 
     print("\n  === Run 1 (no prior lessons) ===")
     r1 = agent.run(targets)
-    print(f"  Lessons loaded  : {r1['n_lessons_loaded'] - len(targets)}")  # before save
+    print(f"  Lessons en store (apres run) : {r1['n_lessons_loaded']}")
     print(f"  Mean WITHOUT    : {r1['mean_score_without_lessons']:.4f}")
     print(f"  Mean WITH       : {r1['mean_score_with_lessons']:.4f}")
     print(f"  Delta           : {r1['improvement_delta']:+.4f}")
 
     print("\n  === Run 2 (lessons from Run 1 loaded) ===")
     r2 = agent.run(targets)
-    print(f"  Lessons loaded  : {r2['n_lessons_loaded'] - len(targets)}")
+    print(f"  Lessons en store (apres run) : {r2['n_lessons_loaded']}")
     print(f"  Mean WITHOUT    : {r2['mean_score_without_lessons']:.4f}")
     print(f"  Mean WITH       : {r2['mean_score_with_lessons']:.4f}")
     print(f"  Delta           : {r2['improvement_delta']:+.4f}")
 
     print("\n  === Run 3 (lessons from Run 1+2 loaded) ===")
     r3 = agent.run(targets)
-    print(f"  Lessons loaded  : {r3['n_lessons_loaded'] - len(targets)}")
+    print(f"  Lessons en store (apres run) : {r3['n_lessons_loaded']}")
     print(f"  Mean WITHOUT    : {r3['mean_score_without_lessons']:.4f}")
     print(f"  Mean WITH       : {r3['mean_score_with_lessons']:.4f}")
     print(f"  Delta           : {r3['improvement_delta']:+.4f}")

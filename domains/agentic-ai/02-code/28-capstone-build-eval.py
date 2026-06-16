@@ -252,6 +252,8 @@ def regression_report(baseline: dict, candidate: dict) -> str:
     print(f"{'case':<16}{'base p^k':>10}{'cand p^k':>10}{'delta':>9}  flags")
     print("-" * 60)
     for cid in sorted(b):
+        if cid not in c:
+            continue  # case absent from the candidate suite -> skip, don't KeyError
         delta = c[cid].pass_k - b[cid].pass_k
         flag = ""
         if "golden" in b[cid].tags and delta <= -0.10:

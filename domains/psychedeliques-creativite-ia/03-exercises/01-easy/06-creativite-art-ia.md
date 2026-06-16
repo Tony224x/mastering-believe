@@ -1,7 +1,7 @@
 # Exercices — Module 06 : Creativite, art & IA
 
-> **⚠️ Disclaimer medical** — Contenu strictement educatif et culturel. N'encourage ni ne recommande la consommation d'aucune substance ; ne remplace pas un avis medical.
-> **⚠️ Disclaimer legal** — En France, la psilocybine est classee stupefiant depuis 1990. La recherche encadree n'est pas une legalisation. Ces exercices n'incitent a aucun acte illegal.
+> **⚠️ Disclaimer medical** — Contenu strictement educatif et culturel. N'encourage ni ne recommande la consommation d'aucune substance ; ne remplace pas un avis medical. La psilocybine est un objet de recherche clinique sous protocole controle avec screening strict, pas une pratique d'auto-experimentation.
+> **⚠️ Disclaimer legal** — En France, la psilocybine est classee stupefiant depuis 1990 (possession/culture/cession/usage interdits et sanctionnes) ; statut analogue dans la plupart des pays. La recherche encadree n'est pas une legalisation. Ce domaine n'incite a aucun acte illegal et n'en facilite aucun.
 
 > Ces exercices se font **sobre, a froid, avec des outils legaux**. Aucun ne simule, ne decrit ni n'encourage un usage de substance.
 

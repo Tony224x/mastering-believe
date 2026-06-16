@@ -56,7 +56,7 @@
 
 ---
 
-## Module 04 — Difficultes desirables (Agent B)
+## Module 04 — Difficultes desirables
 
 **Making Things Hard on Yourself, But in a Good Way** — Bjork, E. L., & Bjork, R. A., 2011. In *Psychology and the Real World*. https://bjorklab.psych.ucla.edu/wp-content/uploads/sites/13/2016/04/EBjork_RBjork_2011.pdf  
 *Cadre theorique des "difficultes desirables" : varier, entrelacer, espacer, se tester.*
@@ -68,7 +68,7 @@
 
 ---
 
-## Module 05 — Attention & deep work (Agent B)
+## Module 05 — Attention & deep work
 
 **Deep Work: Rules for Focused Success in a Distracted World** — Newport, C., 2016. Grand Central Publishing. https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/
 
@@ -80,7 +80,7 @@
 
 ---
 
-## Module 06 — Pratique deliberee & metacognition (Agent B)
+## Module 06 — Pratique deliberee & metacognition
 
 **Peak: Secrets from the New Science of Expertise** — Ericsson, K. A., & Pool, R., 2016. Houghton Mifflin Harcourt. https://en.wikipedia.org/wiki/Peak:_Secrets_from_the_New_Science_of_Expertise  
 *Synthese de 30 ans de recherche sur la pratique deliberee. Corrige la sur-simplification "10 000 heures" de Gladwell.*
@@ -92,7 +92,7 @@
 
 ---
 
-## Module 07 — Capstone : apprendre avec l'IA (Agent B)
+## Module 07 — Capstone : apprendre avec l'IA
 
 **The 2 Sigma Problem** — Bloom, B. S., 1984. *Educational Researcher*, 13(6), 4–16. https://journals.sagepub.com/doi/10.3102/0013189X013006004 | PDF : https://gwern.net/doc/psychology/1984-bloom.pdf  
 *Le tutorat 1-1 avec mastery learning fait gagner ~2 ecarts-types vs classe. Nuance : l'effet tient en grande partie au standard de maitrise eleve (90%), pas seulement au tutorat. Boussole pour utiliser un LLM comme tuteur socratique.*

@@ -213,7 +213,16 @@ class DurableEngine:
         The caller (or an external system) must call `resume()` to continue.
         Returns the edits applied during the pause (empty on first interrupt).
         """
-        self.log.append(self.HITL_INTERRUPTED, {"question": question, "context": context})
+        # Idempotent on replay: when the workflow re-runs from the top after a
+        # resume, this interrupt is already in the log -- don't append it again
+        # (re-appending would place HITL_INTERRUPTED after its own HITL_RESUMED
+        # and break the "read the log in order to reconstruct state" invariant).
+        already = any(
+            r["event"] == self.HITL_INTERRUPTED and r["payload"].get("question") == question
+            for r in self.log.read_all()
+        )
+        if not already:
+            self.log.append(self.HITL_INTERRUPTED, {"question": question, "context": context})
         print(f"\n  [HITL] INTERRUPTED -- waiting for human decision")
         print(f"         Question : {question}")
         print(f"         Context  : {context}")
@@ -235,8 +244,15 @@ class DurableEngine:
     # -----------------------------------------------------------------------
 
     def start_workflow(self, workflow_id: str) -> None:
-        """Log that a new workflow execution has started."""
-        self.log.append(self.WORKFLOW_STARTED, {"workflow_id": workflow_id})
+        """Log that a new workflow execution has started (idempotent on replay)."""
+        # On resume the workflow re-runs from the top; only one WORKFLOW_STARTED
+        # should ever exist per workflow_id, so don't re-append on replay.
+        already = any(
+            r["event"] == self.WORKFLOW_STARTED and r["payload"].get("workflow_id") == workflow_id
+            for r in self.log.read_all()
+        )
+        if not already:
+            self.log.append(self.WORKFLOW_STARTED, {"workflow_id": workflow_id})
 
     def complete_workflow(self, result: Any) -> None:
         """Log successful completion."""

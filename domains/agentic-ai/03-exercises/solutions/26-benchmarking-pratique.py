@@ -228,15 +228,20 @@ def solution_2() -> None:
 # ===========================================================================
 
 class SlowAgent(MockAgent):
-    """Reliable but slow: doubles its step count so it blows the budget on
-    nominal cases (max_steps). Demonstrates that reliability per-run is not
-    enough if the trajectory budget is exceeded."""
+    """Reliable per run, but pads its trajectory well past max_steps.
+
+    Teaching point: a budget overrun only hurts if the *scorer* weights the
+    trajectory enough. With the default Scorer (alpha=0.6 on the final answer,
+    threshold 0.7) a correct-but-over-budget run still scores 0.6 + 0.4*0.5 =
+    0.8 >= 0.7 and PASSES -- the overrun is invisible. solution_3 therefore
+    evaluates with a trajectory-weighted scorer so 'slow' is actually penalized.
+    """
 
     def _successful_run(self, case: EvalCase):
         result = super()._successful_run(case)
         result.steps *= 2
-        # Pad the trajectory so the Scorer's max_steps check actually fails.
-        result.trajectory = result.trajectory + ["noop"] * len(result.trajectory)
+        # Pad far beyond any DEMO_CASES max_steps so the budget check fails.
+        result.trajectory = result.trajectory + ["noop"] * 10
         return result
 
 
@@ -246,6 +251,9 @@ def solution_3() -> None:
     print("#" * 60)
 
     K = 5
+    # Trajectory-weighted scorer: here the step budget genuinely gates success,
+    # so agent_conservative's over-budget runs are penalized (see SlowAgent doc).
+    strict_scorer = Scorer(answer_mode="contains", alpha=0.3, threshold=0.7)
     agents = [
         SlowAgent(label="agent_conservative", error_rate=0.05, seed=3),
         MockAgent(label="agent_balanced", error_rate=0.20, seed=3),
@@ -255,7 +263,7 @@ def solution_3() -> None:
 
     rows = []
     for agent in agents:
-        report = run_suite(agent, DEMO_CASES, k=K)
+        report = run_suite(agent, DEMO_CASES, k=K, scorer=strict_scorer)
         golden = [r.pass_k for r in report.case_reports if r.is_golden]
         golden_mean = sum(golden) / len(golden) if golden else 0.0
         rows.append((agent.label, report.mean_p_hat, report.mean_pass_k, golden_mean))
@@ -269,10 +277,20 @@ def solution_3() -> None:
     for rank, (label, p_hat, pk, gp) in enumerate(rows, start=1):
         print(f"{rank:<5}{label:<22}{p_hat:>12.2f}{pk:>14.3f}{gp:>10.3f}")
 
-    # The slow agent should be penalized on nominal (max_steps) cases.
     pks = [r[2] for r in rows]
     assert pks == sorted(pks, reverse=True), "leaderboard must be sorted desc"
-    print("\n  [check] leaderboard sorted by mean_pass^k desc -> OK")
+
+    # Honest teaching point: the budget overrun lowers agent_conservative's score
+    # but does NOT sink it, because score_trajectory AVERAGES several constraints
+    # (recall, precision, budget) -- a single over-budget signal gets diluted.
+    # Compare the same agent under the default vs the trajectory-weighted scorer:
+    conf_strict = next(pk for label, _, pk, _ in rows if label == "agent_conservative")
+    conf_default = run_suite(SlowAgent(label="c", error_rate=0.05, seed=3),
+                             DEMO_CASES, k=K).mean_pass_k
+    print(f"\n  agent_conservative pass^k : default scorer={conf_default:.3f} "
+          f"-> trajectory-weighted={conf_strict:.3f} (budget overrun now costs it)")
+    assert conf_strict < conf_default, "trajectory-weighted scorer must penalize the overrun"
+    print("  [check] leaderboard sorted desc ; over-budget agent measurably penalized -> OK")
 
 
 if __name__ == "__main__":
