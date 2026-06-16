@@ -64,7 +64,7 @@ Context window (ex: 128k tokens)
 ```
 
 **Limites** :
-- **Taille fixe** : 128k tokens (Claude), 128k (GPT-5.4). Ca parait enorme, mais un agent qui fait 30 etapes avec des tool results verbeux peut remplir le context en quelques minutes
+- **Taille fixe** : la fenetre de contexte est bornee (de l'ordre de 200k a 1M tokens selon le modele frontiere). Ca parait enorme, mais un agent qui fait 30 etapes avec des tool results verbeux peut remplir le context en quelques minutes
 - **Cout proportionnel** : chaque token dans le contexte est facture en input. Un contexte de 100k tokens = 100k * prix/Mtok. Ca chiffre vite
 - **"Lost in the middle"** : les LLM sont moins bons pour retrouver des infos au milieu d'un long contexte. Les infos en debut et en fin sont mieux retenues
 
@@ -402,7 +402,7 @@ checkpoint = {
     "metadata": {
         "task": "Analyse des ventes Q1",
         "user_id": "user_123",
-        "model": "claude-opus-4-6",
+        "model": "claude-sonnet-4-6",
         "duration_so_far_seconds": 180,
     }
 }

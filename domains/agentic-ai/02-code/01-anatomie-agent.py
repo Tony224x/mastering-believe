@@ -1,7 +1,9 @@
 """
 Day 1 — Anatomy of an AI Agent: Minimal ReAct Agent from Scratch
 
-A complete ReAct agent in ~150 lines using only httpx + stdlib.
+A complete ReAct agent using only httpx + stdlib (~360 lines total, including
+the simulated-LLM responses and runnable demos; the core agent loop itself is
+about 150 lines).
 Two modes:
   - LIVE mode:  Uses a real OpenAI-compatible API (set OPENAI_API_KEY env var)
   - SIMULATED mode: Works without any API key using hardcoded LLM responses

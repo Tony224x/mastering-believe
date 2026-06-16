@@ -204,19 +204,24 @@ Un **checkpointer** est un backend qui sauvegarde le state apres chaque step. La
 ```python
 from langgraph.checkpoint.sqlite import SqliteSaver
 
-checkpointer = SqliteSaver.from_conn_string("checkpoints.db")
-app = graph.compile(checkpointer=checkpointer)
+# Depuis LangGraph 0.2.0, from_conn_string() renvoie un CONTEXT MANAGER :
+# il faut l'utiliser avec `with` (l'appeler comme un constructeur direct
+# `SqliteSaver.from_conn_string("checkpoints.db")` est casse).
+with SqliteSaver.from_conn_string("checkpoints.db") as checkpointer:
+    app = graph.compile(checkpointer=checkpointer)
 
-# Pour identifier une "conversation" on passe un thread_id
-config = {"configurable": {"thread_id": "user_123"}}
+    # Pour identifier une "conversation" on passe un thread_id
+    config = {"configurable": {"thread_id": "user_123"}}
 
-# Premier tour
-state = app.invoke({"messages": [{"role": "user", "content": "Hi"}]}, config)
+    # Premier tour
+    state = app.invoke({"messages": [{"role": "user", "content": "Hi"}]}, config)
 
-# Plus tard, on reprend ou on s'est arrete
-state = app.invoke({"messages": [{"role": "user", "content": "And then?"}]}, config)
-# La seconde invocation voit l'historique du premier tour automatiquement
+    # Plus tard, on reprend ou on s'est arrete
+    state = app.invoke({"messages": [{"role": "user", "content": "And then?"}]}, config)
+    # La seconde invocation voit l'historique du premier tour automatiquement
 ```
+
+> **Note** : la version asynchrone est `AsyncSqliteSaver` (paquet `langgraph-checkpoint-sqlite`), egalement un context manager (`async with ...`). Pour un script long-running, on garde le `with` ouvert pendant toute la duree de vie de l'app ; en production multi-instances, on prefere `PostgresSaver`.
 
 ### 5.3 Thread ID et multi-conversation
 

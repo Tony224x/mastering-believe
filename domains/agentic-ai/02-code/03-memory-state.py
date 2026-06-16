@@ -11,7 +11,7 @@ Demonstrates:
   7. Checkpointing              — save/restore agent state to/from JSON
   8. Demo agent that uses ALL memory types for a multi-step research task
 
-Dependencies: stdlib + numpy only. No frameworks.
+Dependencies: stdlib only (numpy used if available, pure-Python fallback otherwise). No frameworks.
 
 Two modes:
   - SIMULATED mode: Works without any API key (default)
@@ -31,7 +31,41 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-import numpy as np
+# numpy is optional. The vector-memory math (mock_embed / cosine_similarity)
+# only needs array creation, dot product and L2 norm — trivial to do in pure
+# Python. We try numpy first (faster, what you'd use in production), and fall
+# back to a tiny shim so the whole file RUNS OFFLINE with zero dependencies.
+try:
+    import numpy as np  # type: ignore
+    _HAS_NUMPY = True
+except ModuleNotFoundError:  # pragma: no cover - exercised only without numpy
+    _HAS_NUMPY = False
+
+    class _NumpyShim:
+        """Minimal stand-in for the handful of numpy features used here.
+
+        Vectors are plain Python lists of floats. This is NOT a numpy
+        replacement — just enough surface (array / float64 / dot / linalg.norm
+        and an `ndarray` alias) for mock_embed and cosine_similarity to work.
+        """
+
+        ndarray = list      # so `embedding: np.ndarray` annotations resolve
+        float64 = float     # so `dtype=np.float64` resolves
+
+        @staticmethod
+        def array(seq, dtype=float):
+            return [dtype(x) for x in seq]
+
+        @staticmethod
+        def dot(a, b):
+            return sum(x * y for x, y in zip(a, b))
+
+        class linalg:
+            @staticmethod
+            def norm(v):
+                return sum(x * x for x in v) ** 0.5
+
+    np = _NumpyShim()  # type: ignore
 
 # ---------------------------------------------------------------------------
 # UTILS — Token counting, message formatting
@@ -527,7 +561,12 @@ def mock_embed(text: str, dim: int = 64) -> np.ndarray:
     # Normalize to unit vector (required for cosine similarity to be meaningful)
     norm = np.linalg.norm(raw)
     if norm > 0:
-        raw = raw / norm
+        # Scalar division works on numpy arrays; with the pure-Python fallback
+        # `raw` is a list, so divide elementwise to support both backends.
+        if _HAS_NUMPY:
+            raw = raw / norm
+        else:
+            raw = [x / norm for x in raw]
     return raw
 
 
@@ -1327,7 +1366,7 @@ def demo_checkpointing():
 if __name__ == "__main__":
     print("=" * 70)
     print("  Day 3 — Memory & State: Complete Memory System from Scratch")
-    print("  Dependencies: stdlib + numpy | No frameworks needed")
+    print(f"  Dependencies: stdlib | numpy {'available' if _HAS_NUMPY else 'absent (pure-Python fallback)'} | No frameworks needed")
     print("=" * 70)
 
     # Run individual demos first (educational — one concept at a time)

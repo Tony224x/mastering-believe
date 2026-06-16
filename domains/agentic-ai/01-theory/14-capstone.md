@@ -270,7 +270,7 @@ Dans `02-code/14-capstone.py`, tu trouveras :
 10. Un eval harness simple avec 3 cas de test
 11. Un `demo()` qui lance 3 queries, imprime le rapport, puis run l'eval
 
-C'est environ 400 lignes. Tout s'execute offline.
+C'est environ 630 lignes. Tout s'execute offline.
 
 ---
 

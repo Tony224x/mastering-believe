@@ -112,9 +112,9 @@ Un agent fait plusieurs appels LLM par requete. Chaque appel peut etre long. Un 
 Les providers LLM te donnent le nombre de tokens d'input/output dans la reponse. Tu multiplies par le tarif.
 
 ```python
-# Exemple : Claude Opus 4.6
-INPUT_COST_PER_1K = 0.015     # $/1K input tokens
-OUTPUT_COST_PER_1K = 0.075    # $/1K output tokens
+# Exemple : Claude Opus 4.8 (tarifs indicatifs — verifier la grille a jour)
+INPUT_COST_PER_1K = 0.005     # $/1K input tokens  ($5 / 1M)
+OUTPUT_COST_PER_1K = 0.025    # $/1K output tokens ($25 / 1M)
 
 def compute_cost(input_tokens: int, output_tokens: int) -> float:
     return (
@@ -297,7 +297,7 @@ class FallbackChain:
 
 **Cas d'usage** :
 - Primaire : Claude Opus (qualite max, cher)
-- Secondaire : GPT-5.4 Mini (moins cher, plus rapide)
+- Secondaire : GPT-5.5 Mini (moins cher, plus rapide)
 - Tertiaire : reponse template "Desole, service temporairement indisponible"
 
 Les fallback chains te permettent de **jamais echouer**.
@@ -410,7 +410,7 @@ Quand tu deploies une nouvelle version :
 > R : A chaque echec, on attend un temps qui double (1s, 2s, 4s, 8s...) avant de retenter. Avec jitter (randomisation) pour eviter les synchronisations. Pas de retry immediat car (1) ca surcharge le service qui est deja en difficulte, (2) ca cree des "thundering herds" si plusieurs clients retry en meme temps, (3) la cause est souvent transitoire et passera rapidement si on attend. Limite stricte a 3-5 retries pour eviter les avalanches.
 
 **Q4 : Qu'est-ce qu'un fallback chain et comment le construit-on ?**
-> R : Un fallback chain est une liste ordonnee de strategies de reponse a essayer en cas d'echec de la precedente. Exemple : primaire = Claude Opus (qualite max), secondaire = GPT-5.4 Mini (moins cher, plus rapide), tertiaire = reponse template "Desole, service indisponible". A chaque niveau, si ca echoue, on descend. Le but est de **jamais renvoyer une erreur brute** au user — on degrade la qualite plutot que de casser.
+> R : Un fallback chain est une liste ordonnee de strategies de reponse a essayer en cas d'echec de la precedente. Exemple : primaire = Claude Opus (qualite max), secondaire = GPT-5.5 Mini (moins cher, plus rapide), tertiaire = reponse template "Desole, service indisponible". A chaque niveau, si ca echoue, on descend. Le but est de **jamais renvoyer une erreur brute** au user — on degrade la qualite plutot que de casser.
 
 **Q5 : Comment le prompt caching reduit-il les couts et quand est-il pertinent ?**
 > R : Si ton prompt contient un preambule long qui se repete (system prompt, few-shot examples), tu marques cette partie comme cacheable. Les appels suivants qui reutilisent ce meme preambule paient 10x moins cher sur les tokens caches. Pertinent quand : le system prompt fait > 1024 tokens (seuil minimum) ET la frequence d'usage est elevee dans la fenetre de cache (5 min par defaut chez Anthropic). Peut reduire le cout de 50-90% sur les systemes conversationnels avec long contexte.

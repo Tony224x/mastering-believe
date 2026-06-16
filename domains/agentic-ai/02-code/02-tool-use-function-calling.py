@@ -645,7 +645,7 @@ def build_messages_with_tool_calls(
 
 API_KEY = os.environ.get("OPENAI_API_KEY", "")
 BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
-MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4-mini")
+MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.5-mini")
 USE_SIMULATION = not API_KEY
 
 

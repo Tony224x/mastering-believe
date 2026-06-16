@@ -32,6 +32,8 @@ Implementer ca a la main donne un plat de spaghettis. LangGraph **factorise ces 
 
 > **Analogie** : c'est comme Redux pour les agents. Au lieu d'une boucle imperative avec des mutations partout, tu definis des **nodes purs** qui prennent un state et retournent des updates. Le framework gere le reste.
 
+> **Note de version (LangGraph v1, oct. 2025)** : l'helper prebuilt `create_react_agent` (anciennement `langgraph.prebuilt`) est **deprecie**. La nouvelle API equivalente est `from langchain.agents import create_agent`. Le `StateGraph` bas niveau presente dans ce module n'est pas affecte — c'est lui le coeur de LangGraph et il reste la voie recommandee pour comprendre les mecanismes. Si tu croises `create_react_agent` dans un vieux tuto, lis-le comme `create_agent`.
+
 ---
 
 ## 2. Le modele mental : un graph de fonctions

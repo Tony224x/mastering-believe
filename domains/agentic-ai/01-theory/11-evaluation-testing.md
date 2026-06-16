@@ -161,7 +161,7 @@ Response : 5 -- The answer is correct and precise. It mentions 820k euros
 
 ### 3.2 Pourquoi ca marche
 
-- Les LLMs modernes (GPT-5.4, Claude 4.6) sont **tres bons** en jugement qualitatif
+- Les LLMs frontiere recents (GPT, Claude) sont **tres bons** en jugement qualitatif
 - Beaucoup plus scalable que du label humain
 - Peut evaluer des choses subjectives (clarte, ton, completude) qu'un regex ne peut pas
 
@@ -281,7 +281,7 @@ if regressions:
 **Nom** : General AI Assistants
 **Ce que c'est** : 466 questions complexes necessitant plusieurs outils (web, code, lecture de fichiers) pour etre resolues. Simple pour un humain, dur pour un agent.
 **Ce que ca mesure** : capacite d'un agent a raisonner et utiliser des outils pour repondre a des questions pratiques.
-**Score reference** : GPT-4 atteint ~30%, un humain bien informe > 90%. Beaucoup de marge.
+**Score reference** : un humain bien informe depasse 90 %. Les premiers agents (vers 2023-24) plafonnaient autour de ~30 % ; les agents frontiere recents ont fortement progresse (plusieurs sont nettement au-dessus de 50-60 % sur l'ensemble du benchmark) — verifie le leaderboard a jour, ces chiffres bougent vite.
 
 ### 5.3 SWE-bench
 

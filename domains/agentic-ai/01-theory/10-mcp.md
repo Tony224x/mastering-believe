@@ -311,7 +311,9 @@ Cela transforme le modele de confiance : meme si un serveur MCP est compromis, l
 
 ## 10. Evolutions de la spec depuis 2024-11
 
-La specification MCP est versionnee par date. La **spec initiale (2024-11-05)** posait deja un socle riche (tools, resources, prompts, sampling, subscriptions), et les revisions suivantes — **2025-03-26** puis **2025-06-18** — ont elargi les cas d'usage et durci la securite. Voici les features marquantes, classees par revision.
+La specification MCP est versionnee par date. La **spec initiale (2024-11-05)** posait deja un socle riche (tools, resources, prompts, sampling, subscriptions), et les revisions suivantes — **2025-03-26**, **2025-06-18**, puis **2025-11-25** (la derniere revision stable a ce jour) — ont elargi les cas d'usage et durci la securite. Voici les features marquantes, classees par revision.
+
+> **Gouvernance** : fin 2025, la gouvernance de MCP est passee a une fondation neutre sous l'egide de la **Linux Foundation** (l'**Agentic AI Foundation**, decembre 2025), pour faire de MCP un standard ouvert porte par plusieurs acteurs plutot que par un seul fournisseur. Concretement, la spec et les SDK officiels evoluent en gouvernance ouverte ; le pattern client/serveur decrit ici reste identique.
 
 ### Spec initiale (2024-11-05)
 
@@ -326,7 +328,7 @@ Server : j'ai besoin de resumer 5 documents pour cette requete
   ↓
 Server appelle client.sample("Resume ces docs : ...")
   ↓
-Client utilise son LLM hote (claude-opus-4-6) pour generer le resume
+Client utilise son LLM hote (claude-sonnet-4-6) pour generer le resume
   ↓
 Server recoit le resume, continue son traitement
 ```
@@ -391,6 +393,10 @@ Server : execute la query sur la bonne DB
 ```
 
 **Cas d'usage** : confirmation d'action destructive, selection d'un parametre dynamique, disambiguation quand le tool a plusieurs interpretations possibles.
+
+### Revision 2025-11-25 (derniere revision stable)
+
+La revision **2025-11-25** est la version stable la plus recente de la spec. Elle consolide les acquis precedents (Streamable HTTP, OAuth 2.1, elicitation) et affine surtout la securite et l'interoperabilite des serveurs distants. Le modele conceptuel — client/serveur, tools/resources/prompts, sampling, elicitation — n'a pas change : un serveur ecrit pour les revisions precedentes reste largement compatible. Verifie toujours la valeur de `protocolVersion` annoncee dans le handshake pour savoir quelle revision negocie ton client.
 
 ### MCP est devenu le standard de facto
 

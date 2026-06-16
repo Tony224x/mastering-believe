@@ -232,7 +232,7 @@ send_email                     email           (envoyer ? lire ? supprimer ?)
 
 - **1-3 outils** : simple, le LLM ne se trompe quasi jamais. Ideal pour les agents specialises.
 - **4-7 outils** : le sweet spot pour un agent generaliste. Assez de capacites sans surcharger le routing.
-- **8-15 outils** : ca marche avec les modeles puissants (Claude Opus, GPT-5.4) mais le routing degrade avec les petits modeles.
+- **8-15 outils** : ca marche avec les modeles puissants (Claude Opus, GPT-5.5) mais le routing degrade avec les petits modeles.
 - **15+ outils** : danger zone. Le LLM confond les outils, choisit le mauvais, invente des parametres. Solutions : grouper les outils, router en 2 etapes, ou utiliser le tool_choice.
 
 > **Retour d'experience terrain** : sur les agents en production, on reste sous 10 outils par agent. Si on a besoin de plus, on split en multi-agent avec un routeur.
@@ -279,7 +279,7 @@ Force le LLM a generer du JSON valide (mais pas de schema specifique) :
 ```python
 # OpenAI
 response = client.chat.completions.create(
-    model="gpt-5.4",
+    model="gpt-5.5",
     messages=[...],
     response_format={"type": "json_object"}  # Force JSON output
 )
@@ -294,7 +294,7 @@ Force le LLM a generer un JSON qui respecte un schema precis :
 ```python
 # OpenAI — structured output
 response = client.chat.completions.create(
-    model="gpt-5.4",
+    model="gpt-5.5",
     messages=[...],
     response_format={
         "type": "json_schema",
@@ -321,7 +321,7 @@ response = client.chat.completions.create(
 ```python
 # Force le LLM a appeler un outil specifique (pas de texte libre)
 response = client.chat.completions.create(
-    model="gpt-5.4",
+    model="gpt-5.5",
     messages=[...],
     tools=[...],
     tool_choice={"type": "function", "function": {"name": "extract_entities"}}
@@ -355,6 +355,8 @@ extraction_tool = {
 
 ### 5.4 Structured Outputs natifs 2024+ (Pydantic + JSON Schema strict)
 
+> **Approfondissement (optionnel)** — A la premiere lecture, retiens juste : *pour un output structure fiable, utilise les structured outputs natifs de ton SDK*. Les details d'API par provider ci-dessous sont utiles le jour ou tu les implementes ; tu peux les survoler maintenant et y revenir.
+
 Depuis aout 2024, les APIs se sont **specialisees** pour le structured output : tu passes directement une classe Pydantic (ou un `model_json_schema`) et l'API garantit un JSON qui respecte le schema. Plus besoin de regex, de retry sur JSON invalide, de fallback texte.
 
 **Le gain mesure** : 90% de reduction des hallucinations sur les tool arguments, et surtout **zero parsing** — le SDK retourne directement l'objet Pydantic.
@@ -370,7 +372,7 @@ class TicketClassification(BaseModel):
     summary: str
 
 response = client.chat.completions.parse(   # .parse() au lieu de .create()
-    model="gpt-5.4",
+    model="gpt-5.5",
     messages=[{"role": "user", "content": ticket_text}],
     response_format=TicketClassification,    # la classe Pydantic directement
 )
@@ -383,7 +385,7 @@ result: TicketClassification = response.choices[0].message.parsed
 
 #### Anthropic — structured outputs natifs, ou `tool_choice` force + Pydantic
 
-Anthropic propose desormais des **structured outputs natifs** : un parametre `output_format` avec un JSON schema (lance fin 2025 en beta) qui contraint directement la reponse au schema, sans passer par un tool. Le pattern `tool_choice={"type": "tool", "name": "..."}` ci-dessous reste un **fallback universel** valide (il marche sur tous les modeles et versions d'API) : il force le LLM a retourner exactement le schema attendu via un appel de tool.
+Anthropic propose des **structured outputs natifs** (desormais GA) : on passe `output_config={"format": {...}}` avec un JSON schema qui contraint directement la reponse au schema, sans passer par un tool. (Le param `output_format` "beta" d'origine est deprecie au profit de `output_config.format` ; pour contraindre les arguments d'un tool plutot que la reponse, on ajoute `strict: true` sur la definition du tool.) Le pattern `tool_choice={"type": "tool", "name": "..."}` plus bas reste un **fallback universel** valide (il marche sur tous les modeles et versions d'API) : il force le LLM a retourner exactement le schema attendu via un appel de tool.
 
 ```python
 from pydantic import BaseModel
@@ -393,12 +395,35 @@ class TicketClassification(BaseModel):
     category: str
     summary: str
 
+# Structured outputs natifs (GA) — output_config.format contraint la reponse
 response = client.messages.create(
-    model="claude-opus-4-6",
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    output_config={
+        "format": {
+            "type": "json_schema",
+            "schema": TicketClassification.model_json_schema(),
+        }
+    },
+    messages=[{"role": "user", "content": ticket_text}],
+)
+
+# Le premier bloc texte contient un JSON valide qui respecte le schema
+import json
+text = next(b.text for b in response.content if b.type == "text")
+result = TicketClassification(**json.loads(text))
+```
+
+Variante "fallback universel" — `tool_choice` force + un tool en `strict: true` (marche partout, y compris sur les vieux modeles) :
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-4-6",
     max_tokens=1024,
     tools=[{
         "name": "classify_ticket",
         "description": "Classify a support ticket.",
+        "strict": True,  # contraint les arguments du tool au schema
         "input_schema": TicketClassification.model_json_schema(),
     }],
     tool_choice={"type": "tool", "name": "classify_ticket"},  # force l'appel
@@ -419,7 +444,7 @@ system=[{
 }],
 ```
 
-> **Regle 2026** : des que tu veux un output structure, utilise les structured outputs natifs (`response_format` chez OpenAI, `output_format` chez Anthropic) ou le `tool_choice` force avec une Pydantic BaseModel. Les anciens patterns (JSON mode vanilla + regex fallback) sont obsoletes.
+> **Regle 2026** : des que tu veux un output structure, utilise les structured outputs natifs (`response_format` chez OpenAI, `output_config.format` chez Anthropic) ou le `tool_choice` force avec une Pydantic BaseModel. Les anciens patterns (JSON mode vanilla + regex fallback) sont obsoletes.
 
 ---
 
@@ -576,7 +601,7 @@ def validate_sql_query(query: str) -> str:
 
 ## 8. Parallel tool calls
 
-Les modeles recents (Claude, GPT-5.4) peuvent appeler **plusieurs outils en parallele** dans une seule reponse.
+Les modeles recents (Claude, GPT) peuvent appeler **plusieurs outils en parallele** dans une seule reponse.
 
 ### 8.1 Comment ca marche
 
@@ -636,6 +661,8 @@ async def execute_tools_parallel(tool_calls: list[dict]) -> list[dict]:
 > **Mise en garde** : le parallel tool calling peut surcharger les APIs externes (rate limiting). Implementer un semaphore ou un rate limiter si les tools appellent des services externes.
 
 ### 8.4 Async tools : mesurer le gain reel
+
+> **Approfondissement (optionnel)** — Le message a retenir tient en une phrase : *paralleliser des tool calls independants avec `asyncio.gather` divise la latence par ~N*. Le benchmark detaille ci-dessous le prouve chiffres a l'appui ; saute-le si tu veux avancer, reviens-y quand tu optimises la latence d'un vrai agent.
 
 La difference entre sequentiel et parallele n'est pas theorique — mesurons-la.
 
@@ -714,7 +741,7 @@ asyncio.run(main())
 
 ### 9.1 Format des outils
 
-**OpenAI (GPT-5.4)** :
+**OpenAI (GPT-5.5)** :
 ```json
 {
   "tools": [{
@@ -751,11 +778,11 @@ asyncio.run(main())
 
 ### 9.2 Capacites
 
-| Feature | OpenAI (GPT-5.4) | Anthropic (Claude 4.x) | Open-source (Llama, Mistral) |
+| Feature | OpenAI (GPT-5.5) | Anthropic (Claude 4.x) | Open-source (Llama, Mistral) |
 |---------|-------------------|----------------------|------------------------------|
 | Function calling natif | Oui | Oui | Varie (Llama 3.3+, Mistral Large) |
 | Parallel tool calls | Oui | Oui | Rarement |
-| Structured output (JSON Schema) | Oui (`strict: true`) | Oui (via tool_use) | Via constrained decoding (Outlines, LMFE) |
+| Structured output (JSON Schema) | Oui (`strict: true`) | Oui (`output_config.format` natif, ou via tool_use) | Via constrained decoding (Outlines, LMFE) |
 | `tool_choice` (forcer un outil) | Oui | Oui (`tool_choice`) | Via prompt engineering |
 | Streaming des tool calls | Oui | Oui | Framework-dependent |
 | Qualite du routing (>10 outils) | Excellente | Excellente | Degrade rapidement |
@@ -766,7 +793,7 @@ asyncio.run(main())
 - **Anthropic** : meilleur raisonnement long (extended thinking), excellent pour les agents complexes. Le tool use de Claude est souvent plus "intelligent" sur les cas ambigus.
 - **Open-source** : pour les cas ou tu ne peux pas envoyer les donnees a un provider cloud (compliance, cout, latence). Necessite plus de travail cote infra.
 
-> **Opinion** : pour les agents en production, on utilise typiquement Claude pour le raisonnement complexe (analyse de documents, multi-step) et GPT-5.4-mini pour le routing rapide et les taches simples. Le multi-provider est la bonne approche.
+> **Opinion** : pour les agents en production, on utilise typiquement un gros modele (Claude Opus, GPT-5.5) pour le raisonnement complexe (analyse de documents, multi-step) et un petit modele rapide (Claude Haiku, GPT-5.5-mini) pour le routing rapide et les taches simples. Le multi-provider est la bonne approche.
 
 ---
 

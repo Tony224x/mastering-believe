@@ -137,23 +137,23 @@ def solution_2() -> None:
 
     # user_A stays under budget
     for _ in range(5):
-        budget.charge("user_A", "gpt-5.4-mini", 100, 50)
+        budget.charge("user_A", "gpt-5.5-mini", 100, 50)
     print(f"  user_A remaining: {budget.get_remaining('user_A'):.6f}$")
     assert budget.get_remaining("user_A") > 0
 
     # user_B breaches
     try:
         for _ in range(100):
-            budget.charge("user_B", "claude-opus-4-6", 1000, 1000)
+            budget.charge("user_B", "claude-sonnet-4-6", 1000, 1000)
     except DailyBudgetExceeded as exc:
         print(f"  user_B breach caught: {exc}")
 
     # user_C simulate yesterday then today
-    budget.charge("user_C", "gpt-5.4-mini", 100, 50)
+    budget.charge("user_C", "gpt-5.5-mini", 100, 50)
     # Manually rewind the date so we can prove the reset works
     budget.ledger["user_C"]["date"] = (date.today() - timedelta(days=1)).isoformat()
     # New charge should now consider the budget reset
-    budget.charge("user_C", "gpt-5.4-mini", 100, 50)
+    budget.charge("user_C", "gpt-5.5-mini", 100, 50)
     entry = budget.ledger["user_C"]
     print(f"  user_C entry after reset: {entry}")
     assert entry["date"] == date.today().isoformat()
