@@ -69,5 +69,3 @@ contenu deja vu. Rappels d'une ligne uniquement, puis renvoi au jour concerne.
    tourne en stdlib pur, sans cle API, exit 0.
 3. **Pedagogy-reviewer** : delimitations respectees, zero redite, flash-cards
    presentes, progression tenue.
-4. **Quarkdown** : `scaffold-domain.py agentic-ai` regenere main.qd + placeholders
-   .qd + sidebar sync.

@@ -38,9 +38,6 @@ mastering-believe/
 │       ├── 01-theory/       # Numbered theory modules (Markdown, source-of-truth)
 │       │   ├── 01-fundamentals.md
 │       │   └── ...
-│       ├── 01-theory-qd/    # Site Quarkdown enrichi (optionnel, 1 par domaine)
-│       │   ├── main.qd      # Index avec sidebar nav
-│       │   └── ...
 │       ├── 02-code/         # Runnable commented examples matching theory
 │       ├── 03-exercises/    # Progressive exercises + solutions
 │       │   ├── 01-easy/
@@ -54,22 +51,15 @@ mastering-believe/
 │           │   ├── README.md    # Contexte, consigne, etapes, criteres
 │           │   └── solution/    # Corrige commente
 │           └── ...
-├── .github/workflows/
-│   └── quarkdown-release.yml # CI : build des sites + bundles en Release sur tag v*
-├── quarkdown/               # Pipeline de rendu .qd -> site HTML statique
-│   ├── README.md            # Prerequis (Java 17+, Quarkdown CLI), install, build
-│   ├── post-build-fix-links.py
-│   └── scripts/
-│       ├── build-all.ps1            # Build tous les sites Windows (ou -Domain X, -Watch)
-│       ├── build-all.sh             # Idem Linux/macOS/CI (--domain X, --out)
-│       └── scaffold-domain.py       # Genere 01-theory-qd/ depuis 01-theory/
 └── shared/
     ├── templates/           # Templates for new domains
     ├── external-courses.md  # Index de cours universitaires (Stanford, MIT, CMU, ...)
     └── logistics-context.md # Shared LogiSim context referenced by all 05-projets-guides
 ```
 
-Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore** — il peut exister sur une machine de dev mais n'est jamais commite. Idem pour `references/`, `docs/plans/` et les outputs Quarkdown (`quarkdown/output*/`).
+Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore** — il peut exister sur une machine de dev mais n'est jamais commite. Idem pour `references/` et `docs/plans/`.
+
+> **Quarkdown (temporairement hors tronc)** : le pipeline de rendu `.qd` -> sites HTML (dossier `quarkdown/`, CI `quarkdown-release.yml`, et les `01-theory-qd/` de chaque domaine) a ete **sorti du tronc** — pas encore pret. Il est **conserve intact dans la branche `quarkdown-wip`** et sera reintegre plus tard. La source-of-truth de la theorie reste les `.md` de `01-theory/`.
 
 ## Conventions
 
@@ -80,7 +70,7 @@ Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore*
 - **Exercises**: un fichier d'exercices regroupe 2-3 exercices ; chaque exercice a ses sections `### Objectif`, `### Consigne`, `### Criteres de reussite` (sous un `## Exercice N`)
 - **Solutions**: Separate folder, never mixed with exercise files
 - **Workspace**: `03-exercises/workspace/` est gitignore — l'apprenant y ecrit ses solutions sans polluer le repo
-- **Naming coherence**: pour un module N, `01-theory/NN-x.md`, `02-code/NN-x.py`, `01-theory-qd/NN-x.qd` et les exercices/solutions partagent le meme slug numerote
+- **Naming coherence**: pour un module N, `01-theory/NN-x.md`, `02-code/NN-x.py` et les exercices/solutions partagent le meme slug numerote
 - **Public repo**: contenu lisible par tous, pas d'info perso/sensible dans les fichiers commites
 
 ## Learning Methodology Rules
@@ -117,8 +107,6 @@ Voie manuelle :
 
 **Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
 
-**Quarkdown** : les **5 domaines actifs** ont un `01-theory-qd/` buildable (agentic-ai partiellement enrichi, les 4 autres en placeholders scaffoldes). Les `.md` de `01-theory/` restent la source-of-truth lisible sur GitHub ; les `.qd` sont des versions enrichies (math LaTeX, mermaid, callouts). **Toute correction d'un `.md` de theorie doit etre repercutee dans le `.qd` miroir s'il existe.** La CI (`.github/workflows/quarkdown-release.yml`) build tous les sites et publie un bundle `tar.gz` par domaine en asset de GitHub Release sur tag `v*`.
-
 ## Roadmap : l'ecole de la vie (Track Vie — 5 prochains domaines)
 
 Les 5 prochains domaines elargissent le repo au-dela de la tech, selon les **5 piliers** d'une vie qui s'epanouit, chacun cadre par son **angle "futur"**. Memes conventions, meme pipeline (`mastering-domain-creator`), meme structure de dossier. Ordre indicatif, ajustable. Ces domaines sont **sans code ou a code leger** : capstone = livrable portfolio (plan, protocole, systeme, dossier, portfolio) plutot que script.
@@ -146,10 +134,3 @@ Code examples are standalone scripts — run them directly (Python 3.11+ recomma
 - **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (requires `"gymnasium[mujoco]"`, `mujoco`, `torch`, `imageio` selon le module ; headless : `MUJOCO_GL=osmesa`)
 - Algorithmie & System Design : stdlib seulement
 - Pas de suite de tests ni de linter au niveau repo — verifier un exemple = le lancer
-
-Quarkdown (build des sites de cours — requiert Java 17+ et le CLI `quarkdown`, voir `quarkdown/README.md`) :
-- **Build tous les domaines** : `pwsh quarkdown/scripts/build-all.ps1` (Windows) / `bash quarkdown/scripts/build-all.sh` (Linux/macOS/CI)
-- **Build un domaine** : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai` / `bash quarkdown/scripts/build-all.sh --domain agentic-ai`
-- **Live preview** : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai -Watch` (PowerShell uniquement)
-- **Scaffold un 01-theory-qd/** : `python quarkdown/scripts/scaffold-domain.py <domain>` (idempotent, `--force` pour reecrire ; `main.qd` toujours regenere)
-- Output : `quarkdown/output-site/<domain>/` (gitignore)
