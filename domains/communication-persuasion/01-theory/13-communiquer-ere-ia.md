@@ -152,6 +152,6 @@ R : Parce que la base de preuve (preprints, analyses, opinions) est **faible et 
 > Sources de niveau **mixte**, signalees honnetement (voir l'encart d'ouverture). Aucune ne constitue une preuve experimentale stabilisee.
 
 - **Generative AI — Harvard Business Review (topic hub)** : https://hbr.org/topic/subject/generative-ai — *[institutionnel — HBR]* l'IA comme outil, pas substitut a la pensee.
-- **Incentives shape how humans co-create with generative AI** — preprint arXiv (2026) : https://arxiv.org/pdf/2604.03529 — *[preprint, a verifier]* homogeneisation vs role du jugement humain.
+- Discussions academiques emergentes sur la co-creation humain/IA (homogeneisation des productions vs role du jugement humain) — *litterature preliminaire et non etablie ; a confirmer, voir Google Scholar « human AI co-creation homogenization »*.
 - **Analyses sur l'homogeneisation de l'ecriture** — N. Potkalitsky : https://nickpotkalitsky.substack.com/p/does-ai-homogenize-writing-toward ; ASCCC : https://www.asccc.org/content/chatgpt-and-homogenization-language-how-adoption-ai-silences-student-voices — *[opinions etayees]* perte de voix, « robovoice ».
 - **SEP — The Ethics of Manipulation** : https://plato.stanford.edu/entries/ethics-manipulation/ — *[peer-reviewed / encyclopedie philosophique]* base **solide** : omettre un fait pertinent (ici l'origine IA) peut etre manipulation.

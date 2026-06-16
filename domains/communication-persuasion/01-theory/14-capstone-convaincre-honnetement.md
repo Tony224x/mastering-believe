@@ -189,6 +189,6 @@ Aristote l'avait pose : la rhetorique n'est pas l'art de faire croire le faux, m
 | **SEP — Ethics of Manipulation** | J1, J13, J14 | https://plato.stanford.edu/entries/ethics-manipulation/ |
 | **Chris Anderson, *TED Talks*** (2016, HMH) | J9, J14 | https://www.amazon.com/TED-Talks-Official-Public-Speaking/dp/0544634497 |
 | **Fisher, Ury & Patton, *Getting to Yes*** (3e ed., 2011) | J7, J14 | https://www.pon.harvard.edu/daily/negotiation-skills-daily/six-guidelines-for-getting-to-yes/ |
-| **Chris Voss & Tahl Raz, *Never Split the Difference*** (2016) — *retour d'experience, pas preuve controlee* | J7, J14 | https://www.amazon.com/Getting-Yes-Negotiating-Agreement-Without/dp/0143118757 |
+| **Chris Voss & Tahl Raz, *Never Split the Difference*** (2016) — *retour d'experience, pas preuve controlee* | J7, J14 | https://www.amazon.com/Never-Split-Difference-Negotiating-Depended/dp/0062407805 |
 | **Steven Pinker, *The Sense of Style*** (2014) | J3, J14 | https://stevenpinker.com/publications/sense-style-thinking-persons-guide-writing-21st-century |
 | **Generative AI — HBR topic hub** | J13, J14 | https://hbr.org/topic/subject/generative-ai |

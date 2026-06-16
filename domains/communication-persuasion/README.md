@@ -38,19 +38,26 @@ Aucun. Ce domaine est accessible a toute personne souhaitant ameliorer sa commun
 
 ---
 
-## Planning — 7 modules (~45 min chacun)
+## Planning — 14 modules (~45 min chacun)
 
-| # | Module | Contenu central | Sources cles |
-|---|--------|-----------------|--------------|
-| 01 | **Fondations & ethique** | Ethos / pathos / logos ; charte CTR ; persuasion vs manipulation | Aristote, SEP, SEP Ethics of Manipulation |
-| 02 | **Ecouter d'abord** | Ecoute active, CNV (Observation/Sentiment/Besoin/Demande), etiquetage | Rosenberg, Voss |
-| 03 | **Clarte & ecriture** | Malediction du savoir, personnages-acteurs/verbes-actions, concision | Pinker, Williams & Bizup |
-| 04 | **Messages qui collent** | Modele SUCCESs (Heath), concret avant abstrait, recit minimal | Made to Stick |
-| 05 | **Principes de persuasion** | 7 principes Cialdini (defense d'abord) + statut de replication | Cialdini, Many Labs 2 |
-| 06 | **Negociation raisonnee** | Interets vs positions, options gagnant-gagnant, BATNA | Fisher & Ury, Harvard PON |
-| 07 | **Capstone : convaincre honnetement** | Pitch + ecrit persuasif + simulation de negociation | Synthese |
+| Jour | Module | Contenu central | Sources cles |
+|------|--------|-----------------|--------------|
+| J1 | **Fondations & ethique** | Ethos / pathos / logos ; charte CTR ; persuasion vs manipulation | Aristote, SEP Ethics of Manipulation |
+| J2 | **Ecouter d'abord & questions** | Ecoute active, CNV (OSBD), etiquetage, questions ouvertes/socratiques | Rosenberg, Voss |
+| J3 | **Clarte & ecriture** | Malediction du savoir, personnages-acteurs/verbes-actions, prose-fenetre | Pinker, Williams & Bizup |
+| J4 | **Idees qui collent & recit** | SUCCESs (grille) + story spine / arc / scene (recit) | Heath, Duarte, Dicks, Green & Brock |
+| J5 | **Non-verbal & voix** | Corps, regard, proxemique, prosodie ; **debunk du mythe Mehrabian "93 %"** | Mehrabian (mal cite), Hall, Lapakko |
+| J6 | **Principes de persuasion** | 7 principes Cialdini (defense d'abord) + contre-exemples | Cialdini, Many Labs 2 |
+| J7 | **Negociation** | Interets vs positions, BATNA (Fisher & Ury) + tactiques Voss encadrees | Fisher & Ury, Voss |
+| J8 | **Donner & recevoir du feedback** | Modele SBI, demander, recevoir sans defense | Stone & Heen, Center for Creative Leadership |
+| J9 | **Prise de parole & audience hostile** | Through-line, structure, trac, Q&R hostile | Anderson/TED, Toastmasters, Frontiers 2019 |
+| J10 | **Ecrit pro & asynchrone** | BLUF, canal, ecrit async autosuffisant ; encart interculturel | AR 25-50, GitLab Handbook, Hall |
+| J11 | **Conversations difficiles** | Les 3 conversations (faits/emotions/identite) | Stone/Patton/Heen ; Crucial Conversations |
+| J12 | **Influence sans autorite & facilitation** | Currencies of exchange (echange transparent), facilitation | Cohen & Bradford, Parker, Lencioni |
+| J13 | **Communiquer a l'ere de l'IA** | Authenticite, voix, divulgation de l'usage de l'IA | (preuve plus faible — assumee) |
+| J14 | **Capstone : convaincre honnetement** | Pitch + ecrit + negociation simulee + auto-audit CTR | Synthese |
 
-> **Duree totale estimee** : ~5-6 h de theorie + exercises, sur 1 a 2 semaines selon le rythme.
+> **Duree totale estimee** : ~11 h de theorie + exercices, sur 2 semaines selon le rythme.
 
 ---
 
@@ -59,22 +66,26 @@ Aucun. Ce domaine est accessible a toute personne souhaitant ameliorer sa commun
 A la fin du domaine, vous devez pouvoir :
 
 - [ ] Expliquer le trio ethos/pathos/logos et identifier lequel manque dans un message faible.
-- [ ] Reformuler le besoin de quelqu'un en utilisant le modele OSBD (CNV) sans evaluer ni conseiller.
-- [ ] Reecrire un texte opaque en appliquant les principes de clarte (personnages acteurs, verbes d'action, phrases courtes).
-- [ ] Structurer un message en utilisant au moins 2 des 6 dimensions SUCCESs (Heath).
-- [ ] Identifier, dans un message commercial ou politique, quel principe de Cialdini est active — et evaluer s'il est utilise honnetement.
-- [ ] Preparer une negociation en distinguant positions et interets, et identifier une BATNA.
-- [ ] Produire un pitch oral de 2 min, un ecrit persuasif d'une page et conduire une simulation de negociation, le tout en passant le filtre CTR.
+- [ ] Reformuler le besoin de quelqu'un (OSBD/CNV) et ouvrir par des questions ouvertes/socratiques.
+- [ ] Reecrire un texte opaque en appliquant les principes de clarte.
+- [ ] Rendre une idee memorable (SUCCESs) et construire un recit (story spine/arc).
+- [ ] Reperer le mythe Mehrabian "93 %" et aligner corps + voix + propos.
+- [ ] Identifier quel principe de Cialdini est active dans un message — et evaluer s'il est honnete.
+- [ ] Donner un feedback structure (SBI) et le recevoir sans se justifier.
+- [ ] Preparer une negociation (positions vs interets, BATNA) et mener une conversation difficile.
+- [ ] Obtenir l'adhesion sans autorite (echange transparent) et faciliter une reunion.
+- [ ] Rester authentique et transparent quand l'IA redige.
+- [ ] Produire un pitch oral, un ecrit persuasif et une negociation simulee, le tout passe au filtre CTR (auto-audit note).
 
 ---
 
-## Capstone (module 07)
+## Capstone (J14)
 
-Le capstone final combine trois livrables evalues sur **clarte, ethique (filtre CTR) et resultat mutuel** :
+Le capstone final combine trois livrables, dont les **fragments sont prepares au fil des jours** (negociation ← J7, pitch ← J9, ecrit ← J3/J4/J10), evalues sur **clarte, resultat mutuel et respect des 3 garde-fous CTR** via une **grille d'auto-audit notee** :
 
-1. **Pitch oral** — 2 minutes sur un sujet de votre choix (projet, idee, demande), structure ethos/pathos/logos.
-2. **Ecrit persuasif** — une page (email, proposition, article court) appliquant clarte + SUCCESs.
-3. **Simulation de negociation** — jeu de role avec un partenaire ou auto-simulation ecrite, en distinguant interets/positions et en cherchant un accord gagnant-gagnant.
+1. **Pitch oral** — 2 minutes, structure through-line + ethos/pathos/logos.
+2. **Ecrit persuasif** — une page appliquant clarte + SUCCESs.
+3. **Simulation de negociation** — jeu de role distinguant interets/positions, vers un accord mutuel.
 
 ---
 

@@ -30,7 +30,7 @@
 | Source | Pertinence |
 |--------|-----------|
 | **Nonviolent Communication: A Language of Life (3e ed.)** — Marshall B. Rosenberg, 2015, PuddleDancer Press. https://nonviolentcommunication.com/product/nvc/ | Modele OSBD (Observation / Sentiment / Besoin / Demande) |
-| **Never Split the Difference** — Chris Voss & Tahl Raz, 2016, Harper Business. https://www.amazon.com/Getting-Yes-Negotiating-Agreement-Without/dp/0143118757 (ISBN Voss : 9780062407801) | Etiquetage des emotions (labeling), miroir, questions calibrees |
+| **Never Split the Difference** — Chris Voss & Tahl Raz, 2016, Harper Business. https://www.amazon.com/Never-Split-Difference-Negotiating-Depended/dp/0062407805 (ISBN 9780062407801) | Etiquetage des emotions (labeling), miroir, questions calibrees |
 | **Non-violent communication as a technology in interpersonal relationships** — Revue de portee 2024, PMC. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10916228/ | CNV efficace en sante, mais base heterogene — a signaler |
 | **Does NVC improve empathy in French medical students?** — 2022, PMC. https://pmc.ncbi.nlm.nih.gov/articles/PMC8994647/ | Pas de preuve claire d'effet sur l'empathie — signal "preuve mince" |
 
