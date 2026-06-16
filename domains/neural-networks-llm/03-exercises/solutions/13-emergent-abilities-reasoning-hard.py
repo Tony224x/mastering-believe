@@ -134,38 +134,52 @@ def expand(numbers):
     return succ
 
 
-def reachable_heuristic(numbers, target):
+def heuristic(numbers, target):
     """
-    Heuristique d'evaluation (sure/maybe/impossible -> score).
-    Simplifie: si un nombre == target et c'est le dernier -> sure ;
-    si tous les nombres sont deja > 2*target+10 (et pas de soustraction utile) -> peu probable.
+    Score d'evaluation d'un etat (plus haut = plus prometteur). C'est le 'value
+    prompt' du ToT, ici une heuristique calculable.
+      - dernier nombre == target -> tres haut (resolu)
+      - sinon : on regarde le nombre le plus PROCHE de la cible parmi ceux qu'on
+        peut encore former -> proximite = 1/(1+min distance possible).
+    WHY une heuristique informative: sans elle, le beam elague au hasard et rate
+    le bon chemin. Avec elle, on garde les branches qui s'approchent de la cible.
     """
     if len(numbers) == 1:
-        return 1.0 if numbers[0] == target else -1.0
-    # maybe : on garde tant que c'est plausible
-    if all(x > 2 * target + 20 for x in numbers):
-        return 0.0  # improbable mais on n'elague pas brutalement
-    return 0.5
+        return 10.0 if abs(numbers[0] - target) < 1e-9 else -1.0
+    # plus petite distance a la cible atteignable en combinant 2 nombres
+    best = min(abs(s[-1] - target) if len(s) == 1 else
+               min(abs(v - target) for v in s) for s in [numbers])
+    # distance min sur les valeurs courantes + sur une expansion
+    cur = min(abs(v - target) for v in numbers)
+    nxt = min((min(abs(v - target) for v in s) for s, _ in expand(numbers)),
+              default=cur)
+    return 1.0 / (1.0 + min(cur, nxt))
 
 
 def solve_linear_cot(numbers, target, rng, max_tries=1):
-    """CoT lineaire: a chaque etape, choisir UNE continuation au hasard. Pas de backtrack."""
+    """
+    CoT lineaire: a chaque etape, s'engager sur UNE seule continuation (greedy
+    sur l'heuristique) SANS jamais revenir en arriere. Echoue des que le 1er
+    choix n'est pas sur le bon chemin.
+    """
     for _ in range(max_tries):
         nums = list(numbers)
         while len(nums) > 1:
             succ = expand(nums)
             if not succ:
                 break
-            nums, _ = rng.choice(succ)  # un seul choix, pas de retour arriere
-        if len(nums) == 1 and nums[0] == target:
+            # greedy : choisir la meilleure continuation selon l'heuristique
+            nums, _ = max(succ, key=lambda s: heuristic(s[0], target))
+        if len(nums) == 1 and abs(nums[0] - target) < 1e-9:
             return True
     return False
 
 
 def solve_tot_bfs(numbers, target, beam=3):
     """
-    Tree-of-Thought, BFS avec beam: a chaque niveau, garder les `beam` meilleurs
-    etats selon l'heuristique, elaguer les 'impossible'. Renvoie (resolu?, n_explored).
+    Tree-of-Thought, BFS avec beam: a chaque niveau, generer toutes les 'thoughts'
+    (expansions), evaluer par l'heuristique, garder les `beam` meilleurs ET tous
+    les etats deja resolus. Renvoie (resolu?, n_explored).
     """
     frontier = [(list(numbers), "")]
     explored = 0
@@ -174,27 +188,34 @@ def solve_tot_bfs(numbers, target, beam=3):
         for nums, expr in frontier:
             explored += 1
             if len(nums) == 1:
-                if nums[0] == target:
+                if abs(nums[0] - target) < 1e-9:
                     return True, explored
                 continue
             for new_nums, op in expand(nums):
-                h = reachable_heuristic(new_nums, target)
-                if h < 0 and len(new_nums) > 1:
-                    continue  # elagage
                 next_frontier.append((new_nums, expr + op))
-        # garder les beam meilleurs (par heuristique)
-        next_frontier.sort(key=lambda s: -reachable_heuristic(s[0], target))
-        frontier = next_frontier[:beam]
-        if not frontier:
+        if not next_frontier:
             break
+        # garder les beam meilleurs par heuristique (deduplique les etats identiques)
+        seen = set()
+        uniq = []
+        for nums, expr in sorted(next_frontier,
+                                 key=lambda s: -heuristic(s[0], target)):
+            key = tuple(sorted(nums))
+            if key not in seen:
+                seen.add(key)
+                uniq.append((nums, expr))
+        frontier = uniq[:beam]
     return False, explored
 
 
-# Jeu de problemes (4 nombres, cible 24) — certains solubles
+# Jeu de problemes (4 nombres, cible 24). Operations autorisees: + - * (PAS de /).
+# Solubles avec {+,-,*} : [4,6,8,2], [2,3,4,5], [6,6,6,6].
+# Insolubles SANS division : [1,1,1,1] (impossible), [3,3,8,8] et [5,5,5,1]
+# (solubles seulement avec la division -> hors de notre espace d'operations).
 problems = [
     ([4, 6, 8, 2], 24),
     ([2, 3, 4, 5], 24),
-    ([1, 1, 1, 1], 24),   # insoluble
+    ([1, 1, 1, 1], 24),
     ([6, 6, 6, 6], 24),
     ([3, 3, 8, 8], 24),
     ([5, 5, 5, 1], 24),

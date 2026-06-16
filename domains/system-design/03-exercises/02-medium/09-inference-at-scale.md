@@ -86,6 +86,6 @@ Un produit LLM recoit 1M requetes/jour. Sans optimisation, tout va au gros model
 ### Criteres de reussite
 - [ ] Baseline : 1M * 3500 * 5/1e6 = $17500/jour
 - [ ] Routing : 60% * (1M*3500*0.3/1e6) + 40% * (1M*3500*5/1e6) = $630 + $7000 = $7630/jour
-- [ ] Prefix caching seul : par requete 2500 system a 10% + 1000 non-caches plein tarif -> ~ (2500*0.1 + 1000) tokens-equivalents -> ~$6875/jour
-- [ ] Routing + caching : ~$3500-4000/jour, soit ~75-80% de reduction vs baseline (ordre de grandeur attendu)
+- [ ] Prefix caching seul : par requete 2500 system a 10% + 1000 non-caches plein tarif -> (2500*0.1 + 1000) = 1250 tokens-equivalents -> $6250/jour
+- [ ] Routing + caching (cache applique a la part gros-modele) : ~$3130/jour, soit ~82% de reduction vs baseline
 - [ ] Routeur mal calibre -> qualite degradee sur le complexe ; surveiller le taux d'escalade / fallback et la satisfaction par tier

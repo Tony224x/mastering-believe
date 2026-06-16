@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 # numpy is optional: we only need dot/norm for cosine, doable in pure Python.
 # Try numpy first, fall back to a tiny shim so the file RUNS OFFLINE with zero

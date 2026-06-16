@@ -60,7 +60,7 @@ def medium_1_twitter_fanout():
     bytes_per_entry = 40
     users = 200_000_000
     cache_bytes = tweets_kept * bytes_per_entry * users
-    cache_tb = cache_bytes / (1024 ** 4)
+    cache_tb = cache_bytes / 1e12                        # decimal TB
     print(f"\n  5. Redis timeline cache size :")
     print(f"     {tweets_kept} tweets * {bytes_per_entry} B * {users:,} users = {cache_tb:.2f} TB")
     print(f"     -> Redis SHARDING is mandatory (no single instance holds 6+ TB).")

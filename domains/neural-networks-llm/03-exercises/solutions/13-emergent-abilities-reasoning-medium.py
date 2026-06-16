@@ -34,9 +34,9 @@ print("=" * 70)
 
 def p_majority(p, n):
     """
-    Proba que la bonne reponse soit majoritaire parmi n samples,
-    sous l'hypothese 'm grand' : les mauvaises reponses ne s'accordent jamais,
-    donc la bonne gagne des qu'elle a >= ceil(n/2) votes. Loi binomiale.
+    Borne BASSE (conservatrice) : proba que la bonne reponse soit en MAJORITE
+    STRICTE (count(correct) > n/2). Loi binomiale. C'est la formule classique
+    (Wang et al. 2022) : si correct a la majorite absolue, il gagne forcement.
     """
     need = n // 2 + 1  # strictement majoritaire pour n impair
     total = 0.0
@@ -45,34 +45,51 @@ def p_majority(p, n):
     return total
 
 
-print("\nProba majorite correcte (p=0.6) :")
+print("\nProba majorite correcte STRICTE (p=0.6) :")
 for n in [1, 3, 5, 11, 25]:
     print(f"  n={n:>3d} : p_majority = {p_majority(0.6, n):.4f}")
 
 
-def simulate_self_consistency(p, n, m=20, trials=50000):
-    """Simulation reelle : tirer n samples, voter, gerer les egalites."""
+def simulate_self_consistency(p, n, m=20, trials=50000, mode="strict"):
+    """
+    Simulation reelle : tirer n samples, voter.
+      mode='strict'    -> compte un succes si count(correct) > n/2 (== la formule)
+      mode='plurality' -> compte un succes si correct a le PLUS de votes (vote reel)
+    WHY deux modes: la formule modelise la majorite STRICTE ; le vote reel est une
+    PLURALITE (le plus de votes), bien plus facile a gagner quand les mauvaises
+    reponses se dispersent sur m labels -> plurality >> strict.
+    """
     rng = random.Random(123)
-    correct = 0
+    success = 0
     for _ in range(trials):
         votes = []
         for _ in range(n):
             if rng.random() < p:
                 votes.append("CORRECT")
             else:
-                votes.append(f"wrong_{rng.randint(0, m - 1)}")  # erreur uniforme
-        winner, _ = Counter(votes).most_common(1)[0]
-        # En cas d'egalite, most_common renvoie le premier rencontre : on verifie
-        if winner == "CORRECT":
-            correct += 1
-    return correct / trials
+                votes.append(f"wrong_{rng.randint(0, m - 1)}")  # erreur uniforme sur m
+        counts = Counter(votes)
+        n_correct = counts["CORRECT"]
+        if mode == "strict":
+            success += (n_correct > n / 2)
+        else:  # plurality : correct a strictement le plus de votes
+            max_wrong = max((c for k, c in counts.items() if k != "CORRECT"),
+                            default=0)
+            success += (n_correct > max_wrong)
+    return success / trials
 
 
-print("\nFormule vs simulation Monte-Carlo (p=0.6, m=20):")
+print("\nFormule (majorite stricte) vs simulation 'strict' (doit matcher):")
 for n in [3, 5, 11]:
     f = p_majority(0.6, n)
-    s = simulate_self_consistency(0.6, n)
-    print(f"  n={n:>3d} : formule={f:.4f}  simu={s:.4f}  ecart={abs(f-s):.4f}")
+    s = simulate_self_consistency(0.6, n, mode="strict")
+    print(f"  n={n:>3d} : formule={f:.4f}  simu_strict={s:.4f}  ecart={abs(f-s):.4f}")
+
+print("\nVote reel = PLURALITE (m=20 mauvaises reponses dispersees) : encore meilleur :")
+for n in [3, 5, 11]:
+    sp = simulate_self_consistency(0.6, n, mode="plurality")
+    print(f"  n={n:>3d} : simu_plurality={sp:.4f} (> majorite stricte : "
+          f"les erreurs dispersees ne s'accordent pas)")
 
 # Nombre de samples pour 95%
 print("\nNombre de samples (impair) pour atteindre 95% :")
