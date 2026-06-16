@@ -19,6 +19,8 @@ Ce capstone vous demande de construire **votre** version opérationnelle de ce r
 | Effets dans le temps, chaînes causales | Module 12 — Analyse de second ordre |
 | Information externe douteuse | Module 11 — Protocole SIFT |
 | Toute décision importante | Checklist de pré-décision |
+| Décision d'équipe / risque de groupthink | Module 13 (pre-mortem + checklist anti-biais) |
+| Résultat d'étude ou statistique invoqué | Module 10 (grille de lecture) |
 
 ---
 

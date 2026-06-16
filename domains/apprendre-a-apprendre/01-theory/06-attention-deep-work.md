@@ -70,13 +70,13 @@ Exemple : si tu lis `C, A, T`, ce sont trois lettres = trois chunks pour un non-
 
 Quand ton attention se rompt — notification, changement d'onglet, pensée intempestive — la mémoire de travail doit **recharger son contexte**. Ce rechargement n'est pas instantané.
 
-La recherche sur le *task-switching cost* (Monsell, 2003) montre qu'il faut en moyenne **15 à 23 minutes** pour retrouver un niveau de concentration profonde après une interruption significative.
+Les études de **Gloria Mark (UC Irvine)** montrent qu'il faut en moyenne **~23 minutes** pour retrouver un niveau de concentration profonde après une interruption significative. La recherche sur le *task-switching cost* (Monsell, 2003) documente par ailleurs le mécanisme cognitif du coût de changement de tâche, même pour des interruptions brèves.
 
 Avec trois interruptions dans une session de 2 heures, tu n'atteins peut-être jamais le régime profond. Tu travailles en surface toute la journée, avec l'impression d'avoir travaillé, mais avec peu d'encodage réel.
 
 Les distractions ne sont pas toutes extérieures. L'une des plus insidieuses est la **pseudo-productivité** : basculer vers des tâches plus faciles (répondre à des mails, réorganiser ses notes) quand la matière devient difficile. C'est du confort cognitif — et c'est exactement l'ennemi des difficultés désirables (Module 04).
 
-> **Statut de preuve** : Le chiffre « 15-23 min » (souvent attribué à Gloria Mark, UC Irvine) est une estimation issue d'études observationnelles en contexte professionnel. Les chiffres exacts varient selon les études et les individus ; l'ordre de grandeur (plusieurs minutes, pas quelques secondes) est bien établi.
+> **Statut de preuve** : Le chiffre « ~23 min » (Gloria Mark, UC Irvine) est une estimation issue d'études observationnelles en contexte professionnel. Les chiffres exacts varient selon les études et les individus ; l'ordre de grandeur (plusieurs minutes, pas quelques secondes) est bien établi. Le mécanisme de *task-switching cost* sous-jacent est documenté par Monsell (2003, *Trends in Cognitive Sciences*).
 
 ---
 
@@ -105,7 +105,7 @@ Newport propose plusieurs « philosophies » de deep work (monastique, bimodale,
 >
 > **Le mythe du cerveau gauche / cerveau droit** : tu as peut-être entendu que les personnes « cérébrales gauches » seraient logiques et analytiques, les « cérébrales droites » créatives et intuitives. C'est une métaphore populaire sans base neuroanatomique.
 >
-> Dekker, Lee, Howard-Jones & Jolles (2012, *Frontiers in Psychology*) ont montré que ce mythe est cru par environ **93 %** des enseignants interrogés. Le cerveau est massivement interconnecté : les deux hémisphères communiquent en permanence via le corps calleux. Les tâches dites « logiques » activent aussi l'hémisphère droit, et inversement. La dichotomie gauche/droit est une simplification commode qui ne correspond pas à la neuroanatomie réelle.
+> Dekker, Lee, Howard-Jones & Jolles (2012, *Frontiers in Psychology*) ont montré que ce mythe est cru par environ **~91 %** des enseignants interrogés. Le cerveau est massivement interconnecté : les deux hémisphères communiquent en permanence via le corps calleux. Les tâches dites « logiques » activent aussi l'hémisphère droit, et inversement. La dichotomie gauche/droit est une simplification commode qui ne correspond pas à la neuroanatomie réelle.
 >
 > **Autre mythe courant :** « on n'utilise que 10 % de son cerveau. » C'est faux : le cerveau est un organe énergivore (≈20 % de la consommation énergétique du corps pour 2 % de la masse), et l'imagerie fonctionnelle ne révèle pas de régions « dormantes » — différentes zones sont actives à différents moments, mais la quasi-totalité du cortex est sollicitée au cours d'une journée.
 
@@ -116,7 +116,7 @@ Newport propose plusieurs « philosophies » de deep work (monastique, bimodale,
 > - La mémoire de travail traite environ **4 chunks** simultanément (Cowan 2001) — bien en dessous des « 7 ± 2 » souvent cités.
 > - La **charge cognitive extrinsèque** consomme des ressources sans produire d'apprentissage ; réduire le bruit libère de la capacité pour l'encodage utile.
 > - Former des **chunks** riches par la compréhension et la pratique variée, c'est repousser cette limite de 4 en l'exploitant mieux.
-> - Une interruption coûte en moyenne 15-23 min de concentration profonde — trois interruptions dans 2 h, et tu n'as jamais atteint le régime profond.
+> - Une interruption coûte en moyenne ~23 min de concentration profonde (Gloria Mark, UC Irvine) — trois interruptions dans 2 h, et tu n'as jamais atteint le régime profond.
 > - Structure tes sessions : objectif explicite → distractions éliminées → blocs 25-50 min → recall à chaud → planification de la prochaine révision.
 
 ---
@@ -133,7 +133,7 @@ Newport propose plusieurs « philosophies » de deep work (monastique, bimodale,
 **R3** : Intrinsèque (complexité du matériel), extrinsèque (complexité de présentation, bruit), pertinente (traitement qui construit des schémas). Il faut **maximiser la charge pertinente** en réduisant la charge extrinsèque.
 
 **Q4** : Quel est le coût approximatif d'une interruption sur la concentration profonde ?
-**R4** : 15 à 23 minutes pour retrouver un niveau de concentration profonde — ce qui signifie que trois interruptions dans une session de 2 h peuvent suffire à ne jamais atteindre le régime profond.
+**R4** : ~23 minutes pour retrouver un niveau de concentration profonde (Gloria Mark, UC Irvine) — ce qui signifie que trois interruptions dans une session de 2 h peuvent suffire à ne jamais atteindre le régime profond.
 
 **Q5** : Quels sont les trois temps d'une session de deep work bien structurée pour l'étude ?
 **R5** : (1) **Avant** : objectif explicite + distractions éliminées. (2) **Pendant** : blocs 25-50 min + pauses réelles + carnet de capture des pensées parasites. (3) **Après** : recall à chaud + planification de la prochaine révision espacée.
@@ -145,7 +145,7 @@ Newport propose plusieurs « philosophies » de deep work (monastique, bimodale,
 1. Sans **attention soutenue**, l'encodage reste superficiel — retrieval practice et espacement s'appuient sur un encodage de qualité ; ils ne compensent pas un encodage distrait.
 2. La mémoire de travail traite ~**4 chunks** simultanément (Cowan 2001) : apprendre, c'est aussi construire des chunks de plus en plus riches pour exploiter au mieux cette capacité limitée.
 3. La **charge cognitive extrinsèque** (mauvaise présentation, bruit, multi-tâche) consomme des ressources sans produire d'apprentissage ; la réduire est un levier pédagogique direct.
-4. Les **interruptions** ont un coût disproportionné : elles empêchent d'atteindre le régime de concentration profonde nécessaire à l'encodage durable.
+4. Les **interruptions** ont un coût disproportionné (~23 min, Gloria Mark) : elles empêchent d'atteindre le régime de concentration profonde nécessaire à l'encodage durable.
 5. Le **deep work comme habitude rythmique** (blocs récurrents, environnement préparé, carnet de capture) est plus fiable que de compter sur la volonté du moment.
 6. Les mythes du « cerveau gauche/droit » et du « 10 % du cerveau » sont des métaphores populaires sans base neuroanatomique — débunker pour ne pas orienter les stratégies d'étude vers de fausses pistes.
 

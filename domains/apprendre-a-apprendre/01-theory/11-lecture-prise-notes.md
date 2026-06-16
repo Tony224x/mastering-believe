@@ -104,16 +104,8 @@ Une carte conceptuelle n'est pas un "mind map décoratif". C'est un graphe orien
 
 ## 5. Manuscrit vs clavier : l'outil n'est pas le problème
 
-En 2014, Mueller & Oppenheimer (*Psychological Science*) ont publié une étude qui a fait le tour des médias : les étudiants qui prennent des notes à la main retiendraient mieux que ceux qui tapent au clavier. L'explication proposée : le clavier encourage la transcription verbatim (copier-coller cognitif), tandis que l'écriture manuscrite — plus lente — force la reformulation et l'encodage profond.
-
-L'histoire semblait logique. Elle a été enseignée dans des dizaines de séminaires. Sauf que :
-
-**Morehead, Dunlosky & Rawson (2019, *Educational Psychology Review*) ont conduit une réplication directe — et elle a échoué.** Résultats : aucune différence robuste entre manuscrit et clavier sur des tests différés. Les effets mesurés sont petits et non significatifs.
-
 > **Statut de preuve — Manuscrit vs clavier :**
-> - Mueller & Oppenheimer 2014 : effet positif du manuscrit, *n* modeste, laboratoire contrôlé.
-> - Morehead, Dunlosky & Rawson 2019 : réplication directe avec *n* plus grand → pas d'effet reproductible.
-> - **Verdict actuel** : les données ne permettent pas de conclure que l'outil fait la différence. La littérature sur le sujet reste ouverte.
+> Mueller & Oppenheimer (2014, *Psychological Science*) avaient montré un avantage du manuscrit (*n* modeste, laboratoire contrôlé), en attribuant l'effet à la reformulation forcée par la lenteur de l'écriture. Morehead, Dunlosky & Rawson (2019, *Educational Psychology Review*) ont conduit une réplication directe avec un échantillon plus grand — **résultat : pas d'effet reproductible**. Les données actuelles ne permettent pas de conclure que l'outil fait la différence. Ce qui compte, c'est le **traitement** (reformuler, questionner, réciter), pas le canal physique.
 
 **Ce qui importe réellement, c'est le traitement :** reformuler au lieu de copier, questionner au lieu de transcrire, réciter au lieu d'archiver. Tu peux atteindre ce niveau de traitement profond avec un stylo, un clavier, ou un outil de prise de notes numérique — à condition de t'imposer la discipline de ne pas copier passivement.
 

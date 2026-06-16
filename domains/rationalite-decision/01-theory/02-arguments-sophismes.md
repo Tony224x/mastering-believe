@@ -11,7 +11,7 @@ Avant toute définition, lisez cet échange :
 
 > **A** : « Les statistiques montrent que les villes où l'on consomme plus de glaces ont aussi plus de noyades. Les glaces causent donc des noyades. »
 >
-> **B** : « Tu simplifie trop. Soit les glaces tuent les gens, soit… quelque chose d'autre explique ça. »
+> **B** : « Tu simplifies trop. Soit les glaces tuent les gens, soit… quelque chose d'autre explique ça. »
 >
 > **A** : « Tu n'es pas statisticien, tu n'as pas à te prononcer là-dessus. »
 

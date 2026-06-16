@@ -99,16 +99,7 @@ Vous possédez un vélo de 500 €. Une assurance coûte 45 €/an. Probabilité
     E = −45 €
 ```
 
-**Espérance monétaire** : "Sans assurance" est légèrement meilleur (−50 € < −45 € en valeur absolue... attends :  −45 > −50, donc sans assurance est plus défavorable). Ici −45 > −50 : payer 45 € est *moins mauvais* que l'espérance sans assurance de −50 €.
-
-Recalculons clairement :
-
-```
-E[sans assurance] = −50 €
-E[avec assurance] = −45 €
-```
-
-L'espérance monétaire favorise l'assurance (−45 € > −50 €). Et si la perte soudaine de 500 € est très pénalisante pour votre utilité (concave), l'assurance est encore plus justifiée.
+E[sans assurance] = 0,10 × (−500) + 0,90 × 0 = −50 €. E[avec assurance] = −45 € (coût certain). L'espérance favorise l'assurance (−45 € > −50 €) ; avec une utilité concave (aversion au risque), l'assurance est encore plus justifiée.
 
 **Méthode de résolution d'un arbre :**
 1. Calculer la valeur de chaque branche terminale.

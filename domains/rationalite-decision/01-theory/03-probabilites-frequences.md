@@ -94,26 +94,21 @@ Avec le **même test** (sensibilité 90 %, spécificité 95 %), la VPP change ra
 
 ---
 
-## 5. L'erreur classique : confondre P(test+ | malade) et P(malade | test+)
+## 5. L'erreur classique : confondre deux questions différentes
 
 La **sensibilité** répond à : *Si je suis malade, quelle est la probabilité que le test soit positif ?*
-→ P(test+ | malade) = 90 %
 
 La **VPP** répond à : *Si le test est positif, quelle est la probabilité que je sois malade ?*
-→ P(malade | test+) = 15 % (avec prévalence 1 %)
 
-Ces deux probabilités conditionnelles sont très différentes, mais nous avons naturellement tendance à les confondre. Cette confusion s'appelle l'**erreur de transposition** ou *prosecutor's fallacy* (erreur du procureur en contexte judiciaire).
+Ces deux probabilités conditionnelles sont très différentes, mais nous avons naturellement tendance à les confondre.
 
 **Exemple neutre pour ancrer l'intuition :**
 
 > Dans une ville, 80 % des jours de pluie, le ciel est couvert le matin. Est-ce que cela signifie que si le ciel est couvert ce matin, il va pleuvoir avec 80 % de probabilité ?
 
-Non. Si le ciel est couvert 40 % des jours et qu'il pleut 10 % des jours, on calcule :
+Non. La probabilité d'avoir le ciel couvert sachant qu'il pleut n'est pas la même que la probabilité qu'il pleuve sachant que le ciel est couvert. C'est l'erreur d'inversion : confondre « la chance que le ciel soit couvert si il pleut » avec « la chance qu'il pleuve si le ciel est couvert ». La formalisation de cette inversion et le sophisme du procureur sont traités au Module 04.
 
-- P(couvert | pluie) = 80 % ← c'est ce qu'on nous dit
-- P(pluie | couvert) = (10 % × 80 %) / 40 % = 20 % ← c'est ce qu'on veut savoir
-
-> **À retenir** : P(A|B) ≠ P(B|A). Toujours identifier quelle question on pose avant d'interpréter une probabilité conditionnelle.
+> **À retenir** : « pluie → nuages » ne signifie pas « nuages → pluie ». Toujours identifier quelle question on pose avant d'interpréter un résultat de test.
 
 ---
 

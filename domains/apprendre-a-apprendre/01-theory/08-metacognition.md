@@ -122,7 +122,7 @@ Ce protocole prend 5 minutes au total (2 min avant, 3 min après). Son effet sur
 
 > **Statut de preuve / nuance**
 >
-> La métacognition comme compétence enseignable est bien documentée (Hattie, 2009 : taille d'effet ~0,69 dans *Visible Learning*) — c'est l'une des interventions pédagogiques les plus robustes. La technique Feynman, elle, est un outil pratique largement recommandé par des praticiens et pédagogues, mais elle n'a pas fait l'objet d'une littérature expérimentale massive en tant que telle : son efficacité est dérivée des principes de récupération active et d'auto-explication, qui eux sont très bien documentés (Chi et al., 1994 ; Dunlosky et al., 2013). Les JOL (jugements d'apprentissage) et leur biais sont documentés depuis Nelson & Narens (1990) et confirmés par de nombreuses réplications.
+> La métacognition comme compétence enseignable est bien documentée (Hattie, 2009 : taille d'effet ~0,69 dans *Visible Learning*) — c'est l'une des interventions pédagogiques les plus robustes. **Nuance :** les méta-analyses de Hattie agrègent des catégories d'interventions très hétérogènes ; la taille d'effet est un ordre de grandeur, pas une valeur précise transposable à toute intervention métacognitive — le résultat réel dépend fortement de la mise en œuvre. La technique Feynman, elle, est un outil pratique largement recommandé par des praticiens et pédagogues, mais elle n'a pas fait l'objet d'une littérature expérimentale massive en tant que telle : son efficacité est dérivée des principes de récupération active et d'auto-explication, qui eux sont très bien documentés (Chi et al., 1994 ; Dunlosky et al., 2013). Les JOL (jugements d'apprentissage) et leur biais sont documentés depuis Nelson & Narens (1990) et confirmés par de nombreuses réplications.
 
 ---
 
@@ -171,4 +171,4 @@ Ce protocole prend 5 minutes au total (2 min avant, 3 min après). Son effet sur
 - **Brown, Roediger & McDaniel — *Make It Stick* (2014)**, chapitre 5 (*Avoid Illusions of Knowing*) : https://www.hup.harvard.edu/books/9780674729018
 - **Hattie, J. — *Visible Learning* (2009)**, chapitre sur la métacognition : méta-analyse de 800+ études, taille d'effet ~0,69.
 - **Chi, M. T. H. et al. (1994)** — *Eliciting Self-Explanations Improves Understanding*, *Cognitive Science*, 18(3), 439–477 : https://onlinelibrary.wiley.com/doi/10.1207/s15516709cog1803_3 *(base expérimentale de l'auto-explication)*
-- **Kornell, N. & Bjork, R. A. (2009)** — *A Stability Bias in Human Memory*, *Journal of Experimental Psychology: General*, 138(4), 449–468 *(biais de calibration et jugements d'apprentissage)*
+- **Nelson, T. O. & Narens, L. (1990)** — *Metamemory: A Theoretical Framework and New Findings*, *Psychology of Learning and Motivation*, 26, 125–173 *(cadre fondateur des JOL et du monitoring métacognitif — déjà cité dans le corps du module)*

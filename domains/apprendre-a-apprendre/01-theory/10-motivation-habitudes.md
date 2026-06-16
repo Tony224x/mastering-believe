@@ -79,7 +79,7 @@ Le Module 01 a abordé le sommeil sous l'angle de la **consolidation mémorielle
 
 ### Le message prudent
 
-**Diekelmann & Born (2010)** documentent que dormir après avoir appris aide : comparé à rester éveillé le même nombre d'heures, le sommeil améliore la rétention (effet réel et reproductible). Mais la critique de **Schmid et al. (2022, *Neuroscience & Biobehavioral Reviews*)** rappelle que le poids causal du sommeil dans la consolidation reste débattu — d'autres facteurs (interférence, récupération attentionnelle) jouent aussi.
+**Diekelmann & Born (2010)** documentent que dormir après avoir appris aide : comparé à rester éveillé le même nombre d'heures, le sommeil améliore la rétention (effet réel et reproductible). Mais la critique de **Dastgheib et al. (2022, *Neuroscience & Biobehavioral Reviews*)** rappelle que le poids causal du sommeil dans la consolidation reste débattu — d'autres facteurs (interférence, récupération attentionnelle) jouent aussi.
 
 > Message prudent à retenir : **dormir suffisamment est une condition nécessaire pour apprendre efficacement, mais ce n'est pas une potion magique** de consolidation. C'est l'énergie de base, pas la technique secrète.
 
@@ -175,6 +175,6 @@ Ce qui fonctionne mieux que l'auto-persuasion abstraite : **intégrer les erreur
 - **Wood, W., & Rünger, D. (2016)** — *Psychology of Habit*, *Annual Review of Psychology*, 67, 289–314 : https://dornsife.usc.edu/wendy-wood/wp-content/uploads/sites/183/2023/10/wood.runger.2016.pdf (PDF auteur)
 - **Steel, P. (2007)** — *The Nature of Procrastination*, *Psychological Bulletin*, 133(1), 65–94 : https://studypedia.au.dk/fileadmin/www.studiemetro.au.dk/Procrastination_2.pdf (PDF)
 - **Diekelmann, S., & Born, J. (2010)** — *The Memory Function of Sleep*, *Nature Reviews Neuroscience*, 11(2), 114–126 : https://www.nature.com/articles/nrn2762
-- **Schmid, D. et al. (2022)** — *Is the role of sleep in memory consolidation overrated?*, *Neuroscience & Biobehavioral Reviews* : https://www.sciencedirect.com/science/article/abs/pii/S0149763422002883
+- **Dastgheib, M., Kulanayagam, A. & Dringenberg, H. C. (2022)** — *Is the role of sleep in memory consolidation overrated?*, *Neuroscience & Biobehavioral Reviews*, 140, 104799 : https://www.sciencedirect.com/science/article/abs/pii/S0149763422002883
 - **Ramirez, G., & Beilock, S. L. (2011)** — *Writing About Testing Worries Boosts Exam Performance in the Classroom*, *Science*, 331, 211–213
 - **Sisk, V. F. et al. (2018)** — *To What Extent and Under Which Circumstances Are Growth Mind-Sets Important to Academic Achievement?* *Psychological Science*, 29(4), 549–571

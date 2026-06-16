@@ -12,7 +12,7 @@ Voici une expérience concrète. Imagine deux groupes d'étudiants qui apprennen
 - **Groupe A (bloqué)** : ils s'exercent sur 10 problèmes du type 1, puis 10 du type 2, puis 10 du type 3. À la fin de chaque bloc, ils ont l'impression de maîtriser.
 - **Groupe B (entrelacé)** : ils reçoivent les mêmes 30 problèmes, mais dans un ordre mélangé — type 2, type 1, type 3, type 1, type 2…
 
-Résultat au test final différé d'une semaine : **72 % de réussite pour le groupe entrelacé contre 38 % pour le groupe bloqué** (Rohrer, Dedrick & Stershic, 2015, *Journal of Educational Psychology*).
+Résultat au test final différé d'une semaine : **~80 % de réussite pour le groupe entrelacé contre ~64 % pour le groupe bloqué** (Rohrer, Dedrick & Stershic, 2015, *Journal of Educational Psychology*).
 
 Pourtant, pendant l'entraînement, le groupe entrelacé se sent *moins compétent*. Il se trompe plus. Il progresse plus lentement en apparence. Et c'est précisément ce signal de difficulté qui produit l'apprentissage durable.
 
@@ -83,22 +83,17 @@ La variation empêche que la mémoire soit trop « située » — récupérable 
 
 ---
 
-> **Pseudoscience ?**
->
-> **Le mythe du « style d'apprentissage » (VAK)** : beaucoup de formateurs conseillent d'identifier ton style (« tu es visuel, donc regarde des schémas ; tu es auditif, donc écoute des podcasts »). C'est intuitif — et faux.
->
-> Pashler, McDaniel, Rohrer & Bjork (2008, *Psychological Science in the Public Interest*) ont passé en revue la littérature : pour valider l'hypothèse VAK, il faudrait que les visuels apprennent mieux avec des images ET que les auditifs apprennent mieux avec le son. Les études qui testent cela correctement ne trouvent pas cet effet — certaines le **contredisent**.
->
-> **Ce qui compte vraiment : apparier la méthode au contenu, pas au « style » de l'apprenant.** La géographie s'apprend avec des cartes (pour tout le monde). La prononciation s'apprend en écoutant (pour tout le monde). L'interleaving et le retrieval practice bénéficient à tout le monde, indépendamment de préférences subjectives.
+> **Pseudoscience ?** Le mythe des styles d'apprentissage (VAK) est traité en détail au Module 01. En bref : la méthode doit correspondre au **contenu**, pas au profil subjectif.
 
 ---
 
-> **À retenir :**
-> - Ce qui semble dur pendant l'apprentissage produit souvent plus de rétention durable — c'est le cœur des « desirable difficulties ».
-> - L'interleaving (mélanger les types) bat le blocked practice (blocs homogènes) de manière spectaculaire sur le test différé : **72 % vs 38 %**.
-> - Tes jugements d'apprentissage sur le moment (JOL) sont de mauvais guides : la fluidité immédiate ne mesure pas l'ancrage réel.
-> - Varier les contextes, formats et exemples généralise l'apprentissage et le rend moins situé.
-> - Le mythe VAK est réfuté par la littérature : adapte la méthode au contenu, pas à une préférence subjective.
+## Points clés à retenir
+
+- Ce qui semble dur pendant l'apprentissage produit souvent plus de rétention durable — c'est le cœur des « desirable difficulties ».
+- L'interleaving (mélanger les types) bat le blocked practice (blocs homogènes) de manière spectaculaire sur le test différé : **~80 % vs ~64 %**.
+- Tes jugements d'apprentissage sur le moment (JOL) sont de mauvais guides : la fluidité immédiate ne mesure pas l'ancrage réel.
+- Varier les contextes, formats et exemples généralise l'apprentissage et le rend moins situé.
+- Le mythe VAK est réfuté par la littérature : adapte la méthode au contenu, pas à une préférence subjective.
 
 ---
 
@@ -111,23 +106,13 @@ La variation empêche que la mémoire soit trop « située » — récupérable 
 **R2** : La storage strength mesure l'ancrage réel en mémoire long terme (ne descend jamais). La retrieval strength mesure la facilité d'accès *maintenant* (volatile). Nos JOL confondent les deux.
 
 **Q3** : Quel chiffre illustre l'avantage de l'interleaving sur le blocked practice en maths ?
-**R3** : 72 % de réussite (groupe entrelacé) vs 38 % (groupe bloqué) sur test différé — Rohrer, Dedrick & Stershic, 2015.
+**R3** : ~80 % de réussite (groupe entrelacé) vs ~64 % (groupe bloqué) sur test différé — Rohrer, Dedrick & Stershic, 2015.
 
 **Q4** : Pourquoi l'interleaving est-il plus efficace que l'étude bloquée ?
 **R4** : Il force le cerveau à *identifier le type de problème* avant de résoudre, pas juste à exécuter une procédure connue — une compétence de discrimination que l'étude bloquée ne développe pas.
 
 **Q5** : Cite deux façons concrètes d'introduire de la variation dans une session d'étude.
 **R5** : (1) Mélanger les flashcards de chapitres différents. (2) Alterner les formats : écrit, oral, schéma. (Aussi : étudier dans des lieux différents, varier les types d'exemples.)
-
----
-
-## Points clés à retenir
-
-1. La **difficulté perçue pendant l'étude** n'est pas un signe que tu apprends mal — c'est souvent l'inverse.
-2. L'**interleaving** construit la capacité à identifier le bon outil pour chaque problème — indispensable dans les situations réelles.
-3. Tes **jugements de compréhension sur le moment** (JOL) sont systématiquement biaisés vers la fluidité, pas vers la rétention durable.
-4. La **variation** (lieux, formats, exemples) ancre le savoir de manière moins contextuellement dépendante.
-5. Le mythe des **styles d'apprentissage VAK** est réfuté : la méthode doit correspondre au contenu, pas à une préférence subjective.
 
 ---
 

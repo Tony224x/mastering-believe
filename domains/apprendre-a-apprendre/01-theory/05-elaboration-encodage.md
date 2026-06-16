@@ -91,7 +91,7 @@ L'idee cle : encoder une information **dans les deux systemes a la fois** cree p
 ### Applications pratiques
 
 - **Lire + dessiner** : apres avoir lu un paragraphe, cree un schema maison — pas copier un schema du livre, dessiner le tien de memoire.
-- **Texte + schema au meme endroit** : les notes qui combinent des mots-cles et un croquis adjacent sont plus efficaces qu'un texte seul (theorie de la charge cognitive multimedia, Mayer 2001).
+- **Texte + schema au meme endroit** : les notes qui combinent des mots-cles et un croquis adjacent sont plus efficaces qu'un texte seul (theorie cognitive de l'apprentissage multimedia, Mayer 2001 — distincte de la theorie de la charge cognitive de Sweller 1988, qui porte sur la gestion des ressources de la memoire de travail).
 - **Mettre en image un concept abstrait** : "la recursivite" → dessine une fonction qui s'appelle elle-meme avec une fleche qui revient sur elle-meme.
 - **Raconter un schema** : regarde un diagramme et explique-le a voix haute phrase par phrase — tu actives les deux voies dans l'autre sens.
 
@@ -174,6 +174,8 @@ C'est la justification cognitive de toute la famille "elaboration" : ce qu'on tr
 5. **Calibration du portefeuille** : elaboration et dual coding sont des complements utiles a preuve moderee. Retrieval practice + espacement restent en tete — ne les sacrifie pas.
 
 ---
+
+## Pour aller plus loin
 
 ## Pour aller plus loin
 

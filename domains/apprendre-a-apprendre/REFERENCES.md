@@ -101,4 +101,16 @@
 *Pattern fondateur : une base de connaissance en markdown ou le LLM fait le bookkeeping (index, cross-references, log) pendant que l'humain curate. « Les LLM ne s'ennuient pas… peuvent toucher 15 fichiers en une passe. »*
 
 **How the Open Knowledge Format can improve data sharing** — McVeety, S., & Hormati, A., 2026. Google Cloud Blog (Data Analytics), 12 juin 2026. https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing  
-*OKF v0.1 : specification ouverte (markdown + frontmatter YAML, index.md/log.md) qui standardise le pattern LLM-Wiki. Base d'une base de connaissances personnelle portable et versionnable — utile seulement si elle alimente le rappel actif, pas la relecture passive (cf. nuance du module 07).*
+*OKF v0.1 : specification ouverte (markdown + frontmatter YAML, index.md/log.md) qui standardise le pattern LLM-Wiki. Base d'une base de connaissances personnelle portable et versionnable — utile seulement si elle alimente le rappel actif, pas la relecture passive (cf. nuance du module 13, « Apprendre avec l'IA »).*
+
+---
+
+## Extension J1-J14 (mode full) — sources additionnelles des nouveaux modules
+
+Sourcage detaille (verifie web) dans `shared/track-vie/apprendre-a-apprendre-j14-sources.md`. Sources tier-1 par nouveau module :
+
+- **J05 Elaboration & encodage** — Chi et al. 1989/1994 (self-explanation) ; Paivio 1986 (dual coding) ; Craik & Lockhart 1972 (levels of processing, avec critique de circularite) ; Mayer 2001 (theorie cognitive de l'apprentissage multimedia).
+- **J09 Mesurer son apprentissage** — Black & Wiliam 1998 (feedback formatif) ; Brier 1950 (*Monthly Weather Review* 78(1):1-3, score de Brier) ; Nelson & Narens 1990 (metamemoire/JOL).
+- **J10 Motivation & habitudes** — Wood & Runger 2016 (*Annual Review of Psychology*, psychologie de l'habitude) ; Steel 2007 (meta-analyse procrastination) ; Dastgheib, Kulanayagam & Dringenberg 2022 (*Neuroscience & Biobehavioral Reviews* 140:104799 — role du sommeil debattu).
+- **J11 Lecture & notes** — Robinson 1946 (SQ3R) ; Pauk 1962 (Cornell) ; Mueller & Oppenheimer 2014 + Morehead, Dunlosky & Rawson 2019 (manuscrit vs clavier : replication echouee).
+- **J12 Acquisition de competence** — Fitts & Posner 1967 (stades) ; Sweller 2019 (worked examples) ; Gick & Holyoak 1983 (transfert/analogies).

@@ -13,7 +13,7 @@ Vous êtes dans un appartement avec trois colocataires (A, B, C). Ce matin, la l
 - **Acte 2 — Preuve 1** : A dort chez ses parents ce week-end. Il ne peut pas être l'auteur. Mise à jour : P(A) = 0, P(B) = 1/2, P(C) = 1/2.
 - **Acte 3 — Preuve 2** : B était le dernier à regarder la télé hier soir (témoignage de C). Mise à jour : P(B) monte, P(C) descend.
 
-Ce processus — *prior + preuve → posterior → nouveau prior + preuve → …* — est le **raisonnement bayésien itératif**. Le module 03 a posé les bases (prior/vraisemblance/posterior). Ce module ajoute la **notation rigoureuse** et la **dynamique de mise à jour en séquence**.
+Ce processus — *prior + preuve → posterior → nouveau prior + preuve → …* — est le **raisonnement bayésien itératif**. Le module 03 a introduit le raisonnement sur les taux de base via les fréquences naturelles. Ce module ajoute la notation formelle (prior, vraisemblance, posterior) et la dynamique de mise à jour.
 
 ---
 

@@ -1,4 +1,4 @@
-# Module 1 — Le système du jugement
+# Module 01 — Le système du jugement
 
 > **Temps estimé** : 45 min | **Prérequis** : aucun
 > **Objectif** : comprendre pourquoi le raisonnement peut dérailler et comment le corriger — sans moraliser, sans survendre les biais. Distinguer intuition rapide vs raisonnement contrôlé ; comprendre qu'un biais est systématique, pas aléatoire.

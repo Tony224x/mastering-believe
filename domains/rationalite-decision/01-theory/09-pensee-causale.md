@@ -120,7 +120,7 @@ Le RCT ne s'applique pas toujours :
 - **Faisabilité** : impossible de randomiser l'altitude à laquelle vit quelqu'un.
 - **Coût et durée** : un essai en médecine peut prendre 10 ans.
 
-Quand le RCT est impossible, les méthodes observationnelles rigoureuses (avec appariement, variables instrumentales, etc.) permettent d'**approcher** la causalité — mais avec plus d'hypothèses à justifier (Module 10).
+Quand le RCT est impossible, les méthodes observationnelles rigoureuses (avec appariement, variables instrumentales, etc.) permettent d'**approcher** la causalité — mais avec plus d'hypothèses à justifier (au-delà de la portée de ce cours — voir les ressources avancées).
 
 ---
 

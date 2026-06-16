@@ -49,7 +49,7 @@ La bonne nouvelle : **chaque revision espacee ralentit la courbe**. Le module 03
 
 Tu as sans doute entendu que "le sommeil consolide la memoire". C'est en grande partie vrai : pendant le sommeil lent profond et le sommeil paradoxal (REM), le cerveau rejoue les traces nouvellement encodees et les integre en memoire long terme.
 
-**Mais attention a la sur-simplification.** Schmid et al. (2022, *Current Biology*) ont montre que le role consolidant du sommeil est plus conditionnel qu'on ne le croyait : l'effet depend fortement de la qualite de l'encodage initial et de l'intention de memoriser. Un contenu mal encode pendant la veille ne "s'auto-ameliore" pas pendant la nuit.
+**Mais attention a la sur-simplification.** Dastgheib, Kulanayagam & Dringenberg (2022, *Neuroscience & Biobehavioral Reviews*) ont montre que le role consolidant du sommeil est plus conditionnel qu'on ne le croyait : l'effet depend fortement de la qualite de l'encodage initial et de l'intention de memoriser. Un contenu mal encode pendant la veille ne "s'auto-ameliore" pas pendant la nuit.
 
 > **Statut de preuve :** L'effet positif du sommeil sur la consolidation est robuste pour les memoires declaratives apprises intentionnellement. Il est **beaucoup moins clair** comme "rattrapage" d'une session d'etude passive ou bâclee. Le sommeil amplifie ce qui a ete bien encode — il ne repare pas un encodage superficiel.
 >
@@ -129,7 +129,7 @@ Le paradoxe est net : les techniques qui fonctionnent *semblent* moins efficaces
 - **Relecture et surlignage** : utilite faible (Dunlosky 2013). On les fait parce qu'ils sont agreable, pas parce qu'ils fonctionnent.
 - **L'inconfort d'apprentissage est un signal positif** : ca indique que la recuperation est en train de renforcer la trace.
 - **Styles d'apprentissage VAK** : refutes par la litterature scientifique (Pashler 2008 ; Dekker 2012). Pas de base pour en tenir compte — plus de 93 % des enseignants y croient pourtant.
-- **Sommeil et consolidation** : effet reel sur la memoire declarative bien encodee, mais le sommeil *amplifie* — il ne repare pas un encodage bacle (Schmid 2022).
+- **Sommeil et consolidation** : effet reel sur la memoire declarative bien encodee, mais le sommeil *amplifie* — il ne repare pas un encodage bacle (Dastgheib et al. 2022).
 
 ---
 
@@ -139,7 +139,7 @@ Le paradoxe est net : les techniques qui fonctionnent *semblent* moins efficaces
 - Roediger, H. L., & Karpicke, J. D. (2006). "Test-Enhanced Learning". *Psychological Science*, 17(3), 249–255. https://journals.sagepub.com/doi/10.1111/j.1467-9280.2006.01693.x
 - Pashler, H. et al. (2008). "Learning Styles: Concepts and Evidence". *PSPI*, 9(3), 105–119. https://journals.sagepub.com/doi/10.1111/j.1539-6053.2009.01038.x
 - Dekker, S. et al. (2012). "Neuromyths in Education". *Frontiers in Psychology*, 3, 429. https://www.frontiersin.org/articles/10.3389/fpsyg.2012.00429/full
-- Schmid, D. et al. (2022). "Sleep Strengthens But Does Not Improve Recall of Weakly Encoded Word Pairs". *Current Biology*, 32(6), 1436–1442. https://doi.org/10.1016/j.cub.2022.01.045
+- Dastgheib, M., Kulanayagam, A. & Dringenberg, H. C. (2022). "Is the role of sleep in memory consolidation overrated?" *Neuroscience & Biobehavioral Reviews*, 140, 104799. https://www.sciencedirect.com/science/article/abs/pii/S0149763422002883
 - Brown, P. C., Roediger, H. L., & McDaniel, M. A. (2014). *Make It Stick*. Belknap Press. https://www.hup.harvard.edu/books/9780674729018
 
 **Prochain module :** [02 — Retrieval practice : se tester, pas se relire](02-retrieval-practice.md)

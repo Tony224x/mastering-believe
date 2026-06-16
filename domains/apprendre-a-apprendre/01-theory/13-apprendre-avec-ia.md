@@ -95,9 +95,7 @@ Seul, tu passes à côté des trous que tu ne vois pas — parce que tu sais ce 
 
 ## 6. Mesurer si ton utilisation du LLM fonctionne
 
-(Lien Module 09 — mesurer son apprentissage)
-
-Un LLM ne doit pas remplacer une métrique de rétention. Après chaque session LLM :
+Les métriques pour vérifier que ton usage du LLM produit de la rétention réelle sont au Module 09 (delta pré/post, rappel J+7). Un LLM ne doit pas remplacer une métrique de rétention. Après chaque session LLM :
 
 - **Test pré/post** : avant la session, tente de répondre aux questions sans aide ; après, reteste les mêmes questions.
 - **Test J+7** : la vraie rétention se mesure une semaine plus tard — si tu ne peux plus restituer sans aide, la session LLM a produit de la fluency, pas de la rétention.

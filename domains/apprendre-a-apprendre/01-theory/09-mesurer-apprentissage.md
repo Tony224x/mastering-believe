@@ -182,3 +182,4 @@ Concrètement, le capstone exigera :
 - **Koriat, A. (1997).** "Monitoring one's own knowledge during study: A cue-utilization approach to judgments of learning." *Journal of Experimental Psychology: General*, 126(4), 349–370. — Pourquoi nos jugements d'apprentissage sont biaisés.
 - **Dunlosky, J., & Metcalfe, J. (2009).** *Metacognition*. SAGE Publications. — Vue complète sur le monitoring et le contrôle de l'apprentissage.
 - **Roediger, H. L., & Karpicke, J. D. (2006).** *Psychological Science*, 17(3), 249–255. — La mesure du taux de rappel comme preuve de l'effet test.
+- **Brier, G. W. (1950).** "Verification of Forecasts Expressed in Terms of Probability." *Monthly Weather Review*, 78(1), 1–3. — Référence fondatrice du score de Brier utilisé pour la calibration (§4).

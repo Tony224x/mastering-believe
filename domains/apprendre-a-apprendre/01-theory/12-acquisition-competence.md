@@ -97,6 +97,8 @@ La première erreur face à une compétence nouvelle : s'y attaquer en bloc. Le 
 
 ## 4. Drills ciblés : s'entraîner sur la faiblesse, pas sur ce qu'on sait déjà
 
+Ces drills opérationnalisent les quatre conditions de la pratique délibérée vues au Module 07 (Ericsson) — objectif précis, feedback immédiat, sortie de zone de confort, guidance — appliquées ici par stade de Fitts.
+
 Un drill ciblé est un exercice délibérément construit pour isoler une sous-compétence spécifique et la pousser au bord de la zone de confort.
 
 **Exemple fil rouge — drill stade 1 :**

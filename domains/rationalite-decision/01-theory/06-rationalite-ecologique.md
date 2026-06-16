@@ -72,7 +72,7 @@ L'heuristique de reconnaissance s'applique à des choix binaires simples. Gigere
 
 Pour prédire lequel de deux marchés a le plus grand chiffre d'affaires, les indices disponibles sont : taille de la ville, présence d'une université, réseau ferroviaire, ligne d'autobus, code postal. Au lieu d'intégrer tous les indices dans une régression linéaire, TTB regarde *d'abord* la taille (indice le plus valide) : si elle discrimine, la décision est prise.
 
-**Résultat empirique** : sur des jeux de données réels (villes allemandes, Gigerenzer & Goldstein, 1996), TTB prédit aussi bien — voire mieux — qu'une régression de moindres carrés dans 19 environnements sur 20 testés.
+**Résultat empirique** : sur des jeux de données réels (villes allemandes, Gigerenzer & Goldstein, 1996), TTB égale ou surpasse en moyenne la régression sur les 20 environnements testés.
 
 ### 4.3 Pourquoi TTB peut battre une régression ?
 

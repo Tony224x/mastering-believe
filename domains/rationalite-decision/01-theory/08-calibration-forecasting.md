@@ -180,7 +180,7 @@ Score Brier contribution : [(0.55 - résultat)²]
 **Q3 : Quel est le score de Brier d'un prévisionniste qui dit toujours "50 %" ?**
 > R : (0,5 − 0)² = (0,5 − 1)² = 0,25 dans tous les cas. Score de référence = **0,25**.
 
-**Q4 : Citez 3 pratiques distinctives des superforecasters.**
+**Q4 : Citez 3 pratiques parmi les 5 identifiées par Tetlock & Gardner.**
 > R : (1) Donner des chiffres précis. (2) Décomposer les questions complexes. (3) Partir de la classe de référence (taux de base). (4) Mettre à jour au fil des nouvelles infos. (5) Chercher activement le désaccord.
 
 **Q5 : Pourquoi le score de Brier utilise-t-il le carré ?**

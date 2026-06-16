@@ -37,7 +37,7 @@ En 2015, l'Open Science Collaboration (OSC) a tenté de répliquer 100 études p
 **Mécanisme** : lorsqu'un chiffre est présenté en premier, il tire les estimations suivantes vers lui — même si ce chiffre est manifestement arbitraire et sans rapport avec la question posée.
 
 **Expérience classique (neutre)** — Tversky & Kahneman (1974) :
-Participants invités à faire tourner une roue de loterie truquée (10 ou 65), puis à estimer le **nombre de pays membres de l'ONU**. Groupe roue=10 : médiane **25**. Groupe roue=65 : médiane **45**. Écart de 20 pays pour un chiffre généré aléatoirement, sans lien avec la question.
+Participants invités à faire tourner une roue de loterie truquée (10 ou 65), puis à estimer le **pourcentage de pays africains membres de l'ONU**. Groupe roue=10 : médiane **25 %**. Groupe roue=65 : médiane **45 %**. Écart de 20 points de pourcentage pour un chiffre généré aléatoirement, sans lien avec la question.
 
 **Quand l'ancrage aide** : en négociation, annoncer sa position en premier ancre la fourchette de discussion.
 
@@ -141,7 +141,7 @@ On cherche à confirmer (E et 4 valident la règle) plutôt qu'à réfuter (7 pe
 ## Flash-cards (Module 05)
 
 **Q1 : Qu'est-ce que l'ancrage numérique ? Donnez un exemple neutre chiffré.**
-> R : Tendance à tirer ses estimations vers un chiffre présenté en premier, même arbitraire. Ex : une roue de loterie affichant 65 fait estimer le nombre de pays membres de l'ONU à ~45 en médiane, contre ~25 pour une roue affichant 10 (Tversky & Kahneman, 1974).
+> R : Tendance à tirer ses estimations vers un chiffre présenté en premier, même arbitraire. Ex : une roue de loterie affichant 65 fait estimer le pourcentage de pays africains membres de l'ONU à ~45 % en médiane, contre ~25 % pour une roue affichant 10 — écart de 20 points de pourcentage (Tversky & Kahneman, 1974).
 
 **Q2 : Pourquoi l'heuristique de disponibilité peut-elle induire en erreur dans l'évaluation des risques ?**
 > R : Parce que la saillance médiatique ou émotionnelle d'un événement ne corrèle pas avec sa fréquence réelle. Un accident d'avion très couvert peut sembler plus probable qu'un accident de voiture, alors que c'est l'inverse par km parcouru.
