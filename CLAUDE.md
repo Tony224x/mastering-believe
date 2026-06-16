@@ -107,23 +107,24 @@ Voie manuelle :
 
 **Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
 
-## Roadmap : l'ecole de la vie (Track Vie — 5 prochains domaines)
+## Domaines actifs (Track Vie — l'ecole de la vie)
 
-Les 5 prochains domaines elargissent le repo au-dela de la tech, selon les **5 piliers** d'une vie qui s'epanouit, chacun cadre par son **angle "futur"**. Memes conventions, meme pipeline (`mastering-domain-creator`), meme structure de dossier. Ordre indicatif, ajustable. Ces domaines sont **sans code ou a code leger** : capstone = livrable portfolio (plan, protocole, systeme, dossier, portfolio) plutot que script.
+Ces domaines elargissent le repo au-dela de la tech : memes conventions, meme structure, mais **sans code ou a code leger** (capstone = livrable portfolio : plan, dossier, essai, oeuvre). Chacun a ete construit a partir de **dossiers de recherche tier-1 verifies** (`shared/track-vie/<slug>-references.md` + `-curricula-evidence.md`) avec une **posture anti-clivant** explicite (poser la donnee, exemples neutres, disclaimers, honnetete sur la preuve). Format : 6 modules + capstone (~45 min/module).
 
-| # | Domaine | Slug propose | Pilier | Focus (Pareto-first) | Angle futur | Capstone portfolio |
-|---|---------|--------------|--------|----------------------|-------------|--------------------|
-| 1 | Finance personnelle & investissement | `finance-personnelle` | **Argent** | Budget, interets composes, ETF & allocation d'actifs, dette, fiscalite de base, independance financiere (FIRE) | Actifs numeriques, automatisation, inflation, litteratie financiere | Plan financier perso chiffre + simulateur d'investissement (Python leger) |
-| 2 | Sante, nutrition & longevite | `sante-longevite` | **Corps** | Sommeil, nutrition fondee sur preuves, force & cardio, sante metabolique & mentale | Medecine preventive, wearables / quantified self, science de la longevite | Protocole sante mesurable + tableau de bord de biomarqueurs |
-| 3 | Apprendre a apprendre & sciences cognitives | `apprendre-a-apprendre` | **Esprit** | Memoire & spaced repetition, attention / deep work, meta-apprentissage, gestion de l'energie | Apprendre vite **et avec l'IA** dans un monde qui change | Systeme d'apprentissage perso (Anki + plan d'etude) sur un vrai sujet |
-| 4 | Pensee critique, rationalite & decision | `rationalite-decision` | **Jugement** | Biais cognitifs, raisonnement bayesien, theorie de la decision, mental models | Discernement face aux deepfakes & a l'IA generative, anti-desinformation | Cadre de decision applique a un choix reel + calibration de predictions |
-| 5 | Communication, persuasion & influence | `communication-persuasion` | **Relations** | Ecriture claire, storytelling, prise de parole, negociation, ecoute active | Se demarquer quand l'IA ecrit tout ; communication humaine authentique | Portfolio : essai + pitch enregistre + negociation simulee |
+| Domaine | Folder | Pilier | Focus | Garde-fou |
+|---------|--------|--------|-------|-----------|
+| Finance personnelle & investissement | `domains/finance-personnelle/` | **Argent** | Interets composes, budget, dette, fonds indiciels/allocation, psychologie de l'argent, independance financiere | Actif vs passif par la donnee (SPIVA) ; disclaimer "pas un conseil financier" |
+| Sante, nutrition & longevite | `domains/sante-longevite/` | **Corps** | Sommeil, activite physique, nutrition fondee sur preuves, sante metabolique, lien social | Consensus, pas de guerres de regimes ; **disclaimer medical** par fichier |
+| Apprendre a apprendre | `domains/apprendre-a-apprendre/` | **Esprit** | Retrieval practice, spaced repetition (SM-2), difficultes desirables, deep work, metacognition, apprendre avec l'IA | Debunk des neuromythes (styles d'apprentissage) |
+| Pensee critique, rationalite & decision | `domains/rationalite-decision/` | **Jugement** | Probas/Bayes, heuristiques & biais, decision sous incertitude, calibration (Brier), verification d'info (SIFT) | Methode > conclusions ; **exemples 100% neutres** |
+| Communication, persuasion & influence | `domains/communication-persuasion/` | **Relations** | Rhetorique, ecoute active, ecriture claire, messages qui collent, principes de persuasion, negociation | Persuasion **ethique** (charte CTR) ; pas de manipulation |
+| Experiences psychedeliques, creativite & IA | `domains/psychedeliques-creativite-ia/` | *(exploratoire)* | Securite/legalite, neuroscience, esprit critique sur la creativite, integration legale, art & IA | **Reduction des risques** ; double disclaimer medical+legal par fichier ; **zero contenu operationnel** ; integration *apres/sobre*, jamais sous influence ; capstone reflexif legal |
 
-**Mnemo des 5 piliers** : **A**rgent · **C**orps · **E**sprit · **J**ugement · **R**elations.
+**Mnemo des 5 piliers** : **A**rgent · **C**orps · **E**sprit · **J**ugement · **R**elations. (Le domaine psychedeliques est un ajout exploratoire, construit sous cadrage adverse securite/ethique strict — cf. `shared/track-vie/psychedeliques-creativite-ia-framing-curriculum.md`.)
 
-**Vivier (candidats futurs, apres ces 5)** : Entrepreneuriat & creation de valeur a l'ere de l'IA ; IA appliquee au quotidien & souverainete numerique ; Psychologie, emotions & relations ; Climat, energie & durabilite ; Langues (immersion + IA). Ces idees sont volontairement gardees en reserve pour rester focus sur les 5 piliers d'abord.
+**Vivier (candidats futurs)** : Entrepreneuriat & creation de valeur a l'ere de l'IA ; IA appliquee au quotidien & souverainete numerique ; Psychologie, emotions & relations ; Climat, energie & durabilite ; Langues (immersion + IA).
 
-> Adaptation du pipeline aux domaines de vie : le skill `mastering-domain-creator` reste la voie recommandee (interview → recherche sourcee → plan challenge → creation → verif → capstone). Pour ces domaines, la passe **code-runner** devient optionnelle (peu ou pas de code) ; les passes **facts-checker** (sources tier-1 : etudes, meta-analyses, auteurs de reference) et **pedagogy-reviewer** restent critiques.
+> Pipeline pour les domaines de vie : le skill `mastering-domain-creator` reste la voie recommandee, mais la passe **code-runner** devient optionnelle (peu/pas de code) ; les passes **facts-checker** (sources tier-1) et **pedagogy-reviewer** (incl. controle **anti-clivant** et, pour les sujets sensibles, une passe adverse **harm/legal**) restent critiques.
 
 ## Commands
 
