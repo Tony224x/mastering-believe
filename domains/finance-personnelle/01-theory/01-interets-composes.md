@@ -134,7 +134,52 @@ Attendre de 25 a 35 ans coute ici pres de **270 000 €** de capital final, meme
 
 ---
 
-## 6. La regle des 72 (estimation rapide)
+## 6. Inflation & pouvoir d'achat : le rendement reel
+
+Tous les chiffres precedents sont **nominaux** : ils comptent des euros, pas ce que ces euros permettent d'acheter. Or l'inflation erode silencieusement le pouvoir d'achat. Un capital qui "grossit" de 5 % pendant que les prix montent de 3 % ne vous enrichit que de ~2 % en termes reels.
+
+### 6.1 Du nominal au reel
+
+Le **taux reel** mesure le gain de pouvoir d'achat, une fois l'inflation retiree.
+
+```
+taux reel = (1 + nominal) / (1 + inflation) - 1
+          ≈ nominal - inflation   (approximation valable quand les taux sont faibles)
+```
+
+Exemple : rendement nominal 5 %, inflation 3 %.
+- Approximation : 5 − 3 = **~2 %**
+- Exact : (1,05 / 1,03) − 1 = **1,94 %**
+
+L'approximation "nominal − inflation" suffit dans la vie courante ; l'ecart avec le calcul exact reste minime tant que les taux sont modestes.
+
+### 6.2 Pourquoi c'est decisif sur le long terme
+
+L'inflation est elle-meme un interet compose… qui joue **contre** vous sur la valeur de votre argent.
+
+A 3 % d'inflation par an, le pouvoir d'achat de 10 000 € devient :
+
+| Duree | Pouvoir d'achat reel de 10 000 € |
+|-------|----------------------------------|
+| 10 ans | ~7 441 € |
+| 20 ans | ~5 537 € |
+| 30 ans | ~4 120 € |
+
+En 30 ans, l'argent "dormant" perd ~60 % de son pouvoir d'achat. C'est pourquoi laisser toute son epargne sur un compte non remunere (ou a un taux inferieur a l'inflation) revient a perdre de l'argent **en termes reels**, meme si le solde nominal ne bouge pas.
+
+> **A retenir** : ce qui compte pour votre niveau de vie futur, c'est le rendement **reel** (nominal − inflation), pas le rendement affiche. Un livret a 2 % quand l'inflation est a 4 % vous appauvrit de ~2 %/an.
+
+### 6.3 Deux regles a penser en reel
+
+- **Le fonds d'urgence (3-6 mois de depenses)** : son role est d'etre liquide et sur, pas de rapporter. Mais comme il est detenu en cash sur la duree, l'inflation le grignote. La bonne reponse n'est pas de l'investir en actifs risques (ce serait trahir sa fonction de filet), mais de le **dimensionner en mois de depenses** — qui montent avec l'inflation — plutot qu'en montant fixe fige, et de le placer sur un support remunere proche de l'inflation (livret reglemente, compte d'epargne). On reverra le fonds d'urgence en detail au Module 03.
+
+- **La regle des 4 % (retrait soutenable)** : ce repere de la phase de retraite suppose un retrait **indexe sur l'inflation** chaque annee, et repose donc sur un rendement **reel** positif du portefeuille. Si on raisonnait en nominal, on surestimerait largement ce qu'un capital peut financer sur 30 ans. Detail et limites au Module 12 — ici, retenez seulement : la regle des 4 % se pense en pouvoir d'achat, pas en euros nominaux.
+
+> Le calculateur `02-code/01-interets-composes.py` calcule desormais le rendement **reel** (ajuste de l'inflation) en plus du nominal.
+
+---
+
+## 7. La regle des 72 (estimation rapide)
 
 Pour estimer combien de temps il faut pour doubler votre capital : divisez 72 par le taux annuel.
 
@@ -149,7 +194,7 @@ Exemples :
 
 ---
 
-## 7. Flash-cards
+## 8. Flash-cards
 
 **Q1 : Quelle est la difference entre interet simple et interet compose ?**
 > R : L'interet simple calcule les interets uniquement sur le capital initial. L'interet compose calcule les interets sur le capital **plus** les interets precedemment accumules — le capital croit donc exponentiellement.
@@ -166,6 +211,9 @@ Exemples :
 **Q5 : Que dit la regle des 72 sur un investissement a 6 % ?**
 > R : 72 / 6 = 12 ans pour doubler le capital. En 24 ans, le capital est multiplie par 4 ; en 36 ans, par 8.
 
+**Q6 : Vous gagnez 5 % nominal alors que l'inflation est de 3 %. Quel est votre rendement reel ?**
+> R : Environ 2 % (approximation nominal − inflation ; exact : 1,05/1,03 − 1 ≈ 1,94 %). C'est ce rendement reel qui mesure votre gain de pouvoir d'achat — le seul qui compte pour votre niveau de vie futur.
+
 ---
 
 ## Points cles a retenir
@@ -175,7 +223,8 @@ Exemples :
 3. **Commencer tot bat verser plus tard** — meme de petits montants places tot peuvent surpasser de gros versements tardifs.
 4. **La regle des 72** permet d'estimer rapidement la duree de doublement : 72 / taux (%).
 5. **Chaque annee d'attente a un cout** — calculable, souvent superieur a ce qu'on imagine.
-6. Les exemples ici sont illustratifs. Les rendements reels varient et ne sont pas garantis.
+6. **Le rendement qui compte est le rendement reel** (nominal − inflation) — l'inflation est un interet compose qui joue contre votre pouvoir d'achat. Fonds d'urgence et regle des 4 % se pensent en reel.
+7. Les exemples ici sont illustratifs. Les rendements reels varient et ne sont pas garantis.
 
 ---
 
@@ -186,5 +235,7 @@ Exemples :
 - **Compound Interest — Investing 101** — Investor.gov : https://www.investor.gov/introduction-investing/investing-basics/glossary/compound-interest
 - **Calculateur du domaine** — `02-code/01-interets-composes.py` (stdlib Python, jouable en local)
 - **Finance Theory I (15.401)** — MIT OCW (valeur-temps de l'argent) : https://ocw.mit.edu/courses/15-401-finance-theory-i-fall-2008/
+- **Consumer Price Index (CPI) — inflation et pouvoir d'achat** — U.S. Bureau of Labor Statistics : https://www.bls.gov/cpi/
+  *(Mesure officielle de l'inflation ; le CPI inflation calculator illustre l'erosion du pouvoir d'achat dans le temps)*
 
 > **Disclaimer** : ce module est educatif. Il ne constitue pas un conseil financier personnalise. Les taux utilises dans les exemples sont illustratifs ; les performances passees ne prejudgent pas des performances futures.

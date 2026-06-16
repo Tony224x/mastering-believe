@@ -126,10 +126,48 @@ Il faudrait verser ~250 × (370/257) ≈ **360 €/mois** au lieu de 250 €, so
 
 ---
 
-## Resume des enseignements cles (Exercices 1-3)
+## Solution Exercice 4 — Du nominal au reel : l'effet de l'inflation
+
+### Partie A — Taux reel
+
+**Cas 1 — Nominal 2 % / inflation 3 % :**
+```
+Approximation : 2 - 3 = -1 %
+Exact         : (1,02 / 1,03) - 1 = -0,97 %
+```
+Pouvoir d'achat : **il diminue** (rendement reel negatif — le livret ne suit pas l'inflation).
+
+**Cas 2 — Nominal 7 % / inflation 3 % :**
+```
+Approximation : 7 - 3 = +4 %
+Exact         : (1,07 / 1,03) - 1 = +3,88 %
+```
+Pouvoir d'achat : **il augmente** (rendement reel positif).
+
+L'approximation `nominal − inflation` est tres proche de la valeur exacte (ecart < 0,15 point ici) ; elle suffit pour raisonner mentalement.
+
+### Partie B — Erosion d'un cash dormant (15 000 €, 0 %, inflation 3 %)
+
+```
+Apres 10 ans : 15 000 / (1,03)^10 = 15 000 / 1,3439 = ~11 161 €
+Apres 25 ans : 15 000 / (1,03)^25 = 15 000 / 2,0938 = ~7 164 €
+```
+
+En 25 ans, sans bouger, ces 15 000 € ne "valent" plus que ~7 200 € d'aujourd'hui — soit une perte de pouvoir d'achat de plus de 50 %.
+
+### Partie C — Raisonnement
+
+**Question 3 :** `demo_rendement_reel()` confirme les taux reels (−0,97 % et +1,94 % pour le couple 5 %/3 % du script) et l'erosion du pouvoir d'achat.
+
+**Question 4 :** Parce que le cout de la vie (donc le montant d'un "filet de 3-6 mois") augmente avec l'inflation : un montant fixe fige en euros couvrirait de moins en moins de mois de depenses au fil du temps, alors qu'une cible exprimee en **mois de depenses** se reajuste automatiquement a la hausse des prix.
+
+---
+
+## Resume des enseignements cles (Exercices 1-4)
 
 1. La croissance exponentielle s'accelere avec le temps — le gain des dernieres annees est toujours superieur aux premieres.
 2. Verser peu tot bat verser beaucoup tard, meme si l'effort total est bien plus faible.
 3. La regle des 72 est un outil de calcul rapide fiable (erreur < 3 %).
 4. 5 ans d'attente peuvent couter 100 000+ € de capital final — c'est concret et chiffrable.
-5. Tous ces calculs sont illustratifs : les rendements reels varient, ne sont pas garantis, et dependent de choix d'investissement risques.
+5. Le rendement qui compte est le rendement REEL (nominal − inflation) : l'inflation erode le pouvoir d'achat, et un cash dormant perd de la valeur reelle meme si son solde ne bouge pas.
+6. Tous ces calculs sont illustratifs : les rendements reels varient, ne sont pas garantis, et dependent de choix d'investissement risques.

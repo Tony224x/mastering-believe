@@ -102,3 +102,36 @@ Marie a 30 ans et hesite a commencer a epargner 250 €/mois. Elle se dit "je co
 - [ ] Les deux capitaux de la Partie B sont calcules avec le script ou la formule (tolerance ±500 €)
 - [ ] Le manque a gagner est chiffre precisement
 - [ ] La reponse a la question 4 donne une estimation raisonnee (pas forcement exacte, mais logiquement argumentee)
+
+---
+
+## Exercice 4 — Du nominal au reel : l'effet de l'inflation
+
+### Objectif
+Distinguer rendement nominal et rendement reel, et mesurer l'erosion du pouvoir d'achat — pour comprendre pourquoi fonds d'urgence et regle des 4 % se pensent en reel.
+
+### Consigne
+
+**Partie A — Taux reel :**
+
+Pour chacun des couples (rendement nominal / inflation) suivants, calculez le rendement reel avec l'approximation `nominal − inflation`, puis avec la formule exacte `(1 + nominal) / (1 + inflation) − 1` :
+1. Nominal 2 % / inflation 3 % (livret en periode d'inflation)
+2. Nominal 7 % / inflation 3 % (portefeuille diversifie, illustratif)
+
+Pour chaque cas, indiquez si le pouvoir d'achat **augmente ou diminue**.
+
+**Partie B — Erosion d'un cash dormant :**
+
+Vous laissez **15 000 €** sur un compte non remunere (0 %). L'inflation est de **3 %/an**. Calculez le **pouvoir d'achat reel** de cette somme (en euros d'aujourd'hui) apres 10 ans puis 25 ans, avec `montant / (1 + inflation)^annees`.
+
+**Partie C — Raisonnement :**
+
+3. Verifiez vos resultats avec `demo_rendement_reel()` du script `02-code/01-interets-composes.py`.
+4. En une phrase : pourquoi vaut-il mieux dimensionner un fonds d'urgence en **mois de depenses** plutot qu'en montant fixe en euros ?
+
+### Criteres de reussite
+
+- [ ] Les taux reels sont calcules par les deux methodes (approximation et exact) pour les deux couples
+- [ ] La direction du pouvoir d'achat (hausse/baisse) est correcte pour chaque cas (cas 1 = baisse, cas 2 = hausse)
+- [ ] Les deux pouvoirs d'achat de la Partie B sont calcules (tolerance ±50 €)
+- [ ] La reponse a la question 4 relie explicitement le fonds d'urgence a la hausse des prix (les depenses augmentent avec l'inflation)
