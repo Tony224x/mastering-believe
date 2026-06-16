@@ -30,7 +30,7 @@ Le modele propose par Daniel Kahneman (2011) distingue deux "systemes" de traite
 | **Acces** | Inconscient | Conscient |
 | **Exemples** | Lire un mot, eviter un obstacle, reconnaitre un visage | Calculer 17 x 24, remplir un formulaire, resoudre un probleme nouveau |
 | **Force** | Efficace pour les taches repetitives et connues | Adapte aux problemes nouveaux et complexes |
-| **Faiblesse** | Produit des erreurs systematiques dans les domaines peu frequentes (statistiques, risques rares) | Lent, se fatigue (ego depletion — effet modere, partiellement replique) |
+| **Faiblesse** | Produit des erreurs systematiques dans les domaines peu frequentes (statistiques, risques rares) | Lent, se fatigue |
 
 > **A retenir** : le Systeme 1 n'est pas "mauvais". Il est extraordinairement efficace pour les 99 % de decisions quotidiennes simples. Les biais apparaissent quand il extrapole ses regles a des domaines pour lesquels il n'a pas ete "entraine" — notamment les probabilites et les statistiques.
 
@@ -88,7 +88,7 @@ Ce probleme illustre pourquoi des methodes explicites (probabilites, Bayes) sont
 
 ## 6. La nuance replication
 
-> **Honnêtete intellectuelle** : la science des biais cognitifs a elle-meme connu une crise. Apres 2011, de nombreux effets de *priming social* (par exemple : lire des mots lies a la vieillesse ralentirait la marche) ont echoue a se repliquer. Kahneman lui-meme a reconnu en 2012 puis 2017 avoir trop fait confiance a des etudes sous-puissantes.
+> **Honnêtete intellectuelle** : la science des biais cognitifs a elle-meme connu une crise. Apres 2011, de nombreux effets de *priming social* (par exemple : lire des mots lies a la vieillesse ralentirait la marche) ont echoue a se repliquer. Kahneman lui-meme a reconnu en 2012 puis 2017 avoir trop fait confiance a des etudes sous-puissances.
 >
 > **Ce que cela signifie pour ce domaine** :
 > - On enseigne les effets **robustes et bien repliques** : ancrage numerique, cadrage, base rate neglect dans des taches probabilistes, biais de confirmation dans des taches de selection.
