@@ -12,7 +12,7 @@
 
 Sophie et Theo gagnent le meme salaire net : 3 000 €/mois.
 
-- **Sophie** epargne 10 % (300 €/mois) → il lui faudra environ **43 ans** pour atteindre l'independance financiere (hypothese de rendement reel ~5 %, depenses stables).
+- **Sophie** epargne 10 % (300 €/mois) → il lui faudra environ **52 ans** pour atteindre l'independance financiere (hypothese de rendement reel ~5 %, depenses stables).
 - **Theo** epargne 40 % (1 200 €/mois) → environ **22 ans**.
 - **Si Theo monte a 60 %** (1 800 €/mois) → environ **12 a 13 ans**.
 
@@ -36,7 +36,7 @@ C'est le pourcentage de votre revenu que vous ne depensez pas et que vous invest
 
 | Taux d'epargne | Annees jusqu'a l'independance |
 |---|---|
-| 10 % | ~43 ans |
+| 10 % | ~52 ans |
 | 20 % | ~37 ans |
 | 30 % | ~28 ans |
 | 50 % | ~17 ans |

@@ -10,7 +10,7 @@
 
 Imaginez deux personnes, Alice et Bob :
 
-- **Alice** commence a epargner 200 € par mois a **25 ans** et s'arrete a **35 ans** (10 ans d'effort).
+- **Alice** epargne 200 € par mois de **25 a 35 ans** (10 ans, 24 000 € verses), puis **arrete de verser** mais laisse son capital investi jusqu.a 65 ans.
 - **Bob** commence a **35 ans** et epargne 200 € par mois jusqu'a **65 ans** (30 ans d'effort).
 - Tous deux obtiennent un rendement annuel moyen de **7 %** (typique d'un portefeuille diversifie sur 30 ans, avant inflation — chiffre illustratif, pas une garantie).
 
@@ -18,10 +18,10 @@ Resultats a 65 ans :
 
 | | Epargne totale versee | Capital final |
 |---|---|---|
-| **Alice** (10 ans, 25-35 ans) | 24 000 € | ~**168 000 €** |
-| **Bob** (30 ans, 35-65 ans) | 72 000 € | ~**227 000 €** |
+| **Alice** (10 ans, 25-35 ans) | 24 000 € | ~**281 000 €** |
+| **Bob** (30 ans, 35-65 ans) | 72 000 € | ~**244 000 €** |
 
-Alice a verse **3 fois moins** que Bob, mais accumule **74 %** de son capital. Pourquoi ? Parce qu'elle a donne **30 ans de plus au temps de travailler** pour elle.
+Alice a verse **3 fois moins** que Bob (24 000 € contre 72 000 €), et finit pourtant avec **plus de capital** (~281 000 € contre ~244 000 €). Pourquoi ? Parce que ses premiers versements ont eu **40 ans pour composer** : le temps a davantage compte que le montant total verse.
 
 > **A retenir** : le temps en bourse est votre actif le plus precieux. Commencer tot bat presque toujours verser plus tard.
 
@@ -95,7 +95,7 @@ La difference entre 4 % et 8 % n'est "que" du simple au double en taux, mais tri
 
 ### 3.3 Le montant investi regulierement
 
-La regularite bat le gros coup unique pour la plupart des epargnants. Verser 200 € par mois pendant 30 ans a 7 % produit ~**227 000 €** (pour 72 000 € verses).
+La regularite bat le gros coup unique pour la plupart des epargnants. Verser 200 € par mois pendant 30 ans a 7 % produit ~**244 000 €** (pour 72 000 € verses).
 
 ---
 

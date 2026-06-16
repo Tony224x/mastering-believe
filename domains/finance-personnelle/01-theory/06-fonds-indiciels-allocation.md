@@ -17,10 +17,10 @@ Marie et Paul investissent chacun 10 000 € aujourd'hui et ajoutent 200 €/moi
 
 | | Capital final estime |
 |---|---|
-| Marie (1,80 % de frais) | ≈ 215 000 € |
-| Paul (0,20 % de frais) | ≈ 297 000 € |
+| Marie (1,80 % de frais) | ≈ 220 000 € |
+| Paul (0,20 % de frais) | ≈ 311 000 € |
 
-Une difference de **~82 000 €**, pour 1,6 point de frais par an. Ce n'est ni le talent ni la chance qui les separe : ce sont **les frais composes sur 30 ans**.
+Une difference de **~91 000 €**, pour 1,6 point de frais par an. Ce n'est ni le talent ni la chance qui les separe : ce sont **les frais composes sur 30 ans**.
 
 > **A retenir** : sur un long horizon, les frais ne sont pas un detail. Ils se composent exactement comme les rendements — mais en votre defaveur.
 
