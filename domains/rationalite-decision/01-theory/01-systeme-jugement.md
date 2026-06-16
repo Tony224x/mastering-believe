@@ -88,7 +88,7 @@ Ce probleme illustre pourquoi des methodes explicites (probabilites, Bayes) sont
 
 ## 6. La nuance replication
 
-> **Honnêtete intellectuelle** : la science des biais cognitifs a elle-meme connu une crise. Apres 2011, de nombreux effets de *priming social* (par exemple : lire des mots lies a la vieillesse ralentirait la marche) ont echoue a se repliquer. Kahneman lui-meme a reconnu en 2012 puis 2017 avoir trop fait confiance a des etudes sous-puissances.
+> **Honnêtete intellectuelle** : la science des biais cognitifs a elle-meme connu une crise. Apres 2011, de nombreux effets de *priming social* (par exemple : lire des mots lies a la vieillesse ralentirait la marche) ont echoue a se repliquer. Kahneman lui-meme a reconnu en 2012 puis 2017 avoir trop fait confiance a des etudes sous-puissantes.
 >
 > **Ce que cela signifie pour ce domaine** :
 > - On enseigne les effets **robustes et bien repliques** : ancrage numerique, cadrage, base rate neglect dans des taches probabilistes, biais de confirmation dans des taches de selection.
