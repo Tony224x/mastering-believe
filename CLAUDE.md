@@ -8,6 +8,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Scope is **not limited to AI/backend or to a 2-week format**: a domain can cover anything (tech, sciences, languages, humanities, etc.) and span any duration that fits the topic — from a few days to several weeks.
 
+### Vision : une ecole de la vie
+
+A terme, **Mastering Believe** depasse la seule maitrise technique pour devenir une **ecole de la vie** : un curriculum holistique qui applique la meme rigueur pedagogique (evidence-based, Pareto-first, deliberate practice, capstone portfolio) aux **competences de vie a fort levier** et aux **domaines du futur** — pas seulement au code.
+
+Deux familles de domaines cohabitent, **meme methode, meme structure de dossier** :
+- **Track Tech** — maitrise d'ingenierie (les 5 domaines actifs : algorithmie, system design, neural networks, agentic AI, robotics).
+- **Track Vie** — les **5 piliers** d'une vie qui s'epanouit, chacun cadre par son angle "futur" : **Argent, Corps, Esprit, Jugement, Relations** (voir la *Roadmap* plus bas).
+
+L'objectif : qu'un apprenant compose **son** cursus — quelques domaines tech, quelques domaines de vie — et en sorte a la fois employable **et** equipe pour decider, apprendre et durer. Pour les domaines de vie, le bloc **Code applique** est souvent optionnel ou leger (simulateurs, scripts d'analyse), mais **theorie + exercices gradues + capstone portfolio** restent obligatoires.
+
 Each domain is a self-contained module composed of:
 1. **Cours theorique** — structured theory (Markdown), progressive, concise, no fluff
 2. **Code applique** *(when relevant)* — real, runnable, heavily commented examples
@@ -28,9 +38,6 @@ mastering-believe/
 │       ├── 01-theory/       # Numbered theory modules (Markdown, source-of-truth)
 │       │   ├── 01-fundamentals.md
 │       │   └── ...
-│       ├── 01-theory-qd/    # Site Quarkdown enrichi (optionnel, 1 par domaine)
-│       │   ├── main.qd      # Index avec sidebar nav
-│       │   └── ...
 │       ├── 02-code/         # Runnable commented examples matching theory
 │       ├── 03-exercises/    # Progressive exercises + solutions
 │       │   ├── 01-easy/
@@ -44,22 +51,15 @@ mastering-believe/
 │           │   ├── README.md    # Contexte, consigne, etapes, criteres
 │           │   └── solution/    # Corrige commente
 │           └── ...
-├── .github/workflows/
-│   └── quarkdown-release.yml # CI : build des sites + bundles en Release sur tag v*
-├── quarkdown/               # Pipeline de rendu .qd -> site HTML statique
-│   ├── README.md            # Prerequis (Java 17+, Quarkdown CLI), install, build
-│   ├── post-build-fix-links.py
-│   └── scripts/
-│       ├── build-all.ps1            # Build tous les sites Windows (ou -Domain X, -Watch)
-│       ├── build-all.sh             # Idem Linux/macOS/CI (--domain X, --out)
-│       └── scaffold-domain.py       # Genere 01-theory-qd/ depuis 01-theory/
 └── shared/
     ├── templates/           # Templates for new domains
     ├── external-courses.md  # Index de cours universitaires (Stanford, MIT, CMU, ...)
     └── logistics-context.md # Shared LogiSim context referenced by all 05-projets-guides
 ```
 
-Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore** — il peut exister sur une machine de dev mais n'est jamais commite. Idem pour `references/`, `docs/plans/` et les outputs Quarkdown (`quarkdown/output*/`).
+Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore** — il peut exister sur une machine de dev mais n'est jamais commite. Idem pour `references/` et `docs/plans/`.
+
+> **Quarkdown (temporairement hors tronc)** : le pipeline de rendu `.qd` -> sites HTML (dossier `quarkdown/`, CI `quarkdown-release.yml`, et les `01-theory-qd/` de chaque domaine) a ete **sorti du tronc** — pas encore pret. Il est **conserve intact dans la branche `quarkdown-wip`** et sera reintegre plus tard. La source-of-truth de la theorie reste les `.md` de `01-theory/`.
 
 ## Conventions
 
@@ -70,7 +70,7 @@ Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore*
 - **Exercises**: un fichier d'exercices regroupe 2-3 exercices ; chaque exercice a ses sections `### Objectif`, `### Consigne`, `### Criteres de reussite` (sous un `## Exercice N`)
 - **Solutions**: Separate folder, never mixed with exercise files
 - **Workspace**: `03-exercises/workspace/` est gitignore — l'apprenant y ecrit ses solutions sans polluer le repo
-- **Naming coherence**: pour un module N, `01-theory/NN-x.md`, `02-code/NN-x.py`, `01-theory-qd/NN-x.qd` et les exercices/solutions partagent le meme slug numerote
+- **Naming coherence**: pour un module N, `01-theory/NN-x.md`, `02-code/NN-x.py` et les exercices/solutions partagent le meme slug numerote
 - **Public repo**: contenu lisible par tous, pas d'info perso/sensible dans les fichiers commites
 
 ## Learning Methodology Rules
@@ -95,7 +95,7 @@ Voie manuelle :
 5. Each code example (if any) should take 15-30 min to read and run
 6. Exercises: minimum 3 easy, 3 medium, 2 hard, 1 capstone project
 
-## Domains actifs
+## Domaines actifs (Track Tech)
 
 | Domain | Folder | Stack | Focus |
 |--------|--------|-------|-------|
@@ -107,7 +107,24 @@ Voie manuelle :
 
 **Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
 
-**Quarkdown** : les **5 domaines actifs** ont un `01-theory-qd/` buildable (agentic-ai partiellement enrichi, les 4 autres en placeholders scaffoldes). Les `.md` de `01-theory/` restent la source-of-truth lisible sur GitHub ; les `.qd` sont des versions enrichies (math LaTeX, mermaid, callouts). **Toute correction d'un `.md` de theorie doit etre repercutee dans le `.qd` miroir s'il existe.** La CI (`.github/workflows/quarkdown-release.yml`) build tous les sites et publie un bundle `tar.gz` par domaine en asset de GitHub Release sur tag `v*`.
+## Domaines actifs (Track Vie — l'ecole de la vie)
+
+Ces domaines elargissent le repo au-dela de la tech : memes conventions, meme structure, mais **sans code ou a code leger** (capstone = livrable portfolio : plan, dossier, essai, oeuvre). Chacun a ete construit a partir de **dossiers de recherche tier-1 verifies** (`shared/track-vie/<slug>-references.md` + `-curricula-evidence.md`) avec une **posture anti-clivant** explicite (poser la donnee, exemples neutres, disclaimers, honnetete sur la preuve). Format : 6 modules + capstone (~45 min/module).
+
+| Domaine | Folder | Pilier | Focus | Garde-fou |
+|---------|--------|--------|-------|-----------|
+| Finance personnelle & investissement | `domains/finance-personnelle/` | **Argent** | Interets composes, budget, dette, fonds indiciels/allocation, psychologie de l'argent, independance financiere | Actif vs passif par la donnee (SPIVA) ; disclaimer "pas un conseil financier" |
+| Sante, nutrition & longevite | `domains/sante-longevite/` | **Corps** | Sommeil, activite physique, nutrition fondee sur preuves, sante metabolique, lien social | Consensus, pas de guerres de regimes ; **disclaimer medical** par fichier |
+| Apprendre a apprendre | `domains/apprendre-a-apprendre/` | **Esprit** | Retrieval practice, spaced repetition (SM-2), difficultes desirables, deep work, metacognition, apprendre avec l'IA | Debunk des neuromythes (styles d'apprentissage) |
+| Pensee critique, rationalite & decision | `domains/rationalite-decision/` | **Jugement** | Probas/Bayes, heuristiques & biais, decision sous incertitude, calibration (Brier), verification d'info (SIFT) | Methode > conclusions ; **exemples 100% neutres** |
+| Communication, persuasion & influence | `domains/communication-persuasion/` | **Relations** | Rhetorique, ecoute active, ecriture claire, messages qui collent, principes de persuasion, negociation | Persuasion **ethique** (charte CTR) ; pas de manipulation |
+| Experiences psychedeliques, creativite & IA | `domains/psychedeliques-creativite-ia/` | *(exploratoire)* | Securite/legalite, neuroscience, esprit critique sur la creativite, integration legale, art & IA | **Reduction des risques** ; double disclaimer medical+legal par fichier ; **zero contenu operationnel** ; integration *apres/sobre*, jamais sous influence ; capstone reflexif legal |
+
+**Mnemo des 5 piliers** : **A**rgent · **C**orps · **E**sprit · **J**ugement · **R**elations. (Le domaine psychedeliques est un ajout exploratoire, construit sous cadrage adverse securite/ethique strict — cf. `shared/track-vie/psychedeliques-creativite-ia-framing-curriculum.md`.)
+
+**Vivier (candidats futurs)** : Entrepreneuriat & creation de valeur a l'ere de l'IA ; IA appliquee au quotidien & souverainete numerique ; Psychologie, emotions & relations ; Climat, energie & durabilite ; Langues (immersion + IA).
+
+> Pipeline pour les domaines de vie : le skill `mastering-domain-creator` reste la voie recommandee, mais la passe **code-runner** devient optionnelle (peu/pas de code) ; les passes **facts-checker** (sources tier-1) et **pedagogy-reviewer** (incl. controle **anti-clivant** et, pour les sujets sensibles, une passe adverse **harm/legal**) restent critiques.
 
 ## Commands
 
@@ -118,10 +135,3 @@ Code examples are standalone scripts — run them directly (Python 3.11+ recomma
 - **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (requires `"gymnasium[mujoco]"`, `mujoco`, `torch`, `imageio` selon le module ; headless : `MUJOCO_GL=osmesa`)
 - Algorithmie & System Design : stdlib seulement
 - Pas de suite de tests ni de linter au niveau repo — verifier un exemple = le lancer
-
-Quarkdown (build des sites de cours — requiert Java 17+ et le CLI `quarkdown`, voir `quarkdown/README.md`) :
-- **Build tous les domaines** : `pwsh quarkdown/scripts/build-all.ps1` (Windows) / `bash quarkdown/scripts/build-all.sh` (Linux/macOS/CI)
-- **Build un domaine** : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai` / `bash quarkdown/scripts/build-all.sh --domain agentic-ai`
-- **Live preview** : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai -Watch` (PowerShell uniquement)
-- **Scaffold un 01-theory-qd/** : `python quarkdown/scripts/scaffold-domain.py <domain>` (idempotent, `--force` pour reecrire ; `main.qd` toujours regenere)
-- Output : `quarkdown/output-site/<domain>/` (gitignore)
