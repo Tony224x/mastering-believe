@@ -26,7 +26,7 @@ Tu surveilles une feature numerique d'un modele de scoring. Tu binnes la distrib
 6. A quelle frequence faire tourner ce calcul en prod, et sur quel echantillon ?
 
 ### Criteres de reussite
-- [ ] Le PSI total est calcule correctement (de l'ordre de 0.1-0.15)
+- [ ] Le PSI total est calcule correctement (de l'ordre de 0.15)
 - [ ] L'interpretation utilise les seuils 0.1 / 0.25 (drift modere "a surveiller")
 - [ ] Le PSI est identifie comme mesurant le data drift (shift des inputs), pas le concept drift
 - [ ] Drift sans baisse de perf -> surveiller, pas forcement re-entrainer (le modele peut rester valide)

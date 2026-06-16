@@ -27,6 +27,7 @@ INJECTION_PATTERNS = [
     r"you\s+are\s+now\s+a",
     r"new\s+instructions?\s*:",
     r"disregard\s+(the|all|previous)",
+    r"reveal\s+(the\s+)?system\s+prompt",
     r"system\s*:\s*",
     r"jailbreak",
 ]
@@ -247,12 +248,19 @@ class JailbreakDetector:
                 continue
         return None
 
+    # Intent to exfiltrate / disclose sensitive material -- aggravating factor.
+    DISCLOSURE = ["system prompt", "secret", "reveal", "exfiltrate", "credentials"]
+
     def _score_text(self, text: str) -> tuple[float, list[str]]:
         low = text.lower()
         signals: list[str] = []
         score = 0.0
-        if any(re.search(p, low) for p in INJECTION_PATTERNS):
+        direct = any(re.search(p, low) for p in INJECTION_PATTERNS)
+        if direct:
             score += self.WEIGHTS["direct"]; signals.append("direct")
+        # A direct injection that ALSO targets disclosure is unambiguous -> +0.3.
+        if direct and any(d in low for d in self.DISCLOSURE):
+            score += 0.3; signals.append("disclosure_intent")
         if any(r in low for r in self.ROLEPLAY):
             score += self.WEIGHTS["roleplay"]; signals.append("roleplay")
         # Encoding: high ratio of non-ascii (homoglyphs) OR a long b64 blob.
@@ -267,12 +275,14 @@ class JailbreakDetector:
 
     def scan(self, text: str) -> dict:
         score, signals = self._score_text(text)
-        # Decode base64 and re-scan the hidden payload.
+        # Decode base64 and re-scan the hidden payload. A hidden injection is
+        # MORE suspicious than a plain one (deliberate obfuscation), so we fold
+        # in the decoded sub-score plus an encoding penalty.
         decoded = self._maybe_base64(text)
         if decoded:
             d_score, d_signals = self._score_text(decoded)
             if d_score > 0:
-                score += self.WEIGHTS["encoding"]
+                score += self.WEIGHTS["encoding"] + d_score
                 signals.append("encoding:base64")
                 signals.extend(f"decoded:{s}" for s in d_signals)
         score = min(1.0, score)
