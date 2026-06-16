@@ -106,27 +106,64 @@ deltas = [0, 5, 17, 42]
 # --- IN-RANGE : positions dans la plage d'entrainement (RoPE base) ---
 base_in = [0, 100, 500, 1000, 2000, 3000]  # toutes < L_train
 var_in = rel_property_variance(q, k, f_orig, deltas, base_in)
-print(f"\n  IN-RANGE (positions < L_train={L_train}, base RoPE) :")
+print(f"\n  Propriete relative q_m.k_n = f(m-n) (base RoPE, positions in-range) :")
 print(f"    variance de q_m.k_n a delta fixe = {var_in:.2e}  "
       f"({'OK' if var_in < 1e-3 else 'FAIL'})")
-assert var_in < 1e-3, "In-range, la propriete relative doit tenir (var ~0)"
+assert var_in < 1e-3, "La propriete relative doit tenir (var ~0)"
 print("    -> q_m.k_n ne depend (quasi) que de m-n : invariance par translation.")
 
-# --- OUT-OF-RANGE : positions tres au-dela de L_train ---
-# Naif = frequences originales a des positions enormes (extrapolation).
-# YaRN = frequences scalees (basses freqs comprimees -> angles dans la plage vue).
-base_out = [25000, 26000, 27000, 28000, 29000, 30000]  # >> L_train
-var_naif = rel_property_variance(q, k, f_orig, deltas, base_out)
-var_yarn = rel_property_variance(q, k, f_yarn, deltas, base_out)
-print(f"\n  OUT-OF-RANGE (positions ~25K-30K >> L_train) :")
-print(f"    variance naif (extrapolation) = {var_naif:.2e}")
-print(f"    variance YaRN (freqs scalees) = {var_yarn:.2e}")
-print(f"    ratio var_naif / var_yarn     = {var_naif / (var_yarn + 1e-300):.2f}x")
-assert var_yarn < var_naif, "YaRN doit degrader moins que le naif out-of-range"
-print("    -> YaRN degrade MOINS la propriete relative hors-plage.")
-print("  POURQUOI : en naif, les basses freqs * positions enormes donnent des angles")
-print("  hors-distribution (jamais vus a l'entrainement) ; YaRN comprime ces basses")
-print("  freqs pour garder les angles dans la plage vue -> extrapolation stable.")
+# --- OUT-OF-RANGE : pourquoi le naif casse et pas YaRN ---
+# CAVEAT HONNETE : l'invariance par translation (q_m.k_n = f(m-n)) est une
+# propriete EXACTE de la rotation 2D ; elle tient pour N'IMPORTE QUELLES
+# frequences, y compris a des positions enormes (la variance a delta fixe reste
+# du bruit machine ~1e-24 dans les deux cas). Mesurer cette variance out-of-range
+# ne separe donc PAS naif et YaRN : ce serait comparer du bruit numerique.
+#
+# Ce qui casse REELLEMENT en extrapolation naive n'est pas l'algebre des
+# rotations, mais le fait que le modele voit des ANGLES DE ROTATION jamais
+# rencontres a l'entrainement (out-of-distribution). A l'entrainement, pour
+# chaque bande i, l'angle pos*theta_i a parcouru au plus [0, L_train*theta_i] :
+# c'est l'enveloppe d'angles "vue". On mesure donc, par bande, de combien
+# l'angle a une position out-of-range DEPASSE cette enveloppe.
+print(f"\n  Angles de rotation out-of-range vs enveloppe vue a l'entrainement :")
+print(f"  (in-range, bande i : angle parcouru au plus L_train*theta_i)")
+
+pos_oor = 30000                                  # position >> L_train
+env_band = L_train * f_orig                       # enveloppe d'angle vue, par bande
+ang_naif = pos_oor * f_orig                        # angle naif a pos_oor, par bande
+ang_yarn = pos_oor * f_yarn                        # angle YaRN a pos_oor, par bande
+
+# "Excess OOD" par bande : de combien l'angle out-of-range deborde l'enveloppe,
+# normalise par l'enveloppe. 0 = reste dans la plage vue ; >0 = hors-distribution.
+excess_naif = np.maximum(0.0, ang_naif - env_band) / env_band
+excess_yarn = np.maximum(0.0, ang_yarn - env_band) / env_band
+
+# On regarde les BASSES frequences a LONGUE PORTEE = le dernier quart du spectre.
+# Ce sont precisement les bandes que YaRN ramene en mode PI (ramp ~ 0 : freqs
+# divisees par scale). Les hautes freqs locales sont laissees intactes PAR DESIGN
+# (resolution locale) ; leur angle cycle mod 2*pi a chaque position, donc leur
+# "depassement" n'est pas le vrai probleme d'extrapolation -> on ne les compte pas
+# ici. Le vrai danger d'extrapolation est sur les basses freqs, dont l'angle croit
+# de facon monotone (pas de wrap) et sort donc franchement de la plage vue.
+low = slice(3 * (d // 2) // 4, None)
+ood_naif = float(np.mean(excess_naif[low]))
+ood_yarn = float(np.mean(excess_yarn[low]))
+print(f"    excess OOD moyen (dernier quart du spectre = longue portee) :")
+print(f"      naif (extrapolation) = {ood_naif:.3f}   (angles ~{1+ood_naif:.1f}x hors plage)")
+print(f"      YaRN (freqs scalees) = {ood_yarn:.3f}   (reste dans la plage vue)")
+
+# Assertions VRAIES et pertinentes (et non du bruit) :
+#  - le naif sort franchement de la distribution vue sur les bandes longue portee ;
+#  - YaRN ramene ces memes bandes dans l'enveloppe d'entrainement (excess ~0).
+assert ood_naif > 1.0, "naif : les basses freqs sortent largement de la plage vue"
+assert ood_yarn < 1e-6, "YaRN : les bandes longue portee restent dans la plage vue"
+assert ood_yarn < ood_naif, "YaRN garde les angles bien plus proches de la plage vue"
+print("    -> les basses freqs naives debordent l'enveloppe (OOD) ; YaRN les garde dedans.")
+print("  POURQUOI : en naif, basse freq * position enorme = angle jamais vu a")
+print("  l'entrainement -> le modele extrapole hors-distribution. YaRN comprime ces")
+print("  basses freqs (theta_i -> theta_i/scale en bas du spectre) pour ramener leurs")
+print("  angles dans la plage vue, tout en laissant les hautes freqs (resolution")
+print("  locale) intactes. C'est exactement l'argument de Peng et al. 2023 (YaRN).")
 
 
 # ============================================================================

@@ -304,12 +304,27 @@ print("=" * 70)
 V8 = 6           # taille du vocab
 D_TOK = V8       # bloc "token courant" = one-hot du token (dim V8)
 D_PREV = V8      # bloc "previous-token signal" ecrit par la head 1 (dim V8)
+D_OUT = V8       # bloc "sortie d'induction" ecrit par la head 2 (dim V8)
 D_POS = 8        # bloc positionnel (pour que la head 1 cible t-1)
-# Residual = [ token_onehot | prev_signal | position ]  (sous-espaces disjoints)
+# Residual = [ token_onehot | prev_signal | out_signal | position ]
+#   -> sous-espaces DISJOINTS. Le bloc OUT est crucial : l'unembedding lit la
+#   sortie ECRITE par l'OV de la head 2 (le token copie), PAS le bloc token
+#   courant. Lire le bloc token courant reviendrait a une "copie naive" du token
+#   present et ferait toujours gagner le token courant -> on doit router la
+#   prediction par l'OV de l'induction head, comme dans un vrai circuit.
 OFF_TOK = 0
 OFF_PREV = D_TOK
-OFF_POS = D_TOK + D_PREV
-D_RES = D_TOK + D_PREV + D_POS
+OFF_OUT = D_TOK + D_PREV
+OFF_POS = D_TOK + D_PREV + D_OUT
+D_RES = D_TOK + D_PREV + D_OUT + D_POS
+
+# Gain de l'OV/QK de l'induction head. Une vraie head a un produit QK appris de
+# grande amplitude : sur des cles one-hot (produit scalaire = 1 au match, 0
+# sinon), il faut amplifier les scores pour que le softmax PIQUE sur la (les)
+# position(s) qui matchent. A strength faible le softmax reste plat (~hasard) ;
+# a strength fort il devient quasi one-hot -> copie fiable. C'est le scalaire
+# qui pilote la phase transition d'Olsson.
+INDUCTION_QK_GAIN = 8.0
 
 # Embedding token : one-hot dans le bloc token. Unembedding : lit le bloc token
 # de la sortie -> les logits sont l'identite du token copie.
@@ -386,20 +401,27 @@ def induction_head(res: np.ndarray, strength: float) -> np.ndarray:
       - Q = bloc TOKEN courant de la position t.
       - K = bloc PREV_SIGNAL de chaque position s (ecrit par la head 1).
       - score[t, s] = <token_t, prev_signal_s> -> maximal quand le token
-        precedant s est egal au token courant t. C'est le QK matching.
-      - V = bloc TOKEN de s ; W_O ecrit la copie dans le bloc TOKEN de t
-        (qui sera lu par l'unembedding).
+        precedant s est egal au token courant t. C'est le QK matching. On
+        amplifie par INDUCTION_QK_GAIN * strength pour piquer le softmax (sinon
+        des scores 0/1 donnent une attention trop plate -> la masse fuit).
+      - V = bloc TOKEN de s ; W_O ecrit la copie dans le bloc OUT de t (sous-
+        espace DEDIE lu par l'unembedding). POURQUOI un bloc separe et pas le
+        bloc TOKEN : ecrire dans le bloc TOKEN melange la prediction avec
+        l'identite du token courant (poids 1.0 garanti) -> la 'copie naive' du
+        token present gagnerait toujours. En routant l'OV vers OUT, la
+        prediction provient UNIQUEMENT de l'attention d'induction (vrai OV).
     """
     T = res.shape[0]
     Q = res[:, OFF_TOK:OFF_TOK + D_TOK]             # token courant (one-hot)
     K = res[:, OFF_PREV:OFF_PREV + D_PREV]          # prev-token signal
-    scores = strength * (Q @ K.T)                    # (T, T) prefix matching
+    scores = INDUCTION_QK_GAIN * strength * (Q @ K.T)  # (T, T) prefix matching
     scores = scores + causal_mask(T)                 # ne regarde que le passe
     attn = softmax_rows(scores)
     V = res[:, OFF_TOK:OFF_TOK + D_TOK]             # token a copier
     copied = attn @ V                                # (T, D_TOK)
     out = res.copy()
-    out[:, OFF_TOK:OFF_TOK + D_TOK] = out[:, OFF_TOK:OFF_TOK + D_TOK] + copied
+    # W_O : ecrit la copie dans le bloc OUT (sous-espace de sortie dedie).
+    out[:, OFF_OUT:OFF_OUT + D_OUT] = out[:, OFF_OUT:OFF_OUT + D_OUT] + copied
     return out
 
 
@@ -408,8 +430,10 @@ def induction_forward(tokens: list[int], strength: float) -> np.ndarray:
     res = embed_tokens(tokens, max_pos=len(tokens))
     res = prev_token_head(res, strength=strength)
     res = induction_head(res, strength=strength)
-    # Unembedding = lecture du bloc token de la sortie -> logits sur V8 tokens.
-    logits_last = res[-1, OFF_TOK:OFF_TOK + D_TOK]
+    # Unembedding = lecture du bloc OUT (ecrit par l'OV de l'induction head)
+    # -> logits sur V8 tokens. On NE lit PAS le bloc token courant : la
+    # prediction doit venir de l'attention d'induction, pas du token present.
+    logits_last = res[-1, OFF_OUT:OFF_OUT + D_OUT]
     return logits_last
 
 
