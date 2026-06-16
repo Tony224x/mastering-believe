@@ -266,7 +266,14 @@ def induction_head(res):
     attn = softmax_rows(5.0 * (Q @ K.T) + causal_mask(T))  # matching = scores+softmax
     copied = attn @ res[:, OFF_TOK:OFF_TOK + D_TOK]
     out = res.copy()
-    out[:, OFF_TOK:OFF_TOK + D_TOK] += copied
+    # W_O ecrit la copie dans le bloc TOKEN. POURQUOI un gain W_O > 1 : le bloc
+    # TOKEN contient encore l'identite du token COURANT (one-hot a 1.0) ; pour
+    # que l'unembedding lise le token COPIE (celui qui suivait l'occurrence
+    # precedente) plutot que le token courant, le circuit OV de l'induction head
+    # doit ECRIRE avec une magnitude qui domine le residual stale. Un vrai
+    # induction head appris fait exactement ca (norme de W_O elevee).
+    W_O_GAIN = 3.0
+    out[:, OFF_TOK:OFF_TOK + D_TOK] += W_O_GAIN * copied
     return out
 
 
@@ -379,20 +386,50 @@ print("\n" + "=" * 70)
 print("EXERCISE 6 : sparse autoencoder minimal — L1 vs TopK")
 print("=" * 70)
 
-# --- Generer des activations superposees (5 features dans 2 dims, sparses) ---
-# Reprend le setup superposition : m features quasi-orthogonales packees dans d<m.
-M_FEAT, D_ACT, K_TRUE, N_SAMP = 5, 2, 2, 4000
-_rng6 = np.random.default_rng(9)
-D_true = _rng6.normal(0, 1.0, size=(M_FEAT, D_ACT))
-D_true = D_true / (np.linalg.norm(D_true, axis=1, keepdims=True) + 1e-9)
-codes = np.zeros((N_SAMP, M_FEAT))
-for i in range(N_SAMP):
-    active = _rng6.choice(M_FEAT, size=K_TRUE, replace=False)  # sparsite controlee
-    codes[i, active] = _rng6.uniform(0.5, 1.0, size=K_TRUE)
-acts = codes @ D_true                          # (N_SAMP, D_ACT) superposition reelle
-N_SAE = 8                                       # sur-completion (n_sae > m)
-print(f"\n  Activations : {M_FEAT} features sparses dans {D_ACT} dims, "
-      f"k={K_TRUE}/exemple ; n_sae={N_SAE}")
+# --- Generer des activations superposees comme 02-code PART 4 + 5 ---
+# On entraine un autoencoder tied-weights R^5 -> R^2 -> R^5 sur des features
+# sparses (Elhage 2022), puis on collecte les ACTIVATIONS HIDDEN (dim 2). Ce
+# sont des activations REELLEMENT superposees et degenerees -> le SAE L1 naif
+# y reproduit le faible taux de recovery + dead features documente par le cours.
+M_FEAT, D_ACT, N_SAMP = 5, 2, 4000
+SPARSITY = 0.9                                   # forte sparsity (pentagone)
+_rng6 = np.random.default_rng(5)
+active = _rng6.random((N_SAMP, M_FEAT)) > SPARSITY
+magnitudes = _rng6.random((N_SAMP, M_FEAT))
+features = (active * magnitudes).astype(np.float64)   # features sparses (N, 5)
+
+
+def train_superposition_ae(features, n_hidden=2, n_iters=4000, lr=0.05, seed=11):
+    """AE tied-weights x -> ReLU(W x) -> W^T h (cf 02-code PART 4). Force a packer
+    5 features dans 2 dims -> superposition. Renvoie W (n_hidden, d_in)."""
+    n, d_in = features.shape
+    rng = np.random.default_rng(seed)
+    W = rng.normal(0, 0.3, size=(n_hidden, d_in))
+    b = np.zeros(d_in)
+    for _ in range(n_iters):
+        h = np.maximum(0, features @ W.T)
+        recon = h @ W + b
+        err = recon - features
+        grad_recon = 2 * err / n
+        grad_b = np.sum(grad_recon, axis=0)
+        grad_W_dec = h.T @ grad_recon
+        grad_pre = (grad_recon @ W.T) * (h > 0)
+        grad_W_enc = grad_pre.T @ features
+        W -= lr * (grad_W_enc + grad_W_dec)          # tied : somme des deux
+        b -= lr * grad_b
+    return W
+
+
+W_super = train_superposition_ae(features)
+# Directions ground-truth = colonnes de W_super (la direction encodee de chaque
+# feature). C'est contre elles qu'on mesure la recovery (comme 02-code PART 5).
+D_true = W_super.T                                # (M_FEAT, D_ACT)
+# Activations hidden sur lesquelles on entraine le SAE (cf 02-code PART 5).
+acts = np.maximum(0, features @ W_super.T)        # (N_SAMP, D_ACT=2)
+K_TRUE = 2                                         # K pour le SAE TopK
+N_SAE = 8                                          # sur-completion (n_sae > m)
+print(f"\n  Activations hidden : shape {acts.shape} (superposition 5->2, "
+      f"sparsity={SPARSITY}) ; n_sae={N_SAE}")
 
 
 def normalize_dec(W_dec):
@@ -414,23 +451,24 @@ def topk_mask(f, k):
     return out
 
 
-def train_sae(acts, n_sae, mode, l1_lambda=0.05, k=K_TRUE,
-              n_iters=4000, lr=0.03, seed=3):
-    """SAE from scratch. mode='l1' : ReLU + penalite L1. mode='topk' : ReLU +
-    masque top-K (pas de L1). Backward manuel (MSE [+ L1]) + normalisation des
-    colonnes du decoder a chaque step."""
+def train_sae(acts, n_sae, mode, l1_lambda=0.1, k=K_TRUE,
+              n_iters=5000, lr=0.03, seed=3, resample_every=1000):
+    """SAE from scratch. mode='l1' : ReLU + penalite L1 (naif). mode='topk' :
+    ReLU + masque top-K (pas de L1) + resampling des dead features (Gao 2024).
+    Backward manuel (MSE [+ L1]) + normalisation des colonnes du decoder."""
     n, d = acts.shape
     rng = np.random.default_rng(seed)
     W_enc = rng.normal(0, 0.3, size=(d, n_sae))
     b_enc = np.zeros(n_sae)
     if mode == "topk":
-        # Init decoder ALIGNEE sur des activations reelles (anti dead-feature).
+        # Init decoder ALIGNEE sur des activations reelles (anti dead-feature) :
+        # chaque colonne part dans une direction effectivement presente.
         W_dec = acts[rng.choice(n, size=n_sae, replace=True)].copy() \
             + rng.normal(0, 0.05, size=(n_sae, d))
     else:
         W_dec = rng.normal(0, 0.3, size=(n_sae, d))
     b_dec = np.zeros(d)
-    for _ in range(n_iters):
+    for it in range(n_iters):
         W_dec = normalize_dec(W_dec)
         pre = acts @ W_enc + b_enc
         f_full = np.maximum(0, pre)
@@ -453,6 +491,23 @@ def train_sae(acts, n_sae, mode, l1_lambda=0.05, k=K_TRUE,
         b_enc -= lr * grad_b_enc
         W_dec -= lr * grad_W_dec
         b_dec -= lr * grad_b_dec
+        # --- Resampling des dead features (TopK uniquement, Gao 2024) ---
+        # POURQUOI : sans ca, des unites nees 'a cote' ne s'activent jamais. On
+        # re-plante chaque unite morte sur l'exemple a plus forte erreur de
+        # recon -> elle ressuscite la ou le dictionnaire manque.
+        if mode == "topk" and resample_every and (it + 1) % resample_every == 0 \
+                and it < n_iters - 1:
+            act_rate = np.mean(f > 1e-4, axis=0)
+            dead = np.where(act_rate < 1e-3)[0]
+            if dead.size > 0:
+                recon_err = np.sum((recon - acts) ** 2, axis=1)
+                worst = np.argsort(-recon_err)[:dead.size]
+                for j, u in enumerate(dead):
+                    v = acts[worst[j % worst.size]]
+                    nv = np.linalg.norm(v) + 1e-8
+                    W_dec[u] = v / nv
+                    W_enc[:, u] = (v / nv) * 0.2
+                    b_enc[u] = 0.0
     return W_enc, b_enc, normalize_dec(W_dec), b_dec
 
 
@@ -485,13 +540,18 @@ def evaluate_sae(W_enc, b_enc, W_dec, b_dec, mode):
         used_s.add(s)
         used_g.add(g)
         recovered.add(g)
-    mag_ratio = float(np.mean(np.linalg.norm(recon, axis=1) /
-                              (np.linalg.norm(acts, axis=1) + 1e-9)))
+    # Shrinkage proxy : ||recon|| / ||acts|| moyen, calcule SEULEMENT sur les
+    # exemples a activation non negligeable (sinon les acts ~ 0 de la
+    # superposition font exploser le ratio). <1 = magnitudes sous-estimees.
+    act_norm = np.linalg.norm(acts, axis=1)
+    mask = act_norm > 0.05 * float(np.median(act_norm[act_norm > 0]) + 1e-9)
+    mag_ratio = float(np.mean(np.linalg.norm(recon[mask], axis=1) /
+                              (act_norm[mask] + 1e-9)))
     recon_loss = float(np.mean(np.sum((recon - acts) ** 2, axis=1)))
     return len(recovered), n_dead, mag_ratio, recon_loss
 
 
-l1_params = train_sae(acts, N_SAE, mode="l1", l1_lambda=0.05)
+l1_params = train_sae(acts, N_SAE, mode="l1", l1_lambda=0.1)
 topk_params = train_sae(acts, N_SAE, mode="topk", k=K_TRUE)
 rec_l1, dead_l1, mag_l1, loss_l1 = evaluate_sae(*l1_params, mode="l1")
 rec_tk, dead_tk, mag_tk, loss_tk = evaluate_sae(*topk_params, mode="topk")

@@ -176,59 +176,56 @@ def exercice_5():
     print("Exercice 5 : Expert collapse vs load balancing loss")
     print("=" * 70)
 
-    N, d_model, B, steps = 8, 32, 256, 50
+    N, d_model, B, steps = 8, 32, 256, 80
     rng = np.random.default_rng(0)
     X = rng.standard_normal((B, d_model))
 
-    mean_x = X.mean(axis=0)                              # direction moyenne (fixe)
-    # Normalise pour que les increments aient une echelle controlee, sinon la
-    # magnitude depend de d_model et les chiffres deviennent fragiles.
-    dir_x = mean_x / (np.linalg.norm(mean_x) + 1e-12)
-
-    def run(use_aux, alpha=0.0):
+    def run(use_aux, lr=0.5, lam=1.0):
         # Routeur initialise petit (proche de l'uniforme au depart).
         W_g = rng.standard_normal((d_model, N)) * 0.05
         top1_history = []
         for _ in range(steps):
-            probs = softmax(X @ W_g, axis=-1)            # (B, N)
+            logits = X @ W_g                             # (B, N)
+            probs = softmax(logits, axis=-1)            # (B, N)
             assign = np.argmax(probs, axis=-1)           # top-1
-            counts = np.bincount(assign, minlength=N).astype(np.float64)
-            f = counts / B
+            f = np.bincount(assign, minlength=N).astype(np.float64) / B
             top1_history.append(float(f.max()))
 
-            # Gradient grossier : on renforce l'expert le plus charge.
-            # POURQUOI : simule la boucle vicieuse "le routeur prefere ce qu'il
-            # connait" -> l'expert favori capte de plus en plus de trafic, et
-            # sans contre-poids ce winner-take-all converge vers le collapse.
-            fav = int(np.argmax(counts))
-            W_g[:, fav] += 0.3 * dir_x                   # renforce le favori
+            # --- Driver de collapse : un VRAI gradient (rich-get-richer) ---
+            # On MAXIMISE la popularite : sum_b sum_i probs[b,i] * f_i, ou f_i
+            # est la charge actuelle de l'expert i. Cela pousse chaque token
+            # vers les experts deja populaires -> boucle de feedback positif
+            # "le routeur prefere ce qu'il connait" = la cause documentee du
+            # collapse. Gradient (a maximiser) de sum probs.f via Jacobien
+            # softmax : g = probs * (f - <f,probs[b]>). On DESCEND -g.
+            fp = np.sum(f[None, :] * probs, axis=-1, keepdims=True)
+            g_pop = probs * (f[None, :] - fp)            # d(popularite)/dlogits
+            g_logits = -g_pop                            # on MAXIMISE -> descend -g
 
             if use_aux:
-                # Contre-poussee de la loss auxiliaire : penaliser les experts
-                # sur-charges proportionnellement a (f_i - 1/N). Un expert au
-                # dessus de sa part equitable est freine ; un expert sous sa
-                # part est encourage. C'est l'effet net du gradient de
-                # L_aux = N * sum(f_i P_i) sur les logits du routeur. Le facteur
-                # est cale pour dominer le driver de collapse (0.3) quand un
-                # expert s'emballe (f_i -> 1), donc l'equilibre tient.
-                for i in range(N):
-                    W_g[:, i] -= alpha * (f[i] - 1.0 / N) * dir_x
+                # Gradient REEL de la load balancing loss L_aux = N * sum(f_i P_i)
+                # p/r aux logits, via P_i = mean_b softmax(logits)_i (f traite
+                # comme constante, non differentiable). dP/dlogits = Jacobien
+                # softmax ; dL_aux/dlogits[b] = N * probs[b] * (f - <f,probs[b]>).
+                # C'est EXACTEMENT l'oppose du driver de popularite (au facteur N
+                # pres) : l'aux loss penalise precisement ce que le collapse
+                # renforce. lam>=1/N suffit donc a inverser la dynamique.
+                g_aux = N * probs * (f[None, :] - fp)
+                g_logits = g_logits + lam * g_aux        # +grad(L_aux) = descend L_aux
+
+            W_g -= lr * (X.T @ g_logits)
         return W_g, np.array(top1_history)
 
-    # Sans regularisation -> collapse.
+    # Sans regularisation -> collapse (le sharpening concentre tout le trafic).
     Wg_no, hist_no = run(use_aux=False)
     probs_no = softmax(X @ Wg_no, axis=-1)
     assign_no = np.argmax(probs_no, axis=-1)
     f_no = np.bincount(assign_no, minlength=N) / B
     dead_no = int(np.sum(f_no < 1e-6))
 
-    # Avec aux loss -> charge ~uniforme. POURQUOI alpha=0.4 ici et pas ~0.01 :
-    # notre "gradient de collapse" est une heuristique brutale (+0.3 par step)
-    # bien plus forte qu'un vrai gradient ; alpha doit etre du meme ordre pour
-    # le compenser. Dans un vrai training, lambda_aux ~ 0.01 suffit car le
-    # gradient de la tache est lui-meme petit.
-    ALPHA = 0.4
-    Wg_aux, hist_aux = run(use_aux=True, alpha=ALPHA)
+    # Avec aux loss -> charge ~uniforme : le gradient de L_aux contre le
+    # sharpening en penalisant les experts sur-charges (P_i baisse quand f_i^).
+    Wg_aux, hist_aux = run(use_aux=True, lam=1.0)
     probs_aux = softmax(X @ Wg_aux, axis=-1)
     assign_aux = np.argmax(probs_aux, axis=-1)
     f_aux = np.bincount(assign_aux, minlength=N) / B
@@ -250,7 +247,7 @@ def exercice_5():
     print(f"    entropie(f) = {entropy(f_no):.3f}  (max = {np.log(N):.3f})")
     print(f"    experts morts = {dead_no} / {N}")
 
-    print(f"\n  AVEC aux loss (alpha={ALPHA}) :")
+    print(f"\n  AVEC aux loss (lambda=1.0) :")
     print(f"    top-1 fraction : debut {hist_aux[0]:.2f} -> fin {hist_aux[-1]:.2f}")
     print(f"    distribution f = {np.round(f_aux, 3).tolist()}")
     print(f"    entropie(f) = {entropy(f_aux):.3f}  (max = {np.log(N):.3f})")
