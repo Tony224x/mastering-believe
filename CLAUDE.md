@@ -8,6 +8,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Scope is **not limited to AI/backend or to a 2-week format**: a domain can cover anything (tech, sciences, languages, humanities, etc.) and span any duration that fits the topic — from a few days to several weeks.
 
+### Vision : une ecole de la vie
+
+A terme, **Mastering Believe** depasse la seule maitrise technique pour devenir une **ecole de la vie** : un curriculum holistique qui applique la meme rigueur pedagogique (evidence-based, Pareto-first, deliberate practice, capstone portfolio) aux **competences de vie a fort levier** et aux **domaines du futur** — pas seulement au code.
+
+Deux familles de domaines cohabitent, **meme methode, meme structure de dossier** :
+- **Track Tech** — maitrise d'ingenierie (les 5 domaines actifs : algorithmie, system design, neural networks, agentic AI, robotics).
+- **Track Vie** — les **5 piliers** d'une vie qui s'epanouit, chacun cadre par son angle "futur" : **Argent, Corps, Esprit, Jugement, Relations** (voir la *Roadmap* plus bas).
+
+L'objectif : qu'un apprenant compose **son** cursus — quelques domaines tech, quelques domaines de vie — et en sorte a la fois employable **et** equipe pour decider, apprendre et durer. Pour les domaines de vie, le bloc **Code applique** est souvent optionnel ou leger (simulateurs, scripts d'analyse), mais **theorie + exercices gradues + capstone portfolio** restent obligatoires.
+
 Each domain is a self-contained module composed of:
 1. **Cours theorique** — structured theory (Markdown), progressive, concise, no fluff
 2. **Code applique** *(when relevant)* — real, runnable, heavily commented examples
@@ -95,7 +105,7 @@ Voie manuelle :
 5. Each code example (if any) should take 15-30 min to read and run
 6. Exercises: minimum 3 easy, 3 medium, 2 hard, 1 capstone project
 
-## Domains actifs
+## Domaines actifs (Track Tech)
 
 | Domain | Folder | Stack | Focus |
 |--------|--------|-------|-------|
@@ -108,6 +118,24 @@ Voie manuelle :
 **Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
 
 **Quarkdown** : les **5 domaines actifs** ont un `01-theory-qd/` buildable (agentic-ai partiellement enrichi, les 4 autres en placeholders scaffoldes). Les `.md` de `01-theory/` restent la source-of-truth lisible sur GitHub ; les `.qd` sont des versions enrichies (math LaTeX, mermaid, callouts). **Toute correction d'un `.md` de theorie doit etre repercutee dans le `.qd` miroir s'il existe.** La CI (`.github/workflows/quarkdown-release.yml`) build tous les sites et publie un bundle `tar.gz` par domaine en asset de GitHub Release sur tag `v*`.
+
+## Roadmap : l'ecole de la vie (Track Vie — 5 prochains domaines)
+
+Les 5 prochains domaines elargissent le repo au-dela de la tech, selon les **5 piliers** d'une vie qui s'epanouit, chacun cadre par son **angle "futur"**. Memes conventions, meme pipeline (`mastering-domain-creator`), meme structure de dossier. Ordre indicatif, ajustable. Ces domaines sont **sans code ou a code leger** : capstone = livrable portfolio (plan, protocole, systeme, dossier, portfolio) plutot que script.
+
+| # | Domaine | Slug propose | Pilier | Focus (Pareto-first) | Angle futur | Capstone portfolio |
+|---|---------|--------------|--------|----------------------|-------------|--------------------|
+| 1 | Finance personnelle & investissement | `finance-personnelle` | **Argent** | Budget, interets composes, ETF & allocation d'actifs, dette, fiscalite de base, independance financiere (FIRE) | Actifs numeriques, automatisation, inflation, litteratie financiere | Plan financier perso chiffre + simulateur d'investissement (Python leger) |
+| 2 | Sante, nutrition & longevite | `sante-longevite` | **Corps** | Sommeil, nutrition fondee sur preuves, force & cardio, sante metabolique & mentale | Medecine preventive, wearables / quantified self, science de la longevite | Protocole sante mesurable + tableau de bord de biomarqueurs |
+| 3 | Apprendre a apprendre & sciences cognitives | `apprendre-a-apprendre` | **Esprit** | Memoire & spaced repetition, attention / deep work, meta-apprentissage, gestion de l'energie | Apprendre vite **et avec l'IA** dans un monde qui change | Systeme d'apprentissage perso (Anki + plan d'etude) sur un vrai sujet |
+| 4 | Pensee critique, rationalite & decision | `rationalite-decision` | **Jugement** | Biais cognitifs, raisonnement bayesien, theorie de la decision, mental models | Discernement face aux deepfakes & a l'IA generative, anti-desinformation | Cadre de decision applique a un choix reel + calibration de predictions |
+| 5 | Communication, persuasion & influence | `communication-persuasion` | **Relations** | Ecriture claire, storytelling, prise de parole, negociation, ecoute active | Se demarquer quand l'IA ecrit tout ; communication humaine authentique | Portfolio : essai + pitch enregistre + negociation simulee |
+
+**Mnemo des 5 piliers** : **A**rgent · **C**orps · **E**sprit · **J**ugement · **R**elations.
+
+**Vivier (candidats futurs, apres ces 5)** : Entrepreneuriat & creation de valeur a l'ere de l'IA ; IA appliquee au quotidien & souverainete numerique ; Psychologie, emotions & relations ; Climat, energie & durabilite ; Langues (immersion + IA). Ces idees sont volontairement gardees en reserve pour rester focus sur les 5 piliers d'abord.
+
+> Adaptation du pipeline aux domaines de vie : le skill `mastering-domain-creator` reste la voie recommandee (interview → recherche sourcee → plan challenge → creation → verif → capstone). Pour ces domaines, la passe **code-runner** devient optionnelle (peu ou pas de code) ; les passes **facts-checker** (sources tier-1 : etudes, meta-analyses, auteurs de reference) et **pedagogy-reviewer** restent critiques.
 
 ## Commands
 
