@@ -1,5 +1,7 @@
 # J18 — JEPA + NVIDIA Cosmos : trois paradigmes pour predire le futur d'un robot
 
+> **[AVANCÉ — optionnel]** Bloc *frontier* (J17-J23), hors chemin critique. Skippable en parcours express (cf README, "Parcours express vs complet").
+
 > **Objectif du jour** : comparer trois paradigmes de world models — Dreamer (generer les pixels du futur), JEPA (predire dans un espace latent), Cosmos (foundation model entraine sur 20M h de video) — et savoir quand chacun est le bon choix pour la robotique.
 
 ---
@@ -128,7 +130,7 @@ L'argument est articule dans plusieurs talks et papiers (LeCun 2022 "A Path Towa
 1. **Le futur est multimodal**. Une feuille au vent peut se plier a gauche **ou** a droite. Predire la moyenne pixel = image floue. Predire seulement le mode dominant = mode collapse. Un encoder latent peut au contraire encoder une distribution sur les abstractions ("la feuille bouge un peu") sans devoir trancher pixel par pixel.
 2. **99% des pixels sont du bruit pour la decision**. Pour saisir une tasse, peu importe la nuance exacte de bois sur la table. Pour stabiliser un humanoide, peu importe la trame du tapis. Allouer des parametres a generer ce bruit, c'est dilapider la capacite du modele.
 3. **Les representations utiles sont structurelles, pas perceptuelles**. Un humain qui regarde une scene n'encode pas une image en RAM ; il encode `{personne assise, tasse, table, etc.}`. C'est exactement ce que fait l'encoder JEPA.
-4. **Empiriquement**. V-JEPA 2 atteint le SOTA sur Something-Something v2 (action recognition) et fait du zero-shot manipulation, **sans jamais avoir genere une image**. Si pixels etaient indispensables, ce ne serait pas possible.
+4. **Empiriquement**. V-JEPA 2 se classe **parmi les meilleurs** sur Something-Something v2 (action recognition, ou la comprehension temporelle du mouvement compte) et fait du zero-shot manipulation, **sans jamais avoir genere une image**. Si les pixels etaient indispensables, ce ne serait pas possible.
 
 **Contre-argument** (NVIDIA, OpenAI Sora-style). Avec **assez** de data et de compute, generer des pixels n'est plus un cout, c'est un signal d'apprentissage gratuit. Cosmos parie sur cet argument scaling. Le verdict 2026 n'est pas tranche.
 

@@ -27,6 +27,8 @@ Diffusion Policy (no EMA)         0.72  ± 0.06        85.7          0.014      
 Behavior Cloning (MLP baseline)   0.42  ± 0.08       142.6          0.083            1.4
 ```
 
+> **Attention** : ces chiffres sont **illustratifs** (ordres de grandeur cohérents avec le papier Diffusion Policy sur le vrai PushT), **pas la sortie du script jouet** de ce module. Le `ToyPushT` du code (`02-code/27-...`) est une version simplifiée et ne reproduit ni le succès 0.84 ni la latence 18 ms — il sert à câbler la *mécanique* d'évaluation (rollouts, métriques, ablations), pas à matcher les nombres du papier. Sur le vrai PushT avec une policy entraînée, on observe ce genre d'écart Diffusion Policy ≫ BC.
+
 Chaque ligne est 50 rollouts, chaque chiffre dit quelque chose de précis sur le système. C'est ça qu'on va construire.
 
 > **Key takeaway #1**
@@ -170,7 +172,7 @@ Effet attendu : success rate baisse de 5-15%, et **variance entre seeds augmente
 
 ### 5.3 Ablation 3 : schedule alternative
 
-Diffusion Policy par défaut utilise un schedule `square_cosine_cap_v2` (du papier). Ablation : remplacer par schedule **linéaire** (DDPM original) ou **cosine** simple.
+Diffusion Policy par défaut utilise un schedule `squaredcos_cap_v2` (nom exact dans `diffusers`, c'est le squared-cosine du papier). Ablation : remplacer par schedule **linéaire** (DDPM original) ou **cosine** simple.
 
 Effet attendu : variation petite mais mesurable (±3% success rate). Le schedule contrôle la distribution de bruit pendant le training et le sampling — le cosine adapte mieux le bruit aux fréquences pertinentes pour les actions.
 

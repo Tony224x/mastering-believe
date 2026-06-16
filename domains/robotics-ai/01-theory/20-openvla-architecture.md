@@ -1,5 +1,7 @@
 # J20 — OpenVLA : architecture detaillee + fine-tuning LoRA
 
+> **[AVANCÉ — optionnel]** Bloc *frontier* (J17-J23), hors chemin critique. Skippable en parcours express (cf README, "Parcours express vs complet").
+
 > Module-jour 20 (45-60 min de lecture). Source principale : REFERENCES.md #13 (OpenVLA, Kim, Pertsch et al., 2024 — https://arxiv.org/abs/2406.09246 + repo https://github.com/openvla/openvla).
 > Prerequis : J19 (RT-1/RT-2/Octo, action tokenization), J15 (diffusion/flow matching), notions Transformer.
 

@@ -1,5 +1,7 @@
 # J17 — World models : Dreamer V1 → V3
 
+> **[AVANCÉ — optionnel]** Début du bloc *frontier* (J17-J23) : hors du chemin critique. Skippable en parcours express (J1-J16 + capstone) ; voir le README, section "Parcours express vs complet".
+
 > **Pré-requis** : J9 (MDP, Bellman), J11 (PPO, advantage), J12 (SAC, MPC, model-based RL).
 > **Objectif lecture (40-55 min)** : comprendre ce qu'est un *world model*, disséquer le RSSM (Recurrent State-Space Model), saisir pourquoi DreamerV3 (Hafner 2023) tourne avec **une seule config** sur 150+ tâches, et savoir quand ça bat le model-free.
 

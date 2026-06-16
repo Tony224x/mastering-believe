@@ -2,6 +2,15 @@
 
 > **Acquis fin de jour** : entrainer PPO sur CartPole en moins d'une minute, lancer PPO sur HalfCheetah, comprendre pourquoi le clip ratio fait toute la difference entre TRPO et PPO.
 
+> **Pont d'accessibilité — l'idée du policy gradient en 4 phrases**
+> On va re-utiliser le gradient (comme en deep learning), mais l'objectif change. Avant le mur d'équations :
+> 1. **On rend la politique différentiable** : `π_θ(a|s)` est un réseau de poids `θ` qui sort une distribution sur les actions (softmax en discret, gaussienne en continu).
+> 2. **Règle d'or, en français** : *augmente la probabilité des actions qui ont mené à beaucoup de récompense, diminue celle des autres.* C'est littéralement le gradient `∇_θ log π_θ(a|s) · (avantage)`.
+> 3. **L'"avantage" `A(s,a)`** = "cette action était-elle meilleure que la moyenne attendue dans cet état ?" (positif = bonne surprise → on la renforce). Il s'appuie sur la valeur `V(s)` de J9.
+> 4. **PPO = REINFORCE rendu stable** : au lieu de faire un grand pas (qui peut tout casser), on **clippe** le ratio nouvelle/ancienne politique pour ne jamais s'éloigner trop d'un coup. C'est tout le secret du `clip ε`.
+>
+> Si "gradient + log-prob + avantage" te parle, le reste s'enchaîne. Sinon, lis le mini-exemple CartPole ci-dessous d'abord : il rend ces 4 idées tangibles avant la moindre formule.
+
 ---
 
 ## 1. Le mini-exemple qui motive tout — CartPole, "pousse a droite si penche a droite"
@@ -196,7 +205,7 @@ C'est l'algo central de [Spinning Up, PPO]. Le repo de reference single-file pou
 
 ## 6. PPO sur MuJoCo — config standard
 
-Pour HalfCheetah-v4 / Ant-v4 / Walker2d-v4, les hyperparametres "qui marchent toujours" (issus du paper original + tuning communautaire) :
+Pour HalfCheetah-v5 / Ant-v5 / Walker2d-v5, les hyperparametres "qui marchent toujours" (issus du paper original + tuning communautaire) :
 
 | Hyperparametre | Valeur typique |
 |---|---|
@@ -214,7 +223,7 @@ Pour HalfCheetah-v4 / Ant-v4 / Walker2d-v4, les hyperparametres "qui marchent to
 
 > **Astuce continuous action** : la policy sort `mu` ; `log_sigma` est un parametre libre du reseau (pas conditionne sur `s`). Tres simple, tres efficace ([CleanRL] confirme).
 
-Sur HalfCheetah-v4, PPO atteint typiquement 3000-6000 de retour en 1M-3M steps avec ces hyperparametres (CPU 8 cores : ~30-60 min).
+Sur HalfCheetah-v5, PPO atteint typiquement 3000-6000 de retour en 1M-3M steps avec ces hyperparametres (CPU 8 cores : ~30-60 min).
 
 ---
 

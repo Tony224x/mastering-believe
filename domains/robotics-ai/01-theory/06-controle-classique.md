@@ -6,7 +6,7 @@
 
 ## 0. L'exemple qui declenche tout : pendule inverse linearise
 
-Considere un pendule inverse monte sur un chariot. L'etat est `x = [theta, theta_dot]^T` (angle par rapport a la verticale, vitesse angulaire). L'entree est un couple `u` applique a l'articulation. Linearise autour de l'equilibre instable `theta = 0`, la dynamique devient :
+Considere un pendule inverse actionne a son pivot (pas un cart-pole : ici l'etat est 2D, sans position de chariot). L'etat est `x = [theta, theta_dot]^T` (angle par rapport a la verticale, vitesse angulaire). L'entree est un couple `u` applique a l'articulation. Linearise autour de l'equilibre instable `theta = 0`, la dynamique devient :
 
 ```
 x_dot = A x + B u

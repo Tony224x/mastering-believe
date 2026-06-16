@@ -244,6 +244,12 @@ print()
 # 8. Visualisation (optionnelle, ne plante pas si matplotlib absent)
 # -----------------------------------------------------------------------------
 try:
+    # Backend "Agg" force AVANT pyplot : on ne fait que savefig() ici (pas de
+    # plt.show()), donc un backend non-interactif evite tout besoin de display
+    # et tout warning sur machine headless (CI, SSH sans X11).
+    import matplotlib
+
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     fig, axes = plt.subplots(2, 1, figsize=(9, 6), sharex=True)

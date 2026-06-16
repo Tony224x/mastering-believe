@@ -1,5 +1,25 @@
 # Robotics & AI — robotique moderne à l'ère de l'IA générative
 
+## Carte d'entrée (lis ça en premier)
+
+C'est le domaine **le plus long du repo (28 jours)**. Avant de plonger, 30 secondes d'auto-diagnostic.
+
+**3 questions pour te situer :**
+
+1. **Sais-tu entraîner un petit réseau PyTorch (forward, loss, backward, optim) sans copier-coller ?**
+   - Oui → tu es prêt pour les modules learning (J9+).
+   - Non → fais d'abord `domains/neural-networks-llm/` J1-J10, puis reviens.
+2. **À l'aise avec matrices, produits matriciels, valeurs propres, et un peu de probas (gaussienne, espérance) ?**
+   - Oui → les murs maths (J2 SE(3), J4 jacobiens, J9 MDP, J15 diffusion) passeront.
+   - Bof → garde un mémo d'algèbre linéaire ouvert ; chaque module mur a un encadré "pont" qui rappelle l'essentiel juste avant.
+3. **Ton but : comprendre les VLA frontier (π0, GR00T) pour lire des papers, OU shipper une policy qui marche ?**
+   - Lire des papers → le bloc frontier J17-J23 est ton cœur de cible (mais fais le core d'abord).
+   - Shipper → le core J1-J16 + capstone J24-J28 suffit ; le bloc frontier est culture générale.
+
+**Prérequis express :** Python solide + PyTorch (niveau "j'entraîne un MLP/CNN") + algèbre linéaire + probas de base. **Aucun** background robotique requis (les fondations classiques sont bootstrapées J2-J7).
+
+**Temps réel à prévoir :** ~75-85h, soit ~3h/jour sur 28 jours. En pratique, compte plutôt **6-8 semaines** à un rythme soutenable de 2-3 séances/semaine. Le parcours express (ci-dessous) descend à ~40-50h.
+
 ## Scope
 
 Maîtriser la robotique moderne au croisement des fondations classiques (cinématique, dynamique, contrôle, planning) et des approches IA générative qui dominent la recherche et l'industrie en 2025-2026 :
@@ -18,6 +38,27 @@ Maîtriser la robotique moderne au croisement des fondations classiques (cinéma
 - Algèbre linéaire (matrices, valeurs propres) et probabilités de base
 - Pas de background robotique requis — le domaine bootstrap les fondations classiques en J2-J7
 
+## Parcours express vs complet
+
+28 jours, c'est long. **Tu n'es pas obligé de tout faire dans l'ordre, ni tout faire tout court.** Le domaine se découpe en trois blocs :
+
+| Bloc | Jours | Statut | Ce que tu y gagnes |
+|------|-------|--------|--------------------|
+| **CORE** (fondations + learning) | **J1-J16** | **Indispensable** | Robotique classique (FK/IK/jacobiens/contrôle/planning) + RL/IL + diffusion. C'est le socle non négociable. |
+| **FRONTIER** (foundation models) | **J17-J23** | **Optionnel / avancé** | World models, JEPA/Cosmos, VLA (OpenVLA, π0, GR00T, Helix), synthetic data. Surtout conceptuel — pour lire les papers récents. |
+| **CAPSTONE** (Diffusion Policy from scratch) | **J24-J28** | **Recommandé** | Le projet portfolio : implémenter et évaluer une Diffusion Policy sur PushT. S'appuie sur J15-J16. |
+
+**Parcours EXPRESS (~40-50h)** — pour acquérir le 80% utile rapidement :
+> **J1-J16 (core) → J24-J28 (capstone)**, en sautant le bloc frontier J17-J23.
+> Tu sais alors faire de la robotique classique, du RL/IL, et tu as un projet diffusion policy shippable. Tu pourras lire J17-J23 plus tard, à la carte, sans bloquer.
+
+**Parcours COMPLET (~75-85h)** — pour la maîtrise + culture frontier :
+> **J1-J28 dans l'ordre.** Le bloc frontier (J17-J23) prend tout son sens après le core, et éclaire les choix d'architecture du capstone.
+
+**Sous-express, si pressé sur les fondations classiques** : si tu connais déjà FK/IK/dynamique/contrôle, tu peux survoler J2-J6 (lire les "Key takeaway" + Q&A) et démarrer sérieusement à J7-J8, puis J9 pour le RL.
+
+> Les modules du bloc frontier sont marqués **[AVANCÉ — optionnel]** dans leur en-tête pour que tu saches, en ouvrant un fichier, s'il fait partie du chemin critique.
+
 ### Setup (dépendances J1)
 
 ```bash
@@ -25,6 +66,19 @@ pip install "gymnasium[mujoco]" mujoco torch imageio
 ```
 
 > `imageio` est requis dès J1 : le script `02-code/01-vue-ensemble-setup.py` l'importe via gymnasium (enregistrement vidéo). Les modules suivants ajoutent ponctuellement `scipy` et `matplotlib`.
+
+### Rendu headless — `MUJOCO_GL=osmesa` : qui en a vraiment besoin ?
+
+Bonne nouvelle : **aucun module de ce domaine ne fait de rendu MuJoCo "live"**. Les modules qui utilisent MuJoCo (J1 partiel, J3, J5, J6) n'appellent que le **moteur physique** (`mj_forward`/`mj_step`, lecture de `qpos`/`qvel`) — pas le `mujoco.Renderer` ni le viewer interactif. Le capstone (J24-J28) est volontairement **sans rendu** (PushT 2D en polygones). Les visualisations matplotlib (J6, J8, J15, J24, J26, J27) sauvegardent un PNG via backend `Agg` et n'ont pas besoin de display.
+
+Conséquence pratique :
+
+- **Tu n'as pas besoin de `MUJOCO_GL=osmesa`** pour exécuter les scripts du domaine tels quels, même en CI / serveur sans écran.
+- Tu n'en as besoin **que si tu ajoutes toi-même** du rendu offscreen MuJoCo (ex. instancier `mujoco.Renderer(model)` pour capturer des images de caméra) sur une machine **sans GPU/display**. Dans ce cas seulement :
+  ```bash
+  MUJOCO_GL=osmesa python domains/robotics-ai/02-code/<ton-script-avec-rendu>.py
+  ```
+  (sur une machine avec GPU + display, le backend par défaut suffit ; `egl` est l'alternative GPU headless).
 
 ## Planning (4 semaines, 28 jours)
 

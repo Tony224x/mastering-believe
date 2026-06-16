@@ -230,7 +230,7 @@ Trois paliers bien identifies dans la litterature 2024-2026.
 - Dataset : Open X-Embodiment (800k+ trajectoires multi-robots) + tes propres demos.
 - Cible : **un seul checkpoint** qui marche sur 5-10 taches distinctes.
 
-**Sources** : OpenVLA repo + paper, LeRobot v0.4 datasets format (REFERENCES.md #27).
+**Sources** : OpenVLA repo + paper, LeRobot v0.5.1 datasets format / LeRobotDataset v3.0 (REFERENCES.md #27).
 
 ### 5.3 Palier 3 — Vers l'industrialisation type Helix / LBM TRI (6-12+ mois)
 
@@ -311,5 +311,5 @@ R — Reproduire le capstone sur un bras 6-DOF en simulation robosuite (peg-inse
 - REFERENCES.md #23 — MIT 6.S184 (fondations theoriques)
 - REFERENCES.md #6, #7, #9 — Sutton & Barto, Spinning Up, CleanRL (formats de reporting)
 - REFERENCES.md #26 — robosuite v1.5 (env manipulation 6-DOF)
-- REFERENCES.md #27 — LeRobot v0.4 (dataset format)
+- REFERENCES.md #27 — LeRobot v0.5.1 / LeRobotDataset v3.0 (dataset format)
 - `shared/logistics-context.md` — contexte LogiSim/FleetSim, schema event canonique, vocabulaire metier (AGV, Work Order, OCC, Safety Policy, Pcollision)

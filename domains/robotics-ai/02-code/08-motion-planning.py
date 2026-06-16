@@ -17,12 +17,24 @@ Lancer :
 
 from __future__ import annotations
 
+import os
+
 # numpy : sampling, distances, operations vectorielles sur les noeuds.
 import numpy as np
 
-# matplotlib : visualiser l'arbre RRT en pleine croissance et le chemin final.
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+# matplotlib : visualiser l'arbre RRT et le chemin final.
+# On choisit le backend AVANT d'importer pyplot. Sans display (CI, serveur,
+# session SSH sans X11) on bascule sur "Agg" (non-interactif) et on sauvegarde
+# un PNG au lieu d'ouvrir une fenetre — sinon `plt.show()` planterait ou
+# bloquerait. Avec un display on garde le backend par defaut pour l'interactif.
+import matplotlib
+
+_HAS_DISPLAY = bool(os.environ.get("DISPLAY")) or os.name == "nt"
+if not _HAS_DISPLAY:
+    matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt  # noqa: E402  (apres matplotlib.use)
+from matplotlib.patches import Rectangle  # noqa: E402
 
 
 # -----------------------------------------------------------------------------
@@ -266,7 +278,17 @@ def visualize(rrt: RRT, path: np.ndarray | None, title: str = "RRT 2D") -> None:
     ax.legend(loc="upper left")
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.show()
+
+    if _HAS_DISPLAY:
+        # Display interactif disponible : on ouvre la fenetre.
+        plt.show()
+    else:
+        # Headless : on sauvegarde un PNG (chemin surchargeable via env var) et
+        # on imprime le chemin pour que l'apprenant sache ou regarder.
+        out_path = os.environ.get("J8_OUT_PNG", "rrt_2d.png")
+        fig.savefig(out_path, dpi=120)
+        plt.close(fig)
+        print(f"[plot] pas de display -> figure sauvegardee dans {out_path}")
 
 
 # -----------------------------------------------------------------------------

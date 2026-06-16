@@ -1,5 +1,7 @@
 # J22 — Frontier humanoid : GR00T N1, Helix, LBM TRI
 
+> **[AVANCÉ — optionnel]** Bloc *frontier* (J17-J23), hors chemin critique. Skippable en parcours express (cf README, "Parcours express vs complet").
+
 > **Objectif du jour** : comprendre le pattern dual-system System1/System2 qui structure les VLAs humanoides 2025-2026 (GR00T N1, Helix, LBM), pourquoi l'industrie converge dessus, et savoir le situer face a OpenVLA / pi0 / Octo (J19-J21).
 
 ---
@@ -93,7 +95,7 @@ System2 conditionne System1 via une representation continue (embedding, tokens, 
 
 ### 3.1 Architecture
 
-- **System2** : Eagle-2 VLM (~2B parametres). Image + instruction → tokens latents.
+- **System2** : Eagle-2 VLM (~1.34B parametres pour le backbone vision-langage ; le modele complet System1+System2 totalise ~2.2B). Image + instruction → tokens latents.
 - **System1** : Diffusion Transformer (DiT) + cross-attention sur les tokens System2. Sort des chunks d'actions de 16 pas a ~120 Hz.
 - **Embodiment-agnostic** : memes poids fonctionnent sur Fourier GR-1, 1X Neo, Apptronik Apollo apres fine-tune leger.
 
@@ -101,10 +103,11 @@ System2 conditionne System1 via une representation continue (embedding, tokens, 
 
 GR00T N1 est entraine sur un mix tres deliberatif :
 - **88h de teleoperation reelle** sur GR-1
-- **780 000 trajectoires synthetiques** generees dans NVIDIA Isaac Sim + Cosmos (J18, J23)
+- **~827h de trajectoires "neurales"** generees a partir de ces demos par un modele video (Cosmos) qui synthetise des variations — soit ~10× le volume reel, PAS un facteur de plusieurs milliers. C'est l'augmentation par modele generatif (J18, J23).
+- **Trajectoires Isaac Sim** : separement, le pipeline DexMimicGen genere de l'ordre de **780 000 trajectoires en ~11h** de calcul (chiffre de debit GPU d'Isaac Sim, **distinct** du compte d'heures ci-dessus — ne pas le fusionner en un ratio sim/reel).
 - **Videos humaines** pour pre-training perception (egocentric data)
 
-Le ratio sim/reel ~9000:1 montre la these NVIDIA : **on ne resoudra pas la robotique humanoide sans pipeline de donnees synthetiques industriel**. Le bottleneck n'est plus l'algorithme mais le data engine.
+La these NVIDIA tient sans gonfler les chiffres : **on ne resoudra pas la robotique humanoide sans pipeline de donnees synthetiques industriel**. Le bottleneck n'est plus l'algorithme mais le data engine — augmentation neurale (~10×) ET generation massive en simulation (Isaac Sim) sont deux leviers complementaires.
 
 ### 3.3 Pourquoi c'est ouvert
 
@@ -242,7 +245,7 @@ Le capstone du domaine implemente Diffusion Policy (Chi 2023) — c'est-a-dire l
 
 **Q4.** Quelle est l'innovation principale de GR00T N1 cote donnees ?
 
-> Le ratio synthetique/reel : 88h de teleoperation reelle vs 780 000 trajectoires generees en simulation (NVIDIA Isaac Sim + Cosmos). C'est ~9000:1, et cela demontre que le scaling humanoide passe par un pipeline de donnees synthetiques industrialise, pas par la teleoperation pure. Le bottleneck devient le data engine.
+> La donnee synthetique a deux leviers **distincts** (a ne pas fusionner en un seul ratio geant) : (1) **augmentation neurale ~10×** des 88h de teleoperation reelle via Cosmos → ~827h de trajectoires neurales ; (2) **generation massive en simulation** Isaac Sim (~780 000 trajectoires en ~11h GPU, pipeline separe). Conclusion : le scaling humanoide passe par un pipeline de donnees synthetiques industrialise, pas par la teleoperation pure. Le bottleneck devient le data engine.
 
 **Q5.** Comment LBM (TRI) demontre l'effet "scaling foundation model" pour la robotique ?
 

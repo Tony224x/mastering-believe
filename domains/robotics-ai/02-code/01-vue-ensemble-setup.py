@@ -1,7 +1,7 @@
 """J1 — Vue d'ensemble robotique moderne + setup stack.
 
 Goal: verify the MuJoCo + Gymnasium + PyTorch stack is installed and run a first
-HalfCheetah-v4 episode with a random policy. We instrument the loop to inspect
+HalfCheetah-v5 episode with a random policy. We instrument the loop to inspect
 the anatomy of a Gymnasium step (obs, reward, terminated, truncated, info) and
 print summary statistics so the student SEES what each field actually contains.
 
@@ -57,7 +57,7 @@ class EpisodeStats:
 
 # --------------------------------------------------------------------------- #
 # 3) Random rollout. We pass the env in (dependency injection) so the same
-#    routine can be reused on Pendulum-v1, HalfCheetah-v4, or a custom env in
+#    routine can be reused on Pendulum-v1, HalfCheetah-v5, or a custom env in
 #    the exercises. Seed defaults to 0 for reproducibility.
 # --------------------------------------------------------------------------- #
 def random_rollout(env, max_steps: int = 200, seed: int = 0) -> EpisodeStats:
@@ -133,9 +133,10 @@ if __name__ == "__main__":
     # actionable 'MISSING' line instead of a Python ImportError traceback.
     import gymnasium as gym  # noqa: E402
 
-    # Step B — first env. HalfCheetah-v4 is the canonical MuJoCo locomotion
+    # Step B — first env. HalfCheetah-v5 is the canonical MuJoCo locomotion
     # benchmark used in nearly every PPO/SAC paper since 2018. obs=17, act=6.
-    env_id = "HalfCheetah-v4"
+    # (v5 is the current Gymnasium MuJoCo generation; v4 is deprecated.)
+    env_id = "HalfCheetah-v5"
     env = gym.make(env_id)
     try:
         stats = random_rollout(env, max_steps=200, seed=0)

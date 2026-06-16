@@ -128,7 +128,7 @@
     Pourquoi : framework de manipulation modulaire sur MuJoCo, embodiments humanoïdes, whole-body controllers, photoreal rendering — benchmark de référence pour la manipulation.
     Couvre : tâches manipulation, controllers, teleop, génération de démos.
 
-27. **LeRobot v0.4 + LeRobotDataset v3.0** — Hugging Face, 2025-2026. https://huggingface.co/docs/lerobot/index — https://huggingface.co/blog/lerobot-release-v040
+27. **LeRobot v0.5.1 (avr. 2026) + LeRobotDataset v3.0** — Hugging Face. https://huggingface.co/docs/lerobot/index — https://huggingface.co/blog/lerobot-release-v040
     Pourquoi : standard 2026 pour datasets de démonstrations (Parquet+MP4 streamables) et policies VLA (PI0.5, GR00T N1.5) prêtes à l'emploi.
     Couvre : datasets imitation learning, fine-tuning policies, dataset format, streaming Hub.
 
@@ -139,6 +139,18 @@
 29. **Stable-Baselines3** + **CleanRL** — DLR-RM / Costa Huang, 2026. https://stable-baselines3.readthedocs.io/ — https://github.com/vwxyzjn/cleanrl
     Pourquoi : SB3 = `agent.learn()` haut-niveau fiable, intégration Gymnasium native ; CleanRL = single-file pédagogique pour comprendre PPO/SAC ligne par ligne. Complémentaires.
     Couvre : jours RL baselines (PPO, SAC sur MuJoCo).
+
+---
+
+## Axe 2 (complément) — Sim-to-real : dynamics randomization
+
+30. **Sim-to-Real Transfer of Robotic Control with Dynamics Randomization** — Peng, Andrychowicz, Zaremba, Abbeel, 2017. https://arxiv.org/abs/1710.06537
+    Pourquoi : papier fondateur de la **dynamics randomization** (randomiser masses, frottements, latences à l'entraînement) — distinct de la randomization purement *visuelle* de Tobin 2017. Cité directement dans le corps de J14.
+    Couvre : J14 (dynamics randomization, robustesse de la policy à l'écart sim-réel sur la physique).
+
+31. **Solving Rubik's Cube with a Robot Hand** — OpenAI (Akkaya et al.), 2019. https://arxiv.org/abs/1910.07113
+    Pourquoi : introduit **Automatic Domain Randomization (ADR)** et les policies adaptatives (encodeur qui régresse les paramètres physiques courants) — référence canonique de la randomization à plages auto-élargies. Cité dans le corps de J14 (§6.2, §6.3).
+    Couvre : J14 (ADR, adaptive policies type RMA, dynamics randomization à grande échelle).
 
 ---
 

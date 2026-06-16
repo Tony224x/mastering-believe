@@ -6,7 +6,7 @@ J11 — Solutions des exercices : REINFORCE -> A2C/baseline -> GAE -> PPO contin
 Trois fonctions main appellables independamment :
 - solve_easy()    : REINFORCE vanilla sur CartPole-v1
 - solve_medium()  : REINFORCE + baseline V(s) + GAE, comparaison
-- solve_hard()    : esquisse du PPO continu sur HalfCheetah-v4 (squelette
+- solve_hard()    : esquisse du PPO continu sur HalfCheetah-v5 (squelette
                     pret a etre execute, necessite gymnasium[mujoco] installe)
 
 Sources :
@@ -235,11 +235,11 @@ def solve_medium(
 
 
 # ===========================================================================
-# HARD — PPO continu sur HalfCheetah-v4 (squelette CleanRL-like)
+# HARD — PPO continu sur HalfCheetah-v5 (squelette CleanRL-like)
 # ===========================================================================
 @dataclass
 class PPOConfig:
-    env_id: str = "HalfCheetah-v4"
+    env_id: str = "HalfCheetah-v5"
     seed: int = 1
     total_timesteps: int = 1_000_000
     n_envs: int = 4
@@ -294,7 +294,7 @@ class ActorCriticContinuous(nn.Module):
 
 
 def solve_hard(cfg: PPOConfig | None = None) -> None:
-    """PPO continu sur HalfCheetah-v4. Necessite gymnasium[mujoco].
+    """PPO continu sur HalfCheetah-v5. Necessite gymnasium[mujoco].
 
     Attendu : retour moyen > 1500 a 1M steps avec hyperparametres standard.
     `clip_fraction` typiquement 0.1-0.3, `approx_kl` < 0.02.
@@ -463,5 +463,5 @@ if __name__ == "__main__":
     solve_medium(seed=42, n_episodes=150, mode="gae")
 
     # Le hard est laisse comme template, decommente si gymnasium[mujoco] dispo
-    # print("\n=== HARD: PPO continuous on HalfCheetah-v4 (long !) ===")
+    # print("\n=== HARD: PPO continuous on HalfCheetah-v5 (long !) ===")
     # solve_hard()

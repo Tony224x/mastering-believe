@@ -4,7 +4,7 @@ Each section is independently runnable from the smoke test in __main__.
 
 Sources:
 - Gymnasium docs (env API + custom env): https://gymnasium.farama.org/
-- MuJoCo docs (HalfCheetah-v4): https://mujoco.readthedocs.io/
+- MuJoCo docs (HalfCheetah-v5): https://mujoco.readthedocs.io/
 """
 
 # requires: gymnasium[mujoco], mujoco, numpy
@@ -38,7 +38,7 @@ def run_easy() -> None:
 
 
 # === MEDIUM === #
-# 5 episodes on HalfCheetah-v4, per-episode stats + aggregate mean/std.
+# 5 episodes on HalfCheetah-v5, per-episode stats + aggregate mean/std.
 def run_medium() -> None:
     # Guarded imports: explain to the student exactly what to install if either
     # gymnasium or mujoco is missing. This pattern is reused in real codebases
@@ -52,7 +52,7 @@ def run_medium() -> None:
         print('Install with: pip install "gymnasium[mujoco]" mujoco numpy')
         sys.exit(1)
 
-    env = gym.make("HalfCheetah-v4")
+    env = gym.make("HalfCheetah-v5")
     rewards: list[float] = []
     lengths: list[int] = []
 
@@ -64,7 +64,7 @@ def run_medium() -> None:
             steps = 0
             terminated = truncated = False
             # No max_steps cap here — we let the env's TimeLimit wrapper handle
-            # truncation (default 1000 for HalfCheetah-v4). That's the correct
+            # truncation (default 1000 for HalfCheetah-v5). That's the correct
             # idiom: trust the env contract instead of imposing our own.
             while not (terminated or truncated):
                 action = env.action_space.sample()
