@@ -190,6 +190,7 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **Generative Agents: Interactive Simulacra of Human Behavior** — Park, O'Brien, Cai, Morris, Liang, Bernstein (Stanford), 2023. https://arxiv.org/abs/2304.03442 — memory stream + retrieval + reflection (consolidation), épisodique/sémantique en pratique.
 - **Reflexion: Language Agents with Verbal Reinforcement Learning** — Shinn, Cassano, Berman, Gopinath, Narasimhan, Yao, 2023 (NeurIPS). https://arxiv.org/abs/2303.11366 — buffer de mémoire épisodique de réflexions verbales (pont mémoire/self-improvement).
 - **How the Open Knowledge Format can improve data sharing** — McVeety & Hormati (Google Cloud, Data Analytics), 2026. https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing — OKF v0.1 : formalise le pattern LLM-Wiki de Karpathy en format portable (markdown + frontmatter YAML, seul `type` obligatoire) pour persister la mémoire sémantique externalisée ; `log.md` ≈ memory stream, `index.md` ≈ divulgation progressive. Gist Karpathy : https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+- **Vertex AI Memory Bank — overview** — Google Cloud, 2025. https://cloud.google.com/agent-builder/agent-engine/memory-bank/overview — mémoire long terme managée : génération asynchrone de faits (Gemini), consolidation CREATED/UPDATED/DELETED (résolution de contradictions), retrieval scopé par identité, TTL. La version « as-a-service » de la consolidation §5.
 
 ### J17 — Self-improving agents
 - **Reflexion** — Shinn et al., 2023. https://arxiv.org/abs/2303.11366 — self-improvement par feedback verbal, sans fine-tuning.
@@ -203,6 +204,7 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **OpenAI Agents SDK — Handoffs** — OpenAI (docs), 2025. https://openai.github.io/openai-agents-python/handoffs/ — handoff léger tool-centric.
 - **openai/swarm** — OpenAI, 2024 (archivé/éducatif, remplacé par l'Agents SDK). https://github.com/openai/swarm — contraste stateless vs stateful.
 - **CrewAI — documentation** — CrewAI Inc. https://docs.crewai.com/ — modèle role-based crews/tasks/process (sequential vs hierarchical).
+- **Agent Development Kit (ADK)** — Google, 2025. https://developers.googleblog.com/en/agent-development-kit-easy-to-build-multi-agent-applications/ (docs https://google.github.io/adk-docs/agents/workflow-agents/) — workflow agents typés (`SequentialAgent`/`ParallelAgent`/`LoopAgent`) vs LLM-driven, `output_key`/state, plugins sécurité au niveau runner. Framework cœur du cours Google/Kaggle.
 
 ### J19 — Protocoles inter-agents
 - **A2A (Agent2Agent) — spécification** — Linux Foundation (Google), v1.0 2025. https://a2a-protocol.org/ (repo https://github.com/a2aproject/A2A) — JSON-RPC/HTTP/SSE, Agent Cards, lifecycle des tasks.
@@ -249,6 +251,7 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **Persistence (LangGraph)** — LangChain. https://docs.langchain.com/oss/python/langgraph/persistence — checkpointers vs store, threads, fault tolerance.
 - **Checkpoints API reference (langgraph)** — LangChain. https://reference.langchain.com/python/langgraph/checkpoints — `PostgresSaver`/`AsyncPostgresSaver`, `BaseCheckpointSaver`.
 - **langgraph-redis** — Redis, 2025. https://github.com/redis-developer/langgraph-redis — `RedisSaver`, TTL, store cross-thread.
+- **Vertex AI Agent Engine — overview** — Google Cloud, GA 2025. https://docs.cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview — runtime managé (sessions + scaling + Memory Bank) : alternative au self-hosting du checkpointer, trade-off contrôle/portabilité vs time-to-prod.
 
 ### J26 — Benchmarks agents & guardrails production
 - **τ-bench: Tool-Agent-User Interaction...** — Yao et al. (Sierra), 2024. https://arxiv.org/abs/2406.12045 — pass^k (fiabilité multi-essais).

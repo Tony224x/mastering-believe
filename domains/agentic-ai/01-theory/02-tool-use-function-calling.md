@@ -195,6 +195,18 @@ Le retour n'est pas formellement dans le schema JSON (contrairement aux params),
 
 Le LLM a besoin de savoir ce qu'il va recevoir pour planifier ses prochaines etapes. Si l'outil retourne un format inattendu, l'agent se plante.
 
+### 3.5 Vocabulaire a connaitre : la taxonomie Google (Extensions / Functions / Data Stores)
+
+L'anatomie d'un tool ci-dessus est universelle. Mais selon l'ecosysteme, le **vocabulaire** change — et tu croiseras vite celui de Google (whitepaper "Introduction to Agents", cours Google/Kaggle). Google decoupe les outils en **trois categories** :
+
+| Terme Google | Ce que c'est | Equivalent dans ce cours |
+|--------------|-------------|--------------------------|
+| **Functions** | Schema d'outil que **le code client execute** (le LLM propose l'appel, ton code l'execute) | Le function calling de ce module (§2) |
+| **Extensions** | Outil que **l'agent appelle directement** cote agent/runtime (API branchee dans la plateforme) | Tool execute cote serveur / agent runtime |
+| **Data Stores** | Acces a des donnees externes (documents, BDD) en lecture | RAG (J8) expose comme un tool |
+
+> **A retenir** : ce n'est pas un concept nouveau, c'est un **vocabulaire** vendor. Functions = exec cote client, Extensions = exec cote agent, Data Stores = RAG-as-tool. Connaitre ces mots evite de croire qu'il s'agit de mecanismes differents quand tu lis la doc Google. Idem pour le mot **"Skills"** (Anthropic, ADK) : un module de capacite reutilisable et packageable = un tool (ou un groupe de tools) + ses instructions — rien de magique.
+
 ---
 
 ## 4. Design de tools efficaces
@@ -813,6 +825,9 @@ asyncio.run(main())
 
 **Q5 : Quand le LLM decide-t-il d'appeler plusieurs outils en parallele ?**
 > R : Quand il detecte que plusieurs informations independantes sont necessaires et que les outils n'ont pas de dependances entre eux. Exemple : "Compare le PIB de la France et de l'Allemagne" → 2 recherches independantes en parallele. Le LLM decide de lui-meme, mais on peut influencer via `parallel_tool_calls: true/false` dans la requete API.
+
+**Q6 : Que recouvrent les termes Google "Extensions / Functions / Data Stores", et est-ce un mecanisme nouveau ?**
+> R : Non — c'est un vocabulaire vendor pour des choses deja vues. **Functions** = schema d'outil execute cote client (le function calling de ce module). **Extensions** = outil execute cote agent / runtime. **Data Stores** = acces a des donnees externes en lecture = RAG (J8) expose comme tool. Connaitre ces mots evite de croire qu'il s'agit de mecanismes differents en lisant la doc Google.
 
 ---
 

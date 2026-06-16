@@ -115,6 +115,25 @@ Redis offre des latences sub-milliseconde. Utile si les sessions sont nombreuses
 
 **Pattern hybride** : Redis comme cache L1 (derniers N checkpoints) + Postgres comme store durable. Les workers lisent depuis Redis, Redis sync vers Postgres en arriere-plan.
 
+### 3.5 Alternative : le runtime manage (Vertex AI Agent Engine & co.)
+
+Les 4 backends ci-dessus supposent que **tu heberges** le store (self-hosted). Une autre voie : deleguer le runtime ET l'etat a un service manage. **Vertex AI Agent Engine** (Google Cloud, GA 2025) est l'exemple de reference du programme Google Agents ; AWS Bedrock AgentCore et les "assistants" heberges jouent dans la meme categorie.
+
+Ce qu'un runtime manage prend en charge a ta place :
+- **Sessions** (memoire court terme = historique de conversation) gerees automatiquement.
+- **Scaling** et disponibilite du runtime (pas de pods a operer).
+- **Memory Bank** (memoire long terme manage) — voir J16 §5.4 : extraction et **consolidation automatiques** des faits par le modele.
+
+| | Self-hosted (sections 3.1-3.4) | Runtime manage (Agent Engine…) |
+|---|---|---|
+| **Controle** | Total (backend, schema, locks) | Limite (boite plus fermee) |
+| **Ops** | A ta charge (DB, scaling, backups) | Delegues au provider |
+| **Portabilite** | Forte (Postgres/Redis partout) | Faible (lock-in cloud) |
+| **Time-to-prod** | Plus long | Tres court |
+| **Cout** | Infra + maintenance | Fees runtime (souvent plus cher a l'echelle) |
+
+> **Regle de choix** : self-hosted quand tu veux le controle, la portabilite et maitriser le cout a l'echelle (le cas par defaut de ce cours). Runtime manage quand le time-to-prod prime et que tu es deja sur le cloud du provider. Le concept de **session / thread** (section 2) reste identique des deux cotes — seul l'operateur du store change.
+
 ---
 
 ## 4. Scaling horizontal : workers stateless
@@ -245,6 +264,9 @@ Les exemples signales par le judge (score bas) deviennent automatiquement des ca
 **Q5 : Pourquoi les sticky sessions sont-elles deconseillees en production HA ?**
 > R : Les sticky sessions routent toujours le meme user vers le meme worker pour garder l'etat en memoire. Mais : (a) si ce worker crashe, toutes ses sessions sont perdues ; (b) un user tres actif surcharge un seul worker pendant que les autres sont sous-utilises ; (c) les deployments rolling necessitent des precautions speciales pour "drainer" les sessions. L'etat partage (store externe) evite ces 3 problemes au prix de quelques ms de latence reseau.
 
+**Q6 : Self-hosted vs runtime manage (type Vertex AI Agent Engine) : qu'est-ce qui change et qu'est-ce qui reste pareil ?**
+> R : Ce qui change = l'operateur du store. Self-hosted (3.1-3.4) : tu heberges Postgres/Redis, controle total + portabilite, mais tu portes les ops (DB, scaling, backups). Runtime manage : sessions + scaling + memoire (Memory Bank) delegues au provider, time-to-prod tres court, mais lock-in cloud et cout souvent plus eleve a l'echelle. Ce qui reste identique : le modele conceptuel **thread / session** (section 2). Regle : self-hosted par defaut (controle + cout), manage quand le time-to-prod prime et qu'on est deja sur le cloud du provider.
+
 ---
 
 ## Points cles a retenir
@@ -258,6 +280,7 @@ Les exemples signales par le judge (score bas) deviennent automatiquement des ca
 - **Online eval** : taux de succes, nb de tours, taux d'erreur outil, latence P95, sessions abandonnees — sur fenetre glissante.
 - **Drift** : baisse progressive du taux de succes ou queries hors-distribution → alerter, collecter des exemples, relancer l'eval offline.
 - **Boucle feedback** : les exemples malscores par le LLM-as-judge en prod alimentent le dataset d'eval offline → amelioration continue.
+- **Self-hosted vs runtime manage** : un service comme Vertex AI Agent Engine delegue sessions + scaling + memoire (Memory Bank, J16 §5.4) au provider — time-to-prod court contre lock-in cloud ; le modele thread/session ne change pas.
 
 ---
 
@@ -266,3 +289,4 @@ Les exemples signales par le judge (score bas) deviennent automatiquement des ca
 - LangChain, "LangGraph — Persistence" https://docs.langchain.com/oss/python/langgraph/persistence
 - LangChain, "Checkpoints API reference" https://reference.langchain.com/python/langgraph/checkpoints
 - Redis, "langgraph-redis" (2025) https://github.com/redis-developer/langgraph-redis
+- Google Cloud, "Vertex AI Agent Engine — overview" (2025) https://docs.cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview

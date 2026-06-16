@@ -398,7 +398,50 @@ Quand tu deploies une nouvelle version :
 
 ---
 
-## 8. Flash Cards — Test de comprehension
+## 8. AgentOps : la discipline, et les KPI qui comptent
+
+Tracing, budgets, guardrails et recovery (sections 2-6) sont les *briques*. **AgentOps** est la **discipline** qui les opere dans la duree — l'equivalent du DevOps/MLOps applique aux agents. Le terme est popularise par les whitepapers Google "Agents Companion" / "Agent Quality" (2025-2026), mais le fond est vendor-neutre.
+
+### 8.1 AgentOps = DevOps + MLOps + primitives agents
+
+AgentOps croise trois heritages et ajoute les primitives propres aux agents qu'il faut versionner, monitorer et gouverner :
+
+| Heritage | Ce qu'il apporte | Primitive agent a operer en plus |
+|----------|------------------|----------------------------------|
+| **DevOps** | CI/CD, versioning, rollback (section 7) | **Prompts & tools** versionnes comme du code |
+| **MLOps** | Eval, datasets, drift (J11/J25) | **Trajectoires** evaluees, pas juste l'output |
+| **Specifique agent** | — | **Orchestration**, **memoire**, **task decomposition** instrumentees |
+
+> **Idee cle** : un agent n'est ni un modele (MLOps classique) ni un service stateless (DevOps classique). Il **decide, appelle des outils et garde un etat** — il faut donc operer ces trois dimensions en plus.
+
+### 8.2 "The trajectory is the truth"
+
+Principe directeur de l'eval d'agents (rappel J11) remis dans le contexte prod : la vraie mesure de la logique, de la surete et de l'efficacite d'un agent est sa **trajectoire end-to-end** (le chemin de pensee : quels tools, dans quel ordre, avec quels arguments), pas seulement la reponse finale. En cas d'echec, on part du **succes reel** (l'objectif user a-t-il ete atteint ?) puis on **descend dans la trajectoire** pour passer de "la reponse est fausse" a "la reponse est fausse **parce que** l'agent a appele le mauvais tool a l'etape 3".
+
+L'observabilite (section 2) se lit alors en **3 piliers** :
+- **Logs** : le journal brut des evenements.
+- **Traces** : le recit ordonne d'une execution (spans relies — section 2.2).
+- **Metrics** : le bulletin de sante agrege (taux de succes, latence P95, cout).
+
+### 8.3 Les KPI qui comptent (au-dela de la latence)
+
+Un HTTP 200 ne prouve rien sur la valeur produit. Structurer les KPI en **3 familles** (cadrage Google Cloud, transferable) :
+
+| Famille | KPI | Pourquoi |
+|---------|-----|----------|
+| **Fiabilite & efficacite** | `tool_selection_accuracy`, `argument_hallucination_rate`, taux de completion, nb d'etapes / cout par tache | Mesure si l'agent *fonctionne* correctement, pas juste s'il repond |
+| **Adoption & usage** | sessions actives, taux de retour, taches par session, taux d'escalade humaine | Mesure si l'agent est *reellement utilise* |
+| **Valeur business** | tache resolue sans humain, temps gagne, conversion, satisfaction (CSAT) | Mesure l'*impact* — le seul KPI qui justifie le budget |
+
+Deux metriques agent-specifiques a retenir absolument :
+- **`tool_selection_accuracy`** : l'agent a-t-il choisi le bon outil ? (un agent qui repond bien *par hasard* en appelant le mauvais tool est fragile).
+- **`argument_hallucination_rate`** : taux d'appels ou un argument est invente ou mal forme (cause silencieuse d'echec, cf. J2 §6).
+
+> **Garde-fou pedagogique** : ces KPI ne remplacent pas l'eval offline (J11/J26) — ils la **completent en ligne** (J25 §6). Offline = avant deploy, sur dataset fige ; AgentOps KPI = en continu, sur trafic reel.
+
+---
+
+## 9. Flash Cards — Test de comprehension
 
 **Q1 : Quelles sont les 4 grandes categories de problemes qu'on doit gerer en production d'un agent ?**
 > R : (1) **Tracing/Observabilite** pour savoir ce qui se passe (spans, traces, metadata, cost, latency). (2) **Error recovery** (retry avec backoff, fallback chains, circuit breakers, graceful degradation) pour ne jamais crasher. (3) **Budgets** (cost ceiling par requete, par user, global) pour ne pas exploser la facture. (4) **Guardrails** (input, output, tool) pour empecher les comportements dangereux et les prompt injections.
@@ -415,6 +458,9 @@ Quand tu deploies une nouvelle version :
 **Q5 : Comment le prompt caching reduit-il les couts et quand est-il pertinent ?**
 > R : Si ton prompt contient un preambule long qui se repete (system prompt, few-shot examples), tu marques cette partie comme cacheable. Les appels suivants qui reutilisent ce meme preambule paient 10x moins cher sur les tokens caches. Pertinent quand : le system prompt fait > 1024 tokens (seuil minimum) ET la frequence d'usage est elevee dans la fenetre de cache (5 min par defaut chez Anthropic). Peut reduire le cout de 50-90% sur les systemes conversationnels avec long contexte.
 
+**Q6 : Qu'est-ce qu'AgentOps, et quels KPI distinguent un agent qui "repond" d'un agent qui "sert" ?**
+> R : AgentOps est la discipline qui opere un agent en prod = DevOps (CI/CD, versioning des prompts/tools) + MLOps (eval, drift) + les primitives agent (orchestration, memoire, task decomposition instrumentees). Un HTTP 200 ne prouve rien sur la valeur. KPI a structurer en 3 familles : fiabilite & efficacite (`tool_selection_accuracy`, `argument_hallucination_rate`, taux de completion), adoption & usage (sessions actives, taux de retour, escalade humaine), valeur business (tache resolue sans humain, temps gagne, CSAT). Principe directeur : "the trajectory is the truth" — juger le chemin, pas seulement la reponse finale.
+
 ---
 
 ## Points cles a retenir
@@ -430,6 +476,7 @@ Quand tu deploies une nouvelle version :
 - Deploiement : FastAPI + queue (ARQ/Celery) pour les taches longues + tracing = stack robuste
 - Versionne tes prompts comme du code, canary + rollback pour les releases
 - Sans tracing, tu ne peux rien debugger en prod — c'est le premier investissement
+- **AgentOps** = DevOps + MLOps + primitives agents (orchestration / memoire / trajectoires) ; mesurer les KPI en 3 familles (fiabilite, adoption, valeur business), pas juste la latence — "the trajectory is the truth"
 
 
 ---
@@ -440,3 +487,5 @@ Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../
 
 - **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours terrain sur la mise en prod et l'observabilite d'agents.
 - **Berkeley CS294-196 (Fa25) — Lec. 10 (Evolution of System Designs, Yangqing Jia)** — patterns d'infra LLM en production.
+- **Google / Kaggle — "Agents Companion" & "Agent Quality" (whitepapers, 2025-2026)** — AgentOps, eval par trajectoire, observabilite logs/traces/metrics : https://www.kaggle.com/whitepaper-agent-companion · https://www.kaggle.com/whitepaper-agent-quality
+- **Google Cloud — "The KPIs that actually matter for production AI agents" (2025)** — KPI en 3 piliers, tool selection accuracy : https://cloud.google.com/transform/the-kpis-that-actually-matter-for-production-ai-agents

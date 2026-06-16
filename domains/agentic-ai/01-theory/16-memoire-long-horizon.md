@@ -259,6 +259,17 @@ Strategies :
 - **Soft decay** : compression (resume) plutot que suppression
 - **Importance shield** : les entrees importantes ne sont jamais oubliees
 
+### 5.4 La consolidation comme service manage (Vertex AI Memory Bank)
+
+Tout ce qu'on vient de construire a la main (extraction de faits, consolidation, scoring, oubli) existe aussi en **service manage**. **Vertex AI Memory Bank** (Google Cloud, 2025) en est l'exemple de reference : il distingue **Sessions** (memoire court terme = historique) et **Memory Bank** (memoire long terme = faits persistants cross-sessions), et automatise le cycle de vie :
+
+1. **Generation** : extraction **asynchrone** des faits saillants depuis les transcripts (ex : "l'user prefere Python a Java"), via le modele (Gemini).
+2. **Consolidation** : le modele reconcilie les nouveaux faits avec l'existant et renvoie un verdict **CREATED / UPDATED / DELETED** — il **resout les contradictions** et **deduplique** automatiquement (la version manage de la reflection vue en §5.2).
+3. **Recuperation** : simple ou par **similarity search** (embeddings), **scopee par identite** (`user_id`) → isolation / privacy par defaut.
+4. **TTL** : expiration automatique (la version manage du decay de §5.3).
+
+> **Ce que ca change** : la plupart des tutoriels reduisent la memoire a "mets tes faits dans un vector store". Un service comme Memory Bank ajoute la **reconciliation active** (CREATED/UPDATED/DELETED) — il ne se contente pas d'empiler, il **met a jour et supprime** quand un fait en contredit un autre. C'est exactement la consolidation de §5, mais operee pour toi. Trade-off : lock-in cloud vs zero code de gestion memoire (meme arbitrage qu'en J25 §3.5).
+
 ---
 
 ## 6. Vue d'ensemble : flux de memoire d'un agent
@@ -391,6 +402,9 @@ En resume : OKF complete le J15 (context offloading) en donnant un standard d'ec
 **Q7 : Quels sont les champs de frontmatter OKF, et lequel est le seul obligatoire ?**
 > R : Les champs standard sont `type`, `title`, `description`, `resource`, `tags`, `timestamp`. Le seul obligatoire est `type` : OKF est minimalement opinione et laisse tout le reste (types disponibles, autres champs, sections du corps) au producteur. `index.md` (divulgation progressive) et `log.md` (historique chronologique) sont des fichiers optionnels a noms reserves.
 
+**Q8 : En quoi un service de memoire manage (type Vertex AI Memory Bank) va-t-il plus loin qu'un simple vector store de faits ?**
+> R : Il ajoute la **reconciliation active** : a chaque nouvelle info, le modele compare avec l'existant et renvoie CREATED / UPDATED / DELETED — il resout les contradictions et deduplique au lieu d'empiler. C'est la consolidation de §5.2 operee comme service, plus un scoping par identite (`user_id`) pour l'isolation et un TTL pour le decay (§5.3). Trade-off : lock-in cloud contre zero code de gestion memoire.
+
 ---
 
 ## Points cles a retenir
@@ -401,6 +415,7 @@ En resume : OKF complete le J15 (context offloading) en donnant un standard d'ec
 - **Consolidation** : la reflection periodique distille les episodes en faits semantiques, reduisant la masse de donnees a gerer
 - **Oubli selectif** : decay exponentiel + bouclier d'importance — oublier intelligemment est aussi important que se souvenir
 - **OKF / LLM-Wiki** : un repertoire de markdown + frontmatter YAML (seul champ obligatoire : `type`) donne a la memoire semantique externalisee un format portable et vendor-neutral — `log.md` joue le role du memory stream, `index.md` celui de la divulgation progressive
+- **Memoire manage** : un service comme Vertex AI Memory Bank automatise generation + consolidation (CREATED/UPDATED/DELETED) + retrieval scope par identite + TTL — la version "as-a-service" de ce module, au prix du lock-in (cf. J25 §3.5)
 
 ---
 
@@ -412,3 +427,4 @@ En resume : OKF complete le J15 (context offloading) en donnant un standard d'ec
 - Letta (successeur open-source de MemGPT) — https://github.com/letta-ai/letta
 - Sam McVeety & Amir Hormati (Google Cloud Data Analytics), **"How the Open Knowledge Format can improve data sharing"** (12 juin 2026) — https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing (repo : https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf)
 - Andrej Karpathy, **"LLM-Wiki"** (gist fondateur du pattern formalise par OKF) — https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+- Google Cloud, **"Vertex AI Memory Bank — overview"** (2025) — https://cloud.google.com/agent-builder/agent-engine/memory-bank/overview
