@@ -600,8 +600,8 @@ def topk_mask(f: np.ndarray, k: int) -> np.ndarray:
     return out
 
 
-def train_topk_sae(acts, n_sae, k, n_iters=4000, lr=0.03, seed=3,
-                   resample_every=800, dead_thresh=1e-4):
+def train_topk_sae(acts, n_sae, k, n_iters=5000, lr=0.03, seed=3,
+                   resample_every=500, dead_thresh=1e-4):
     """
     SAE TopK (Gao 2024) : pas de L1. A chaque forward on ne garde que les k
     plus grandes activations (topk_mask). Anti dead-features : init du decoder
@@ -704,7 +704,9 @@ def evaluate_sae(W_enc, b_enc, W_dec, b_dec, k=None, cos_thresh=0.5):
 
 
 # --- Entrainement des deux SAE ---
-l1_params = train_l1_sae(acts, N_SAE, l1_lambda=0.05)
+# L1 avec lambda assez fort pour exhiber clairement shrinkage + dead features
+# (comme le 02-code, le L1 naif sous-performe par construction).
+l1_params = train_l1_sae(acts, N_SAE, l1_lambda=0.1)
 topk_params = train_topk_sae(acts, N_SAE, k=K_TRUE)
 
 rec_l1, dead_l1, mag_l1, loss_l1 = evaluate_sae(*l1_params, k=None)

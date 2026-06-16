@@ -26,7 +26,7 @@ C'est plus dur que l'easy/medium : ici il n'y a **pas** de numpy. Tu implementes
 
 5. **Metrique "dark knowledge" hold-out.** Sur un **hold-out** jamais vu en train, definir le **dark-knowledge recovery** : la fraction d'exemples ou le student reproduit le **bon ordre des perdantes** du teacher, c.-a-d. `rank_student(2e classe du teacher) < rank_student(3e classe du teacher)` (la 2e place du student tombe sur la classe soeur, pas sur une lointaine). Montrer que **soft > hard** sur cette metrique — c'est la preuve que le soft target transmet une info que le one-hot efface, **a accuracy comparable**.
 
-6. **Ablation temperature.** Balayer `T` dans `{1, 2, 3, 5, 10}` cote distillation. Trop bas (`T=1`) ≈ presque du hard, on perd la dark knowledge ; trop haut, la distribution devient quasi uniforme, le signal se noie. Afficher la courbe et identifier le sweet spot intermediaire.
+6. **Ablation temperature.** Balayer `T` dans `{1, 2, 3, 5, 10, 20}` cote distillation, **moyenne sur plusieurs seeds**. Une `T` tres haute aplatit la cible vers l'uniforme et **degrade** (le signal de classe se noie) — c'est l'inegalite robuste a asserter. Caveat honnete attendu : avec un student **lineaire** (capacite tres limitee), la "cloche" classique de Hinton (sweet spot intermediaire ~2-3) n'est que **partielle** ; une `T` moderee (1-2) fait deja aussi bien. Documenter ce caveat plutot que de forcer une cloche artificielle (esprit "honest caveat" du domaine).
 
 ### Criteres de reussite
 
@@ -34,8 +34,8 @@ C'est plus dur que l'easy/medium : ici il n'y a **pas** de numpy. Tu implementes
 - [ ] le teacher encode une vraie structure de similarite (classe soeur systematiquement 2e)
 - [ ] le facteur `T^2` est present dans la loss de distillation
 - [ ] `KL(teacher || student)` **decroit** au fil des epochs (assert `KL_final < KL_initial`)
-- [ ] le student soft **bat** le student hard sur la metrique dark-knowledge recovery hold-out
-- [ ] l'ablation `T` montre une courbe en cloche (sweet spot ~2-3) et le code explique le POURQUOI
+- [ ] le student soft **bat** le student hard sur la metrique dark-knowledge recovery hold-out (et colle mieux a la distribution teacher : KL hold-out plus basse)
+- [ ] l'ablation `T` (moyenne multi-seed) montre qu'une `T` tres haute degrade ; caveat honnete documente sur la cloche partielle d'un student lineaire
 
 ---
 
