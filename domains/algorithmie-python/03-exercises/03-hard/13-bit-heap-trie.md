@@ -98,7 +98,7 @@ board = [
 ]
 assert sorted(find_words(board, ["oath", "pea", "eat", "rain"])) == ["eat", "oath"]
 assert find_words([["a"]], ["b"]) == []
-assert sorted(find_words([["a", "b"]], ["a", "b", "ab", "ba"])) == ["a", "ab", "b"]
+assert sorted(find_words([["a", "b"]], ["a", "b", "ab", "ba"])) == ["a", "ab", "b", "ba"]
 assert find_words([["a", "a"]], ["aaa"]) == []         # Not enough cells
 assert sorted(find_words([["a"]], ["a"])) == ["a"]
 ```
