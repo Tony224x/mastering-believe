@@ -133,8 +133,16 @@ def apply_rope(x, cos, sin):
       cos, sin: (seq_len, head_dim/2)
 
     Returns: x rotated
+
+    CONVENTION: this uses the *interleaved-pairs* form of RoPE (pairing
+    dims (0,1), (2,3), ...), as in the original RoFormer paper and GPT-NeoX.
+    Real LLaMA/HF checkpoints use the *rotate-half* form (pairing dim i with
+    dim i + head_dim/2), which rotates the same plane but with a different
+    dimension permutation. Both are mathematically valid RoPE; they are
+    self-consistent here but NOT weight-compatible with a LLaMA checkpoint
+    unless you also permute the projection weights accordingly.
     """
-    # Split into even and odd pair indices
+    # Split into even and odd pair indices (interleaved convention)
     x1 = x[..., 0::2]  # (..., seq_len, head_dim/2)
     x2 = x[..., 1::2]
 

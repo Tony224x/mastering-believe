@@ -2,6 +2,8 @@
 
 > **Temps estime** : 4h | **Prerequis** : J10 (fine-tuning, SFT, RLHF), J15 (reasoning)
 
+> **[AVANCE — optionnel]** Module de frontiere (bloc J15-J22). Le core du domaine est J1-J14 ; cette lecon est un approfondissement, a faire apres avoir solidement maitrise le core.
+
 ---
 
 ## 1. La renaissance des SLMs (Small Language Models)
@@ -40,7 +42,7 @@ Le ratio qualite/taille a **triple** entre 2023 (Mistral 7B) et 2025-2026. Un Qw
 
 - **Reasoning complexe** : un 7B distille atteint ~60-70% d'un reasoning model complet sur AIME/MATH. Si ton produit depend de math/code avances, un SLM ne sera pas suffisant.
 - **OOD (out-of-domain)** : un modele specialise peut "casser" sur des queries hors scope. Un routeur a l'entree limite les degats.
-- **World knowledge** : un 3B ne peut pas memoriser tout Wikipedia. Pour les questions factuelles, ajouter du RAG (J17).
+- **World knowledge** : un 3B ne peut pas memoriser tout Wikipedia. Pour les questions factuelles, ajouter du RAG (hors scope de ce domaine — voir les domaines `agentic-ai` et `system-design`).
 
 ---
 

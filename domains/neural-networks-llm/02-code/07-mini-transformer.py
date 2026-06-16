@@ -422,7 +422,7 @@ if __name__ == "__main__":
     print("Step 6: Generate text AFTER training")
     print("=" * 70)
 
-    # Start with the character 'L' (which is common in the corpus)
+    # Start with the character 'V' (seed token for generation)
     seed_char = 'V'
     start_ids = torch.tensor(
         [[tokenizer.stoi.get(seed_char, 0)]],

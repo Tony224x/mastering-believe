@@ -2,6 +2,8 @@
 
 > **Temps estime** : 5h | **Prerequis** : J1-J14 (transformers, SFT/RLHF, CoT, emergent abilities)
 
+> **[AVANCE — optionnel]** Module de frontiere (bloc J15-J22). Le core du domaine est J1-J14 ; cette lecon est un approfondissement, a faire apres avoir solidement maitrise le core.
+
 ---
 
 ## 1. Le shift de paradigme de 2024-2026
@@ -201,7 +203,7 @@ Budget total = Training + Inference
    thinking) tency)  ratio qualite/cout)
 ```
 
-**Regle d'or 2026** : avant de scale le compute, verifier que le prompt, le contexte et les outils sont optimaux. La plupart des "problemes de raisonnement" sont en fait des problemes de **context engineering** (J18). Passer d'un Haiku bien prompte a o3 pour masquer un mauvais prompt coute 50x plus et resout rarement le fond.
+**Regle d'or 2026** : avant de scale le compute, verifier que le prompt, le contexte et les outils sont optimaux. La plupart des "problemes de raisonnement" sont en fait des problemes de **context engineering** (un sujet a part entiere, traite en profondeur dans le domaine `agentic-ai`). Passer d'un Haiku bien prompte a o3 pour masquer un mauvais prompt coute 50x plus et resout rarement le fond.
 
 ---
 

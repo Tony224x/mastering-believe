@@ -320,7 +320,7 @@ Output : "Le chat mange la souris" (decoder, generated token by token)
 | 2019 | T5 | Encoder-Decoder | 11B |
 | 2020 | GPT-3 | Decoder-only | 175B |
 | 2023 | LLaMA-2 | Decoder-only | 70B |
-| 2024 | Claude 3, GPT-4 | Decoder-only | ~1T (estime) |
+| 2024 | Claude 3, GPT-4 | Decoder-only | ~1T (non confirme, estimation) |
 
 **Observation** : la famille decoder-only a gagne. Pourquoi ? Parce qu'elle est plus simple, scale mieux, et peut faire toutes les taches (classification, traduction, generation) en formulant la tache comme une generation de texte.
 

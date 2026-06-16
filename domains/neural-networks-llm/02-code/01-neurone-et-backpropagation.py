@@ -133,8 +133,9 @@ class NeuralNetwork:
         """
         np.random.seed(seed)
 
-        # Xavier initialization: scale by 1/sqrt(n_in) to keep variance stable
-        # across layers. Without this, activations either explode or vanish.
+        # LeCun init (sqrt(1/n_in)): scale by 1/sqrt(n_in) to keep variance
+        # stable across layers. Without this, activations explode or vanish.
+        # (Xavier/Glorot uses sqrt(2/(n_in+n_out)); He uses sqrt(2/n_in) for ReLU.)
         self.W_h = np.random.randn(n_input, n_hidden) * np.sqrt(1.0 / n_input)
         self.b_h = np.zeros((1, n_hidden))  # biases init to 0 is fine
 

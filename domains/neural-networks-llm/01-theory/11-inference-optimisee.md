@@ -12,7 +12,7 @@ L'entrainement d'un LLM coute cher une fois (10M USD pour LLaMA 3 70B). L'infere
 
 Pour GPT-4 en production :
 - Cout du training : environ 100M USD (une fois)
-- Cout de l'inference : plusieurs millions par jour (hallucinations continues)
+- Cout de l'inference : plusieurs millions par jour (inferences continues)
 
 C'est pour ca que l'optimisation d'inference est devenue **plus importante** que l'optimisation du training. Chaque 1% de gain en inference vaut des millions.
 
