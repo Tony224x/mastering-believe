@@ -1,67 +1,72 @@
 # Solutions — Module 02 : Retrieval practice
 
-> Les exercices 1 et 3 dependent de ta production personnelle. Ce corrige donne les elements attendus pour l'auto-evaluation.
+> Les exercices 1 et 3 dépendent de ta production personnelle. Ce corrigé donne les éléments attendus pour l'auto-évaluation.
 
 ---
 
-## Exercice 1 — Recall structure : elements de reference
+## Exercice 1 — Recall structuré : éléments de référence
 
-**a. Les 3 techniques concretes du module :**
-1. **Flashcards recto-verso** : une question precise au recto, reponse minimale au verso. On tente de repondre avant de retourner. Une idee par carte. Format efficace : question contextuelle qui ne peut pas etre devinee.
-2. **Blank-page recall** : fermer tout document, ecrire tout ce dont on se souvient. Protocole : etude (20 min) → recall (10 min) → verification + lacunes → re-test cible.
-3. **Auto-questionnement / elaborative interrogation** : se poser des questions sur le contenu ("pourquoi ca fonctionne comme ca ?", "quelle est la difference entre X et Y ?"). Utilite "moderee" selon Dunlosky, superieure a la relecture.
+**a. Les 4 techniques concrètes du module :**
+1. **Flashcards recto-verso** : une question précise au recto, réponse minimale au verso. On tente de répondre avant de retourner. Une idée par carte. Format efficace : question contextuelle qui ne peut pas être devinée.
+2. **Blank-page recall** : fermer tout document, écrire tout ce dont on se souvient. Protocole : étude (15-20 min) → recall (10 min) → vérification + lacunes → re-test ciblé.
+3. **Auto-questionnement / elaborative interrogation** : se poser des questions sur le contenu ("pourquoi ça fonctionne comme ça ?", "quelle est la différence entre X et Y ?"). Utilité "modérée" selon Dunlosky, supérieure à la relecture.
+4. **Enseigner à un pair (retrieval génératif)** : expliquer à voix haute comme si on était le prof. Force la récupération, l'organisation et la reformulation. Révèle les zones floues que le recall solitaire peut masquer.
 
-**b. Chiffre Karpicke & Roediger (2008) :**
-Groupe C (se teste sur toutes les paires, meme les reussites) : **80 % de rappel** apres 1 semaine. Groupe A (re-etude) : **36 %**.
+**b. Chiffres Roediger & Karpicke (2006) :**
+- Groupe STTT (une lecture + trois sessions de test) : **61 %** de rappel à 1 semaine
+- Groupe SSSS (quatre sessions de re-lecture) : **40 %** de rappel à 1 semaine
 
-**c. Pourquoi l'echec pendant un test renforce quand meme la memoire :**
-Le processus de *tentative* de recuperation active le chemin neuronal meme si la reponse n'arrive pas. L'echec suivi de la bonne reponse est particulierement puissant (effet "hypercorrection") : le contraste entre l'echec et la correction produit un encodage plus profond que la reussite immediate. La memoire se renforce a l'acces, pas a la lecture.
+*(Note : à ne pas confondre avec Karpicke & Roediger 2008 : 80 % vs 36 % — cette étude portait sur le vocabulaire swahili et testait l'effet de retirer ou non les paires réussies.)*
 
-**d. L'effet de generation (Slamecka & Graf, 1978) :**
-Generer soi-meme une reponse — meme approximative ou incomplete — produit un ancrage superieur a recevoir passivement la bonne reponse. Cela explique pourquoi il vaut mieux tenter de repondre avant de retourner une flashcard, meme si on n'est pas sur.
+**c. Pourquoi l'échec pendant un test renforce quand même la mémoire :**
+Le processus de *tentative* de récupération active le chemin neuronal même si la réponse n'arrive pas. L'échec suivi de la bonne réponse est particulièrement puissant (effet "hypercorrection") : le contraste entre l'échec et la correction produit un encodage plus profond que la réussite immédiate. La mémoire se renforce à l'accès, pas à la lecture.
 
-**e. Session type de 45 min :**
-- Etude initiale : 20 min (lire, comprendre, annoter — *une seule fois*)
-- Blank-page recall : 10 min (tout ecrire sans regarder)
-- Verification : 5 min (comparer, noter les lacunes)
-- Re-test cible : 10 min (flashcards sur les points retes ou lacunes)
+**d. L'effet de génération (Slamecka & Graf, 1978) :**
+Générer soi-même une réponse — même approximative ou incomplète — produit un ancrage supérieur à recevoir passivement la bonne réponse. Cela explique pourquoi il vaut mieux tenter de répondre avant de retourner une flashcard, même si on n'est pas sûr.
 
-**Score attendu :** >= 3/5. Si < 3, c'est normal pour une premiere revision — l'important est de noter les lacunes et de planifier J+1.
+**e. Pourquoi enseigner à un pair est du retrieval practice :**
+Expliquer à un pair force à récupérer, organiser et reformuler les concepts en temps réel — c'est du **retrieval génératif**. Ce n'est pas passif : on ne peut pas expliquer ce qu'on n'a pas récupéré. De plus, les questions du pair (ou celles qu'on anticipe) activent des angles que le recall solitaire (blank-page) manque souvent. L'enseignement est aussi un test de compréhension profonde : les zones floues apparaissent quand on bute sur une formulation simple.
+
+**Score attendu :** >= 3/5. Si < 3, c'est normal pour une première révision — l'important est de noter les lacunes et de planifier J+1.
 
 ---
 
 ## Exercice 2 — Reformulation de flashcards
 
 **Flashcard A**
-- Probleme : "Qu'est-ce que le retrieval practice ?" est trop vague. La reponse "c'est quand on se teste" peut etre devinee par n'importe qui ayant lu le titre du module. Pas de mecanisme, pas de chiffre, pas de nuance.
+- Problème : "Qu'est-ce que le retrieval practice ?" est trop vague. La réponse "c'est quand on se teste" peut être devinée par n'importe qui ayant lu le titre du module. Pas de mécanisme, pas de chiffre, pas de nuance.
 - Reformulation :
-  - Recto : "Pourquoi la recuperation active (retrieval practice) ancre-t-elle mieux en memoire que la relecture, selon la recherche ?"
-  - Verso : "Chaque acte de recuperation renforce le chemin neuronal qui mene a l'information. La relecture ne fait qu'exposer a nouveau l'info en memoire de travail sans demander de recuperation. Dunlosky (2013) classe le retrieval en utilite 'elevee' vs 'faible' pour la relecture."
+  - Recto : "Pourquoi la récupération active (retrieval practice) ancre-t-elle mieux en mémoire que la relecture, selon Roediger & Karpicke 2006 ?"
+  - Verso : "Chaque acte de récupération renforce le chemin neuronal qui mène à l'information. La relecture ne fait qu'exposer à nouveau l'info en mémoire de travail sans demander de récupération. Résultat à 1 semaine : 61 % (test) vs 40 % (relecture). Dunlosky (2013) classe le retrieval en utilité 'élevée' vs 'faible' pour la relecture."
 
 **Flashcard B**
-- Probleme : le recto commence la phrase et le verso la complete — c'est un exercice de completion, pas de recuperation. On pourrait repondre "correct" en ayant retenu uniquement que "se tester > re-etudier" sans aucune precision.
+- Problème : le recto commence la phrase et le verso la complète — c'est un exercice de complétion, pas de récupération. On pourrait répondre "correct" en ayant retenu uniquement que "se tester > re-étudier" sans aucune précision chiffrée ni sur le dispositif.
 - Reformulation :
-  - Recto : "Dans Karpicke & Roediger (2008) sur le vocabulaire swahili, quel groupe obtenait le meilleur rappel a 1 semaine, et quel etait le pourcentage ?"
-  - Verso : "Le groupe 'se tester sur toutes les paires' (meme les reussites) : 80 % vs 36 % pour le groupe re-etude."
+  - Recto : "Dans Karpicke & Roediger (2008) sur le vocabulaire swahili, quel groupe obtenait le meilleur rappel à 1 semaine, et quel était le pourcentage ? Quelle était la procédure de ce groupe ?"
+  - Verso : "Le groupe C, qui se testait sur *toutes* les paires (même les réussites) : **80 %** de rappel à 1 semaine. Groupes A (re-étude) et B (test avec retrait des paires réussies) : ~35-36 %."
 
 **Flashcard C**
-- Probleme : "Le blank-page recall" n'est pas une question — c'est un titre. La reponse decrit une procedure sans inclure le *pourquoi* ni les etapes completes du protocole.
+- Problème : "Enseigner à un pair" n'est pas une question — c'est un titre. La réponse "c'est utile pour consolider l'apprentissage" est tautologique et ne contient aucun mécanisme. On ne sait pas *pourquoi* ni *comment* ça fonctionne.
 - Reformulation :
-  - Recto : "Decris le protocole en 4 etapes du blank-page recall, et explique pourquoi les 'zones blanches' sur la feuille sont des informations utiles."
-  - Verso : "(1) Etudier (20 min). (2) Fermer tout document. (3) Ecrire tout ce dont on se souvient. (4) Comparer avec la source et noter les lacunes. Les zones blanches = les lacunes reelles, pas les lacunes percues — c'est plus fiable que l'impression subjective de 'j'ai compris'."
+  - Recto : "Pourquoi 'enseigner à un pair' est-il qualifié de 'retrieval génératif', et quelles zones floues révèle-t-il que le blank-page recall seul peut manquer ?"
+  - Verso : "Enseigner force à récupérer, organiser et reformuler en temps réel — impossible sans récupération préalable. Les angles activés par les questions anticipées du pair complètent le recall solitaire. Les zones floues apparaissent quand on bute sur une formulation simple ('en gros...') — signal que la compréhension est creuse, pas encore récupérable en langage naturel."
 
 ---
 
-## Exercice 3 — Session reelle : elements d'evaluation
+## Exercice 3 — Session réelle + debriefing "pair" : éléments d'évaluation
 
-Cet exercice est personnel. Voici les criteres de qualite du bilan ecrit :
+Cet exercice est personnel. Voici les critères de qualité du bilan écrit :
 
 **Ce qu'un bon bilan contient :**
-- Une mention de la surprise ("j'ai cru connaitre X mais j'ai eu du mal a le formuler") — c'est la fluency illusion en action
-- Une liste precise de lacunes (pas "j'avais oublie des trucs") avec les concepts exacts
-- Un lien entre les lacunes et la strategie de re-test (quelles flashcards creer, quand les revoir)
-- La mention de l'illusion de competence : si tu pensais connaitre le sujet avant l'exercice et que le recall a revele des lacunes, c'est exactement le phenomene documente par Roediger & Karpicke
+- Une mention précise des zones floues révélées par l'enseignement *que le blank-page n'avait pas détectées* — cette différence est le point clé de l'exercice
+- La description d'au moins un moment d'illusion de compétence ("j'ai cru maîtriser X jusqu'à ce que j'essaie d'expliquer Y")
+- Une liste de flashcards supplémentaires à créer, ciblant exactement ces zones
+- Un lien entre les lacunes et la stratégie de re-test (quand les revoir, dans quel ordre)
 
-**Un bilan a eviter :**
-- "J'ai bien compris le sujet" sans identifier de lacunes — signe que le recall etait trop superficiel
-- "Je n'ai pas eu de lacunes" — soit le sujet etait trop facile, soit le recall n'etait pas assez precis
+**Un bilan à éviter :**
+- "J'ai bien compris le sujet" sans identifier de lacunes — signe que le recall ou l'enseignement était trop superficiel
+- "L'enseignement n'a rien révélé de plus" — soit le sujet était trop simple, soit l'explication était trop vague (formules générales au lieu d'explications mécanistes)
+- Confondre "j'ai pu réciter les points" avec "j'ai pu expliquer les mécanismes" — la récitation est de la reconnaissance, pas de la récupération profonde
+
+**Signe que l'exercice a bien fonctionné :**
+Tu as créé plus de flashcards après la Phase 2 qu'après la Phase 1. C'est normal : l'enseignement révèle des couches de compréhension que le recall écrit ne touche pas.

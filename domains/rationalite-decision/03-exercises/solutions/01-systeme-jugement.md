@@ -1,66 +1,80 @@
-# Solutions — Module 01 : Le systeme d'exploitation du jugement
+# Solutions — Module 1 : Le système du jugement
+
+> Ces corrigés sont des réponses modèles. D'autres formulations sont acceptables si les concepts clés sont présents.
 
 ---
 
-## Exercice 1 : Systeme 1 ou Systeme 2 ?
+## Exercice 1 — Identifier Système 1 vs Système 2
 
-| Situation | Systeme | Justification |
-|---|---|---|
-| 1. Joueur de tennis retournant un smash | **S1** | Expertise consolidee : le mouvement est automatise par des milliers d'heures de pratique |
-| 2. Etudiant calculant 37 x 48 | **S2** | Tache numerique nouvelle, requiert concentration et calcul pas a pas |
-| 3. Conducteur freinant au feu rouge | **S1** | Reponse automatisee apres apprentissage : le stimulus (rouge) declenche la reponse sans deliberation |
-| 4. Comptable verifiant une declaration complexe | **S2** | Nouveau client, regles nombreuses, verification minutieuse : traitement deliberatif |
-| 5. Reconnaitre l'odeur du cafe | **S1** | Reconnaissance sensorielle immediate, inconsciente |
-| 6. Traduire une phrase dans une langue recente | **S2** | Langue non automatisee : chercher les mots, verifier la grammaire = effort deliberatif |
-| 7. Medecin expert reconnaissant un diagnostic | **S1 acquis** | Expertise tres poussee : la reconnaissance de patterns est automatisee. Un novice ferait la meme tache en S2. |
-| 8. Taper son mot de passe habituel | **S1** | Sequence motorique automatisee par la repetition |
+| # | Situation | Système | Justification |
+|---|-----------|---------|---------------|
+| A | Joueur d'échecs expert repère un cavalier en prise | **S1** | Expertise consolidée : après des milliers de parties, la reconnaissance de patterns est automatisée. Un débutant ferait la même tâche en S2. |
+| B | Comptable vérifie 47 lignes de chiffres d'un autre | **S2** | Tâche nouvelle, vérification minutieuse ligne par ligne : traitement délibératif et fatigant. |
+| C | Freinage brusque sur balle surgissante | **S1** | Réflexe moteur automatisé : le stimulus visuel déclenche la réponse sans délibération consciente. |
+| D | Ingénieur résout pour la 1ère fois un problème réseau | **S2** | Problème nouveau et complexe : recherche consciente, pas de routine disponible. |
+| E | Reconnaître la voix d'un ami au téléphone | **S1** | Reconnaissance perceptuelle immédiate et inconsciente. |
+| F | Remplir sa déclaration fiscale pour la 1ère fois | **S2** | Règles nombreuses et inconnues, lecture attentive, vérifications = effort délibératif continu. |
+| G | Médecin urgentiste reconnaît une fracture connue | **S1 acquis** | Même logique que A : l'expertise a transféré la tâche de S2 vers S1. Un étudiant en médecine ferait la même tâche en S2. |
+| H | Étudiant calcule 37 × 48 de tête | **S2** | Calcul non mémorisé, effort conscient pas à pas. |
 
-**Note sur la situation 7** : c'est le cas le plus interessant. La meme tache peut etre S1 ou S2 selon le niveau d'expertise. L'expertise convertit des taches S2 en taches S1 par automatisation.
-
----
-
-## Exercice 2 : Reconnaitre un biais
-
-### Scenario A — Heuristique de disponibilite
-
-**Reponse correcte** : Les mots avec "R" en troisieme position sont bien plus nombreux en francais que les mots commencant par "R". Mais les mots commencant par R sont plus *faciles a evoquer* (on les cherche par leur initiale).
-
-**Mecanisme** : heuristique de disponibilite (Tversky & Kahneman, 1973). Le cerveau juge la frequence d'une categorie par la facilite avec laquelle des exemples viennent a l'esprit. Facilite d'evocation ≠ frequence reelle.
-
-**Direction du biais** : systematiquement en faveur des categories ou les exemples sont plus accessibles en memoire.
-
-### Scenario B — Deux sequences equiprobables
-
-Chaque lancer est independant. P(rouge) = 1/2 pour chaque lancer.
-
-```
-P(RRRRRR) = (1/2)^6 = 1/64 ≈ 1,56 %
-P(RRBRRB) = (1/2)^6 = 1/64 ≈ 1,56 %
-```
-
-Les deux sequences ont exactement la meme probabilite. L'intuition juge RRRRRR comme "moins probable" car elle semble non-aleatoire (biais de representativite : on confond "aleatoire" avec "qui ressemble a ce qu'on imagine de l'aleatoire"). En realite, toutes les sequences de 6 lancers ont la probabilite identique de (1/2)^6.
-
-### Scenario C — Batte et balle
-
-**Calcul correct** :
-- Notons b = prix de la balle
-- Batte = b + 1,00 €
-- Batte + balle = b + 1,00 + b = 1,10 €
-- 2b = 0,10 €
-- b = **0,05 €**, batte = 1,05 €
-
-**Erreur du Systeme 1** : le S1 decompose rapidement "1,10 € en deux parties dont une vaut 1,00 € de plus" et sort "0,10 €" par analogie rapide. Il ne verifie pas algebriquement. L'activation du S2 (ecrire l'equation) corrige l'erreur immediatement.
+**Point clé sur A et G** : la même tâche objective peut relever de S1 ou S2 *selon le niveau d'expertise*. L'entraînement répété convertit des tâches S2 en tâches S1 — c'est le mécanisme de l'automatisation. Un expert fait en S1 ce qu'un novice fait en S2.
 
 ---
 
-## Exercice 3 : Rationalite vs intelligence
+## Exercice 2 — Déconstruire un biais à partir d'un problème chiffré
 
-**Question 1** :
-- Marie a plus de **puissance algorithmique** (S2 brut) : meilleure memoire de travail, calcul rapide, algorithmie.
-- Thomas raisonne **mieux sur les probabilites conditionnelles dans son domaine** : 10 ans d'experience ont calibre son S1 sur ce domaine specifique.
+### 1. Réponse correcte
 
-**Question 2** : L'erreur de Marie est un **mindware gap** (Stanovich). Elle manque d'un outil conceptuel : la formalisation de P(A|B) et du theoreme de Bayes. Ce n'est pas un manque d'intelligence, c'est un manque d'outil.
+Les 10 billes sont remises dans l'urne après chaque tirage. Les tirages sont **indépendants** : la composition de l'urne n'a pas changé. La probabilité d'obtenir une bille rouge au 6ᵉ tirage est identique à celle de tout autre tirage, soit le **rapport entre le nombre de billes rouges et le total** (information non donnée dans l'énoncé — ce qui est le piège : la réponse ne peut pas être "plus élevée qu'avant" quel que soit ce rapport).
 
-**Question 3** : Marie doit **combler son mindware gap** : apprendre explicitement la probabilite conditionnelle et le theoreme de Bayes. Une fois le mindware installe, son esprit algorithmique peut l'utiliser correctement.
+Si l'urne contient, par exemple, 5 billes rouges sur 10 : P(rouge) = 50 % à chaque tirage, quel que soit l'historique. L'historique ne modifie pas l'urne — donc ne modifie pas la probabilité.
 
-**Question 4** : Non. L'expertise de Thomas est **domaine-specifique**. Il est calibre sur les probabilites des matchs sportifs grace a 10 ans d'immersion dans ce contexte. Cela ne lui donne pas automatiquement une bonne calibration sur les probabilites medicales, juridiques ou financieres.
+### 2. Nom du biais
+
+**Biais du joueur** (*gambler's fallacy*) : croyance erronée que des événements aléatoires indépendants passés influencent les événements futurs — par exemple, attendre un "rééquilibrage" qui n'a aucune base probabiliste.
+
+### 3. Application de la définition formelle
+
+| Critère | Application à cet exemple |
+|---------|--------------------------|
+| **Systématique** | L'erreur va toujours dans le même sens : les gens surestiment la probabilité après une "série" (attente de rééquilibrage). |
+| **Prévisible** | On peut prédire que la majorité des sujets donnera une réponse > probabilité réelle après une longue série d'un même résultat. |
+| **Écart normatif** | La norme est calculable : indépendance des événements → probabilité inchangée. L'écart par rapport à cette norme est mesurable. |
+
+### 4. Rôle de S1
+
+S1 est un détecteur de patterns : il cherche des régularités pour prédire l'avenir. Dans des séquences causales réelles (météo, comportement humain), cette tendance est utile. Appliquée à des événements aléatoires *sans mémoire*, elle produit une fausse attente de rééquilibrage. S2, s'il est activé, rappelle la règle d'indépendance et corrige l'intuition — mais sous pression de temps ou de fatigue, S1 l'emporte.
+
+---
+
+## Exercice 3 — Mindware gap : diagnostiquer et combler
+
+### 1. Biais identifié
+
+**Heuristique de disponibilité** (ou représentativité sur petit échantillon — les deux sont défendables) :
+
+- *Disponibilité* : les 3 livraisons récentes réussies sont saillantes et facilement accessibles en mémoire. Lucas juge la fiabilité du fournisseur par la facilité avec laquelle des exemples positifs lui viennent à l'esprit, pas par les données historiques complètes.
+- *Représentativité* : 3 observations semblent "représentatives" d'une tendance fiable alors que l'échantillon est trop petit pour estimer un taux à 40 % de retard.
+
+### 2. Mindware manquant
+
+Lucas manque de deux outils conceptuels :
+1. **La notion de taux de base** : avant de juger sur l'expérience récente, consulter le taux de performance historique sur une période suffisante (ici, 2 ans de données existantes).
+2. **La loi des grands nombres (version intuitive)** : 3 observations ne suffisent pas à estimer un taux de fiabilité — la variance est trop grande sur un petit échantillon.
+
+### 3. Procédure en 3 étapes
+
+**Étape 1 — Collecter les données historiques.**
+Récupérer les données de livraison du fournisseur sur *au moins 12 mois* (idéalement 24 mois) : nombre de livraisons, taux de retard, ampleur des retards.
+
+**Étape 2 — Comparer à un taux de référence.**
+Définir un seuil acceptable (ex. : taux de retard ≤ 10 %) et comparer le taux historique du fournisseur à ce seuil, *indépendamment des 3 dernières livraisons*.
+
+**Étape 3 — Décision sur règle, pas sur intuition.**
+La règle est posée à l'avance : si le taux historique dépasse le seuil, le contrat n'est pas renouvelé sauf justification documentée d'une amélioration structurelle (changement de processus, audit tiers). L'expérience récente peut être un *signal faible* mais ne remplace pas la règle.
+
+### 4. Distinction rationalité / intelligence (Stanovich)
+
+La procédure ne demande pas à Lucas d'être *plus intelligent* (puissance algorithmique). Elle lui demande d'activer son **esprit réflexif** : s'arrêter, interroger son intuition, appliquer une règle formelle plutôt que se fier à S1.
+
+Lucas était probablement parfaitement capable de calculer un taux de retard s'il l'avait cherché — son algorithme n'était pas en défaut. Ce qui lui manquait : la *disposition* à interroger son intuition et le *mindware* (concept de taux de base, règle de décision explicite). C'est précisément ce que Stanovich appelle la dysrationalia : raisonner mal non par manque d'intelligence, mais par manque d'esprit réflexif et d'outils conceptuels.

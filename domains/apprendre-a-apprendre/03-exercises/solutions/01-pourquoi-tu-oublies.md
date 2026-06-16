@@ -23,8 +23,11 @@ Un recall complet du module 01 doit contenir au minimum ces elements :
 - Utilite faible : relecture, surlignage, resumes
 
 **Neuromythes :**
-- Styles d'apprentissage VAK : refutes par Pashler et al. 2008 (*PSPI*) — quasiment aucune etude ne valide l'hypothese du meshing
+- Styles d'apprentissage VAK : refutes par Pashler et al. 2008 (*PSPI*) — quasiment aucune etude ne valide l'hypothese du meshing ; Dekker et al. 2012 (*Frontiers in Psychology*) : plus de 93 % des enseignants y croient pourtant
 - Brain-training : Simons et al. 2016 (*PSPI*) — pas de transfert generalise a la vie reelle
+
+**Sommeil et consolidation (nuance Schmid 2022) :**
+- Le sommeil consolide les memoires declaratives *bien encodees*, pas un encodage bacle (Schmid et al. 2022, *Current Biology*) — il amplifie, ne repare pas
 
 **Difference type A vs type B de lacunes :**
 - Type A ("je ne savais pas du tout") : contenu non encode — a re-etudier
@@ -89,3 +92,8 @@ Voici 5 flashcards bien formulees sur le module 01 :
 - Probleme : Karpicke & Roediger (2008) montrent que retirer les paires reussies est sous-optimal. Le groupe qui testait *toutes* les paires (meme les succes) obtenait 80 % de rappel apres 1 semaine vs 36 % pour le groupe re-etude. Re-tester les succes renforce la trace et maintient la recuperation fluide.
 - Strategie alternative : garder toutes les cartes dans le deck ; Anki espace automatiquement les cartes faciles sans les supprimer.
 - Source : Karpicke, J. D., & Roediger, H. L. (2008). *Science*, 319(5865), 966–968.
+
+**Scenario bonus — Emma et le sommeil "consolidateur"**
+- Probleme : Emma confond deux choses. Le sommeil consolide bien les memoires declaratives, mais a une condition : que l'encodage initial ait ete de qualite. Or, 2 heures de relecture passive produisent un encodage superficiel (Dunlosky 2013 : utilite "faible"). Schmid et al. (2022, *Current Biology*) ont montre que le sommeil *amplifie* les traces bien encodees, mais ne "repare" pas un encodage bacle — les paires faiblement apprises ne beneficiaient pas du meme gain post-sommeil que les paires bien apprises.
+- Strategie alternative : remplacer la relecture par du retrieval practice (blank-page recall, flashcards) avant de dormir — l'encodage actif produit une trace plus solide que le sommeil pourra effectivement renforcer.
+- Sources : Dunlosky et al. (2013) ; Schmid, D. et al. (2022). "Sleep Strengthens But Does Not Improve Recall of Weakly Encoded Word Pairs". *Current Biology*, 32(6), 1436–1442.

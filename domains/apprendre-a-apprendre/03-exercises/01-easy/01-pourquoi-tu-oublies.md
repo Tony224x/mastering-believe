@@ -75,12 +75,15 @@ Pour chacun des 5 scenarios suivants, indique : (a) quel est le probleme de la s
 
 **Scenario 5** : Marc teste ses connaissances en mathematiques mais enleve les problemes reussis de sa liste de revision, convaincu qu'il n'a plus besoin de les revoir.
 
+**Scenario bonus (sommeil)** : Emma a etudie passivement son cours de chimie pendant 2 heures en relisant ses notes. Elle pense que "dormir dessus" cette nuit va consolider tout ca et qu'elle sera prete pour le controle demain.
+
 ### Criteres de reussite
-- [ ] 5 scenarios analyses
+- [ ] 5 scenarios analyses (le scenario bonus est optionnel, mais recommande)
 - [ ] Chaque analyse contient : probleme identifie + strategie alternative + reference (auteur, annee)
 - [ ] Les references citees sont reelles et correspondent aux affirmations (pas invente)
 - [ ] La reponse au Scenario 4 cite explicitement Pashler et al. (2008) et explique ce qu'est l'"hypothese du meshing"
 - [ ] La reponse au Scenario 5 s'appuie sur Karpicke & Roediger (2008) et explique pourquoi re-tester les succes est important
+- [ ] (Bonus) La reponse au scenario Emma distingue consolidation des contenus bien encodes vs encodage bacle, et cite Schmid et al. (2022)
 
 ---
 

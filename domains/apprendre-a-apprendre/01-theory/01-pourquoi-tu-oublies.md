@@ -45,6 +45,16 @@ Hermann Ebbinghaus a ete le premier a mesurer systematiquement l'oubli sur lui-m
 
 La bonne nouvelle : **chaque revision espacee ralentit la courbe**. Le module 03 explique comment l'exploiter.
 
+### 2.4 Le sommeil et la consolidation memoire — avec nuance
+
+Tu as sans doute entendu que "le sommeil consolide la memoire". C'est en grande partie vrai : pendant le sommeil lent profond et le sommeil paradoxal (REM), le cerveau rejoue les traces nouvellement encodees et les integre en memoire long terme.
+
+**Mais attention a la sur-simplification.** Schmid et al. (2022, *Current Biology*) ont montre que le role consolidant du sommeil est plus conditionnel qu'on ne le croyait : l'effet depend fortement de la qualite de l'encodage initial et de l'intention de memoriser. Un contenu mal encode pendant la veille ne "s'auto-ameliore" pas pendant la nuit.
+
+> **Statut de preuve :** L'effet positif du sommeil sur la consolidation est robuste pour les memoires declaratives apprises intentionnellement. Il est **beaucoup moins clair** comme "rattrapage" d'une session d'etude passive ou bâclee. Le sommeil amplifie ce qui a ete bien encode — il ne repare pas un encodage superficiel.
+>
+> **En pratique :** dormir apres une session de retrieval practice est plus utile que dormir apres une simple relecture. Le sommeil multiplie ; il ne cree pas.
+
 ---
 
 ## 3. Les strategies qui ne fonctionnent pas (et pourquoi on les utilise quand meme)
@@ -68,6 +78,8 @@ Le paradoxe est net : les techniques qui fonctionnent *semblent* moins efficaces
 > Tu as peut-etre entendu parler des "styles d'apprentissage" : certains seraient "visuels", d'autres "auditifs", d'autres "kinesthesiques" (VAK). L'idee semble intuitive. Pourtant :
 >
 > Pashler, McDaniel, Rohrer & Bjork (2008) ont passe en revue toutes les etudes disponibles dans *Psychological Science in the Public Interest*. Pour valider cette theorie, il faudrait une **interaction croisee** : les "visuels" apprennent mieux avec des images *et* les "auditifs" apprennent mieux avec du son. Quasiment aucune etude ne teste cela. Et celles qui le font **contredisent** l'hypothese.
+>
+> **Ampleur du probleme :** Dekker, Lee, Howard-Jones & Jolles (2012, *Frontiers in Psychology*) ont sonde des enseignants interesses par les neurosciences — plus de 93 % croyaient au mythe des styles d'apprentissage. Contre-intuitivement, plus de culture scientifique generale *augmentait* la croyance aux mythes. Le mythe est profondement ancre, y compris chez les professionnels de l'education.
 >
 > **Verdict :** il n'y a pas de base scientifique pour adapter son enseignement au "style" de l'apprenant. Ce qui marche : apparier la methode au *contenu* (une carte pour la geographie, la voix pour la prononciation), et utiliser les techniques a haut rendement — pour tout le monde.
 >
@@ -102,8 +114,8 @@ Le paradoxe est net : les techniques qui fonctionnent *semblent* moins efficaces
 **Q3** : Pourquoi la relecture est-elle inefficace selon Dunlosky et al. (2013) ?
 > **R :** Elle produit une impression de fluidite sans provoquer l'encodage profond ni la recuperation active. Son utilite est jugee "faible".
 
-**Q4** : Que dit la recherche sur les "styles d'apprentissage" VAK ?
-> **R :** Pashler et al. (2008) concluent qu'il n'y a pas de base scientifique : quasiment aucune etude ne valide l'"hypothese du meshing", et celles qui la testent la contredisent.
+**Q4** : Que dit la recherche sur les "styles d'apprentissage" VAK, et quelle proportion d'enseignants y croient-ils ?
+> **R :** Pashler et al. (2008) concluent qu'il n'y a pas de base scientifique : quasiment aucune etude ne valide l'"hypothese du meshing", et celles qui la testent la contredisent. Dekker et al. (2012) montrent que plus de 93 % des enseignants y croient malgre tout — le mythe est tres tenace.
 
 **Q5** : Combien de "chunks" la memoire de travail peut-elle contenir environ ?
 > **R :** Environ 4 (Cowan, 2001), et non 7 comme l'ancienne estimation populaire de Miller (1956).
@@ -116,7 +128,8 @@ Le paradoxe est net : les techniques qui fonctionnent *semblent* moins efficaces
 - La **fluency illusion** : se sentir a l'aise avec un contenu ne signifie pas l'avoir appris.
 - **Relecture et surlignage** : utilite faible (Dunlosky 2013). On les fait parce qu'ils sont agreable, pas parce qu'ils fonctionnent.
 - **L'inconfort d'apprentissage est un signal positif** : ca indique que la recuperation est en train de renforcer la trace.
-- **Styles d'apprentissage VAK** : refutes par la litterature scientifique. Pas de base pour en tenir compte.
+- **Styles d'apprentissage VAK** : refutes par la litterature scientifique (Pashler 2008 ; Dekker 2012). Pas de base pour en tenir compte — plus de 93 % des enseignants y croient pourtant.
+- **Sommeil et consolidation** : effet reel sur la memoire declarative bien encodee, mais le sommeil *amplifie* — il ne repare pas un encodage bacle (Schmid 2022).
 
 ---
 
@@ -125,6 +138,8 @@ Le paradoxe est net : les techniques qui fonctionnent *semblent* moins efficaces
 - Dunlosky, J. et al. (2013). "Improving Students' Learning With Effective Learning Techniques". *Psychological Science in the Public Interest*, 14(1), 4–58. https://journals.sagepub.com/doi/10.1177/1529100612453266
 - Roediger, H. L., & Karpicke, J. D. (2006). "Test-Enhanced Learning". *Psychological Science*, 17(3), 249–255. https://journals.sagepub.com/doi/10.1111/j.1467-9280.2006.01693.x
 - Pashler, H. et al. (2008). "Learning Styles: Concepts and Evidence". *PSPI*, 9(3), 105–119. https://journals.sagepub.com/doi/10.1111/j.1539-6053.2009.01038.x
+- Dekker, S. et al. (2012). "Neuromyths in Education". *Frontiers in Psychology*, 3, 429. https://www.frontiersin.org/articles/10.3389/fpsyg.2012.00429/full
+- Schmid, D. et al. (2022). "Sleep Strengthens But Does Not Improve Recall of Weakly Encoded Word Pairs". *Current Biology*, 32(6), 1436–1442. https://doi.org/10.1016/j.cub.2022.01.045
 - Brown, P. C., Roediger, H. L., & McDaniel, M. A. (2014). *Make It Stick*. Belknap Press. https://www.hup.harvard.edu/books/9780674729018
 
 **Prochain module :** [02 — Retrieval practice : se tester, pas se relire](02-retrieval-practice.md)
