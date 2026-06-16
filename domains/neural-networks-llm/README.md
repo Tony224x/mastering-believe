@@ -82,7 +82,6 @@ Cette semaine reste **strictement sur les reseaux de neurones** : architectures,
 - **`03-exercises/`** : exercices progressifs (easy → medium → hard) + solutions, couvrant les modules 01-14 en 1:1. Les modules 15-22 n'ont pas encore d'exercices. L'espace `workspace/` (gitignore) est reserve a tes propres solutions.
 - **`04-projects/`** : espace libre pour mini-projets et capstones supplementaires lies au domaine.
 - **`05-projets-guides/`** : 3 projets guides appliques au contexte logistique LogiSim/FleetSim (voir [`shared/logistics-context.md`](../../shared/logistics-context.md)) — detection de quasi-collisions, imitation learning, rapport EOD genere par LLM.
-- **`01-theory-qd/`** : version Quarkdown enrichie de la theorie (math LaTeX, mermaid, callouts), buildable en site statique via `quarkdown/scripts/build-all.ps1`. Les `.md` de `01-theory/` restent la source-of-truth.
 
 ## Criteres de reussite
 

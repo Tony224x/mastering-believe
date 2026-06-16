@@ -1,18 +1,5 @@
 # Systemes IA Agentiques — Concevoir des Agents Autonomes
 
-> ### Carte d'entree — Peux-tu commencer ?
->
-> Reponds a ces 3 questions avant de te lancer :
->
-> 1. **Sais-tu lire et ecrire du Python "normal"** (fonctions, classes, dict/list, un peu d'async) sans bloquer ? → si non, fais d'abord un domaine Python avant celui-ci.
-> 2. **As-tu deja appele une API LLM** (ne serait-ce qu'un `chat.completions.create` ou `messages.create`) ? → si non, fais-le une fois aujourd'hui, ca suffit pour demarrer J1.
-> 3. **Sais-ce qu'est un system prompt / du few-shot** ? → si non, lis 15 min de doc prompting, c'est le seul vrai prerequis conceptuel.
->
-> **Prerequis durs** (sans eux tu vas souffrir) : Python courant, avoir deja fait un appel API LLM.
-> **Prerequis souples** (utiles mais rattrapables en route) : async/await, notions de vecteurs/embeddings (pour J8), avoir touche un graphe d'etats (pour J5-J6).
->
-> **Temps reel** : le planning affiche ~3-5h/jour soit **~47h au total** sur 14 modules. En rythme soir/weekend, compte **3 a 5 semaines** plutot que 2 — c'est normal, le but est la maitrise, pas la vitesse. Tu peux aussi suivre le **Parcours express** ci-dessous (~20h) si tu veux le 20% qui donne 80%.
-
 ## Scope
 
 Maitriser la conception, l'implementation et le deploiement de systemes IA agentiques : du single-agent au multi-agent, avec tool use, memory, planning, et orchestration. Stack : Python, LangGraph, Claude/OpenAI APIs, MCP.
@@ -23,7 +10,9 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 - Experience avec les APIs LLM (au moins avoir fait des appels API)
 - Notions de prompting (system prompt, few-shot)
 
-## Planning (2 semaines)
+## Planning (4 semaines)
+
+Le parcours se fait en deux temps : **S1-S2 = fondations** (J1-J14, du single-agent au multi-agent en production), puis **S3-S4 = niveau avance/frontier 2025-2026** (J15-J28 : context engineering, memoire long-horizon, verifiers, protocoles inter-agents, durabilite, coding & computer-use agents, serving a l'echelle, capstone avance). Les S3-S4 supposent les S1-S2 acquises.
 
 ### Semaine 1 — Fondations Agent
 
@@ -49,14 +38,29 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 | J13 | Securite & Robustesse | Prompt injection, tool abuse, sandboxing, rate limiting, human oversight | 3h |
 | J14 | **Capstone** | Systeme multi-agent production-ready (ex: assistant de recherche autonome) | 5h |
 
-## Parcours express vs complet
+### Semaine 3 — Frontier patterns & orchestration avancee
 
-Tu n'es pas oblige de tout faire dans l'ordre, ni tout court. Deux trajectoires :
+| Jour | Module | Focus | Temps |
+|------|--------|-------|-------|
+| J15 | Context engineering & compaction | Curation du context window, compaction/offloading, deep-agent scratchpad/virtual FS, token & cost budgeting | 3h |
+| J16 | Memoire long-horizon | Episodique/semantique/procedurale, MemGPT/Letta, consolidation, decay & scoring de pertinence | 3h |
+| J17 | Verifiers & self-improvement | Verifiers / process reward models, best-of-N, self-improvement persiste, expo RL/fine-tuning | 3h |
+| J18 | Orchestration comparee & failure modes | LangGraph vs CrewAI vs AutoGen vs OpenAI SDK vs Swarm, quand le multi-agent casse | 3h |
+| J19 | Protocoles inter-agents | A2A, agent cards, ACP, complementarite MCP, interop multi-vendor | 3h |
+| J20 | Durable & event-driven agents | Durable execution (Temporal), reprise sur crash, event-driven, HITL avance (interrupt/resume) | 3h |
+| J21 | Architecture des coding agents | SWE-agent & ACI, boucle edit/search/run, SWE-bench, Aider | 3h |
 
-- **Parcours express (~20h) — le 20% qui donne 80%.** Pour avoir un agent fonctionnel et comprendre les mecanismes essentiels : **J1 → J2 → J3 → J5 → J7 → J9 → J12**. Tu sais alors construire une boucle ReAct, brancher des tools, gerer la memoire, modeliser un agent en graphe LangGraph, livrer un agent complet, coordonner plusieurs agents, et l'observer en production. C'est suffisant pour un premier projet serieux.
-- **Parcours complet (~47h) — la maitrise.** Les 14 modules dans l'ordre. Les modules "complementaires" (J4 planning avance, J6 LangGraph avance, J8 RAG agentique, J10 MCP, J11 eval, J13 securite) approfondissent des dimensions que tu rencontreras en vrai des que tu passes en production ou en multi-agent serieux.
+### Semaine 4 — Computer-use, production a l'echelle & capstone
 
-> **Conseil** : commence par l'express. Si un sujet te bloque ou te passionne, va lire le module complementaire correspondant. L'interleaving (alterner les sujets) retient mieux qu'un tunnel lineaire.
+| Jour | Module | Focus | Temps |
+|------|--------|-------|-------|
+| J22 | Computer use & GUI/browser agents | Claude computer use, CUA/Operator, browser-use, set-of-marks, action grounding | 3h |
+| J23 | Sandboxing & execution sure (infra) | gVisor/microVM, sandbox-runtime, egress filtering, capability-based access | 3h |
+| J24 | Inference engineering | Structured outputs/constrained decoding, model routing (RouteLLM), prompt caching | 3h |
+| J25 | Serving stateful & sessions a l'echelle | Backends checkpointer (SQLite/Postgres/Redis), scaling horizontal, online eval/drift | 3h |
+| J26 | Benchmarking pratique | Harness d'eval sur SON agent, pass^k, rapport de regression | 3h |
+| J27 | Capstone avance — architecture | Deep ops agent durable : conception, contrats, setup | 4h |
+| J28 | **Capstone avance — build & eval** | Implementation runnable de bout en bout + harness d'evaluation | 5h |
 
 ## Criteres de reussite
 
@@ -67,25 +71,27 @@ Tu n'es pas oblige de tout faire dans l'ordre, ni tout court. Deux trajectoires 
 - [ ] Mettre en place un pipeline d'evaluation qui detecte les regressions
 - [ ] Designer l'architecture d'un systeme agentique complet sur whiteboard
 
+### Avance (S3-S4, J15-J28)
+
+- [ ] Maitriser le context engineering : compaction, offloading, budgeting tokens par sous-agent
+- [ ] Implementer une memoire long-horizon (episodique/semantique/procedurale) avec consolidation
+- [ ] Construire une boucle verifier/PRM (best-of-N) et un agent qui s'ameliore entre runs
+- [ ] Comparer 5 frameworks d'orchestration et expliquer les multi-agent failure modes
+- [ ] Decrire A2A (agent cards, JSON-RPC) et sa complementarite avec MCP
+- [ ] Implementer un agent durable qui reprend apres un crash du process
+- [ ] Dissequer la boucle edit/search/run d'un coding agent (ACI) sur un repo
+- [ ] Expliquer set-of-marks et la fragilite des GUI/computer-use agents
+- [ ] Choisir un niveau de sandboxing (subprocess/gVisor/microVM) selon la menace
+- [ ] Mettre en place routing multi-modele + prompt caching et chiffrer le gain
+- [ ] Choisir un backend de checkpointer et scaler horizontalement des sessions
+- [ ] Construire un harness d'eval sur son agent avec metrique pass^k et regression
+
 ## Au-dela des 14 jours
 
 - **`05-projets-guides/`** — 3 projets appliques au contexte d'editeur de simulation logistique LogiSim/FleetSim (voir [`shared/logistics-context.md`](../../shared/logistics-context.md)). Projet phare : `02-supervisor-swarm-multi-tier/`, qui combine les patterns supervisor et swarm de LangGraph sur une operation multi-flotte.
 - **`04-projects/`** — espace libre pour mini-projets et capstones supplementaires lies au domaine.
-- **`01-theory-qd/`** — version Quarkdown enrichie de la theorie (math LaTeX, mermaid, callouts). Build : `pwsh quarkdown/scripts/build-all.ps1 -Domain agentic-ai`. Les `.md` de `01-theory/` restent la source-of-truth.
 
-### Etat de la couverture des exercices (honnete)
-
-Tous les modules n'ont pas encore les 3 niveaux d'exercices :
-
-| Niveau | Modules couverts |
-|--------|------------------|
-| **Easy** (`01-easy/`) | **J1 → J14** (les 14 modules) |
-| **Medium** (`02-medium/`) | **J1, J2, J3 uniquement** |
-| **Hard** (`03-hard/`) | **J1, J2, J3 uniquement** |
-
-Autrement dit : **J4 a J14 n'ont pour l'instant que le niveau easy.** Les niveaux medium/hard pour J4-J14 sont une **extension prevue** (contributions bienvenues — c'est un repo public). Les exercices hard existants (J1-J3) sont de vrais mini-projets, avec corriges complets et executables dans `03-exercises/solutions/` (fichiers `NN-<slug>-hard.py`), en plus des solutions easy/medium.
-
-En attendant, pour J4-J14 : le module `04-projects/` (mini-projets libres) et les `05-projets-guides/` offrent de la pratique avancee appliquee.
+**Note sur les exercices hard (modules 01-03)** : ce sont des mini-projets a part entiere. Des corriges complets et executables existent desormais dans `03-exercises/solutions/` (fichiers `NN-<slug>-hard.py`), en plus des solutions easy/medium.
 
 ## Patterns d'architecture agentique
 

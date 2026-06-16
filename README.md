@@ -16,15 +16,28 @@ Chaque domaine est concu autour de techniques d'apprentissage prouvees :
 
 ## Domaines disponibles
 
+**Track Tech** — maitrise d'ingenierie :
+
 | Domaine | Stack | Focus |
 |---------|-------|-------|
 | [Algorithmie Python](./domains/algorithmie-python/) | Python | Live coding, patterns LeetCode, entretiens tech |
 | [System Design](./domains/system-design/) | Diagrammes + Python | Architecture backend & IA, entretiens senior |
 | [Neural Networks & LLMs](./domains/neural-networks-llm/) | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
 | [Agentic AI](./domains/agentic-ai/) | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
-| [Robotics & AI](./domains/robotics-ai/) | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies) — **en cours** |
+| [Robotics & AI](./domains/robotics-ai/) | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies) |
 
-Les domaines actuels sont organises sur ~14 jours (3-5h/jour) avec un capstone, mais ce format reste indicatif — un nouveau domaine peut etre plus court ou plus long selon le sujet.
+**Track Vie** — l'ecole de la vie (competences de vie a fort levier, sources tier-1, posture anti-clivant) :
+
+| Domaine | Pilier | Focus |
+|---------|--------|-------|
+| [Finance personnelle](./domains/finance-personnelle/) | Argent | Interets composes, budget, investissement long terme, independance financiere |
+| [Sante & longevite](./domains/sante-longevite/) | Corps | Sommeil, activite physique, nutrition fondee sur preuves, lien social |
+| [Apprendre a apprendre](./domains/apprendre-a-apprendre/) | Esprit | Retrieval practice, spaced repetition, deep work, apprendre avec l'IA |
+| [Rationalite & decision](./domains/rationalite-decision/) | Jugement | Probas/Bayes, biais, decision, calibration, verification d'info |
+| [Communication & persuasion](./domains/communication-persuasion/) | Relations | Rhetorique, ecoute, ecriture, negociation (persuasion ethique) |
+| [Psychedeliques, creativite & IA](./domains/psychedeliques-creativite-ia/) | *exploratoire* | Educatif & **reduction des risques** : science, esprit critique, integration legale, art & IA |
+
+Les domaines tech sont organises sur ~14-28 jours ; les domaines de vie sur ~6 modules + capstone. Le format reste indicatif — un domaine peut etre plus court ou plus long selon le sujet.
 
 ## Structure d'un domaine
 
