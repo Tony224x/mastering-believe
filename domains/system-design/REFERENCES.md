@@ -91,6 +91,7 @@
 - Malkov, Y.A. & Yashunin, D.A. (2016). *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW)*. arXiv:1603.09320 (IEEE TPAMI 2020) — l'index ANN dominant des vector DBs (Qdrant, pgvector, FAISS, Weaviate).
 - Gao, Y. et al. (2023). *Retrieval-Augmented Generation for Large Language Models: A Survey*. arXiv:2312.10997 — taxonomie Naive/Advanced/Modular RAG, chunking, hybrid search, reranking ; survey de reference.
 - Edge, D. et al. (2024). *From Local to Global: A Graph RAG Approach to Query-Focused Summarization*. arXiv:2404.16130 (Microsoft) — GraphRAG : indexation par graphe d'entites pour les questions "globales".
+- McVeety, S. & Hormati, A. (2026). *How the Open Knowledge Format can improve data sharing*. Google Cloud Blog (Data Analytics), 12 juin 2026. https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing — OKF v0.1 : format ouvert (markdown + frontmatter YAML, "metadata as code") pour la connaissance curee/metadonnees des agents, couche semantique portable au-dessus de l'index vectoriel ; repo https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf
 
 ## Module 11 — LLM Infrastructure
 

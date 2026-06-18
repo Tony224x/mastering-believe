@@ -406,6 +406,20 @@ LLM answer generation
 
 > **Retour d'experience** : si tu construis un nouveau RAG en 2026, ne commence pas par "je fais du dense retrieval avec Chroma et un top 5". Commence directement avec cette pipeline — l'ecart de qualite est enorme pour une complexite marginalement superieure.
 
+### OKF — un corpus de connaissances structure et portable pour agents
+
+Tous les patterns ci-dessus retrievent dans un **sac de chunks bruts** : on decoupe des documents, on les embedde, on cherche. Mais sur de la **connaissance interne** (schemas de tables, sens metier des metriques, runbooks, chemins de jointure, avis de depreciation), cette connaissance est en realite eparpillee — entre catalogues de donnees, wikis, commentaires de code et tetes des seniors. Chaque builder d'agent re-resout alors le meme probleme d'assemblage de contexte.
+
+L'**Open Knowledge Format (OKF)**, specification ouverte publiee par Google Cloud le 12 juin 2026, propose une autre maille : au lieu d'un sac de chunks, le corpus est structure comme un ensemble de **concepts markdown cures**, chacun avec un frontmatter YAML (`type` obligatoire ; `title`, `description`, `resource`, `tags`, `timestamp` requetables). OKF formalise le pattern "LLM-Wiki" de Karpathy en format portable et vendor-neutral.
+
+**Le pont avec GraphRAG** : les concepts OKF se citent les uns les autres via des liens markdown. Le repertoire devient donc un **graphe** de relations (plus riche que la hierarchie parent/enfant du filesystem) — exactement la structure que GraphRAG construit, mais ici **materialisee de facon versionnee, lisible et vendor-neutral** plutot qu'enfermee dans un knowledge-graph proprietaire. Un `index.md` (divulgation progressive) et un `log.md` (historique) sont optionnels.
+
+**L'agent consomme ET maintient ce corpus.** L'implementation de reference cote producteur — l'**enrichment agent** — illustre la maintenance automatisee : il parcourt un dataset BigQuery, redige un document de concept OKF pour chaque table et vue, puis une 2e passe LLM crawle la documentation faisant autorite et enrichit chaque concept avec **citations, schemas et chemins de jointure**. C'est le cas d'usage ideal du RAG agentique sur connaissance interne : le retriever ne tombe plus sur des chunks dilues, mais sur des concepts cures et relies.
+
+Cote consommateur, un **visualiseur HTML statique** transforme n'importe quel bundle OKF en vue graphe interactive dans un seul fichier autonome (sans backend, sans installation, aucune donnee ne quitte la page). Le format etant ouvert, n'importe quel producteur (catalogue, agent) et n'importe quel consommateur (agent, outil de visualisation) peuvent l'echanger sans se connaitre.
+
+> **Source** : Google Cloud Data Analytics, "How the Open Knowledge Format can improve data sharing" (12 juin 2026). OKF v0.1 — repertoire de markdown + frontmatter, format et non plateforme.
+
 ---
 
 ## 7. Pieges courants et comment les eviter
@@ -494,6 +508,9 @@ LLM answer generation
 **Q5 : Quels sont les 3 pieges les plus courants d'un RAG agentique et leur defense ?**
 > R : (1) **Hallucination plausible** → grading strict + prompt "only use context" + citations obligatoires. (2) **Boucle infinie de reformulation** → budget max de retry (3) et escalade "not found". (3) **Explosion du cout en multi-hop** → compter les appels LLM par query et imposer un budget max (ex: 20).
 
+**Q6 : Qu'est-ce que l'Open Knowledge Format (OKF) et en quoi se relie-t-il a GraphRAG ?**
+> R : OKF (Google Cloud, juin 2026) est une specification ouverte qui structure un corpus de connaissances comme des concepts markdown cures (frontmatter YAML, seul `type` obligatoire) relies par des liens markdown formant un **graphe** — la meme structure que GraphRAG, mais materialisee de facon portable, versionnee et vendor-neutral. C'est ideal pour le RAG agentique sur connaissance interne (schemas, metriques, runbooks, chemins de jointure), d'autant que l'agent peut **maintenir** ce corpus lui-meme (cf. l'enrichment agent de reference qui documente un dataset BigQuery).
+
 ---
 
 ## Points cles a retenir
@@ -508,6 +525,7 @@ LLM answer generation
 - Les chunks doivent faire 300-800 tokens avec overlap de 50-100 tokens
 - Metadata filtering avant similarity search = performance + pertinence
 - Budget strict sur les appels LLM pour eviter l'explosion du cout
+- **OKF** (Google Cloud, 2026) : un corpus de concepts markdown cures + liens (un graphe vendor-neutral) que l'agent consomme ET maintient — alternative portable au sac de chunks pour la connaissance interne
 
 
 ---
@@ -518,3 +536,4 @@ Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../
 
 - **CMU 11-711 (Neubig, Fa24) — Lec. 10 (Retrieval and RAG)** — fondations academiques du RAG, dense vs sparse, evaluation.
 - **Berkeley CS294-196 (Fa24) — Lec. 8 (Compound AI & DSPy, Khattab)** — pipelines de retrieval optimisables et auto-tunes.
+- **Google Cloud — "How the Open Knowledge Format can improve data sharing"** (12 juin 2026) — OKF, format ouvert de corpus de connaissances pour agents (markdown + frontmatter, graphe vendor-neutral) : https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing

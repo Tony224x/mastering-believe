@@ -96,3 +96,9 @@
 
 **The 2 Sigma Problem** — Bloom, B. S., 1984. *Educational Researcher*, 13(6), 4–16. https://journals.sagepub.com/doi/10.3102/0013189X013006004 | PDF : https://gwern.net/doc/psychology/1984-bloom.pdf  
 *Le tutorat 1-1 avec mastery learning fait gagner ~2 ecarts-types vs classe. Nuance : l'effet tient en grande partie au standard de maitrise eleve (90%), pas seulement au tutorat. Boussole pour utiliser un LLM comme tuteur socratique.*
+
+**LLM-Wiki (gist)** — Karpathy, A. https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f  
+*Pattern fondateur : une base de connaissance en markdown ou le LLM fait le bookkeeping (index, cross-references, log) pendant que l'humain curate. « Les LLM ne s'ennuient pas… peuvent toucher 15 fichiers en une passe. »*
+
+**How the Open Knowledge Format can improve data sharing** — McVeety, S., & Hormati, A., 2026. Google Cloud Blog (Data Analytics), 12 juin 2026. https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing  
+*OKF v0.1 : specification ouverte (markdown + frontmatter YAML, index.md/log.md) qui standardise le pattern LLM-Wiki. Base d'une base de connaissances personnelle portable et versionnable — utile seulement si elle alimente le rappel actif, pas la relecture passive (cf. nuance du module 07).*

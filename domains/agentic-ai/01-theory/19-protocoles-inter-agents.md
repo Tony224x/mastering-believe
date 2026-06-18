@@ -206,6 +206,24 @@ En pratique : si tu implementes A2A aujourd'hui, tu seras compatible avec l'ecos
 
 > **Regle pratique** : dans un systeme reel, tu utilises MCP **et** A2A ensemble. Ton agent consomme des tools via MCP (J10), et se fait recruter par un orchestrateur externe via A2A.
 
+### 5.1 OKF — le format de connaissances partagees (agent ↔ savoir)
+
+MCP et A2A couvrent deux axes de la grammaire d'interop, mais il en manque un troisieme. Recapitulons :
+
+- **MCP** = agent ↔ **outils** (le LLM appelle des tools, lit des resources)
+- **A2A** = agent ↔ **agent** (deux agents cooperent comme pairs)
+- **OKF** = agent ↔ **connaissance partagee** (les agents lisent et echangent un meme corpus de savoir)
+
+L'**Open Knowledge Format (OKF)**, specification ouverte publiee par Google Cloud le 12 juin 2026, standardise la representation de la **connaissance curee** d'un systeme IA : un repertoire de **markdown + frontmatter YAML** (`type` obligatoire ; `title`, `description`, `resource`, `tags`, `timestamp` requetables), avec des liens markdown qui transforment le corpus en **graphe** de concepts. Il formalise le pattern "LLM-Wiki" de Karpathy en format portable et interoperable.
+
+**Meme esprit ouvert que MCP et A2A.** OKF est un « **format, pas une plateforme** » : pas lie a un cloud, une DB, un fournisseur ou un framework, jamais de compte ou de SDK proprietaire — avec une **independance producteur/consommateur** stricte. La gouvernance est ouverte, exactement comme la Linux Foundation pour A2A : « la valeur d'un format de connaissance vient du nombre de parties qui le parlent, pas de qui le possede. » Un bundle OKF se transporte donc entre orgs, outils et vendeurs sans adherence.
+
+**Complementarite avec MCP et A2A.** Les trois ne se concurrencent pas : MCP et A2A **transportent les messages** (tool calls, taches, statuts), tandis qu'OKF **standardise les artefacts de connaissance** echanges entre ces agents. Un orchestrateur peut recruter un specialiste via A2A, lui passer une tache, et tous deux partager le meme corpus OKF comme socle de contexte commun.
+
+> **Parallele** : l'Agent Card A2A (`/.well-known/agent.json`) est elle-meme un **artefact declaratif** lisible (qui je suis, ce que je sais faire) — meme philosophie de contrat ouvert et lisible que les concepts OKF. La grammaire inter-agents converge vers des artefacts portables plutot que des API proprietaires.
+
+> **Source** : Google Cloud Data Analytics, "How the Open Knowledge Format can improve data sharing" (12 juin 2026). OKF v0.1, format vendor-neutral.
+
 ---
 
 ## 6. Securite et confiance entre agents
@@ -261,6 +279,9 @@ Un attaquant expose une fausse Agent Card pour se faire passer pour un agent leg
 **Q5 :** Pourquoi faut-il traiter le contenu entrant d'un agent externe comme untrusted ?
 > **R :** Un agent malveillant peut inclure des injections dans ses taches pour manipuler ton agent. Le fait qu'un appelant soit un agent (et non un humain) n'implique pas une confiance automatique.
 
+**Q6 :** Quel axe d'interoperabilite couvre OKF, et en quoi est-il complementaire de MCP et A2A ?
+> **R :** OKF (Google Cloud, juin 2026) couvre l'axe agent ↔ **connaissance partagee** (MCP = agent ↔ outils, A2A = agent ↔ agent). C'est un « format, pas une plateforme » (markdown + frontmatter, vendor-neutral, gouvernance ouverte). Complementarite : MCP et A2A **transportent les messages**, OKF **standardise les artefacts de connaissance** echanges.
+
 ---
 
 ## Points cles a retenir
@@ -269,6 +290,7 @@ Un attaquant expose une fausse Agent Card pour se faire passer pour un agent leg
 - **L'Agent Card** (`/.well-known/agent.json`) est la carte d'identite declarative d'un agent : elle permet la decouverte sans connaissance prealable de l'implementation
 - **MCP et A2A sont complementaires** : dans le meme agent, tu utilises MCP vers tes outils et A2A vers les agents partenaires
 - **ACP** (IBM/BeeAI) couvre le meme espace qu'A2A, avec une convergence annoncee — preferer A2A pour les nouveaux projets
+- **OKF** (Google Cloud, 2026) ajoute le 3e axe : agent ↔ **connaissance partagee**. Format vendor-neutral (markdown + frontmatter) qui standardise les artefacts de savoir, la ou MCP/A2A transportent les messages
 - **La securite inter-agents** ne va pas de soi : auth Bearer, guardrails sur les inputs, controles d'acces propres a chaque agent
 
 ---
@@ -279,3 +301,4 @@ Un attaquant expose une fausse Agent Card pour se faire passer pour un agent leg
 - **IBM/BeeAI — Agent Communication Protocol (ACP)** (2025) : https://github.com/i-am-bee/acp
 - **Anthropic/MCP Specification (2025-11-25)** : https://modelcontextprotocol.io/specification/2025-11-25
 - **Anthropic — "Introducing the Model Context Protocol"** (nov. 2024) : https://www.anthropic.com/news/model-context-protocol
+- **Google Cloud — "How the Open Knowledge Format can improve data sharing"** (12 juin 2026) — OKF, format ouvert de connaissance partagee (agent ↔ savoir), complement de MCP/A2A : https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing

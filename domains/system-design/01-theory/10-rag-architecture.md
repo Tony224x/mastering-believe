@@ -289,6 +289,85 @@ Pinecone reste un choix solide pour l'enterprise avec du budget et une exigence 
 
 ---
 
+## Open Knowledge Format (OKF) : le corpus comme format portable
+
+### Le constat : la connaissance d'un RAG d'entreprise est interne et fragmentee
+
+Quand tu montes un RAG sur de la doc publique, le corpus est propre et autonome. En entreprise, la connaissance dont l'agent a besoin est surtout **interne et implicite** : le schema d'une table, le **sens metier d'une metrique** ("active user" = quoi, exactement ?), un runbook d'incident, les **chemins de jointure** entre deux systemes, un avis de depreciation d'API. Cette connaissance existe deja, mais elle est **eparpillee** : entre les **catalogues de metadonnees** (chacun son API, son SDK, son schema de knowledge-graph proprietaire), les wikis et drives, les commentaires de code et docstrings, et "la tete de quelques ingenieurs seniors".
+
+Resultat : chaque builder de RAG re-assemble le contexte de zero, chaque vendeur de catalogue reinvente les memes modeles, et la connaissance reste **verrouillee** derriere la surface qui l'a creee. Ce qui manquait, ce n'etait pas un service de plus : c'etait un **format** commun.
+
+### La proposition OKF : un format, pas une plateforme
+
+L'**Open Knowledge Format (OKF)**, publie par Google Cloud (Data Analytics) le 12 juin 2026 en **v0.1**, est une **specification ouverte** qui formalise le pattern **"LLM-Wiki" d'Andrej Karpathy** en un format **portable, interoperable et vendor-neutral** — lisible par des humains *et* parsable par des agents — pour les metadonnees, le contexte et la connaissance curee d'un systeme IA.
+
+Le format tient en trois idees :
+
+- **"just markdown"** : du markdown standard, donc lisible, rendu et indexable partout.
+- **"just files"** : un repertoire de fichiers, donc versionnable en git, packageable en tarball, posable sur un filesystem.
+- **"just YAML frontmatter"** : un en-tete YAML pour les champs requetables — `type`, `title`, `description`, `resource`, `tags`, `timestamp`. **Seul `type` est obligatoire** : la spec est volontairement peu opinionnee.
+
+Les **liens markdown** entre documents forment un **graphe** de relations (une table pointe vers les tables avec lesquelles elle se joint, etc.). Deux fichiers conventionnels sont optionnels : `index.md` (divulgation progressive, point d'entree) et `log.md` (historique des changements).
+
+```
+sales/
+├── index.md
+├── datasets/
+│   ├── index.md
+│   └── orders_db.md
+├── tables/
+│   ├── index.md
+│   ├── orders.md
+│   └── customers.md
+└── metrics/
+    ├── index.md
+    └── weekly_active_users.md
+```
+
+Un document (ici une table) ressemble a ca :
+
+```yaml
+---
+type: BigQuery Table
+title: Orders
+description: One row per completed customer order.
+resource: https://console.cloud.google.com/bigquery?p=acme&d=sales&t=orders
+tags: [sales, revenue]
+timestamp: 2026-05-28T14:30:00Z
+---
+
+# Schema
+| Column | Type | Description |
+|---------------|-----------|------------------------------------------|
+| `order_id`    | STRING    | Globally unique order identifier.        |
+| `customer_id` | STRING    | FK to [customers](/tables/customers.md). |
+
+# Joins
+Joined with [customers](/tables/customers.md) on `customer_id`.
+```
+
+Point cle d'architecture : c'est un **format, pas une plateforme**. Rien ne le lie a un cloud, une DB, un fournisseur ou un framework ; pas de SDK proprietaire. Comme c'est "just files", il se **versionne aux cotes du code** ("metadata as code") : la connaissance vit dans le repo, suit les revues, les branches, les diffs. Et il pose une **independance producteur/consommateur** : qui *ecrit* la connaissance n'a pas besoin d'etre qui la *consomme*. Publie en standard ouvert, son pari est explicite : « la valeur vient du nombre de parties qui le parlent, pas de qui le possede ».
+
+### Le lien produit : ingestion et implementations de reference
+
+Google Cloud **Knowledge Catalog** a ete mis a jour pour **ingerer de l'OKF et le servir aux agents**. La spec arrive avec trois implementations de reference qui illustrent l'independance producteur/consommateur :
+
+1. **Enrichment agent (producteur)** : parcourt un dataset **BigQuery** et redige un document OKF par table/vue, puis fait une 2e passe LLM qui enrichit citations, schemas et **chemins de jointure** entre tables.
+2. **Visualiseur HTML statique (consommateur)** : rend un repertoire OKF en une vue graphe interactive dans un fichier HTML autonome — aucune donnee ne quitte la page.
+3. **Bundles d'exemple** : GA4 e-commerce, Stack Overflow, Bitcoin.
+
+Repo : `https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf`.
+
+### Le takeaway d'archi : une couche semantique portable, pas une vector DB
+
+OKF n'est pas un concurrent des vector DBs — c'est une **couche complementaire**. Une vector DB stocke des **embeddings de chunks** (representation statistique du texte brut, pour la recherche par similarite). OKF stocke la **connaissance curee et structuree** — le sens metier, les relations, les join paths — que des agents *lisent et maintiennent* comme du code. La citation de Karpathy resume pourquoi les LLM sont de bons mainteneurs de ce format : « les LLM ne s'ennuient pas, n'oublient pas de mettre a jour une cross-reference, peuvent toucher 15 fichiers en une passe. »
+
+L'autre apport architectural est la **separation production/consommation** : la connaissance n'est plus verrouillee dans le catalogue qui l'a generee, elle devient un artefact portable qu'un RAG, un agent ou un autre catalogue peut consommer. Pour un systeme RAG d'entreprise, OKF est donc le bon endroit ou poser la **couche semantique/metadonnees** au-dessus (ou a cote) de l'index vectoriel.
+
+**Key takeaway** : OKF est une couche semantique portable (markdown + YAML, `type` requis, liens = graphe) qui separe la production de la connaissance curee de sa consommation — la ou la vector DB stocke des embeddings de chunks, OKF stocke la connaissance structuree que les agents lisent et maintiennent.
+
+---
+
 ## Tradeoffs recapitulatifs
 
 | Dimension | Petit | Grand | Tradeoff |
@@ -327,6 +406,9 @@ R: Methode de fusion de plusieurs listes de candidats : score = sum(1/(rank+k)).
 **Q: Quelle metrique pour evaluer le retrieval seul ?**
 R: Recall@k (la bonne reponse est-elle dans les top-k ?) et MRR (1/position_du_premier_vrai).
 
+**Q: Qu'est-ce que l'Open Knowledge Format (OKF) et que stocke-t-il par rapport a une vector DB ?**
+R: Un format ouvert (markdown + frontmatter YAML, seul `type` obligatoire, liens = graphe, versionnable en git) qui formalise le pattern LLM-Wiki de Karpathy. La vector DB stocke des embeddings de chunks ; OKF stocke la connaissance curee et structuree (sens metier, join paths) que les agents lisent et maintiennent. Il separe la production de la connaissance de sa consommation.
+
 ---
 
 ## Key takeaways
@@ -336,6 +418,7 @@ R: Recall@k (la bonne reponse est-elle dans les top-k ?) et MRR (1/position_du_p
 - Reranker cross-encoder = 15-30% de gain gratuit. A toujours tester.
 - Le chunking est la decision la plus sous-estimee. Investis du temps dessus.
 - Toujours citer les sources. Toujours creer un gold set d'evaluation des le debut.
+- La connaissance interne (schemas, metriques, join paths) est le vrai goulot d'un RAG d'entreprise : OKF la pose en couche semantique portable (markdown + YAML, "metadata as code") au lieu de la verrouiller dans un catalogue proprietaire.
 
 
 ---
@@ -346,3 +429,4 @@ Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../
 
 - **CMU 11-711 (Neubig) Fa24 — Lec. 10 (Retrieval and RAG)** — fondations academiques du RAG, retrieval dense vs sparse, evaluation.
 - **Berkeley CS294-196 Fa24 — Lec. 8 (Compound AI & DSPy — Khattab)** — RAG comme systeme compose, optimisation programmatique des pipelines.
+- **Google Cloud — "How the Open Knowledge Format can improve data sharing"** (Sam McVeety & Amir Hormati, 12 juin 2026) — la spec OKF v0.1 : metadata as code, format portable pour la connaissance curee des agents. [`cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing`](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)

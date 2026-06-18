@@ -71,6 +71,7 @@
 - **Yan, Gu, Zhu, Ling (2024). *Corrective Retrieval Augmented Generation (CRAG)*. arXiv:2401.15884** — https://arxiv.org/abs/2401.15884 — évaluateur de retrieval + fallback web search quand les docs sont mauvais ; le pattern corrective/retry du module.
 - **Jeong, Baek, Cho, Hwang, Park (2024/NAACL 2024). *Adaptive-RAG: Learning to Adapt Retrieval-Augmented LLMs through Question Complexity*. arXiv:2403.14403** — https://arxiv.org/abs/2403.14403 — routeur qui choisit no-retrieval / single-hop / multi-hop selon la complexité ; cœur de l'"adaptive RAG".
 - **Lewis et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*. arXiv:2005.11401** — https://arxiv.org/abs/2005.11401 — le RAG "vanilla" de référence dont le module montre les limites.
+- **Google Cloud — McVeety, Hormati (2026). *How the Open Knowledge Format can improve data sharing*.** — https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing — OKF v0.1 : corpus de connaissances comme concepts markdown + frontmatter reliés en graphe (vendor-neutral, versionné), alternative portable au sac de chunks ; pont avec GraphRAG, l'agent consomme **et** maintient le corpus (enrichment agent BigQuery). Repo : https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf
 
 ---
 
@@ -182,11 +183,13 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **Context engineering: memory, compaction, and tool clearing** — Anthropic (Claude Cookbook), 2025. https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools — implémentation concrète (memory tool + context editing beta).
 - **Don't Build Multi-Agents** — Walden Yan (Cognition), 2025. https://cognition.ai/blog/dont-build-multi-agents — contre-argument single-agent vs sub-agents (débat structurant).
 - **LangChain Deep Agents — overview** — LangChain (docs), 2025. https://docs.langchain.com/oss/python/deepagents/overview — planning/`write_todos`, sub-agents isolés, virtual filesystem (offloading).
+- **How the Open Knowledge Format can improve data sharing** — McVeety & Hormati (Google Cloud, Data Analytics), 2026. https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing — OKF v0.1 : format standard (markdown + frontmatter, `index.md`/`log.md`) pour le savoir externalisé du context offloading ; formalise le pattern LLM-Wiki de Karpathy. Repo : https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf
 
 ### J16 — Mémoire avancée & agents long-horizon
 - **MemGPT: Towards LLMs as Operating Systems** — Packer, Wooders, Lin, Patil, Gonzalez et al. (UC Berkeley), 2023. https://arxiv.org/abs/2310.08560 — mémoire hiérarchique virtuelle (main/external context), socle de Letta.
 - **Generative Agents: Interactive Simulacra of Human Behavior** — Park, O'Brien, Cai, Morris, Liang, Bernstein (Stanford), 2023. https://arxiv.org/abs/2304.03442 — memory stream + retrieval + reflection (consolidation), épisodique/sémantique en pratique.
 - **Reflexion: Language Agents with Verbal Reinforcement Learning** — Shinn, Cassano, Berman, Gopinath, Narasimhan, Yao, 2023 (NeurIPS). https://arxiv.org/abs/2303.11366 — buffer de mémoire épisodique de réflexions verbales (pont mémoire/self-improvement).
+- **How the Open Knowledge Format can improve data sharing** — McVeety & Hormati (Google Cloud, Data Analytics), 2026. https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing — OKF v0.1 : formalise le pattern LLM-Wiki de Karpathy en format portable (markdown + frontmatter YAML, seul `type` obligatoire) pour persister la mémoire sémantique externalisée ; `log.md` ≈ memory stream, `index.md` ≈ divulgation progressive. Gist Karpathy : https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
 
 ### J17 — Self-improving agents
 - **Reflexion** — Shinn et al., 2023. https://arxiv.org/abs/2303.11366 — self-improvement par feedback verbal, sans fine-tuning.
@@ -206,6 +209,7 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **Model Context Protocol — Specification (2025-11-25)** — Anthropic / MCP. https://modelcontextprotocol.io/specification/2025-11-25 — tools/resources/prompts/transports (rappel + complémentarité avec A2A).
 - **Introducing the Model Context Protocol** — Anthropic, nov. 2024. https://www.anthropic.com/news/model-context-protocol — problème M×N, motivation.
 - **Agent Communication Protocol (ACP)** — IBM / BeeAI (LF AI & Data), 2025. https://github.com/i-am-bee/acp — async-first JSON-RPC ; nuance d'actualité : convergence ACP → A2A.
+- **How the Open Knowledge Format can improve data sharing** — McVeety & Hormati (Google Cloud, Data Analytics), 2026. https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing — OKF : 3e axe d'interop (agent ↔ connaissance partagée), « format, pas plateforme » vendor-neutral, complément de MCP (agent ↔ outils) et A2A (agent ↔ agent). Repo : https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf
 
 ### J20 — Durable & event-driven agents
 - **Durable Agent with Tools — OpenAI Agents SDK (Temporal)** — Temporal (AI cookbook), 2025. https://docs.temporal.io/ai-cookbook/openai-agents-sdk-python — LLM/tool calls en activities, contrôle déterministe dans le workflow.
