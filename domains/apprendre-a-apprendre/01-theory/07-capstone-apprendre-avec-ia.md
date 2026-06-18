@@ -110,6 +110,53 @@ Le systeme ne fonctionne que si les boucles de feedback sont **courtes** (on tes
 
 ---
 
+## 5. Ta base de connaissances portable : le pattern LLM-Wiki (et OKF)
+
+### Le probleme humain : on abandonne nos wikis perso
+
+Presque tout le monde a deja demarre un "second cerveau" — un Notion, un Obsidian, un carnet, un dossier de notes. Et presque tout le monde l'a abandonne. La raison est rarement le manque d'idees : c'est la **maintenance**. Relier une nouvelle note aux anciennes, la ranger au bon endroit, mettre a jour un index, garder les references coherentes — ce travail de tenue de registre est fastidieux, repetitif, et l'humain finit par lacher. Les notes s'accumulent en vrac, deviennent introuvables, et le systeme meurt.
+
+### L'insight de Karpathy : deleguer le bookkeeping au LLM
+
+Andrej Karpathy a propose une idee simple pour briser ce cercle (son "LLM-Wiki", voir *Pour aller plus loin*) : garder un format **simple et durable** — de simples fichiers markdown — et confier le travail penible de tenue de registre a un LLM. L'humain **curate** (decide quoi garder, corrige, oriente) ; le LLM **entretient** (relie, met a jour l'index, propage les cross-references, touche beaucoup de fichiers d'un coup).
+
+> *"Les LLM ne s'ennuient pas, n'oublient pas de mettre a jour une cross-reference, et peuvent toucher 15 fichiers en une seule passe."* — Andrej Karpathy
+
+Autrement dit, le bookkeeping qui pousse les humains a **abandonner** leurs wikis personnels est precisement ce que les LLM font bien. On enleve la corvee qui tuait le systeme.
+
+### OKF : la version standardisee de l'idee
+
+Le 12 juin 2026, Google Cloud (Sam McVeety & Amir Hormati) a formalise ce pattern en une specification ouverte, l'**Open Knowledge Format (OKF, v0.1)** — voir *Pour aller plus loin*. L'idee en une phrase : un **repertoire de fichiers markdown**, chacun avec un petit en-tete structure (frontmatter YAML, ou seul le champ `type` est obligatoire), les notes se reliant entre elles par de simples liens markdown — ce qui forme un **graphe** de connaissances. Deux fichiers optionnels organisent le tout : un `index.md` (point d'entree / sommaire) et un `log.md` (historique chronologique).
+
+```
+ma-base/
+  index.md            <- sommaire / point d'entree
+  log.md              <- journal chronologique de ce que j'ai appris
+  retrieval-practice.md
+  espacement-sm2.md
+```
+
+```
+---
+type: note
+title: Retrieval practice
+tags: [apprendre, memoire]
+---
+La recuperation active bat la relecture. Voir [espacement](espacement-sm2.md).
+```
+
+Le point cle est resume par la formule des auteurs : **"format, pas plateforme"**. Pas de compte, pas d'outil proprietaire requis : tes notes restent **lisibles partout**, **versionnables** avec git, et ta connaissance n'est pas **prisonniere** d'un seul logiciel.
+
+### Application a l'apprentissage
+
+Une telle base devient une **source vivante** pour les techniques des modules precedents. Le LLM peut lire tes notes pour **generer des quiz** de recuperation (c'est exactement le role 2 vu plus haut : generateur de retrieval) et te proposer un **plan d'espacement** a partir de ce que tu as ajoute recemment. Le `log.md`, lui, documente ta progression dans le temps — un journal honnete de ce que tu as reellement consolide.
+
+### La nuance honnete (a ne jamais oublier)
+
+Tout cela n'est puissant qu'a une condition : la base doit **nourrir le rappel actif**, pas le remplacer. Un wiki magnifique qu'on se contente de **relire et d'admirer** est de la **relecture passive deguisee** — la technique la moins efficace selon Dunlosky (2013). Pire, comme l'explication structuree du module 06, une base bien rangee peut amplifier l'**illusion de comprehension** : elle a l'air maitrisee, donc on *croit* la maitriser. Le test ne change pas : **ferme le wiki et ressors le concept de memoire**. Si tu n'y arrives pas, la note ne t'a encore rien appris — elle t'attend pour un vrai effort de recuperation.
+
+---
+
 > **A retenir :**
 > - L'effet 2-sigma de Bloom vient du mastery learning autant que du tutorat — un LLM ne reproduit cet effet que si *tu* maintiens le standard de maitrise (ne pas avancer avant de vraiment comprendre).
 > - Les trois roles du LLM en apprentissage : **tuteur socratique** (questions, pas reponses directes), **generateur de retrieval et d'espacement** (quiz calibres, plans de revision), **partenaire Feynman** (detection de trous).
@@ -135,6 +182,9 @@ Le systeme ne fonctionne que si les boucles de feedback sont **courtes** (on tes
 **Q5** : Ecris le prompt Feynman de base pour utiliser un LLM en partenaire d'explication.
 **R5** : *"Je vais expliquer [concept] comme si je l'enseignais. Detecte dans mon explication les zones floues, les sauts logiques, le jargon non defini et les erreurs conceptuelles."*
 
+**Q6** : Pourquoi un beau wiki personnel (LLM-Wiki / OKF) ne suffit-il pas a faire apprendre, et quel est le piege ?
+**R6** : Parce qu'un wiki qu'on se contente de **relire** est de la relecture passive — la technique la moins efficace (Dunlosky 2013) — et qu'une base bien rangee amplifie l'**illusion de comprehension**. Il n'a de valeur d'apprentissage que s'il **alimente le rappel actif** (generer des quiz, se tester a livre ferme). Test : fermer le wiki et ressortir le concept de memoire.
+
 ---
 
 ## Points cles a retenir
@@ -144,6 +194,7 @@ Le systeme ne fonctionne que si les boucles de feedback sont **courtes** (on tes
 3. Les **confabulations** sont un risque reel : verifie toujours les faits critiques dans les sources primaires.
 4. Le systeme complet combine encoder (deep work + interleaving) + ancrer (retrieval + espacement) + progresser (deliberate practice + metacognition) + detecter les illusions — c'est la somme des six modules.
 5. Ce systeme est **reutilisable** pour n'importe quel domaine futur : remplace le sujet, garde la boucle.
+6. Une **base de connaissances portable** (pattern LLM-Wiki / OKF : markdown + frontmatter, `index.md`/`log.md`, versionnable et non prisonniere d'un outil) te donne une source vivante que le LLM entretient — mais elle n'apprend rien si tu te contentes de la relire : elle ne vaut que si elle **alimente le rappel actif**.
 
 ---
 
@@ -154,3 +205,5 @@ Le systeme ne fonctionne que si les boucles de feedback sont **courtes** (on tes
 - **Brown, Roediger & McDaniel — *Make It Stick* (2014)** : https://www.hup.harvard.edu/books/9780674729018 (synthese grand public de tout le domaine)
 - **Learning How to Learn (Oakley & Sejnowski)** — MOOC Coursera : https://www.coursera.org/learn/learning-how-to-learn
 - **Bjork, Dunlosky & Kornell (2013)** — *Self-Regulated Learning: Beliefs, Techniques, and Illusions*, *Annual Review of Psychology* : https://gwern.net/doc/psychology/spaced-repetition/2013-bjork.pdf
+- **Karpathy, A. — *LLM-Wiki*** (gist) : le pattern d'une base de connaissance en markdown ou le LLM fait le bookkeeping (index, cross-references, log) pendant que l'humain curate : https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+- **McVeety, S. & Hormati, A. (12 juin 2026)** — *How the Open Knowledge Format can improve data sharing*, Google Cloud Blog : la specification ouverte (OKF v0.1) qui standardise ce pattern (markdown + frontmatter, `index.md`/`log.md`, portable et vendor-neutral) : https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing

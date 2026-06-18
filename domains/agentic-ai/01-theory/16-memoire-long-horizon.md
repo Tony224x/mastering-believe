@@ -300,6 +300,74 @@ Page in les top-K dans le contexte LLM
 
 ---
 
+## 8. OKF — formaliser la memoire semantique en format portable
+
+Jusqu'ici, on a vu *comment* consolider des episodes en faits semantiques (§5 reflection) et *comment* MemGPT separe main context et **external context** (§3). Reste une question pratique : **sous quel format** persister cette memoire semantique externalisee pour qu'elle survive a un changement de framework, de vector store, ou de fournisseur de modele ?
+
+Le 12 juin 2026, Google Cloud a publie l'**Open Knowledge Format (OKF)** : une **specification ouverte, vendor-neutral**, qui formalise le pattern **"LLM-Wiki" d'Andrej Karpathy** en un format **portable et interoperable**. But : representer les **metadonnees, le contexte et la connaissance curee** dont les systemes IA ont besoin — lisible par les humains *et* parsable par les agents.
+
+> **Analogie** : MemGPT te dit *comment paginer* la memoire entre RAM et disque. OKF te dit *en quel format ecrire sur le disque* — un format que n'importe quel autre agent, demain, saura relire sans ton SDK.
+
+### 8.1 Le format : des fichiers markdown + frontmatter YAML
+
+OKF (version **v0.1**, point de depart amene a evoluer) tient sur trois choix simples :
+- **"just markdown"** : lisible, rendu et indexable partout
+- **"just files"** : un repertoire — qui vit dans un tarball, un repo git, un filesystem
+- **"just YAML frontmatter"** pour le petit jeu de champs requetables
+
+OKF est **minimalement opinione** : il n'exige **qu'une seule chose** de chaque concept — un champ **`type`**. Tout le reste (quels types existent, quels autres champs, quelles sections dans le corps) est laisse au producteur. Les champs frontmatter standard : `type` (seul obligatoire), `title`, `description`, `resource`, `tags`, `timestamp`.
+
+```
+memory/
+├── index.md            # optionnel : divulgation progressive (table des matieres)
+├── log.md              # optionnel : historique chronologique des changements
+├── facts/
+│   ├── user-prefers-csv.md
+│   └── export-pdf-tool-broken.md
+├── episodes/
+│   └── ep-001-rapport-q3.md
+└── skills/
+    └── generer-rapport-csv.md
+```
+
+```yaml
+---
+type: fact
+title: "Preference de format de rapport"
+description: "L'utilisateur prefere les exports CSV aux PDF"
+resource: "facts/user-prefers-csv.md"
+tags: [user-preference, reporting]
+timestamp: 2026-01-20
+---
+Consolide depuis [[ep-001-rapport-q3]] et [[ep-012]]. Confidence 0.92.
+```
+
+Les concepts se **lient entre eux par des liens markdown normaux** : le repertoire cesse d'etre une simple hierarchie parent/enfant du filesystem et devient un **graphe** de relations — exactement la structure dont a besoin une memoire semantique riche.
+
+### 8.2 `index.md` et `log.md` : le parallele avec le chapitre
+
+Deux fichiers **optionnels** aux noms reserves portent directement les idees de ce chapitre :
+- **`index.md`** — sert la **divulgation progressive** (progressive disclosure) : quand l'agent navigue la hierarchie, il lit d'abord la table des matieres, puis ne charge en contexte que les pages utiles. C'est le retrieval scope de §3.2 (paging in a la demande), cote stockage.
+- **`log.md`** — un **historique chronologique** des changements. C'est le pendant durable du **memory stream** de Generative Agents (§5.1) : la suite ordonnee des observations, mais persistee dans un fichier que la **reflection** (§5.2) vient distiller en pages `facts/`.
+
+La spec v0.1 complete (criteres de conformite, regles de cross-linking, petit nombre de noms reserves) tient sur une page.
+
+### 8.3 L'agent fait le bookkeeping, l'humain curate
+
+Pourquoi un format markdown maintenu par un agent, et pas un wiki humain de plus ? Karpathy le resume :
+
+> « Les LLM ne s'ennuient pas, n'oublient pas de mettre a jour une cross-reference, et peuvent toucher 15 fichiers en une seule passe. »
+
+Le travail de tenue de registre (bookkeeping) qui pousse les humains a abandonner leurs wikis personnels est exactement ce que les LLM font bien. Applique a notre chapitre : la **consolidation** (§5) et la mise a jour des cross-references entre `episodes/`, `facts/` et `skills/` deviennent une tache d'agent, l'humain se contentant de curer.
+
+### 8.4 Format, pas plateforme
+
+OKF est un **format, pas une plateforme** : non lie a un cloud, une base de donnees, un fournisseur de modele ou un framework d'agent ; il ne requiert jamais de compte ni de SDK proprietaire. D'ou son interet pour ce chapitre : la memoire semantique externalisee (l'`external context` de MemGPT, §3.1) devient **portable** entre systemes et vendeurs, et survit a leurs changements. Il resout la **fragmentation de la connaissance** — schema d'une table, sens metier d'une metrique, runbook d'incident, avis de depreciation — eparpillee entre catalogues (chacun son API/SDK), wikis, commentaires de code et « la tete de quelques ingenieurs seniors ». Il manquait un **format**, pas un service de plus.
+
+En resume : OKF complete le J15 (context offloading) en donnant un standard d'ecriture au savoir deporte, et donne a la memoire semantique de ce chapitre un format d'echange durable.
+
+---
+
 ## Flash-cards
 
 **Q1 : Quelle est la difference entre memoire episodique et semantique ?**
@@ -317,6 +385,12 @@ Page in les top-K dans le contexte LLM
 **Q5 : Pourquoi l'importance protege-t-elle de l'oubli ?**
 > R : Les entrees importantes (score proche de 1.0) ont un `effective_score = max(recency, importance * 0.5)` qui reste elevee meme quand la recence decroit. Sans ce mecanisme, des faits critiques seraient oublies apres quelques jours.
 
+**Q6 : Qu'est-ce que l'Open Knowledge Format (OKF) et quel pattern formalise-t-il ?**
+> R : OKF (Google Cloud, juin 2026) est une specification ouverte, vendor-neutral, qui formalise le pattern "LLM-Wiki" d'Andrej Karpathy en un format portable et interoperable : un repertoire de fichiers markdown + frontmatter YAML, lisible par les humains et parsable par les agents, pour persister la memoire semantique externalisee.
+
+**Q7 : Quels sont les champs de frontmatter OKF, et lequel est le seul obligatoire ?**
+> R : Les champs standard sont `type`, `title`, `description`, `resource`, `tags`, `timestamp`. Le seul obligatoire est `type` : OKF est minimalement opinione et laisse tout le reste (types disponibles, autres champs, sections du corps) au producteur. `index.md` (divulgation progressive) et `log.md` (historique chronologique) sont des fichiers optionnels a noms reserves.
+
 ---
 
 ## Points cles a retenir
@@ -326,6 +400,7 @@ Page in les top-K dans le contexte LLM
 - **Scoring** : `score = w1*recency + w2*importance + w3*similarity` — les trois dimensions ensemble permettent un retrieval pertinent meme sur de tres longs horizons
 - **Consolidation** : la reflection periodique distille les episodes en faits semantiques, reduisant la masse de donnees a gerer
 - **Oubli selectif** : decay exponentiel + bouclier d'importance — oublier intelligemment est aussi important que se souvenir
+- **OKF / LLM-Wiki** : un repertoire de markdown + frontmatter YAML (seul champ obligatoire : `type`) donne a la memoire semantique externalisee un format portable et vendor-neutral — `log.md` joue le role du memory stream, `index.md` celui de la divulgation progressive
 
 ---
 
@@ -335,3 +410,5 @@ Page in les top-K dans le contexte LLM
 - Park, O'Brien, Cai, Morris, Liang, Bernstein, **"Generative Agents: Interactive Simulacra of Human Behavior"** (2023) — https://arxiv.org/abs/2304.03442
 - Shinn et al., **"Reflexion: Language Agents with Verbal Reinforcement Learning"** (2023) — https://arxiv.org/abs/2303.11366
 - Letta (successeur open-source de MemGPT) — https://github.com/letta-ai/letta
+- Sam McVeety & Amir Hormati (Google Cloud Data Analytics), **"How the Open Knowledge Format can improve data sharing"** (12 juin 2026) — https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing (repo : https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf)
+- Andrej Karpathy, **"LLM-Wiki"** (gist fondateur du pattern formalise par OKF) — https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f

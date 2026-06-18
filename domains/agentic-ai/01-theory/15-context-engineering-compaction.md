@@ -148,6 +148,28 @@ Superviseur integre 200 tokens (pas 10k de logs intermediaires)
 
 Le superviseur ne recoit que le **resultat final**, pas l'historique interne du sous-agent. Gain net : 10 x a 100 x de reduction selon la complexite de la sous-tache.
 
+### 4.4 OKF — un format standard pour le savoir externalise
+
+Le VFS (§4.1), le scratchpad et la todo list (§4.2) externalisent bien le savoir hors du contexte — mais chacun a son propre format ad hoc, lie a ton agent. Il manquait un **standard portable** pour ce savoir deporte. C'est ce que donne l'**Open Knowledge Format (OKF)**, publie par Google Cloud le 12 juin 2026.
+
+OKF est une specification ouverte, vendor-neutral : un **repertoire de fichiers markdown + frontmatter YAML**, lisible par les humains et parsable par les agents. Il formalise le pattern "LLM-Wiki" d'Andrej Karpathy. Le frontmatter porte un petit jeu de champs requetables — un seul est obligatoire, `type` :
+
+```yaml
+---
+type: runbook
+title: "Reprise apres timeout API tierce"
+description: "Procedure quand l'API retourne HTTP 429"
+tags: [incident, rate-limit]
+timestamp: 2026-06-12
+---
+```
+
+Deux fichiers optionnels a noms reserves recoupent exactement nos patterns d'offloading :
+- **`index.md`** — sert la **divulgation progressive** : l'agent ne garde en contexte que la table des matieres et ne charge une page que lorsqu'il en a besoin (c'est l'idee de §4.1, la table des matieres du VFS, standardisee).
+- **`log.md`** — un **historique chronologique** des changements, equivalent durable du scratchpad/journal.
+
+Etant un **format, pas une plateforme** (aucun cloud, DB, SDK ou compte proprietaire requis), un repertoire OKF vit dans le **version control aux cotes du code qu'il decrit** et reste relisible par n'importe quel agent. Pour l'usage de ce format comme memoire semantique long-horizon (consolidation, graphe de faits), voir le J16.
+
 ---
 
 ## 5. Token & cost budgeting fin
@@ -264,6 +286,9 @@ def trim_tool_result(result: str, max_tokens: int = 500) -> str:
 **Q5 : Quelles sont les 3 informations indispensables qu'un resume de compaction doit preserver ?**
 > R : (1) Les **decisions prises** (choix d'architecture, options retenues), (2) l'**etat courant** des artefacts (quels fichiers sont corrects, lesquels ont des bugs), (3) les **contraintes actives** (regles de code, limites de l'API, invariants a respecter). Tout le reste (messages intermediaires, erreurs corrigees, resultats redondants) peut etre supprime.
 
+**Q6 : Qu'apporte l'Open Knowledge Format (OKF) au context offloading ?**
+> R : OKF (Google Cloud, juin 2026) donne un **format standard, portable et vendor-neutral** au savoir externalise — la ou le VFS/scratchpad/todo restaient ad hoc. C'est un repertoire de markdown + frontmatter YAML (seul champ obligatoire : `type`) qui formalise le pattern "LLM-Wiki" de Karpathy ; `index.md` sert la divulgation progressive et `log.md` l'historique, et le tout vit dans le version control aux cotes du code.
+
 ---
 
 ## Points cles a retenir
@@ -275,6 +300,7 @@ def trim_tool_result(result: str, max_tokens: int = 500) -> str:
 - Allouer un **budget par sous-agent** et placer un **budget global** comme circuit breaker
 - En architecture multi-niveaux, limiter la **profondeur a 2-3 niveaux** et reduire le budget par facteur 2-5 a chaque niveau
 - Le **tool result trimming** est souvent le gain le plus rapide : les resultats HTML/JSON non-filres peuvent peser 10-50 k tokens
+- L'**OKF** (Google Cloud, juin 2026) standardise le savoir externalise : un repertoire de markdown + frontmatter YAML, vendor-neutral, avec `index.md` (divulgation progressive) et `log.md` (historique) — il formalise le "LLM-Wiki" de Karpathy et vit dans le version control
 
 ---
 
@@ -284,3 +310,4 @@ def trim_tool_result(result: str, max_tokens: int = 500) -> str:
 - Anthropic Claude Cookbook, **"Context engineering: memory, compaction, and tool clearing"** (2025) — https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools
 - Walden Yan (Cognition), **"Don't Build Multi-Agents"** (2025) — https://cognition.ai/blog/dont-build-multi-agents
 - LangChain, **"Deep Agents — overview"** (2025) — https://docs.langchain.com/oss/python/deepagents/overview
+- Sam McVeety & Amir Hormati (Google Cloud Data Analytics), **"How the Open Knowledge Format can improve data sharing"** (12 juin 2026) — https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing (repo : https://github.com/GoogleCloudPlatform/knowledge-catalog/tree/main/okf)
