@@ -111,5 +111,23 @@ domains/finance-personnelle/
 │   ├── 03-hard/
 │   ├── solutions/
 │   └── workspace/     # Votre espace de travail (gitignore)
-└── 04-projects/       # Mini-projets libres
+├── 04-projects/       # Mini-projets libres
+└── 05-projets-guides/ # Projets guidés appliqués (contexte LogiSim)
 ```
+
+## Projets guidés (Module 05-projets-guides)
+
+Trois projets appliqués qui mettent vos acquis en situation, sur le décor métier
+partagé LogiSim (cf. [`shared/logistics-context.md`](../../shared/logistics-context.md)) :
+les protagonistes sont des personnes travaillant chez/autour de LogiSim
+confrontées à des décisions d'argent ordinaires (finance **personnelle**, pas
+finance d'entreprise). Chaque projet fournit un script exécutable (stdlib) + une
+analyse interprétée :
+
+| # | Projet | Modules mobilisés |
+|---|--------|-------------------|
+| 01 | Le plan d'épargne d'une équipe OCC | 01, 02, 05 |
+| 02 | Faut-il s'endetter pour la voiture ? | 03, 01 |
+| 03 | Allocation & indépendance financière | 04, 05, 06, 01 |
+
+Voir [`05-projets-guides/README.md`](./05-projets-guides/README.md).
