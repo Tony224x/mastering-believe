@@ -45,7 +45,7 @@ Le parcours se fait en deux temps : **S1-S2 = fondations** (J1-J14, du single-ag
 | J15 | Context engineering & compaction | Curation du context window, compaction/offloading, deep-agent scratchpad/virtual FS, token & cost budgeting | 3h |
 | J16 | Memoire long-horizon | Episodique/semantique/procedurale, MemGPT/Letta, consolidation, decay & scoring de pertinence | 3h |
 | J17 | Verifiers & self-improvement | Verifiers / process reward models, best-of-N, self-improvement persiste, expo RL/fine-tuning | 3h |
-| J18 | Orchestration comparee & failure modes | LangGraph vs CrewAI vs AutoGen vs OpenAI SDK vs Swarm, quand le multi-agent casse | 3h |
+| J18 | Orchestration comparee & failure modes | LangGraph vs CrewAI vs AutoGen vs OpenAI SDK vs Swarm vs Google ADK, quand le multi-agent casse | 3h |
 | J19 | Protocoles inter-agents | A2A, agent cards, ACP, complementarite MCP, interop multi-vendor | 3h |
 | J20 | Durable & event-driven agents | Durable execution (Temporal), reprise sur crash, event-driven, HITL avance (interrupt/resume) | 3h |
 | J21 | Architecture des coding agents | SWE-agent & ACI, boucle edit/search/run, SWE-bench, Aider | 3h |
@@ -118,3 +118,5 @@ Le parcours se fait en deux temps : **S1-S2 = fondations** (J1-J14, du single-ag
 - **"Building Effective Agents"** (Anthropic blog) — principles de design
 - **MCP Specification** — protocol officiel
 - **DeepLearning.AI — AI Agents in LangGraph** (Andrew Ng)
+- **Google × Kaggle — "5-Day AI Agents Intensive"** — cours gratuit (Gemini + ADK + Vertex AI Agent Engine, complete par MCP & A2A) ; whitepapers + codelabs Kaggle
+- **Google ADK (Agent Development Kit)** — framework multi-agent open-source (workflow agents types Sequential/Parallel/Loop)

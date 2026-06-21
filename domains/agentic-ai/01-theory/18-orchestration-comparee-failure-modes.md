@@ -88,23 +88,45 @@ Le choix du framework n'est pas anodin — il dicte :
 
 > **Pourquoi le mentionner ?** Swarm a popularise le concept de handoffs legers. Beaucoup de ressources en ligne l'utilisent encore. Comprendre Swarm aide a comprendre l'Agents SDK.
 
+### 2.6 Google ADK — Agent Development Kit (Google, 2025)
+
+**Modele d'execution** : hybride **workflow agents deterministes** + **LLM agents dynamiques**. ADK est un framework open-source (Python/Java) code-first, deployable sur Vertex AI Agent Engine (J25). Sa signature : exposer les topologies multi-agents comme des **classes pretes a l'emploi** plutot que comme du graphe a cabler soi-meme.
+
+- **`SequentialAgent`** : pipeline en chaine. La sortie de chaque sous-agent est ecrite dans le `state` partage via une cle `output_key`, lue par le suivant.
+- **`ParallelAgent`** : execute des sous-agents independants en concurrence (fan-out), puis fan-in.
+- **`LoopAgent`** : repete un sous-agent jusqu'a une condition d'arret (raffinement iteratif).
+- **LLM-driven routing** : pour le comportement adaptatif, un agent LLM decide dynamiquement du sous-agent a appeler (equivalent d'un supervisor, J9).
+
+**Points forts** :
+- **Workflow agents types** : Sequential / Parallel / Loop comme primitives nommees — la topologie est explicite dans le type, pas implicite dans le cablage du graphe.
+- DevX soignee : CLI + Web UI locale pour inspecter pas-a-pas le state, les events et l'execution.
+- Built-in tools manages (Google Search, **Code Execution**, RAG Engine), agent-as-a-tool, long-running tools async.
+- Securite en couches via **plugins au niveau runner** (policies globales : checks pre-LLM, tool execution policy-enforced, validation post-LLM).
+
+**Limites** :
+- Pleinement integre quand on deploie sur **Google Cloud / Vertex AI Agent Engine** ; hors de cet ecosysteme, on perd le runtime manage (J25).
+- Plus jeune que LangGraph ; ecosysteme d'integrations tierces encore en construction.
+- Le modele cible est **Gemini** (multi-modele possible, mais le chemin doux reste Google).
+
+> **Le clivage a retenir (transferable hors ADK)** : *workflow agents deterministes* (Sequential/Parallel/Loop — tu sais a l'avance qui s'execute et dans quel ordre) **vs** *LLM-driven dynamic routing* (le LLM choisit a la volee). C'est une grille de design utile dans **tous** les frameworks : LangGraph te laisse coder les deux, ADK les nomme. Choisis le deterministe quand l'ordre est connu (moins cher, plus debuggable) ; le dynamique quand l'ordre depend de l'input.
+
 ---
 
 ## 3. Table de decision — quel framework choisir ?
 
-| Critere | **LangGraph** | **CrewAI** | **AutoGen 0.4** | **OpenAI Agents SDK** | **Swarm** |
-|---|---|---|---|---|---|
-| **Modele d'execution** | Graphe d'etats | Role-based crew | Event-driven / acteurs | Handoffs tool-centric | Handoffs stateless |
-| **Etat / persistence** | TypedDict partage + checkpointing natif | Task outputs stringifies | Messages types par acteur | Conversation history | context_variables dict |
-| **Handoff / delegation** | Edges conditionnels + subgraphs | Manager LLM ou sequence | Messages inter-acteurs | Tool `transfer_to_X` | Return `Agent` object |
-| **Parallelisme** | Send() pour branches paralleles | Limite (sequential/hierarchical) | Natif (async acteurs) | Parallel tool calls | Non |
-| **Courbe d'apprentissage** | Moyenne (graphe a apprendre) | Faible (role/task intuitif) | Elevee (actor model async) | Faible-Moyenne | Faible (archive) |
-| **Debug / observabilite** | LangSmith, streaming natif | Limitee | OpenTelemetry natif | Traces OpenAI | Aucune |
-| **Vendor lock-in** | LangChain ecosystem | Aucun | Aucun | OpenAI fort | OpenAI fort |
-| **Checkpointing / reprise** | Natif | Non | Non (a implanter) | Non | Non |
-| **Quand choisir** | Pipelines complexes, long-running, besoin de reprise | Automatisation de workflows metier en quelques heures | Multi-agent distribue, scalabilite, recherche | Apps OpenAI, handoffs simples, prototypage rapide | Ne pas choisir (archive) |
+| Critere | **LangGraph** | **CrewAI** | **AutoGen 0.4** | **OpenAI Agents SDK** | **Swarm** | **Google ADK** |
+|---|---|---|---|---|---|---|
+| **Modele d'execution** | Graphe d'etats | Role-based crew | Event-driven / acteurs | Handoffs tool-centric | Handoffs stateless | Workflow agents types (Seq/Par/Loop) + LLM-driven |
+| **Etat / persistence** | TypedDict partage + checkpointing natif | Task outputs stringifies | Messages types par acteur | Conversation history | context_variables dict | `state` partage via `output_key` + sessions (Agent Engine) |
+| **Handoff / delegation** | Edges conditionnels + subgraphs | Manager LLM ou sequence | Messages inter-acteurs | Tool `transfer_to_X` | Return `Agent` object | Sous-agents types + agent-as-tool + routing LLM |
+| **Parallelisme** | Send() pour branches paralleles | Limite (sequential/hierarchical) | Natif (async acteurs) | Parallel tool calls | Non | Natif (`ParallelAgent`) |
+| **Courbe d'apprentissage** | Moyenne (graphe a apprendre) | Faible (role/task intuitif) | Elevee (actor model async) | Faible-Moyenne | Faible (archive) | Moyenne (classes claires + Web UI) |
+| **Debug / observabilite** | LangSmith, streaming natif | Limitee | OpenTelemetry natif | Traces OpenAI | Aucune | Web UI locale + traces ; Agent Engine en prod |
+| **Vendor lock-in** | LangChain ecosystem | Aucun | Aucun | OpenAI fort | OpenAI fort | Google Cloud fort (runtime manage Vertex) |
+| **Checkpointing / reprise** | Natif | Non | Non (a implanter) | Non | Non | Via Agent Engine sessions (manage) |
+| **Quand choisir** | Pipelines complexes, long-running, besoin de reprise | Automatisation de workflows metier en quelques heures | Multi-agent distribue, scalabilite, recherche | Apps OpenAI, handoffs simples, prototypage rapide | Ne pas choisir (archive) | Stack Google Cloud / Gemini, topologies typees + runtime manage |
 
-> **Analogie** : LangGraph = un chef de projet avec un organigramme precis. CrewAI = une equipe de freelances avec des fiches de poste. AutoGen = un reseau d'agents autonomes qui se passent des notes. OpenAI Agents SDK = un standard telephonique qui transfere l'appel au bon service.
+> **Analogie** : LangGraph = un chef de projet avec un organigramme precis. CrewAI = une equipe de freelances avec des fiches de poste. AutoGen = un reseau d'agents autonomes qui se passent des notes. OpenAI Agents SDK = un standard telephonique qui transfere l'appel au bon service. ADK = une chaine de montage avec des postes types (sequentiel / parallele / boucle) qu'on assemble comme des Lego.
 
 ---
 
@@ -219,6 +241,9 @@ Quelques patterns qui s'appliquent independamment du framework choisi :
 **Q5 :** Selon l'heuristique pratique J18, quand le multi-agent est-il justifie vs un agent unique bien outille ?
 > **R :** Multi-agent justifie pour : taches parallelisables (fan-out), domaines tres differents saturant le context window, verification croisee independante. Sinon : single agent + tools (plus simple, moins cher, plus debuggable).
 
+**Q6 :** Qu'est-ce qui distingue les *workflow agents* d'ADK et quel clivage de design en retenir ?
+> **R :** ADK expose les topologies comme des classes pretes a l'emploi : `SequentialAgent` (chaine via `output_key`), `ParallelAgent` (fan-out concurrent), `LoopAgent` (iteration jusqu'a condition d'arret). Le clivage transferable : *workflow deterministe* (ordre connu a l'avance — moins cher, plus debuggable) vs *LLM-driven routing* (le LLM choisit a la volee — adaptatif). LangGraph laisse coder les deux ; ADK les nomme.
+
 ---
 
 ## Points cles a retenir
@@ -228,6 +253,7 @@ Quelques patterns qui s'appliquent independamment du framework choisi :
 - **AutoGen 0.4** = actor model async → multi-agent distribue / recherche
 - **OpenAI Agents SDK** = handoffs legers → apps OpenAI, prototypage rapide
 - **Swarm** = archive, ne pas utiliser pour de nouveaux projets
+- **Google ADK** = workflow agents types (Sequential/Parallel/Loop) + runtime manage Vertex → stack Google Cloud / Gemini ; retenir le clivage *deterministe vs LLM-driven*
 - Les failure modes principaux : cascade d'erreurs, boucles de desaccord, explosion de cout tokens, hallucination cross-agent amplifiee, latence additive
 - Avant de creer un 2e agent, demande-toi si un tool supplementaire suffira (Cognition)
 - Multi-agent justifie dans 3 cas : parallelisme, specialisation, verification croisee (Anthropic)
@@ -242,3 +268,5 @@ Quelques patterns qui s'appliquent independamment du framework choisi :
 - OpenAI, "swarm" (archive, remplace par l'Agents SDK) — https://github.com/openai/swarm
 - CrewAI docs — https://docs.crewai.com/
 - Walden Yan (Cognition), "Don't Build Multi-Agents" (2025) — https://cognition.ai/blog/dont-build-multi-agents
+- Google, "Agent Development Kit (ADK) — Easy to build multi-agent applications" (2025) — https://developers.googleblog.com/en/agent-development-kit-easy-to-build-multi-agent-applications/
+- Google, "ADK docs — Workflow agents (Sequential / Parallel / Loop)" — https://google.github.io/adk-docs/agents/workflow-agents/
