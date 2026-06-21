@@ -1,131 +1,136 @@
-# Module 01 — Le systeme d'exploitation du jugement
+# Module 01 — Le système du jugement
 
-> **Temps estime** : 45 min | **Prerequis** : aucun
-> **Objectif** : comprendre pourquoi le raisonnement peut derailler et comment le corriger — sans moraliser, sans survendre les biais.
+> **Temps estimé** : 45 min | **Prérequis** : aucun
+> **Objectif** : comprendre pourquoi le raisonnement peut dérailler et comment le corriger — sans moraliser, sans survendre les biais. Distinguer intuition rapide vs raisonnement contrôlé ; comprendre qu'un biais est systématique, pas aléatoire.
 
 ---
 
 ## 1. Un exemple pour commencer
 
-Avant toute theorie, resolvez ce probleme (30 secondes maximum) :
+Avant toute théorie, résolvez ce problème (30 secondes maximum) :
 
-> Une batte et une balle content 1,10 € au total. La batte coute 1,00 € de plus que la balle. Combien coute la balle ?
+> Une batte et une balle coûtent 1,10 € au total. La batte coûte 1,00 € de plus que la balle. Combien coûte la balle ?
 
-La reponse intuitive est 0,10 €. La reponse correcte est **0,05 €**.
+La réponse intuitive est 0,10 €. La réponse correcte est **0,05 €**.
 
-*(Batte = 1,05 € + balle = 0,05 € = 1,10 €. Si la balle coutait 0,10 €, la batte couterait 1,10 € et le total serait 1,20 €.)*
+*(Batte = 1,05 € + balle = 0,05 € = 1,10 €. Si la balle coûtait 0,10 €, la batte coûterait 1,10 € et le total serait 1,20 €.)*
 
-Ce petit piege illustre un fait central : notre cerveau dispose de **deux modes de traitement** dont l'un, rapide et automatique, produit parfois des erreurs systematiques et previsibles.
+Ce petit piège illustre un fait central : notre cerveau dispose de **deux modes de traitement** dont l'un, rapide et automatique, produit parfois des erreurs systématiques et prévisibles.
 
 ---
 
-## 2. Systeme 1 et Systeme 2
+## 2. Système 1 et Système 2
 
-Le modele propose par Daniel Kahneman (2011) distingue deux "systemes" de traitement de l'information. Il s'agit de raccourcis conceptuels — pas de regions cerebrales separees — mais ils decrivent une realite experimentale solide.
+Le modèle proposé par Daniel Kahneman (2011) distingue deux "systèmes" de traitement de l'information. Il s'agit de raccourcis conceptuels — pas de régions cérébrales séparées — mais ils décrivent une réalité expérimentale solide.
 
-| | Systeme 1 | Systeme 2 |
+| | Système 1 | Système 2 |
 |---|---|---|
-| **Vitesse** | Rapide (millisecondes) | Lent (secondes a minutes) |
-| **Effort** | Automatique, sans effort | Deliberatif, fatiguant |
-| **Acces** | Inconscient | Conscient |
-| **Exemples** | Lire un mot, eviter un obstacle, reconnaitre un visage | Calculer 17 x 24, remplir un formulaire, resoudre un probleme nouveau |
-| **Force** | Efficace pour les taches repetitives et connues | Adapte aux problemes nouveaux et complexes |
-| **Faiblesse** | Produit des erreurs systematiques dans les domaines peu frequentes (statistiques, risques rares) | Lent, se fatigue |
+| **Vitesse** | Rapide (millisecondes) | Lent (secondes à minutes) |
+| **Effort** | Automatique, sans effort | Délibératif, fatigant |
+| **Accès** | Inconscient | Conscient |
+| **Exemples** | Lire un mot, éviter un obstacle, reconnaître un visage | Calculer 17 × 24, remplir un formulaire, résoudre un problème nouveau |
+| **Force** | Efficace pour les tâches répétitives et connues | Adapté aux problèmes nouveaux et complexes |
+| **Faiblesse** | Produit des erreurs systématiques dans les domaines peu fréquentés (statistiques, risques rares) | Lent, se fatigue (ego depletion — effet de taille modeste) |
 
-> **A retenir** : le Systeme 1 n'est pas "mauvais". Il est extraordinairement efficace pour les 99 % de decisions quotidiennes simples. Les biais apparaissent quand il extrapole ses regles a des domaines pour lesquels il n'a pas ete "entraine" — notamment les probabilites et les statistiques.
+> **À retenir** : le Système 1 n'est pas "mauvais". Il est extraordinairement efficace pour les 99 % de décisions quotidiennes simples. Les biais apparaissent quand il extrapole ses règles à des domaines pour lesquels il n'a pas été "entraîné" — notamment les probabilités et les statistiques.
 
 ---
 
 ## 3. Qu'est-ce qu'un biais cognitif ?
 
-Un **biais cognitif** est un ecart systematique et previsible entre le raisonnement reel d'une personne et le raisonnement normatif optimal pour la tache.
+Un **biais cognitif** est un écart systématique et prévisible entre le raisonnement réel d'une personne et le raisonnement normatif optimal pour la tâche.
 
-Trois elements cles de cette definition :
-- **Systematique** : l'erreur va toujours dans le meme sens (pas du bruit aleatoire).
-- **Previsible** : on peut predire qui va faire l'erreur et dans quelle direction.
-- **Ecart normatif** : par rapport a une regle logique ou probabiliste bien definie (pas par rapport a une opinion).
+Trois éléments clés de cette définition :
+- **Systématique** : l'erreur va toujours dans le même sens (pas du bruit aléatoire).
+- **Prévisible** : on peut prédire qui va faire l'erreur et dans quelle direction.
+- **Écart normatif** : par rapport à une règle logique ou probabiliste bien définie (pas par rapport à une opinion).
 
-**Ce qu'un biais n'est pas** : un defaut moral ou un signe de stupidite. Les biais sont des raccourcis adaptatifs qui ont evolue parce qu'ils fonctionnent bien dans la majorite des situations. Gerd Gigerenzer et ses collaborateurs ont montre que les memes heuristiques qui produisent des biais dans des contextes statistiques peuvent battre des modeles complexes dans des environnements incertains (principe de "rationalite ecologique").
+**Ce qu'un biais n'est pas** : un défaut moral ou un signe de stupidité. Les biais sont des raccourcis adaptatifs qui ont évolué parce qu'ils fonctionnent bien dans la majorité des situations. Gerd Gigerenzer et ses collaborateurs ont montré que les mêmes heuristiques qui produisent des biais dans des contextes statistiques peuvent battre des modèles complexes dans des environnements incertains (principe de "rationalité écologique" — voir Module 6).
+
+> **À retenir** : apprendre à connaître un biais ne le fait pas disparaître automatiquement (effet de simple exposition insuffisant). Le remède est structurel : appliquer des méthodes explicites — probabilités, arbres de décision, checklists — qui court-circuitent le point de défaillance.
 
 ---
 
-## 4. Rationalite vs intelligence : une distinction cruciale
+## 4. Rationalité vs intelligence : une distinction cruciale
 
-Keith Stanovich (2011) a montre experimentalement que les tests de QI et les tests de raisonnement rationnel mesurent des choses differentes.
+Keith Stanovich (2011) a montré expérimentalement que les tests de QI et les tests de raisonnement rationnel mesurent des choses différentes.
 
-**Des gens tres intelligents peuvent raisonner tres mal.** Pourquoi ?
+**Des gens très intelligents peuvent raisonner très mal.** Pourquoi ?
 
-Stanovich propose un modele tripartite :
+Stanovich propose un modèle tripartite :
 
-1. **Esprit autonome** (= Systeme 1) : traitements automatiques, associations.
-2. **Esprit algorithmique** (= Systeme 2, capacite brute) : puissance de calcul, memoire de travail. C'est ce que mesurent les tests de QI.
-3. **Esprit reflexif** : la disposition a interroger et corriger les sorties des deux premiers. C'est ici que se joue la qualite du raisonnement.
+1. **Esprit autonome** (≈ Système 1) : traitements automatiques, associations.
+2. **Esprit algorithmique** (≈ Système 2, capacité brute) : puissance de calcul, mémoire de travail. C'est ce que mesurent les tests de QI.
+3. **Esprit réflexif** : la disposition à interroger et corriger les sorties des deux premiers. C'est ici que se joue la qualité du raisonnement.
 
 Deux concepts importants de Stanovich :
-- **Mindware gap** : manquer des outils conceptuels pour raisonner correctement (par exemple ne pas connaitre la probabilite conditionnelle).
-- **Dysrationalia** : la capacite a raisonner mal malgre une intelligence elevee — par manque d'esprit reflexif, pas par manque de puissance algorithmique.
+- **Mindware gap** : manquer des outils conceptuels pour raisonner correctement (par exemple ne pas connaître la probabilité conditionnelle).
+- **Dysrationalia** : la capacité à raisonner mal malgré une intelligence élevée — par manque d'esprit réflexif, pas par manque de puissance algorithmique.
 
-**Implication pratique** : la qualite du jugement s'ameliore en apprenant des methodes (combler le mindware gap) et en cultivant l'habitude d'activer l'esprit reflexif (ralentir, verifier, chercher les contre-exemples).
+**Implication pratique** : la qualité du jugement s'améliore en apprenant des méthodes (combler le mindware gap) et en cultivant l'habitude d'activer l'esprit réflexif (ralentir, vérifier, chercher les contre-exemples).
 
-> **A retenir** : ce domaine s'adresse a l'esprit reflexif. L'intelligence n'est pas un prerequis — la volonte de s'interroger l'est.
-
----
-
-## 5. Un exemple chiffre : le probleme des taxis
-
-Voici un probleme classique de base rate neglect (qu'on approfondira au module 04) :
-
-> Dans une ville, 85 % des taxis sont verts et 15 % sont bleus. Un accident implique un taxi. Un temoin dit que le taxi etait bleu. Des tests montrent que ce temoin identifie correctement la couleur dans 80 % des cas. Quelle est la probabilite que le taxi etait effectivement bleu ?
-
-Reponse intuitive frequente : "80 %" (le taux d'exactitude du temoin).
-Reponse correcte : **environ 41 %**.
-
-*(Calcul au module 03. Pour l'instant, retenez que l'intuition ignore systematiquement les proportions de depart — les "taux de base".)*
-
-Ce probleme illustre pourquoi des methodes explicites (probabilites, Bayes) sont necessaires : l'intuition seule, meme bien intentionnee, produit une reponse tres eloignee de la realite.
+> **À retenir** : ce domaine s'adresse à l'esprit réflexif. L'intelligence n'est pas un prérequis — la volonté de s'interroger l'est.
 
 ---
 
-## 6. La nuance replication
+## 5. Un exemple chiffré : le problème des taxis
 
-> **Honnêtete intellectuelle** : la science des biais cognitifs a elle-meme connu une crise. Apres 2011, de nombreux effets de *priming social* (par exemple : lire des mots lies a la vieillesse ralentirait la marche) ont echoue a se repliquer. Kahneman lui-meme a reconnu en 2012 puis 2017 avoir trop fait confiance a des etudes sous-puissantes.
+Voici un problème classique de *base rate neglect* (qu'on approfondira au Module 3) :
+
+> Dans une ville, 85 % des taxis sont verts et 15 % sont bleus. Un accident implique un taxi. Un témoin dit que le taxi était bleu. Des tests montrent que ce témoin identifie correctement la couleur dans 80 % des cas. Quelle est la probabilité que le taxi était effectivement bleu ?
+
+Réponse intuitive fréquente : « 80 % » (le taux d'exactitude du témoin).
+Réponse correcte : **environ 41 %**.
+
+*(Calcul complet au Module 3. Pour l'instant, retenez que l'intuition ignore systématiquement les proportions de départ — les "taux de base".)*
+
+Ce problème illustre pourquoi des méthodes explicites (probabilités, Bayes) sont nécessaires : l'intuition seule, même bien intentionnée, produit une réponse très éloignée de la réalité.
+
+---
+
+## 6. La nuance réplication
+
+> **Honnêteté intellectuelle** : la science des biais cognitifs a elle-même connu une crise. Après 2011, de nombreux effets de *priming social* (par exemple : lire des mots liés à la vieillesse ralentirait la marche) ont échoué à se répliquer. Kahneman lui-même a reconnu en 2012 puis 2017 avoir trop fait confiance à des études sous-puissantes.
 >
 > **Ce que cela signifie pour ce domaine** :
-> - On enseigne les effets **robustes et bien repliques** : ancrage numerique, cadrage, base rate neglect dans des taches probabilistes, biais de confirmation dans des taches de selection.
-> - On presente les effets fragiles (priming social) comme "histoire de la discipline / a prendre avec prudence".
-> - La crise de replication est elle-meme une lecon pedagogique : meme les experts se trompent, meme la science peut survendre des resultats. Le doute methodique s'applique a tout.
+> - On enseigne les effets **robustes et bien répliqués** : ancrage numérique, cadrage, base rate neglect dans des tâches probabilistes, biais de confirmation dans des tâches de sélection.
+> - On présente les effets fragiles (priming social) comme « histoire de la discipline / à prendre avec prudence ».
+> - La crise de réplication est elle-même une leçon pédagogique : même les experts se trompent, même la science peut survendre des résultats. Le doute méthodique s'applique à tout, y compris à ce cours.
 
 ---
 
-## Flash-cards (4)
+## Flash-cards (5)
 
-**Q1** : Quelle est la difference fondamentale entre Systeme 1 et Systeme 2 ?
-**R1** : Systeme 1 = rapide, automatique, inconscient. Systeme 2 = lent, deliberatif, conscient. Le S1 traite l'information en parallele sans effort ; le S2 traite sequentiellement avec effort et se fatigue.
+**Q1 : Quelle est la différence fondamentale entre Système 1 et Système 2 ?**
+> R : Système 1 = rapide, automatique, inconscient. Système 2 = lent, délibératif, conscient. S1 traite l'information en parallèle sans effort ; S2 traite séquentiellement avec effort et se fatigue.
 
-**Q2** : Un biais cognitif est-il un defaut moral ou un signe de stupidite ?
-**R2** : Non. C'est un ecart systematique entre raisonnement reel et norme optimale. Les biais sont des raccourcis adaptatifs utiles dans la majorite des situations — ils echouent dans des contextes pour lesquels ils n'ont pas ete "calibres" (statistiques rares, probabilites conditionnelles).
+**Q2 : Un biais cognitif est-il un défaut moral ou un signe de stupidité ?**
+> R : Non. C'est un écart systématique entre raisonnement réel et norme optimale. Les biais sont des raccourcis adaptatifs utiles dans la majorité des situations — ils échouent dans des contextes pour lesquels ils n'ont pas été "calibrés" (statistiques rares, probabilités conditionnelles).
 
-**Q3** : Que mesure un test de QI, et qu'est-ce qu'il ne mesure pas ?
-**R3** : Un test de QI mesure la puissance algorithmique (memoire de travail, vitesse de traitement). Il ne mesure pas la qualite du raisonnement rationnel ni la disposition a interroger ses propres croyances (esprit reflexif).
+**Q3 : Que mesure un test de QI, et qu'est-ce qu'il ne mesure pas ?**
+> R : Un test de QI mesure la puissance algorithmique (mémoire de travail, vitesse de traitement). Il ne mesure pas la qualité du raisonnement rationnel ni la disposition à interroger ses propres croyances (esprit réflexif).
 
-**Q4** : Qu'est-ce que la "dysrationalia" selon Stanovich ?
-**R4** : La capacite a raisonner mal malgre une intelligence elevee — due a un manque d'esprit reflexif ou de mindware (outils conceptuels), pas a un manque de puissance cognitive.
+**Q4 : Qu'est-ce que la "dysrationalia" selon Stanovich ?**
+> R : La capacité à raisonner mal malgré une intelligence élevée — due à un manque d'esprit réflexif ou de mindware (outils conceptuels), pas à un manque de puissance cognitive.
+
+**Q5 : Pourquoi connaître un biais ne suffit-il pas à l'éliminer ?**
+> R : Parce que S1 opère en dehors du contrôle conscient. La connaissance seule n'active pas S2 au bon moment. Le remède est structurel : procédures, checklists, méthodes formelles qui forcent le passage par S2 aux points de décision critiques.
 
 ---
 
-## Points cles a retenir
+## Points clés à retenir
 
-- Le cerveau dispose de deux modes : S1 (rapide/automatique) et S2 (lent/deliberatif). Les biais apparaissent principalement quand S1 extrapole hors de son domaine de competence.
-- Un biais est systematique, previsible, et defini par rapport a une norme logique — pas une opinion.
-- Rationalite et intelligence sont des competences distinctes. Ce domaine developpe la rationalite.
-- La litterature des biais elle-meme a connu une crise de replication : preferer les effets robustes, signaler les effets fragiles.
-- Le remede est le mindware : apprendre des methodes explicites (probabilites, Bayes, calibration) et cultiver l'esprit reflexif.
+- Le cerveau dispose de deux modes : S1 (rapide/automatique) et S2 (lent/délibératif). Les biais apparaissent principalement quand S1 extrapole hors de son domaine de compétence.
+- Un biais est **systématique** et **prévisible**, défini par rapport à une norme logique — pas une opinion.
+- **Rationalité et intelligence sont des compétences distinctes.** Ce domaine développe la rationalité (esprit réflexif + mindware), pas l'intelligence brute.
+- La littérature des biais elle-même a connu une crise de réplication : préférer les effets robustes, signaler les effets fragiles.
+- Le remède est le **mindware** : apprendre des méthodes explicites (probabilités, Bayes, calibration) et cultiver l'habitude d'activer l'esprit réflexif.
 
 ---
 
 ## Pour aller plus loin
 
-- **Kahneman, D.** (2011). *Thinking, Fast and Slow.* Farrar, Straus and Giroux. https://us.macmillan.com/books/9780374533557/thinkingfastandslow — Synthese grand public du programme heuristiques et biais. Lire avec la nuance replication (chapitre priming fragile).
+- **Kahneman, D.** (2011). *Thinking, Fast and Slow.* Farrar, Straus and Giroux. https://us.macmillan.com/books/9780374533557/thinkingfastandslow — Synthèse grand public du programme heuristiques et biais. Lire avec la nuance réplication (chapitre priming fragile).
 - **Stanovich, K.E.** (2011). *Rationality and the Reflective Mind.* Oxford University Press. https://global.oup.com/academic/product/rationality-and-the-reflective-mind-9780195341140 — Cadre tripartite, dysrationalia, mindware.
-- **Open Science Collaboration** (2015). *Estimating the Reproducibility of Psychological Science.* Science 349(6251). https://osf.io/ezcuj/overview — La crise de replication en chiffres.
-- **Gigerenzer, G., Todd, P.M. & ABC Research Group** (1999). *Simple Heuristics That Make Us Smart.* Oxford University Press. — Le contre-programme : rationalite ecologique.
+- **Open Science Collaboration** (2015). *Estimating the Reproducibility of Psychological Science.* Science 349(6251). https://osf.io/ezcuj/overview — La crise de réplication en chiffres : ~36 % de réplications significatives.
+- **Gigerenzer, G., Todd, P.M. & ABC Research Group** (1999). *Simple Heuristics That Make Us Smart.* Oxford University Press. https://global.oup.com/academic/product/simple-heuristics-that-make-us-smart-9780195143812 — Le contre-programme : rationalité écologique, les heuristiques ne sont pas que des erreurs.

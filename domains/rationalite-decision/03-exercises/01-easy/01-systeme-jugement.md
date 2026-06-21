@@ -1,83 +1,86 @@
-# Exercices Easy — Module 01 : Le systeme d'exploitation du jugement
+# Exercices — Module 1 : Le système du jugement
+
+> **Niveau** : débutant → intermédiaire (3 exercices gradués)
+> **Prérequis** : avoir lu `01-theory/01-systeme-jugement.md`
+> **Matériel** : papier + crayon suffisent. Pas de code requis.
 
 ---
 
-## Exercice 1 : Systeme 1 ou Systeme 2 ?
+## Exercice 1 — Identifier Système 1 vs Système 2
 
 ### Objectif
-
-Distinguer les traitements automatiques (Systeme 1) des traitements deliberatifs (Systeme 2) dans des situations de la vie courante.
+Distinguer les traitements automatiques (S1) des traitements délibératifs (S2) dans des situations concrètes, y compris les cas ambigus liés à l'expertise.
 
 ### Consigne
+Pour chacune des 8 situations ci-dessous, indiquez si le traitement dominant est **S1** ou **S2**, puis justifiez en une phrase.
 
-Pour chacune des situations suivantes, indiquez si elle releve principalement du Systeme 1 ou du Systeme 2, et justifiez en une phrase.
+| # | Situation |
+|---|-----------|
+| A | Un joueur d'échecs expérimenté aperçoit en deux secondes que son adversaire a laissé son cavalier en prise. |
+| B | Un comptable vérifie manuellement une somme de 47 lignes de chiffres qu'il n'a pas calculés lui-même. |
+| C | Vous freinez brusquement quand une balle surgit devant votre voiture. |
+| D | Un ingénieur résout pour la première fois un problème d'optimisation de réseau. |
+| E | Vous reconnaissez immédiatement la voix de votre meilleur ami au téléphone. |
+| F | Vous remplissez votre déclaration fiscale pour la première fois. |
+| G | Un médecin urgentiste reconnaît d'un coup d'œil un type de fracture qu'il a diagnostiqué des centaines de fois. |
+| H | Un étudiant en physique calcule mentalement 37 × 48 lors d'un examen. |
 
-1. Un joueur de tennis experimente retourne un smash sans reflechir.
-2. Un etudiant calcule mentalement 37 × 48 pour la premiere fois.
-3. Un conducteur habitue freine instinctivement quand le feu passe au rouge.
-4. Un comptable verifie une declaration fiscale complexe pour un nouveau client.
-5. Vous reconnaissez immediatement l'odeur du cafe le matin.
-6. Vous traduisez une phrase complexe dans une langue etrangere apprise recemment.
-7. Un medecin experimente reconnaît un diagnostic "d'un coup d'oeil" sur une radiographie qu'il a vue des centaines de fois.
-8. Vous lisez votre mot habituel de mot de passe sans reflechir.
-
-### Criteres de reussite
-
-- [ ] 7 situations sur 8 classees correctement (S1 ou S2)
-- [ ] Chaque reponse est justifiee en une phrase qui cite une propriete du systeme (vitesse, effort, automaticite)
-- [ ] La situation 7 (diagnostic experimente = S1 acquis) est identifiee correctement meme si elle semble complexe
-- [ ] Distinction correcte entre expertise consolidee (S1) et tache nouvelle (S2) pour la situation 1 vs 6
+### Critères de réussite
+- [ ] Au moins 7 attributions correctes sur 8.
+- [ ] Chaque justification mentionne un trait distinctif (vitesse, effort, conscience, automatisme).
+- [ ] La situation A et la situation G sont identifiées comme des cas où l'expertise a *transféré* une tâche de S2 vers S1, et cela est expliqué.
+- [ ] La différence entre C (réflexe moteur) et F (tâche nouvelle complexe) est articulée clairement.
 
 ---
 
-## Exercice 2 : Reconnaitre un biais
+## Exercice 2 — Déconstruire un biais à partir d'un problème chiffré
 
 ### Objectif
-
-Appliquer la definition d'un biais cognitif (ecart systematique et previsible) a des scenarios concrets, en utilisant uniquement des exemples a reponse calculable.
+Appliquer la définition formelle d'un biais (écart systématique par rapport à une norme calculable) sur un exemple numérique neutre.
 
 ### Consigne
 
-Pour chacun des scenarios suivants, calculez la reponse correcte, puis expliquez pourquoi l'intuition typique s'en ecarte et dans quelle direction.
+**Problème :** On donne à 200 personnes l'énoncé suivant :
 
-**Scenario A** : On vous demande si plus de mots francais commencent par la lettre "R" ou ont "R" en troisieme position. La majorite des gens repondent "commencent par R". La reponse reelle est : les mots avec "R" en troisieme position sont bien plus nombreux. Quel mecanisme cognitif explique cet ecart ?
+> « Une urne contient 10 billes. On en tire une au hasard, on note sa couleur, puis on la remet. On répète l'opération 5 fois et on obtient à chaque fois une bille rouge. Quelle est la probabilité que la 6ᵉ bille tirée soit rouge ? »
 
-**Scenario B** : Un de a 6 faces est lance 6 fois. La sequence RRRRRR (6 fois rouge sur un de colore a moitie rouge) vous semble-t-elle moins probable que la sequence RRBRRB ? Calculez les deux probabilites.
+Réponse modale observée dans des expériences analogues : **« beaucoup plus de 50 % — les tirages sont "chauds" »**.
 
-**Scenario C** : Batte et balle : une batte et une balle content 1,10 € au total. La batte coute 1,00 € de plus que la balle. Combien coute la balle ? Exprimez l'erreur intuitive en terme de systeme.
+**Questions :**
 
-### Criteres de reussite
+1. Quelle est la réponse correcte, et pourquoi ?
+2. Quel nom porte ce biais (indice : il a trait à des "séquences") ?
+3. En quoi cet écart respecte-t-il la définition formelle d'un biais (systématique, prévisible, écart normatif) ?
+4. Quel système (S1 ou S2) produit la réponse erronée, et quel mécanisme en est responsable ?
 
-- [ ] Scenario A : le biais de disponibilite (facilite d'evocation) est nomme et explique
-- [ ] Scenario B : les deux probabilites sont calculees correctement ((1/2)^6 = 1/64 dans les deux cas) et la conclusion est correcte
-- [ ] Scenario C : la reponse correcte (0,05 €) est calculee et l'erreur est attribuee au Systeme 1 (reponse intuitive sans verification S2)
-- [ ] Les trois scenarios distinguent "l'intuition" (direction, magnitude) de "la reponse calculable"
+### Critères de réussite
+- [ ] La réponse correcte est identifiée avec sa justification probabiliste (indépendance des tirages avec remise).
+- [ ] Le biais est nommé (*gambler's fallacy* / biais du joueur) et brièvement défini.
+- [ ] Les trois éléments de la définition formelle (systématique / prévisible / écart normatif) sont explicitement appliqués à cet exemple.
+- [ ] Le rôle de S1 (recherche de patterns, attente de "rééquilibrage") est identifié.
 
 ---
 
-## Exercice 3 : Rationalite vs intelligence
+## Exercice 3 — Mindware gap : diagnostiquer et combler
 
 ### Objectif
-
-Comprendre concretement la distinction rationalite/intelligence a travers le concept de mindware gap.
+Appliquer le concept de *mindware gap* (Stanovich) à un scénario de prise de décision, puis proposer un outil concret pour le combler.
 
 ### Consigne
 
-Lisez les deux profils suivants et repondez aux questions.
+**Scénario :** Lucas est directeur logistique dans une entreprise de transport. Il doit décider s'il renouvelle le contrat d'un fournisseur. Son intuition lui dit « ce fournisseur est fiable — il a bien livré les 3 dernières commandes ». Il passe le contrat sans autre vérification.
 
-**Profil A** : Marie est ingenieure en logiciel, diplome de grande ecole, excellente en algorithmie et en mathematiques. Face a un probleme de probabilites conditionnelles, elle confond systematiquement P(A|B) et P(B|A). Elle n'a jamais appris le theoreme de Bayes.
+Trois mois plus tard, il s'avère que le fournisseur avait un taux de retard de 40 % sur les 2 années précédentes, et que les 3 livraisons récentes étaient une coïncidence favorable.
 
-**Profil B** : Thomas n'a pas suivi d'etudes superieures. Il tient un stand de pari sportif depuis 10 ans et a developpe une intuition tres precise pour les probabilites implicites des cotes.
+**Questions :**
 
-**Questions** :
-1. Lequel de A ou B a le plus de "puissance algorithmique" (au sens de Stanovich) ? Lequel raisonne mieux sur les probabilites conditionnelles dans son domaine ?
-2. Quel concept de Stanovich explique l'erreur de Marie malgre son intelligence ?
-3. Que devrait faire Marie pour corriger son point faible ? Exprimez votre reponse en termes de "mindware".
-4. Le fait que Thomas soit bon en probabilites implicites signifie-t-il qu'il raisonne bien dans *tous* les domaines ? Justifiez.
+1. Quel biais ou heuristique défaillante a conduit Lucas à sa décision ? (Nommez-le et définissez-le en 2 phrases.)
+2. Quel *mindware* lui manquait-il ? (Quel outil ou concept lui aurait permis de corriger son raisonnement ?)
+3. Proposez une **procédure en 3 étapes** que Lucas pourrait systématiser avant tout renouvellement de contrat, pour activer son esprit réflexif (S2) plutôt que de s'en remettre à S1.
+4. En quoi cette procédure illustre-t-elle la distinction rationalité / intelligence selon Stanovich ?
 
-### Criteres de reussite
-
-- [ ] Question 1 : Marie = puissance algorithmique superieure ; Thomas = meilleur dans ce domaine specifique grace a l'experience
-- [ ] Question 2 : "mindware gap" est cite et defini (manque d'outils conceptuels, pas manque d'intelligence)
-- [ ] Question 3 : reponse concrete (apprendre la probabilite conditionnelle et le theoreme de Bayes = combler le mindware gap)
-- [ ] Question 4 : non — l'expertise de Thomas est domaine-specifique, pas transferable automatiquement
+### Critères de réussite
+- [ ] Le biais est identifié avec précision (heuristique de disponibilité ou représentativité sur petit échantillon — les deux acceptés avec justification).
+- [ ] Le mindware manquant est désigné concrètement (ex. : analyse de données historiques, taux de base, échantillon suffisant).
+- [ ] La procédure comporte au moins : (a) une étape de collecte de données historiques sur une période suffisante, (b) une comparaison à un taux de référence, (c) un seuil de décision explicite défini à l'avance.
+- [ ] La réponse à la question 4 distingue clairement puissance algorithmique (absent du problème) et esprit réflexif (le levier manquant).

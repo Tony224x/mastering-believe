@@ -1,6 +1,6 @@
 # Solutions — Module 03 : Clarte & ecriture qui se comprend
 
-> Ces solutions sont des *corriges modeles*. Une version reecrite qui respecte les criteres (sujet acteur, verbe action, concision, information preservee) est tout aussi valide.
+> Ces solutions sont des *corriges modeles*. Une version reecrite qui respecte les criteres (sujet acteur, verbe action, concision, chose concrete montree, information preservee) est tout aussi valide.
 
 ---
 
@@ -18,27 +18,27 @@
 1. "mise en oeuvre" (au lieu de "mettre en oeuvre")
 2. "integration" (au lieu de "integrer") — apparait deux fois
 3. "realisation" (au lieu de "realiser")
-4. "amelioration" / "ameliorer de facon significative" (au lieu de simplement "ameliorer")
+4. "amelioration" / "ameliorer de facon significative"
 5. "evaluation" (au lieu de "evaluer")
 6. "conception" (au lieu de "concevoir")
 7. "elaboration" (au lieu de "elaborer")
 
 **Constructions passives sans acteur identifie :**
-1. "il a ete decide" (qui a decide ? La DRH est mentionnee en peripherie — mais le sujet grammatical est impersonnel)
+1. "il a ete decide" (qui a decide ? La DRH est mentionnee en peripherie, mais le sujet grammatical est impersonnel)
 2. "sera effectuee" (par qui ? pas precise)
 3. "est actuellement en cours d'elaboration" (par qui ?)
 
 **Mots-coussins et formules inutiles :**
-1. "Dans le cadre de" → supprimer ou remplacer par "Pour"
-2. "susceptible d'ameliorer" → "ameliorera" ou "devrait ameliorer"
+1. "Dans le cadre de" → supprimer ou "Pour"
+2. "susceptible d'ameliorer" → "ameliorera" / "devrait ameliorer"
 3. "de facon significative" → supprimer ou quantifier
 4. "au terme d'une periode de six mois" → "dans six mois"
 5. "au moyen d'un questionnaire" → "via un questionnaire"
-6. "dont la conception est actuellement en cours d'elaboration" → "en cours de creation" ou "que nous preparons"
-7. "nouveaux entrants" → "nouveaux employes" (jargon inutile)
+6. "dont la conception est actuellement en cours d'elaboration" → "que nous preparons"
+7. "nouveaux entrants" → "nouveaux employes"
 
 **Phrases de plus de 30 mots :**
-La premiere phrase fait ~75 mots. La deuxieme fait ~40 mots.
+La premiere phrase fait ~75 mots ; la deuxieme ~40 mots.
 
 ---
 
@@ -81,33 +81,38 @@ La premiere phrase fait ~75 mots. La deuxieme fait ~40 mots.
 **Original** (~42 mots) :
 > "Afin de proceder a l'optimisation de l'utilisation des ressources informatiques partagees au sein de l'organisation, il est demande a l'ensemble des collaborateurs de bien vouloir effectuer une sauvegarde reguliere de leurs fichiers de travail sur les serveurs prevus a cet effet."
 
-**Version claire** (~18 mots) :
+**Version claire** (~14 mots) :
 > "Merci de sauvegarder regulierement vos fichiers de travail sur les serveurs partages."
 
-*(reduction : -57 % ; sujet : "vous" implicite dans l'imperatif ; verbe : "sauvegarder" ; objectif supprime car evident de la demande)*
+*(reduction : -67 % ; sujet : "vous" implicite dans l'imperatif ; verbe : "sauvegarder" ; l'objectif d'optimisation est supprime car evident)*
 
 ---
 
-## Exercice 3 — Email en pyramide inversee
+## Exercice 3 — Prose-fenetre : concretiser et reviser a voix haute
 
-### Exemple de corrige
+### Texte original
 
-**Objet : Changement de salle — jeudi 14h, A105 au lieu de B210**
+> "L'enjeu de la perennisation des actifs informationnels au sein de notre structure necessite la mise en place d'une demarche systematique de formalisation des connaissances, de maniere a garantir une optimisation de la transmission inter-collaborateurs et une reduction des situations de dependance vis-a-vis de ressources humaines specifiques."
 
-> La session de formation de jeudi a 14h se tiendra en salle A105 (meme batiment que la B210) plutot qu'en B210, indisponible.
->
-> Votre badge habituel donne acces a la salle A105. Rien d'autre ne change : meme heure, meme duree, meme programme.
->
-> A jeudi,
-> [Prenom]
+### 1. Diagnostic prose-fenetre — abstractions qui ne montrent rien
 
-*(corps : 42 mots)*
+| Abstraction (vitre sale) | Chose concrete a montrer |
+|--------------------------|--------------------------|
+| "actifs informationnels" | les notes, schemas, decisions et le code de l'equipe |
+| "demarche systematique de formalisation des connaissances" | ecrire ce qu'on fait au moment ou on le fait |
+| "reduction des situations de dependance vis-a-vis de ressources humaines specifiques" | ne plus etre bloque quand la seule personne qui sait est absente |
 
----
+*(Autres candidats acceptables : "perennisation" → "ne pas reperdre ce qu'on a appris" ; "optimisation de la transmission inter-collaborateurs" → "un collegue retrouve l'info sans nous demander".)*
 
-### Justification de l'ordre (exemple)
+### 2. Reecriture prose-fenetre (~45 mots)
 
-La premiere phrase donne l'information *actionnable* : ou aller jeudi. C'est la seule information dont un participant qui lit en diagonal a besoin. La deuxieme phrase repond a la question immediatement suivante ("ai-je besoin de quoi que ce soit de special ?"). Les details non essentiels (pourquoi la B210 est indisponible, historique) sont omis car ils n'aident pas le lecteur a agir — ils servent l'emetteur, pas le destinataire.
+> "Quand on documente au fur et a mesure, on ecrit ce qu'on fait pendant qu'on le fait. Resultat : si quelqu'un est absent, l'equipe retrouve l'information sans rester bloquee. Documenter, c'est laisser une note a son futur soi — et a ses collegues."
+
+*(45 mots ; sujets-acteurs : "on", "l'equipe" ; aucune nominalisation vide ; on "voit" la scene : ecrire en faisant, un collegue absent, retrouver l'info)*
+
+### 3. Revision a voix haute (exemple de note)
+
+> A voix haute, j'ai trebuche sur la phrase initiale "Quand on documente au fur et a mesure, on ecrit..." qui repetait "documente/documenter". J'ai garde la repetition finale car elle est intentionnelle (effet de chute "note a son futur soi"), mais j'ai verifie qu'aucune phrase ne depassait un souffle. Pas d'autre achoppement.
 
 ---
 
@@ -119,5 +124,6 @@ La premiere phrase donne l'information *actionnable* : ou aller jeudi. C'est la 
 | Passif sans acteur | Identifier qui agit et en faire le sujet |
 | Mots-coussins | Supprimer ou remplacer par un mot simple |
 | Phrase > 30 mots | Couper en deux phrases, une idee par phrase |
-| Conclusion enterree | Mettre l'essentiel en premier (pyramide inversee) |
+| Abstraction sans referent | Montrer une chose concrete (prose-fenetre) |
 | Jargon | Remplacer par le mot courant equivalent |
+| Doute sur la clarte | Lire a voix haute et corriger les achoppements |

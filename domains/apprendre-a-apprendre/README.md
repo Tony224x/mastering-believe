@@ -2,7 +2,7 @@
 
 > **Pilier** : Esprit | **Track** : Vie  
 > **Niveau** : Debutant absolu — aucun prerequis  
-> **Duree estimee** : 7 modules × ~45 min = ~5 h 15 min de theorie + exercices
+> **Duree estimee** : 14 modules × ~45 min = ~10 h 30 de theorie + exercices
 
 ---
 
@@ -22,17 +22,24 @@ Aucun. Juste de la curiosite et un stylo (ou un editeur de texte).
 
 ---
 
-## Planning — 7 modules (~45 min chacun)
+## Planning — 14 modules (~45 min chacun)
 
 | # | Module | Technique cle | Temps |
 |---|--------|---------------|-------|
-| 01 | Pourquoi tu oublies | Courbe d'oubli, illusion de competence | 45 min |
-| 02 | Retrieval practice | Active recall, flashcards, blank-page | 45 min |
+| 01 | Pourquoi tu oublies (+ mythe des styles) | Courbe d'oubli, illusion de competence, debunk VAK | 45 min |
+| 02 | Retrieval practice | Active recall, flashcards, blank-page, enseigner a un pair | 45 min |
 | 03 | Spaced repetition | SM-2, intervalles croissants, Anki | 45 min |
-| 04 | Difficultes desirables | Interleaving, variation, chunking | 45 min |
-| 05 | Attention & deep work | Concentration, charge cognitive, sessions | 45 min |
-| 06 | Pratique deliberee & metacognition | Feedback, Feynman, pilotage | 45 min |
-| 07 | Capstone — Apprendre avec l'IA | Systeme augmente, tuteur socratique | 45 min |
+| 04 | Difficultes desirables | Interleaving, variation | 45 min |
+| 05 | Elaboration & encodage profond | Self-explanation, dual coding (utilite moderee) | 45 min |
+| 06 | Attention & deep work | Charge cognitive, memoire de travail, chunking | 45 min |
+| 07 | Pratique deliberee | Feedback, representations mentales, nuance Macnamara | 45 min |
+| 08 | Metacognition | Planifier/monitorer/ajuster, Feynman, calibration | 45 min |
+| 09 | Mesurer son apprentissage | Test pre/post, retention, metriques | 45 min |
+| 10 | Motivation, habitudes & energie | Boucles d'habitude, procrastination, apprendre sous pression | 45 min |
+| 11 | Lecture & prise de notes | SQ3R, Cornell, debunk surlignage | 45 min |
+| 12 | Acquisition d'une competence | Stades de Fitts, decomposition, drills | 45 min |
+| 13 | Apprendre avec l'IA | Tuteur socratique, generateur retrieval/espacement (2-sigma) | 45 min |
+| 14 | Capstone — Systeme d'apprentissage augmente | Plan retrieval/espacement + boucle IA + metriques | 45 min |
 
 **Ordre recommande :** lineaire. Chaque module s'appuie sur le precedent.
 

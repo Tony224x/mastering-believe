@@ -3,6 +3,7 @@
 > **Prerequis** : avoir lu `01-theory/03-clarte-ecriture.md`
 > **Duree estimee** : 30-40 min
 > **Solutions** : `03-exercises/solutions/03-clarte-ecriture.md`
+> **Perimetre** : principes *cognitifs* de clarte. Les formats pro (email, BLUF) sont travailles au Module 10 — ici on travaille la phrase, pas le gabarit.
 
 ---
 
@@ -10,7 +11,7 @@
 
 ### Objectif
 
-Identifier precisement les causes d'opacite d'un texte (nominalisations, passif sans acteur, mots-coussins, phrases trop longues) avant de le réécrire.
+Identifier precisement les causes d'opacite d'un texte (nominalisations, passif sans acteur, mots-coussins, phrases trop longues) avant de le reecrire.
 
 ### Consigne
 
@@ -30,16 +31,16 @@ Puis redigez une version claire du paragraphe (max 60 mots, contre ~100 dans l'o
 - [ ] Au moins 6 nominalisations identifiees.
 - [ ] Au moins 2 constructions passives sans acteur identifiees.
 - [ ] Au moins 4 formules-coussins identifiees.
-- [ ] La version reecrite est a la voix active, avec un sujet concret pour chaque verbe principal.
+- [ ] La version reecrite est a la voix active, avec un sujet concret (acteur) pour chaque verbe principal.
 - [ ] La version reecrite fait 60 mots maximum et conserve les informations essentielles.
 
 ---
 
-## Exercice 2 — Reecrire pour la clarte
+## Exercice 2 — Reecrire pour la clarte (acteurs et actions)
 
 ### Objectif
 
-Appliquer les principes "sujet = acteur, verbe = action" et "concision" pour transformer un texte lourd en prose lisible.
+Appliquer les principes "sujet = acteur, verbe = action" et "concision" (Williams) pour transformer un texte lourd en prose lisible.
 
 ### Consigne
 
@@ -62,32 +63,29 @@ Redigez une version claire de chacun des trois segments ci-dessous. Pour chaque 
 - [ ] Chaque version reecrite identifie un sujet humain ou organisationnel concret.
 - [ ] Chaque verbe principal est un verbe d'action direct (pas "il a ete procede a", pas "une decision a ete prise").
 - [ ] Chaque version est au moins 30 % plus courte (compter les mots).
-- [ ] Aucune information essentielle n'a ete perdue dans la réécriture.
+- [ ] Aucune information essentielle n'a ete perdue dans la reecriture.
 
 ---
 
-## Exercice 3 — Structurer un email en pyramide inversee
+## Exercice 3 — Prose-fenetre : concretiser et reviser a voix haute
 
 ### Objectif
 
-Produire un email professionnel court, structure en pyramide inversee (conclusion d'abord, raisons ensuite, details en dernier).
+Appliquer l'ideal de prose-fenetre (Pinker) — montrer une chose concrete plutot qu'empiler des abstractions — puis verifier la clarte par une revision a voix haute.
 
 ### Consigne
 
-Vous avez organise une session de formation interne prevue jeudi prochain a 14h. Vous devez informer les 8 participants d'un changement de salle : la salle B210 est indisponible, vous basculez en salle A105 au meme batiment. L'acces a la salle A105 requiert un badge (les participants en ont tous un). La duree et l'heure restent les memes.
+Vous expliquez a un nouveau collegue, par ecrit, pourquoi votre equipe documente son travail au fur et a mesure. Voici une premiere version, abstraite et opaque :
 
-Redigez un email qui :
-1. Annonce le changement des la premiere phrase (pyramide inversee).
-2. Donne les informations pratiques necessaires dans l'ordre de leur importance.
-3. N'inclut que ce dont les destinataires ont besoin de savoir.
-4. Fait moins de 80 mots (corps du message, hors formules de politesse).
+> "L'enjeu de la perennisation des actifs informationnels au sein de notre structure necessite la mise en place d'une demarche systematique de formalisation des connaissances, de maniere a garantir une optimisation de la transmission inter-collaborateurs et une reduction des situations de dependance vis-a-vis de ressources humaines specifiques."
 
-Puis expliquez en 2-3 lignes pourquoi vous avez choisi cet ordre d'informations.
+1. **Diagnostic prose-fenetre** : reperez 3 endroits ou le texte ne *montre rien de concret* (abstractions sans chose visible derriere). Pour chacun, ecrivez la chose concrete qu'on pourrait montrer a la place (ex. "actifs informationnels" → "les notes, les schemas, le code de l'equipe").
+2. **Reecriture** : redigez une version prose-fenetre (max 50 mots) qui montre une situation concrete, parle au collegue comme a un egal, et n'emploie aucune nominalisation vide.
+3. **Revision a voix haute** : relisez votre version a voix haute. Notez en 1-2 lignes le ou les endroits ou vous avez trebuche ou manque de souffle, et corrigez-les.
 
 ### Criteres de reussite
 
-- [ ] La premiere phrase contient l'information principale (changement de salle).
-- [ ] Les informations pratiques indispensables (quelle salle, meme heure, badge suffisant) sont presentes.
-- [ ] Aucune information inutile (historique de la salle B210, excuses elaborees, details non actionnables).
-- [ ] Le corps du message fait 80 mots maximum.
-- [ ] La justification de l'ordre demontre la logique "lecteur-d'abord" (pas "logique de l'emetteur").
+- [ ] 3 abstractions reperees, chacune remplacee par une chose concrete et visible.
+- [ ] La version reecrite fait 50 mots maximum, sans nominalisation vide ("perennisation", "optimisation", "formalisation"...).
+- [ ] La version montre une situation concrete (on peut "voir" de quoi on parle).
+- [ ] La passe a voix haute est documentee : au moins un point d'achoppement identifie et corrige (ou justification explicite qu'il n'y en avait pas).

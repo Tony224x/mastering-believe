@@ -13,18 +13,23 @@ Ce domaine couvre les **fondamentaux universels** de la finance personnelle selo
 **Public vise** : adultes francophones debutants ou intermediaires. **Aucun prerequis math avance** n'est requis — arithmetique de base suffit. Pas de jargon inutile, concret avant abstrait.
 
 **Ce que vous apprendrez** :
-- Comprendre et exploiter les interets composes (le moteur de toute richesse a long terme)
-- Construire un budget solide et un fonds d'urgence qui vous protege
-- Gerer la dette intelligemment et comprendre le cout reel du credit
-- Investir simplement, a bas cout et sur le long terme
-- Reconnaitre vos biais psychologiques et y resister
-- Viser l'independance financiere avec methode et realisme
-- Construire votre propre plan financier chiffre (capstone)
+- Comprendre et exploiter les interets composes — y compris le rendement **reel** (ajuste de l'inflation)
+- Construire un budget solide, automatiser son epargne et constituer un fonds d'urgence
+- Definir des objectifs financiers par horizon et etapes de vie
+- Gerer la dette et le credit (et comprendre le score de credit)
+- Poser les bases de l'investissement (risque/rendement, diversification) puis investir via des fonds indiciels a bas cout
+- Comprendre les principes fiscaux generaux et le role des enveloppes
+- Reconnaitre vos biais psychologiques et reperer les arnaques financieres
+- Assurer et transferer le risque ; decider acheter vs louer par la donnee
+- Augmenter et negocier ses revenus (le levier #1 d'une vie)
+- Viser l'independance financiere avec methode (regle des 4 % et ses limites)
+- Situer crypto et robo-advisors de facon neutre
+- Construire votre propre simulateur de plan financier (capstone)
 
 **Ce que ce domaine n'est PAS** :
 - Un guide de stock-picking ou de day-trading
-- Un cours sur la crypto ou les placements speculatifs
-- Un conseil fiscal adapte a votre pays ou situation personnelle
+- Une promotion de la crypto ou de placements speculatifs (presentes de facon neutre, par la donnee)
+- Un conseil fiscal adapte a votre pays ou situation personnelle (principes generaux uniquement)
 - Une promesse de "s'enrichir vite"
 
 ---
@@ -37,47 +42,57 @@ Ce domaine couvre les **fondamentaux universels** de la finance personnelle selo
 
 ---
 
-## Planning — 7 modules (~45 min chacun)
+## Planning — 14 modules (~45 min chacun)
 
-| # | Slug | Titre | Temps |
-|---|------|-------|-------|
-| 01 | `01-interets-composes` | Le moteur : interets composes et valeur du temps | ~45 min |
-| 02 | `02-budget-epargne-fonds-urgence` | Se payer en premier : budget, epargne automatique et fonds d'urgence | ~45 min |
-| 03 | `03-dette-credit` | Maitriser la dette et le credit | ~45 min |
-| 04 | `04-investir-long-terme` | Investir simplement et sur le long terme | ~45 min |
-| 05 | `05-psychologie-argent-frais` | Le facteur humain : psychologie de l'argent et impact des frais | ~45 min |
-| 06 | `06-independance-financiere` | Cap long terme : independance financiere et retrait soutenable | ~45 min |
-| 07 | `07-capstone-plan-financier` | Capstone : mon plan financier personnel chiffre | ~60 min |
+| Jour | Slug | Titre | Temps |
+|------|------|-------|-------|
+| J1 | `01-interets-composes` | Interets composes, valeur du temps et inflation | ~45 min |
+| J2 | `02-budget-se-payer-dabord` | Budget et se payer en premier | ~45 min |
+| J3 | `03-fonds-urgence-objectifs` | Fonds d'urgence, objectifs et etapes de vie | ~45 min |
+| J4 | `04-dette-credit` | Dette, credit et score de credit | ~45 min |
+| J5 | `05-bases-investissement` | Bases de l'investissement (risque/rendement, diversification) | ~45 min |
+| J6 | `06-fonds-indiciels-allocation` | Fonds indiciels et allocation | ~45 min |
+| J7 | `07-fiscalite-enveloppes` | Fiscalite et enveloppes (principes universels) | ~45 min |
+| J8 | `08-psychologie-arnaques` | Psychologie de l'argent et arnaques | ~45 min |
+| J9 | `09-assurance-risque` | Assurance, gestion du risque et transmission | ~45 min |
+| J10 | `10-immobilier-location` | Immobilier vs location et gros achats | ~45 min |
+| J11 | `11-revenus-negociation` | Revenus et negociation salariale | ~45 min |
+| J12 | `12-independance-financiere` | Independance financiere et retrait soutenable | ~45 min |
+| J13 | `13-actifs-numeriques-robo` | Actifs numeriques et robo-advisors (neutre) | ~45 min |
+| J14 | `14-capstone-plan-financier` | Capstone : simulateur de plan financier | ~60 min |
 
-**Duree totale estimee** : ~5,5 h de formation + exercices
+**Duree totale estimee** : ~11 h de formation + exercices
 
 ---
 
 ## Criteres de reussite du domaine
 
-A l'issue des 7 modules, vous devez etre capables de :
+A l'issue des 14 modules, vous devez etre capables de :
 
-- [ ] Calculer la valeur finale d'une epargne reguliere sur 20-30 ans avec les interets composes
-- [ ] Rediger votre propre budget mensuel avec la regle 50/30/20 et identifier vos leviers
-- [ ] Calculer le cout reel d'un credit (TAEG, total des interets) et decider si s'endetter vaut le coup
-- [ ] Expliquer pourquoi les fonds indiciels a bas cout surperforment en moyenne la gestion active nette de frais
-- [ ] Identifier trois biais psychologiques qui sabotent les decisions financieres et les contourner
-- [ ] Calculer votre taux d'epargne actuel et simuler un scenario d'independance financiere
-- [ ] Produire un plan financier personnel chiffre : budget + objectif fonds d'urgence + allocation d'investissement + projection a 20 ans (capstone module 07)
+- [ ] Calculer la valeur finale d'une epargne reguliere sur 20-30 ans, en nominal **et en reel** (inflation)
+- [ ] Rediger votre budget mensuel (50/30/20), automatiser l'epargne et fixer des objectifs par horizon
+- [ ] Calculer le cout reel d'un credit (TAEG, total des interets) et expliquer le score de credit
+- [ ] Distinguer risque/rendement et expliquer pourquoi la diversification reduit le risque
+- [ ] Expliquer (preuves SPIVA, avec leur nuance) pourquoi les fonds indiciels a bas cout sont difficiles a battre nettement de frais
+- [ ] Decrire les principes fiscaux generaux et le role des enveloppes
+- [ ] Identifier des biais psychologiques et reconnaitre les schemas d'arnaque courants
+- [ ] Raisonner acheter vs louer par la donnee, et preparer une negociation salariale
+- [ ] Simuler un scenario d'independance financiere (regle des 4 % et ses limites)
+- [ ] Produire un simulateur de plan financier parametrable : budget + fonds d'urgence + allocation + projection reelle a 20-30 ans (capstone J14)
 
 ---
 
-## Capstone (Module 07)
+## Capstone (J14)
 
-Le capstone est un **plan financier personnel chiffre** que vous construirez pas a pas :
+Le capstone est un **simulateur de plan financier parametrable** (`02-code/14-capstone-plan-financier.py`) ou vous entrez **vos** chiffres :
 1. Budget mensuel detaille et taux d'epargne
 2. Objectif et calendrier de constitution du fonds d'urgence
 3. Inventaire et plan de remboursement de la dette
-4. Allocation d'investissement simulee (fonds indiciels, horizon)
-5. Projection d'interets composes sur 20-30 ans avec differents scenarios
-6. Cible optionnelle d'independance financiere (taux de retrait soutenable)
+4. Allocation d'investissement simulee (vos % en entree, jamais imposes)
+5. Projection d'interets composes sur 20-30 ans, **nominale et reelle**
+6. Cible optionnelle d'independance financiere (taux de retrait soutenable et ses limites)
 
-Ce plan est le votre — educatif, pas un conseil personnalise.
+C'est un **gabarit educatif** : il affiche des projections a partir d'hypotheses ajustables, **pas une recommandation**.
 
 ---
 
@@ -88,7 +103,7 @@ domains/finance-personnelle/
 ├── README.md          # Ce fichier
 ├── PLAN.md            # Curriculum fige et notes editoriales
 ├── REFERENCES.md      # Sources tier-1 par module
-├── 01-theory/         # Cours theoriques (Modules 01-07)
+├── 01-theory/         # Cours theoriques (Modules 01-14)
 ├── 02-code/           # Calculateurs et exemples Python (stdlib)
 ├── 03-exercises/      # Exercices progressifs + solutions
 │   ├── 01-easy/

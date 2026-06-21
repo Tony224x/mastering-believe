@@ -15,22 +15,29 @@ Tous les exemples utilisent des terrains neutres : probabilites, jeux, meteo, sp
 
 Aucun. Maths de niveau college suffisants (fractions, pourcentages, produit en croix). Aucune connaissance en psychologie ou statistiques requise.
 
-## Planning (7 modules, ~45 min chacun)
+## Planning (14 modules, ~45 min chacun)
 
-| Module | Titre | Temps | Focus |
-|--------|-------|-------|-------|
-| 01 | Le systeme d'exploitation du jugement | 45 min | Systeme 1 / Systeme 2, definition d'un biais, rationalite vs intelligence |
-| 02 | Probabilites utiles en 45 minutes | 45 min | Frequences, probabilite conditionnelle, taux de base, faux positifs |
-| 03 | Pensee bayesienne et mise a jour | 45 min | Theoreme de Bayes intuitif + calcul, priors/posteriors |
-| 04 | Heuristiques et biais (les robustes) | 45 min | Ancrage, disponibilite, cadrage, base rate neglect + nuance replication |
-| 05 | Decision sous incertitude | 45 min | Esperance, utilite, aversion au risque, arbres de decision |
-| 06 | Calibration et forecasting | 45 min | Score de Brier, lecons des superforecasters, journal de previsions |
-| 07 | Capstone — La boite a outils de jugement | 45 min | Checklist pre-decision + journal calibre + protocole de verification |
+| Module | Titre | Focus |
+|--------|-------|-------|
+| 01 | Le systeme du jugement | Systeme 1 / Systeme 2, definition d'un biais, rationalite vs intelligence |
+| 02 | Arguments & sophismes | Structure premisses->conclusion, validite vs solidite, sophismes courants |
+| 03 | Probabilites en frequences naturelles | Taux de base, probabilite conditionnelle, faux positifs |
+| 04 | Pensee bayesienne | Bayes (notation) + mise a jour iterative prior->posterior |
+| 05 | Heuristiques & biais | Ancrage, disponibilite, cadrage, confirmation + nuance replication |
+| 06 | Rationalite ecologique | Heuristiques rapides et frugales (Gigerenzer), less-is-more |
+| 07 | Decision sous incertitude | Esperance, utilite, aversion au risque, arbres de decision |
+| 08 | Calibration & forecasting | Score de Brier, superforecasters, journal de previsions |
+| 09 | Pensee causale | Correlation != causation, confondants, contrefactuels, RCT |
+| 10 | Lire une etude & stats trompeuses | p-hacking, taille d'effet > p-value, pieges des stats medias |
+| 11 | Verification de l'information | SIFT, lecture laterale, deepfakes, hallucinations LLM |
+| 12 | Pensee systemique | Stocks/flux, boucles de retroaction, effets de second ordre |
+| 13 | Debiaisage en pratique | Pre-mortem, red teaming, checklists, groupthink |
+| 14 | Capstone — Boite a outils de jugement | Checklist + arbre de decision + journal calibre (Brier) + protocole SIFT |
 
 ## Structure du contenu
 
-- `01-theory/` — 7 modules theoriques (source-of-truth)
-- `02-code/` — scripts Python autonomes (taux de base, mise a jour bayesienne)
+- `01-theory/` — 14 modules theoriques (source-of-truth)
+- `02-code/` — scripts Python autonomes (frequences, Bayes, decision, Brier, p-hacking, systemes)
 - `03-exercises/` — exercices progressifs easy/medium/hard avec solutions
 - `04-projects/` — mini-projets libres lies au domaine
 

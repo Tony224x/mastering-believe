@@ -14,6 +14,8 @@ Contenu :
     3. Comparaison de scenarios (Alice vs Bob)
     4. Impact de la frequence de capitalisation
     5. Regle des 72 (approximation rapide)
+    6. Comparaison de scenarios d'epargne
+    7. Rendement REEL (ajuste de l'inflation) — pouvoir d'achat
 
 Dependances : stdlib uniquement (math, decimal) — aucune installation requise.
 """
@@ -113,6 +115,38 @@ def duree_doublement_exact(taux_annuel: float, n: int = 1) -> float:
     if taux_annuel <= 0:
         return float("inf")
     return math.log(2) / (n * math.log(1 + taux_annuel / n))
+
+
+def taux_reel(taux_nominal: float, inflation: float) -> float:
+    """
+    Convertit un rendement NOMINAL en rendement REEL (ajuste de l'inflation).
+
+    On utilise la formule exacte de Fisher, et non l'approximation
+    "nominal - inflation". POURQUOI : l'approximation est commode mentalement
+    mais sous-estime legerement l'erosion ; pour un calculateur on prefere
+    l'exactitude. L'approximation reste affichee a cote pour montrer l'ecart.
+
+        taux_reel = (1 + nominal) / (1 + inflation) - 1
+
+    Parametres
+    ----------
+    taux_nominal : rendement affiche en decimal (ex. 0.05 pour 5 %)
+    inflation    : taux d'inflation annuel en decimal (ex. 0.03 pour 3 %)
+    """
+    return (1 + taux_nominal) / (1 + inflation) - 1
+
+
+def pouvoir_achat(montant: float, inflation: float, annees: float) -> float:
+    """
+    Valeur REELLE future d'un montant nominal fige, rongee par l'inflation.
+
+    POURQUOI : un solde qui ne bouge pas (cash dormant) perd du pouvoir
+    d'achat chaque annee. On actualise le montant nominal par l'inflation
+    composee pour exprimer ce qu'il "vaudra" en euros d'aujourd'hui.
+
+        pouvoir_achat = montant / (1 + inflation)^annees
+    """
+    return montant / (1 + inflation) ** annees
 
 
 # ---------------------------------------------------------------------------
@@ -279,6 +313,55 @@ def demo_comparaison_scenarios() -> None:
         print(f"  {label:40}  {formater_eur(verses)}  {formater_eur(montant)}")
 
 
+def demo_rendement_reel() -> None:
+    """
+    Montre la difference entre rendement nominal et rendement REEL,
+    puis l'erosion du pouvoir d'achat d'un cash dormant.
+    """
+    afficher_titre("7. Rendement reel — ajuste de l'inflation")
+
+    # --- Partie A : du nominal au reel ---
+    inflation = 0.03  # hypothese illustrative
+    print(f"  Hypothese d'inflation : {inflation * 100:.1f} % / an")
+    print()
+    print(f"  {'Nominal':>10}  {'Approx (n-i)':>13}  {'Reel exact':>12}")
+    print(f"  {'-'*10}  {'-'*13}  {'-'*12}")
+    for nominal in (0.02, 0.05, 0.07, 0.10):
+        approx = nominal - inflation                 # heuristique courante
+        reel = taux_reel(nominal, inflation)         # formule de Fisher exacte
+        print(f"  {nominal*100:>8.1f} %  {approx*100:>11.2f} %  {reel*100:>10.2f} %")
+
+    print()
+    print("  Lecture : un livret a 2 % avec 3 % d'inflation rapporte un")
+    print("  rendement REEL negatif (~-1 %). Le solde monte, le pouvoir")
+    print("  d'achat baisse.")
+
+    # --- Partie B : erosion d'un cash dormant ---
+    print()
+    print(f"  Pouvoir d'achat reel de {formater_eur(10_000).strip()} a {inflation*100:.0f} % d'inflation :")
+    print(f"  {'Duree':>8}  {'Valeur reelle':>15}")
+    print(f"  {'-'*8}  {'-'*15}")
+    for annees in (10, 20, 30):
+        reste = pouvoir_achat(10_000, inflation, annees)
+        print(f"  {annees:>6} ans  {formater_eur(reste)}")
+
+    # --- Partie C : capital investi, nominal vs reel ---
+    print()
+    print("  Capital de 10 000 € + 200 €/mois sur 30 ans :")
+    capital, versement, duree = 10_000, 200, 30
+    nominal = 0.07
+    reel = taux_reel(nominal, inflation)
+    final_nominal = capital_final(capital, nominal, duree, versement)
+    # POURQUOI : on rejoue le meme calcul avec le taux REEL pour obtenir le
+    # capital exprime en euros d'aujourd'hui (a pouvoir d'achat constant).
+    final_reel = capital_final(capital, reel, duree, versement)
+    print(f"  Capital final NOMINAL (a {nominal*100:.0f} %)        : {formater_eur(final_nominal)}")
+    print(f"  Capital final REEL    (a {reel*100:.1f} % reel) : {formater_eur(final_reel)}")
+    print()
+    print("  Le capital reel est ce que vous pourrez vraiment acheter :")
+    print("  c'est lui qui doit guider fonds d'urgence et regle des 4 %.")
+
+
 # ---------------------------------------------------------------------------
 # Point d'entree
 # ---------------------------------------------------------------------------
@@ -301,6 +384,7 @@ if __name__ == "__main__":
     demo_frequence_capitalisation()
     demo_regle_72()
     demo_comparaison_scenarios()
+    demo_rendement_reel()
 
     print()
     print("=" * 60)

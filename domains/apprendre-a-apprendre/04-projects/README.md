@@ -1,7 +1,8 @@
-# Gabarit — Systeme d'apprentissage personnel augmente
+# Gabarit portfolio — Systeme d'apprentissage personnel augmente
 
-> **Module** : Capstone du domaine "Apprendre a apprendre"
+> **Module** : Capstone J14 du domaine "Apprendre a apprendre"
 > **Usage** : copie ce gabarit, remplis-le pour chaque nouveau domaine que tu veux maitriser. C'est ton contrat avec toi-meme.
+> **Consigne** : aucune section ne doit rester vide ou en "a completer". Si une section ne s'applique pas, ecris explicitement pourquoi.
 
 ---
 
@@ -70,7 +71,26 @@
 
 ---
 
-## 5. Role de l'IA dans ce systeme
+## 5. Metriques de suivi (Module 09)
+
+> Ce tableau est la difference entre apprendre et avoir l'impression d'apprendre. Rempli a chaque session — jamais a partir de la memoire du lendemain.
+
+| Metrique | Description | Frequence | Colonne de suivi |
+|----------|-------------|-----------|-----------------|
+| **Taux de rappel** | % de reponses correctes a livre ferme | Chaque session de revision | ___ % |
+| **Retention J+7** | % de rappel 7 jours apres la premiere exposition | Hebdomadaire | ___ % |
+| **Ratio comprendre / produire** | Comprendre quand tu lis vs produire sans aide (0–10) | Bilan hebdomadaire | ___/10 |
+| **Delta pre / post** | Score avant le bloc d'etude vs apres | Debut + fin de chaque bloc | ___→___ |
+
+**Ou je vais consigner ces metriques :**
+- [ ] Tableau dans ce fichier (version ci-dessus)
+- [ ] Carnet papier
+- [ ] Fichier Notion / Obsidian
+- [ ] Autre : ___
+
+---
+
+## 6. Role de l'IA dans ce systeme
 
 > Specifie le mode, le timing et le prompt type — pas juste "j'utiliserai ChatGPT".
 
@@ -93,7 +113,7 @@
 
 ---
 
-## 6. Boucle metacognitive
+## 7. Boucle metacognitive
 
 ### Bilan hebdomadaire (dimanche, 10 min)
 - Score du test de la semaine : ___
@@ -113,7 +133,7 @@
 
 ---
 
-## 7. Capstone du projet (livrable final)
+## 8. Capstone du projet (livrable final)
 
 **Qu'est-ce que je vais produire / faire a la fin de ce projet pour prouver la maitrise ?**
 (Un projet deployable, une presentation, un test officiel, un article explicatif, une demo...)
@@ -134,4 +154,4 @@
 
 ---
 
-> *Ce gabarit est inspire du cadre "2-sigma" de Bloom (1984) — tutorat individuel avec mastery learning — applique a l'auto-apprentissage augmente par IA. Il operationnalise les sept modules du domaine "Apprendre a apprendre" en un systeme coherent et reutilisable.*
+> *Ce gabarit est inspire du cadre "2-sigma" de Bloom (1984) — tutorat individuel avec mastery learning — applique a l'auto-apprentissage augmente par IA. Il operationnalise les 13 modules du domaine "Apprendre a apprendre" en un systeme coherent et reutilisable : encoder (Modules 04–06), ancrer (Modules 02–03), monitorer (Module 09), progresser (Modules 07–08, 12), boucle IA (Module 13).*

@@ -96,3 +96,16 @@ https://www.nature.com/articles/s41586-021-03344-2
 **Poor Charlie's Almanack** — Charles T. Munger (ed. Peter D. Kaufman), 2005. Reed. Stripe Press 2023.
 https://www.stripe.press/poor-charlies-almanack/
 — Notion de latticework of mental models. A presenter comme heuristique d'organisation (pas comme verite economique). Discours cle : "The Psychology of Human Misjudgment".
+
+---
+
+## Extension J1-J14 (mode full) — sources additionnelles des nouveaux modules
+
+Sourcage detaille (verifie web) dans `shared/track-vie/rationalite-decision-j14-sources.md`. Sources tier-1 par nouveau module :
+
+- **J02 Arguments & sophismes** — logique informelle (manuels de pensee critique reconnus) ; sophismes classiques.
+- **J06 Rationalite ecologique** — Gigerenzer & Goldstein 1996 (*Psychological Review* 103(4):650-669) ; Gigerenzer, Todd & ABC 1999.
+- **J09 Pensee causale** — Pearl & Mackenzie, *The Book of Why* (2018) ; Hernan & Robins, *Causal Inference: What If* (2020).
+- **J10 Lire une etude** — Ioannidis 2005 (*PLoS Medicine*) ; Simmons, Nelson & Simonsohn 2011 (*Psychological Science*) ; Open Science Collaboration 2015 (*Science*).
+- **J12 Pensee systemique** — Meadows, *Thinking in Systems* (2008).
+- **J13 Debiaisage** — Klein 2007 (pre-mortem, *HBR* ; chiffre ~30% : Mitchell, Russo & Pennington 1989) ; Nemeth et al. 2001 (*EJSP*, DOI 10.1002/ejsp.58) ; Gawande, *The Checklist Manifesto* (2009) ; Janis, *Groupthink* (1982, mecanisme uniquement).

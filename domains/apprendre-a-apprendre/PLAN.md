@@ -1,70 +1,87 @@
-# PLAN — Apprendre a apprendre (curriculum fige)
+# PLAN figé — `apprendre-a-apprendre` (cursus complet J1–J14, mode full)
 
-> Ce plan est **fige** : il ne doit pas etre modifie sans consensus. Il sert de contrat entre les agents de creation et de verification.
+> Contrat lu par les builders de Phase 4. **Ne lisez PAS les autres jours.**
+> Sources : `REFERENCES.md` du domaine + `shared/track-vie/apprendre-a-apprendre-references.md`,
+> `-curricula-evidence.md`, `-j14-sources.md`.
 
----
+## Règles transverses (OBLIGATOIRES sur CHAQUE jour)
+- **Anti-pseudoscience** : debunk explicite des neuromythes là où c'est pertinent, avec un **encart « Pseudoscience ? »** identifiable. Le mythe des **styles d'apprentissage (VAK)** doit être tué dès J1 (Pashler 2008, Dekker 2012). Autres : brain-training (Simons 2016), cerveau gauche/droit, « 10% du cerveau », « 10 000 heures » (Macnamara).
+- **Honnêteté sur la preuve** : bloc « statut de preuve / nuance » en fin des modules concernés, avec taille d'effet ou réplication. Ne PAS survendre : dual coding = utilité **modérée** ; sommeil-consolidation = poids causal **débattu** ; manuscrit>clavier = **réplication échouée 2019** (c'est le traitement, pas l'outil) ; 2-sigma = effet du **mastery learning 90%**, pas magie du tuteur ; pratique délibérée = **variance Macnamara** (pas « 10 000 h »).
+- Langue FR, **concret AVANT le principe**. ~45 min/module.
+- Format théorie : H1 `# Module N — Titre` ; `> **Temps estimé** : 45 min | **Prérequis** : Modules 01-0(N-1)` + `> **Objectif** :` ; sections ; `> **À retenir** :` ; **4-5 flash-cards** ; `## Points clés à retenir` ; `## Pour aller plus loin`.
+- Exercices : `03-exercises/01-easy/NN-slug.md` = **3 exercices gradués easy→hard** (Objectif/Consigne/Critères `- [ ]`). Solution : `03-exercises/solutions/NN-slug.md` (ou `.py` si code).
+- Code (seulement où indiqué) : `02-code/NN-slug.py`, stdlib pur, exit 0.
 
-## Note anti-pseudoscience transversale
-
-**Chaque module contient au moins un encart "Pseudoscience ?" quand pertinent.** L'objectif est de former un reflexe, pas de faire un module isole.
-
-Neuromythes a aborder explicitement :
-- **Styles d'apprentissage VAK** (module 01) — refutes par Pashler et al. 2008 (*PSPI*)
-- **Brain-training / Lumosity & co.** (module 01 ou 02) — pas de transfert generalise, Simons et al. 2016 (*PSPI*)
-- **"10 000 heures"** (module 06) — nuance forte via Macnamara et al. 2014 et Ericsson lui-meme (*Peak*)
-- **Cerveau gauche/droit, "on n'utilise que 10 % du cerveau"** (module 05) — Dekker et al. 2012 (*Frontiers in Psychology*)
-
-**Posture constante :** factuelle, non condescendante — expliquer pourquoi le mythe est seduisant avant de le refuter.
-
----
-
-## Curriculum module par module
-
-### Module 01 — Pourquoi tu oublies (et comment le savoir te change)
-**Objectif** : comprendre que la memoire est un systeme de recuperation (pas de stockage passif) et identifier l'illusion de competence.  
-**Sources** : Dunlosky 2013 ; Bjork/Dunlosky/Kornell 2013 ; Brown/Roediger/McDaniel 2014 (*Make It Stick*) ; Roediger & Karpicke 2006  
-**Neuromythe** : styles d'apprentissage VAK (Pashler 2008) + brain-training (Simons 2016)  
-**Flash-cards** : 4-5 sur courbe d'oubli, fluency illusion, memoire de travail vs long terme
-
-### Module 02 — Retrieval practice : se tester, pas se relire
-**Objectif** : maitriser la technique #1 de Dunlosky — active recall, flashcards, blank-page recall.  
-**Sources** : Roediger & Karpicke 2006 (*Psychological Science*) ; Karpicke & Roediger 2008 (*Science*) ; Dunlosky 2013 (utilite "elevee")  
-**Chiffre cle** : rappel a 1 semaine — 61 % (groupe testing) vs 40 % (groupe relecture) — Roediger & Karpicke 2006  
-**Flash-cards** : 4-5 sur testing effect, spacing effect, active recall vs re-encoding
-
-### Module 03 — Spaced repetition : espacer pour ancrer
-**Objectif** : comprendre la distributed practice, les intervalles croissants, et utiliser un systeme SRS (Anki/SM-2).  
-**Sources** : Cepeda et al. 2006 (*Psychological Bulletin*) ; Cepeda et al. 2008 (*Psychological Science*) ; SuperMemo/SM-2 (Wozniak 1987-1990)  
-**Regle chiffree** : gap optimal ≈ 10-20 % du delai avant test (Cepeda 2008)  
-**Code** : `02-code/03-spaced-repetition.py` — planificateur SM-2 simplifie (stdlib pur)  
-**Flash-cards** : 4-5 sur distributed vs massed practice, intervalles, facteur "easiness"
-
-### Module 04 — Difficultes desirables : interleaving & variation
-**Objectif** : comprendre pourquoi "plus dur sur le moment = mieux ancre" et appliquer l'interleaving.  
-**Sources** : Bjork & Bjork 2011 ; Rohrer & Taylor 2007 (*Instructional Science*) ; Rohrer, Dedrick & Stershic 2015 (*Journal of Educational Psychology*)  
-**Chiffre cle** : 72 % vs 38 % de reussite (entrelace vs bloque) — Rohrer et al. 2015
-
-### Module 05 — Attention & deep work : encoder en profondeur
-**Objectif** : comprendre la charge cognitive, le chunking, et structurer ses sessions d'etude sans distraction.  
-**Sources** : Newport 2016 (*Deep Work*) ; Cowan 2001 (*Behavioral and Brain Sciences*, ~4 chunks en memoire de travail)  
-**Neuromythe** : cerveau gauche/droit, "10 % du cerveau" — Dekker et al. 2012
-
-### Module 06 — Pratique deliberee & metacognition
-**Objectif** : passer de "retenir" a "devenir bon" ; piloter son propre apprentissage avec le feedback.  
-**Sources** : Ericsson & Pool 2016 (*Peak*) ; Bjork/Dunlosky/Kornell 2013 (*Annual Review of Psychology*) ; Macnamara et al. 2014  
-**Neuromythe** : "10 000 heures" — nuance forte (la qualite prime le volume, Macnamara 2014 : 26 % de variance seulement)
-
-### Module 07 — Capstone : apprendre avec l'IA
-**Objectif** : assembler tout le domaine en un systeme personnel augmente par un LLM.  
-**Sources** : Bloom 1984 (2 sigma problem) ; Brown/Roediger/McDaniel 2014 (*Make It Stick*)  
-**Livrable** : README de systeme personnel (retrieval + spacing + deliberate practice + tuteur LLM)
+## Carte de réutilisation
+| Nouveau | Réutilise l'existant |
+|---------|----------------------|
+| 01-pourquoi-tu-oublies | `01-theory/01-pourquoi-tu-oublies.md` (upgrade + ajouter styles d'apprentissage) |
+| 02-retrieval-practice | `02-retrieval-practice.md` |
+| 03-spaced-repetition | `03-spaced-repetition.md` + `02-code/03-spaced-repetition.py` |
+| 04-difficultes-desirables | `04-difficultes-desirables.md` |
+| 06-attention-deep-work | `05-attention-deep-work.md` |
+| 07-pratique-deliberee | `06-pratique-deliberee-metacognition.md` (partie pratique délibérée) |
+| 08-metacognition | `06-pratique-deliberee-metacognition.md` (partie métacognition) |
+| 13-apprendre-avec-ia | `07-capstone-apprendre-avec-ia.md` (devient module d'enseignement, plus le capstone) |
 
 ---
 
-## Contraintes pedagogiques globales
+## J1 — Pourquoi tu oublies (+ mythe des styles d'apprentissage)
+- Courbe d'oubli (Ebbinghaus) ; mémoire = récupération (pas stockage passif) ; illusion de compétence (fluency). **Encart Pseudoscience : styles d'apprentissage = mythe** (Pashler 2008, Dekker 2012). Mention sommeil = consolidation (nuance Schmid 2022).
+- Slug : `01-pourquoi-tu-oublies`. Pas de code.
 
-1. **Concret avant abstrait** — exemple d'abord, principe ensuite
-2. **Pareto-first** — les 3 premiers modules couvrent 80 % du gain
-3. **Flashcards a chaque module** — 4-5 cartes au format Q/R
-4. **Encarts pseudoscience** — minimum 1 par module ou les modules 01, 02, 05, 06 en portent la charge principale
-5. **Code standalone** — le script SM-2 tourne avec `python 02-code/03-spaced-repetition.py` sans dependance externe
+## J2 — Retrieval practice
+- Active recall, flashcards, blank-page recall ; effet test. Variante : **enseigner à un pair** (retrieval génératif). Source : Roediger & Karpicke 2006.
+- Slug : `02-retrieval-practice`. Pas de code.
+
+## J3 — Spaced repetition & Anki
+- Distributed practice (Cepeda 2006) ; intervalles croissants ; SM-2 ; mise en place d'Anki.
+- Code : `03-spaced-repetition.py` (planificateur SM-2) — réutiliser l'existant.
+- Slug : `03-spaced-repetition`.
+
+## J4 — Difficultés désirables
+- Interleaving & variation (Bjork ; Rohrer & Taylor : interleaved 72% vs blocked 38%) ; pourquoi « plus dur sur le moment = mieux ancré ».
+- Slug : `04-difficultes-desirables`. Pas de code.
+
+## J5 — Élaboration & encodage profond (🆕)
+- Self-explanation (Chi) ; elaborative interrogation ; dual coding (Paivio) ; levels of processing (Craik & Lockhart — en encart, en posant sa **circularité**).
+- **Disclaimer obligatoire** : élaboration = utilité **modérée**, dual coding = utilité **faible→modérée** (Dunlosky 2013) — complément, PAS technique #1.
+- Slug : `05-elaboration-encodage`. Pas de code.
+
+## J6 — Attention, charge cognitive & deep work
+- Mémoire de travail (~4 chunks, Cowan) ; charge cognitive ; chunking ; focus sans distraction pendant la session (Newport). **= capacité cognitive** (le « se mettre au travail/durer » est en J10).
+- Slug : `06-attention-deep-work`. Pas de code.
+
+## J7 — Pratique délibérée
+- Objectifs précis + feedback immédiat + représentations mentales (Ericsson). **Nuance variance Macnamara** (la pratique explique ~26%/21%/18%… selon le domaine — dégonfler « 10 000 h »). *Théorie ; l'opérationnel par stades est en J12.*
+- Slug : `07-pratique-deliberee`. Pas de code.
+
+## J8 — Métacognition
+- Planifier / monitorer / ajuster ; technique Feynman ; calibrer ses jugements ; éviter l'illusion de fluidité.
+- Slug : `08-metacognition`. Pas de code.
+
+## J9 — Mesurer son apprentissage (🆕)
+- Feedback formatif ; test pré/post ; suivre la rétention dans le temps ; calibration (lien J8) ; définir des **métriques** d'apprentissage. *Prérequis caché du capstone J14.*
+- Code : `09-mesurer-apprentissage.py` (suivi de rétention + delta pré/post + courbe d'oubli mesurée).
+- Slug : `09-mesurer-apprentissage`.
+
+## J10 — Motivation, habitudes, énergie & apprendre sous pression
+- Boucles d'habitude (Wood & Rünger 2016) ; procrastination (Steel 2007) ; sommeil comme **énergie** ; **apprendre sous pression** : anxiété de test, valeur de l'erreur, jour J.
+- Slug : `10-motivation-habitudes`. Code optionnel (tracker d'habitudes léger).
+
+## J11 — Lecture & prise de notes efficaces
+- SQ3R (Robinson 1946), méthode Cornell (Pauk 1962) ; **debunk surlignage/relecture** (utilité faible, Dunlosky) ; manuscrit vs clavier : **réplication échouée Morehead 2019** → c'est le **traitement** (reformuler), pas l'outil.
+- Slug : `11-lecture-prise-notes`. Pas de code.
+
+## J12 — Acquisition d'une compétence (🆕, opérationnel)
+- **UN seul cadre transférable** : stades de Fitts & Posner (cognitif → associatif → autonome), décomposition d'une compétence, drills ciblés, immersion-avec-feedback, calibrage du feedback selon le stade. **Ne PAS multiplier les domaines** : 1 fil rouge (au choix, ex. le code) + 2-3 encarts courts pour la généralité. Renvoyer la théorie Ericsson à J7 (ne pas la re-faire).
+- Slug : `12-acquisition-competence`. Pas de code.
+
+## J13 — Apprendre avec l'IA
+- LLM comme tuteur socratique ; générateur de retrieval practice & d'espacement ; partenaire Feynman. **2-sigma de Bloom = effet du mastery learning (standard 90%), pas magie du tutorat** (disclaimer). Dépend de J9 (mesure) et J2/J3/J8.
+- Slug : `13-apprendre-avec-ia`. Pas de code (LLM mocké/illustratif ; pas de clé API requise).
+
+## J14 — Capstone : système d'apprentissage augmenté
+- Livrable portfolio : choisir un sujet réel, bâtir un **plan retrieval + espacement** (J2/J3), une **boucle IA** (J13), et des **métriques de suivi** (J9) ; auto-évaluer la rétention.
+- Livrables : `01-theory/14-capstone-systeme-apprentissage.md` (brief + grille) + exercices + solution + `04-projects/README.md` (gabarit). 
+- Slug : `14-capstone-systeme-apprentissage`.
