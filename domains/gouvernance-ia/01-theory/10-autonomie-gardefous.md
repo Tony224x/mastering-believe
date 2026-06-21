@@ -7,6 +7,8 @@
 
 Un agent gouvernable n'est pas un agent qu'on surveille en permanence — c'est un agent dont l'**autonomie est calibree sur le risque** et dont on peut **reprendre le controle** a tout instant. Ce module donne les leviers operationnels : autonomie graduee, garde-fous, kill-switch, reponse a incident, fin de vie.
 
+> **Repere anti-surcharge.** Beaucoup de leviers ici — gardez le fil. Les sections 2 a 5 ne sont pas des sujets separes : c'est **un seul gate d'autorisation runtime** que chaque action traverse, dans cet ordre operationnel : `kill-switch (actif ?) -> niveau d'autonomie (qui valide ?) -> budget (cumul restant ?) -> garde-fou (ALLOW / DENY / ESCALATE) -> ACT -> log`. Les sections 6 et 7 sont les **enveloppes** autour de ce gate : que faire quand il se declenche (reponse a incident) et comment retirer l'agent proprement (decommission). Une seule colonne vertebrale, pas sept sujets isoles.
+
 ---
 
 ## 1. Le probleme concret : l'agent qui rembourse 10 000 € tout seul

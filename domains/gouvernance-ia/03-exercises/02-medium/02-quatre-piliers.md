@@ -47,21 +47,21 @@ Materialiser les 4 piliers dans une Agent Card persistable et la recharger sans 
 
 ---
 
-## Exercice 3 : Distinguer ASI01 — usurpation vs abus de privilege
+## Exercice 3 : Distinguer ASI03 — usurpation vs abus de privilege
 
 ### Objectif
-Outiller la categorie OWASP **ASI01 (Identity and Privilege Abuse)** en deux sous-detecteurs distincts.
+Outiller la categorie OWASP **ASI03 (Identity and Privilege Abuse)** en deux sous-detecteurs distincts.
 
 ### Consigne
 1. Ecris deux fonctions de detection separees :
    - `detect_impersonation(agent) -> bool` : l'`agent_id` usurpe-t-il une identite humaine (prefixe `user:`/`human:`/`person:`/`employee:`) ?
    - `detect_privilege_abuse(agent) -> bool` : l'agent detient-il un scope dangereux **non justifie** par son role ? Modelise un role attendu (ex. un dict `ROLE_ALLOWED_SCOPES = {"summarizer": {"read:tickets", "write:ticket_summary"}}`) et signale tout scope **hors** de cet ensemble (ou un wildcard).
 2. Sur une petite flotte mixte, produis un tableau : pour chaque agent, `impersonation` (oui/non) et `privilege_abuse` (oui/non).
-3. Conclus : compte combien d'agents declenchent **au moins un** des deux signaux ASI01.
+3. Conclus : compte combien d'agents declenchent **au moins un** des deux signaux ASI03.
 
 ### Criteres de reussite
 - [ ] `detect_impersonation` distingue un `agent://...` (faux) d'un `user:...` (vrai)
 - [ ] `detect_privilege_abuse` signale un scope hors du role attendu et le wildcard
 - [ ] Le tableau couvre toute la flotte avec les deux colonnes
-- [ ] Le decompte final des agents « ASI01 » est correct sur ton echantillon
+- [ ] Le decompte final des agents « ASI03 » est correct sur ton echantillon
 - [ ] Un agent conforme a son role ne declenche **aucun** des deux signaux

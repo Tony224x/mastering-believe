@@ -24,7 +24,7 @@
 ## J2 — Les 4 piliers d'un agent gouvernable
 - **Concepts cles** : les 4 piliers — **identite** (qui est l'agent, de maniere unique), **owner nomme** (un humain responsable), **permissions** (ce qu'il a le droit de faire — moindre privilege en apercu), **audit trail** (trace verifiable de ce qu'il a fait) ; la notion d'**Agent Card** (declaration de capacites/auth) ; pourquoi les 4 sont indissociables (un agent sans owner = ingerable ; sans audit = non-prouvable) ; le « smell test » d'un agent *ungoverned*.
 - **Acquis a la fin du jour** : definir pour un agent donne ses 4 attributs de gouvernance ; reconnaitre et qualifier un agent non gouverne.
-- **Sources autorisees** : CSA — Agentic AI Identity and Access Management (2025) ; OWASP Top 10 for Agentic Applications 2026 (ASI = Identity & Privilege Abuse, etc.).
+- **Sources autorisees** : CSA — Agentic AI Identity and Access Management (2025) ; OWASP Top 10 for Agentic Applications 2026 (ASI03 = Identity & Privilege Abuse, etc.).
 - **Stack** : python stdlib — `@dataclass GovernedAgent` + validateur de completude de gouvernance (les 4 piliers presents et non vides ?).
 - **Slug** : `02-quatre-piliers`
 

@@ -57,7 +57,7 @@ Un agent change la nature du problème : il ne se contente pas de répondre, **i
 | Surface de risque | qualité de la prédiction | **excessive agency**, mésusage d'outil, identité |
 | Question clé | « la sortie est-elle correcte ? » | « **qui** a autorisé **quelle** action, **quand** ? » |
 
-C'est pour cela que la gouvernance agentique introduit ses propres concepts (identité de l'agent, propriétaire nommé, permissions, piste d'audit) que la gouvernance modèle ne couvrait pas. Les taxonomies de sécurité l'ont acté : l'OWASP a publié en décembre 2025 un *Top 10 for Agentic Applications* distinct du *Top 10 for LLM Applications*, où le tout premier risque est précisément l'abus d'identité et de privilèges [OWASP Gen AI Security Project, 2026].
+C'est pour cela que la gouvernance agentique introduit ses propres concepts (identité de l'agent, propriétaire nommé, permissions, piste d'audit) que la gouvernance modèle ne couvrait pas. Les taxonomies de sécurité l'ont acté : l'OWASP a publié en décembre 2025 un *Top 10 for Agentic Applications* distinct du *Top 10 for LLM Applications*, où l'abus d'identité et de privilèges figure en tête de liste — au 3ᵉ rang (**ASI03**), juste derrière le détournement d'objectif de l'agent (ASI01) et le mésusage d'outil (ASI02) [OWASP Gen AI Security Project, 2026].
 
 > **Key takeaway** — Un modèle *dit*, un agent *fait*. Gouverner un agent, ce n'est plus seulement contrôler une sortie : c'est tracer **qui** a autorisé **quelle action**, et pouvoir la **prouver** ou l'**arrêter**.
 

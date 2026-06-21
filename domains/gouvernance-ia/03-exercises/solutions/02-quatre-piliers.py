@@ -9,7 +9,7 @@ The `__main__` block is a smoke test exercising every solution.
 
 Real-world anchors (re-implemented in miniature, stdlib only):
   - Non-Human Identity / agent IAM ............. CSA, Agentic AI IAM (2025)
-  - ASI01 Identity & Privilege Abuse .......... OWASP Top 10 Agentic (2026)
+  - ASI03 Identity & Privilege Abuse .......... OWASP Top 10 Agentic (2026)
   - "humans remain ultimately accountable" .... IMDA Agentic framework (2026)
 
 # requires: stdlib only
@@ -211,7 +211,7 @@ def medium_ex2_serialize_card() -> None:
         print(f"  incomplete card -> ValueError: {e}")
 
 
-# ASI01 split into two distinct detectors (medium ex3).
+# ASI03 split into two distinct detectors (medium ex3).
 ROLE_ALLOWED_SCOPES = {
     "summarizer": {"read:tickets", "write:ticket_summary"},
 }
@@ -228,7 +228,7 @@ def detect_privilege_abuse(agent: GovernedAgent, role: str) -> bool:
     return any(scope not in allowed for scope in agent.permissions)
 
 
-def medium_ex3_asi01() -> None:
+def medium_ex3_asi03() -> None:
     fleet = [
         ("summarizer", GovernedAgent("agent://s/1", "Amina Diallo",
                                      ["read:tickets", "write:ticket_summary"])),
@@ -238,22 +238,22 @@ def medium_ex3_asi01() -> None:
                                      ["read:tickets"])),  # impersonation
         ("summarizer", GovernedAgent("agent://s/4", "Sam Park", ["*"])),  # wildcard
     ]
-    print("[medium3] ASI01 -- impersonation vs privilege abuse")
-    asi01 = 0
+    print("[medium3] ASI03 -- impersonation vs privilege abuse")
+    asi03 = 0
     for role, agent in fleet:
         imp = detect_impersonation(agent)
         abuse = detect_privilege_abuse(agent, role)
         if imp or abuse:
-            asi01 += 1
+            asi03 += 1
         print(f"  {agent.agent_id:<22} impersonation={imp!s:<5} abuse={abuse}")
-    print(f"  agents flagged ASI01: {asi01}")
+    print(f"  agents flagged ASI03: {asi03}")
 
 
 # ===========================================================================
 # === HARD ===
 # ===========================================================================
 # Weights sum to 100. Permissions & Identity weigh most: an over-privileged
-# or impersonating agent is the sharpest OWASP ASI01 risk; owner and audit,
+# or impersonating agent is the sharpest OWASP ASI03 risk; owner and audit,
 # while essential, fail "more recoverably".
 PILLAR_WEIGHTS = {"identity": 30, "owner": 20, "permissions": 35, "audit": 15}
 
@@ -362,7 +362,7 @@ def remediation_plan(agent: GovernedAgent) -> list[dict]:
     for issue in check_governance(agent):
         pillar = issue.split(":")[0].lower()
         if "wildcard" in issue or "impersonation" in issue:
-            prio = "CRITICAL"  # sharpest ASI01 risk
+            prio = "CRITICAL"  # sharpest ASI03 risk
         elif pillar == "owner":
             prio = "HIGH"
         else:
@@ -448,7 +448,7 @@ if __name__ == "__main__":
     print("\n===== MEDIUM =====")
     medium_ex1_least_privilege()
     medium_ex2_serialize_card()
-    medium_ex3_asi01()
+    medium_ex3_asi03()
     print("\n===== HARD =====")
     hard_ex1_scoring()
     hard_ex2_chain()

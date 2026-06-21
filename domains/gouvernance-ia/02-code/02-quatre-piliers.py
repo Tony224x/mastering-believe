@@ -20,7 +20,7 @@ caught the over-privileged action BEFORE it executed.
 
 Real-world anchors (re-implemented in miniature here, stdlib only):
   - "Non-Human Identity" / agent IAM ............ CSA, Agentic AI IAM (2025)
-  - ASI01 Identity & Privilege Abuse, least priv. OWASP Top 10 Agentic (2026)
+  - ASI03 Identity & Privilege Abuse, least priv. OWASP Top 10 Agentic (2026)
   - "humans remain ultimately accountable" ...... IMDA Agentic framework (2026)
 The "Agent Card" idea (Google A2A / Microsoft Entra Agent ID) is an *emerging*
 practice, not a frozen standard -- we model only its durable core.

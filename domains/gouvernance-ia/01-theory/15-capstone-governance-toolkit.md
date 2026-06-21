@@ -124,6 +124,23 @@ Cette posture — *les humains restent ultimement responsables, l'outil produit 
 
 ---
 
+## 7. Antiseche — les 6 briques en un coup d'oeil
+
+Avant le code, ancrez la vue d'ensemble. Chaque etage du pipeline reutilise un module precis du parcours et produit **une** metrique que le board comprend :
+
+| Etape | Ce qu'elle fait | Vient du jour | Metrique board |
+|---|---|---|---|
+| **1. INGEST** | charge `fleet.json`, valide les 4 piliers, expose les orphelins | J2 / J3 | couverture de gouvernance (%) |
+| **2. ENFORCE** | PDP/PEP : `allow / deny / oblige` + consentement MCP | J14 (+ J8 scope, J10 budget) | actions risquees bloquees / tentees |
+| **3. LOG** | audit chaine par hash, tamper-evident | J9 | integrite = VERIFIED |
+| **4. SCORE** | `likelihood x impact` + modulateurs agentiques | J4 | classement TREAT / MONITOR / ACCEPT |
+| **5. MAP** | crosswalk : 1 controle -> N referentiels | J7 | couverture par referentiel + **gaps obligatoires** |
+| **6. REPORT** | agrege en markdown + JSON, finit sur un verdict | (synthese) | verdict : signable / a corriger |
+
+Le fil de donnees ne change jamais : un meme agent (`id, owner, scopes, risk_tier`) traverse les six etapes. Si vous perdez le fil dans le code, revenez a cette table : chaque fonction du toolkit correspond a une ligne.
+
+---
+
 ## Spaced repetition
 
 1. **Q :** Pourquoi structurer le toolkit en pipeline `ingest → enforce → log → score → map → report` plutot qu'en un seul bloc monolithique ?

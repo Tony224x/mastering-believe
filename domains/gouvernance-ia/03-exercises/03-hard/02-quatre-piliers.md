@@ -10,7 +10,7 @@
 Depasser le « passe / passe pas » binaire : produire un **score de gouvernance** par agent et le qualifier par un niveau de maturite defendable devant un board.
 
 ### Consigne
-1. Definis une ponderation des 4 piliers (ils ne sont pas egaux en risque). Justifie tes poids en commentaire. Suggestion : Permissions et Identite plus lourds (un agent sur-permissionne ou usurpant une identite est le risque OWASP ASI01 le plus aigu).
+1. Definis une ponderation des 4 piliers (ils ne sont pas egaux en risque). Justifie tes poids en commentaire. Suggestion : Permissions et Identite plus lourds (un agent sur-permissionne ou usurpant une identite est le risque OWASP ASI03 le plus aigu).
 2. Ecris `governance_score(agent) -> float` qui retourne un score sur 100 :
    - chaque pilier **satisfait** rapporte son poids,
    - un pilier **partiellement** satisfait (ex. owner present mais = « IT ») rapporte la moitie de son poids,

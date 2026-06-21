@@ -59,7 +59,7 @@ Deux raffinements opérationnels :
 1. **Granularité.** Un scope trop large (`finance:*`) annule le bénéfice du moindre privilège. Préférer des scopes-actions explicites. C'est le « moindre privilège *opérationnel* » : on scope au verbe métier, pas au domaine entier.
 2. **Contexte/ressource.** Un scope peut être borné à une ressource : `invoices:read` *sur le tenant A uniquement*. C'est la transition naturelle vers le module 5 (Zero Trust : la décision dépend du contexte de la requête).
 
-OWASP a fait de cet écart un risque de premier plan : dans le **Top 10 for Agentic Applications 2026**, **Identity & Privilege Abuse** figure parmi les menaces majeures spécifiques aux agents (avec Tool Misuse et Rogue Agents) [OWASP, 2026]. Le risque jumeau, l'*excessive agency* (LLM08 dans le Top 10 LLM 2025), désigne précisément un agent doté de plus de capacités que nécessaire.
+OWASP a fait de cet écart un risque de premier plan : dans le **Top 10 for Agentic Applications 2026**, **Identity & Privilege Abuse** (ASI03) figure parmi les menaces majeures spécifiques aux agents (aux côtés du détournement d'objectif ASI01, du Tool Misuse ASI02 et des Rogue Agents ASI10) [OWASP, 2026]. Le risque jumeau, l'*excessive agency* (LLM06 dans le Top 10 LLM 2025), désigne précisément un agent doté de plus de capacités que nécessaire.
 
 > **Key takeaway.** Scope au verbe métier, jamais au domaine entier. Le moindre privilège transforme une faille de sécurité (« l'agent a été détourné ») en simple refus d'autorisation (« il n'avait pas le scope »).
 

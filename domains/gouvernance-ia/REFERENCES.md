@@ -133,7 +133,7 @@ Autres points de vigilance :
    *Pourquoi* : taxonomie des risques LLM (LLM01–LLM10:2025, dont excessive agency, system prompt leakage).
 3. **OWASP Top 10 for Agentic Applications for 2026** — OWASP Gen AI Security Project, publie 9 dec. 2025.
    https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/
-   *Pourquoi* : taxonomie ASI01–ASI10 specifique aux agents (dont **Identity and Privilege Abuse**, Tool Misuse, Rogue Agents). Pendant agentique exact des 4 piliers.
+   *Pourquoi* : taxonomie ASI01–ASI10 specifique aux agents (ASI01 Agent Goal Hijack, ASI02 Tool Misuse, **ASI03 Identity and Privilege Abuse**, … ASI10 Rogue Agents). Pendant agentique exact des 4 piliers.
 4. **NIST SP 800-207 — Zero Trust Architecture** — NIST (Rose et al.), aout 2020.
    https://csrc.nist.gov/pubs/sp/800/207/final
    *Pourquoi* : standard d'autorite pour le moindre privilege et l'acces per-request base identite/contexte.

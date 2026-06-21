@@ -71,7 +71,7 @@ Le moindre privilege se decline en **scopes** explicites et bornes :
 - des bornes : montant maximal, plage horaire, environnement (sandbox vs prod) ;
 - idealement des permissions **a duree de vie courte** (ephemerite), revoquees apres la tache.
 
-C'est exactement le risque que l'OWASP classe en tete de sa taxonomie agentique : **ASI01 — Identity and Privilege Abuse** (usurpation d'identite et abus de privileges), aux cotes de *Tool Misuse* et de *Rogue Agents* [OWASP, 2026]. Un agent sur-permissionne n'est pas un agent qui *va* mal tourner : c'est un agent dont *chaque* defaillance (bug, hallucination, injection) devient maximale au lieu d'etre bornee.
+C'est exactement le risque que l'OWASP place au 3e rang de sa taxonomie agentique : **ASI03 — Identity and Privilege Abuse** (usurpation d'identite et abus de privileges), aux cotes du detournement d'objectif (ASI01), du *Tool Misuse* (ASI02) et des *Rogue Agents* (ASI10) [OWASP, 2026]. Un agent sur-permissionne n'est pas un agent qui *va* mal tourner : c'est un agent dont *chaque* defaillance (bug, hallucination, injection) devient maximale au lieu d'etre bornee.
 
 Le pilier permissions repond a une question testable : *« quelle est la pire chose que cet agent puisse faire, et est-ce acceptable ? »* Si la reponse est « virer 4 200 € » pour un bot de notes de litige, le scope est faux.
 
@@ -130,7 +130,7 @@ L'enchainement logique : l'**identite** rend l'agent attribuable → l'**owner**
 ## Spaced repetition
 
 **Q1.** Un agent porte la cle API d'un humain (le chef de projet) pour agir. Lesquels des 4 piliers cela viole-t-il directement, et pourquoi ?
-**R1.** Au moins deux : **Identite** (l'agent n'a pas d'ID propre, il est invisible dans les logs, confondu avec l'humain) et **Permissions** (il herite de *tous* les droits de l'humain au lieu du moindre privilege). C'est l'archetype d'OWASP **ASI01 — Identity and Privilege Abuse**.
+**R1.** Au moins deux : **Identite** (l'agent n'a pas d'ID propre, il est invisible dans les logs, confondu avec l'humain) et **Permissions** (il herite de *tous* les droits de l'humain au lieu du moindre privilege). C'est l'archetype d'OWASP **ASI03 — Identity and Privilege Abuse**.
 
 **Q2.** Pourquoi exiger un owner *humain nomme* (une personne) plutot qu'une equipe responsable ?
 **R2.** Une responsabilite diffuse est nulle : on ne peut ni escalader, ni decider d'un kill-switch, ni imputer aupres d'« une equipe ». L'IMDA (2026) pose que *les humains restent ultimement responsables* — il faut un point de contact unique et redevable.
