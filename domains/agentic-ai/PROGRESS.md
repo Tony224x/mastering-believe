@@ -21,7 +21,7 @@ versionner ta progression.
 | Action | XP | Principe vise |
 |---|---|---|
 | 📖 Lire un module de theorie **+ s'auto-tester sur ses flash-cards** | 10 | Active recall |
-| 💻 Lancer le code `02-code/NN-*.py` et comprendre la sortie | 10 | Concret-d'abord |
+| 💻 Faire tourner `02-code/NN-*.py` **en mode actif** (predire la sortie avant de lancer, puis modifier un parametre) | 10 | Concret-d'abord + pratique active |
 | 🟢 Exercices **easy** d'un module | 10 | Pratique deliberee |
 | 🟡 Exercices **medium** d'un module | 15 | Surcharge progressive |
 | 🔴 Exercices **hard** (mini-projet) d'un module | 25 | Surcharge progressive |
@@ -29,8 +29,11 @@ versionner ta progression.
 | 🔥 **Bonus streak / interleaving / recall** | variable | Repetition espacee |
 
 > Module standard entierement valide = **70 XP** (10+10+10+15+25). Les 28 modules
-> valent donc ~1960 XP de socle ; capstones, projets guides et bonus completent
-> la barre jusqu'a la maitrise (~2400 XP).
+> valent donc **1960 XP** de socle ; +80 de bonus capstones (J14 +30, J28 +50) et
+> +180 des 3 projets guides portent le **plafond deterministe a 2220 XP**. Le
+> dernier rang (2300) ne se franchit qu'en y ajoutant les **revisions espacees**
+> (carnet plus bas) : par design, devenir Architecte exige d'avoir aussi *retenu*,
+> pas seulement *parcouru*.
 
 ---
 
@@ -38,21 +41,30 @@ versionner ta progression.
 
 Ta jauge XP te place sur l'arc du curriculum (du premier agent ReAct a l'architecte) :
 
-| Palier | Rang | XP requis |
-|---|---|---|
-| 1 | 🥚 **Apprenti ReAct** | 0 |
-| 2 | 🔨 **Forgeron d'Outils** (Tool-Smith) | 250 |
-| 3 | 🧠 **Gardien de la Memoire** | 550 |
-| 4 | 🕸️ **Chef d'Orchestre Multi-Agent** | 950 |
-| 5 | 🚀 **Ingenieur de Production** | 1400 |
-| 6 | 🔭 **Pionnier Frontier** | 1900 |
-| 7 | 🏛️ **Architecte Agentique** | 2300 |
+| Palier | Rang | XP requis | Jalon verifiable a tenir (cf. [criteres de reussite](./README.md#criteres-de-reussite)) |
+|---|---|---|---|
+| 1 | 🥚 **Apprenti ReAct** | 0 | — (point de depart) |
+| 2 | 🔨 **Forgeron d'Outils** (Tool-Smith) | 250 | Agent ReAct from-scratch (< 100 lignes) + tools definis (J1, J2, J7) |
+| 3 | 🧠 **Gardien de la Memoire** | 550 | Graph LangGraph avec memory + persistence + human-in-the-loop (J3, J5, J6) |
+| 4 | 🕸️ **Chef d'Orchestre Multi-Agent** | 950 | Expliquer supervisor vs swarm vs hierarchical + serveur MCP fonctionnel (J9, J10) |
+| 5 | 🚀 **Ingenieur de Production** | 1400 | Pipeline d'eval qui detecte les regressions + capstone J14 livre (J11, J12, J14) |
+| 6 | 🔭 **Pionnier Frontier** | 1900 | Context engineering + memoire long-horizon + verifier/PRM + A2A (J15->J19) |
+| 7 | 🏛️ **Architecte Agentique** | 2300 | Capstone avance J28 (build + eval, harness pass^k) + archi sur whiteboard (J26, J28) |
+
+> **Le XP est necessaire, pas suffisant.** Un rang ne se debloque vraiment que si
+> le **jalon verifiable** correspondant est tenu — un artefact qu'on peut montrer,
+> pas seulement un compteur auto-declare. C'est le garde-fou anti-Goodhart : on
+> monte en sachant *construire*, pas en cochant.
 
 **Mon total actuel : `____ XP` → Rang : `__________`**
 
 ---
 
-## Carte de quete (skill-tree)
+## Carte du parcours
+
+> Parcours **lineaire conseille** (J1 -> J28), pas un arbre a branches : l'ordre est
+> volontairement progressif (chaque jour suppose le precedent). La carte sert de
+> reperage visuel de ta position, pas de choix de chemin.
 
 ```mermaid
 flowchart LR
@@ -163,9 +175,13 @@ ancrees sur les [criteres de reussite](./README.md#criteres-de-reussite) du doma
 ## Carnet de revision espacee (le 🔥 streak)
 
 L'arme secrete : ne pas seulement avancer, mais **re-tester** les flash-cards des
-modules passes a intervalles croissants (rythme SM-2 lite : J+1, J+3, J+7, J+16).
-Cf. le domaine [`apprendre-a-apprendre`](../apprendre-a-apprendre/) (repetition
-espacee, difficultes desirables). Chaque revision d'un module deja vu = **+5 XP**.
+modules passes a intervalles croissants (rythme type Leitner, inspire de SM-2 :
+J+1, J+3, J+7, J+14). Cf. le domaine
+[`apprendre-a-apprendre`](../apprendre-a-apprendre/) (repetition espacee,
+difficultes desirables) — note que le *vrai* SM-2 adapte l'intervalle au facteur
+de facilite ; ici on fige une echelle simple. Chaque revision d'un module deja vu
+= **+5 XP**, **plafonne aux 4 intervalles ci-dessus** (J+1, J+3, J+7, J+14) =
+**+20 XP max par module** : on recompense l'espacement, pas le grind.
 
 | Date | Modules revises | Auto-eval (facile/moyen/dur) | XP |
 |---|---|---|:--:|
@@ -177,7 +193,7 @@ espacee, difficultes desirables). Chaque revision d'un module deja vu = **+5 XP*
 
 ---
 
-## Regles du jeu (la science derriere les points)
+## Regles du jeu
 
 Cette couche n'est pas du vernis : chaque mecanique mappe un principe de la
 [methodologie du repo](../../CLAUDE.md#learning-methodology-rules).
@@ -186,9 +202,10 @@ Cette couche n'est pas du vernis : chaque mecanique mappe un principe de la
 |---|---|---|
 | XP pour l'auto-test des flash-cards (pas pour la lecture seule) | **Active recall** | Se tester ancre plus que relire ; la lecture passive ne donne d'XP qu'avec son quiz |
 | Exos hard >> easy en XP | **Pratique deliberee** + surcharge progressive | On recompense l'effort a la limite de la zone de confort, pas la repetition du connu |
-| Streak de revision espacee (+5 XP/revision) | **Repetition espacee** | Re-tester a intervalles croissants bat le bachotage pour la retention long-terme |
+| Streak de revision espacee (+5 XP/revision, plafond +20/module) | **Repetition espacee** | Re-tester a intervalles croissants bat le bachotage ; le plafond evite de farmer la meme carte |
+| Les 20 XP T+C ne comptent qu'une fois un exo du module tente | **Pratique deliberee** | On ne farme pas la lecture/le run passifs : l'XP suit la pratique, pas le survol |
 | Badge 🧩 Interleaver | **Interleaving** | Melanger les sujets ameliore le transfert vs blocs monolithiques |
-| Paliers de niveau (gates XP) | **Surcharge progressive** | La difficulte monte par crans francs, jamais d'un coup |
+| Paliers de niveau (gates XP + jalon verifiable) | **Surcharge progressive** | La difficulte monte par crans francs ; chaque palier exige un artefact, pas qu'un compteur |
 | Capstones = gros bonus | **Capstone portfolio** | Le livrable montrable est l'objectif final de chaque domaine |
 
 **Anti-triche (envers soi-meme)** : l'XP ne vaut que si la case correspond a une
@@ -197,8 +214,9 @@ que toi. Le vrai score, c'est ce que tu sais construire.
 
 ---
 
-> 💡 **Reutilisable** : ce format (bareme + niveaux themes + skill-tree Mermaid +
-> badges + carnet de revision) se transpose tel quel a n'importe quel domaine du
-> repo — il suffit de re-habiller les rangs/badges sur le sujet et de remapper le
-> tableau sur les modules. Candidat a une generalisation dans `shared/templates/`
-> si l'idee plait.
+> 💡 **Reutilisable (piste, non engagee)** : ce format (bareme + niveaux themes +
+> carte de parcours Mermaid + badges + carnet de revision) se transpose a
+> n'importe quel domaine du repo — re-habiller les rangs/badges sur le sujet et
+> remapper le tableau sur les modules. Une generalisation dans `shared/templates/`
+> reste une **idee a valider apres rodage** sur `agentic-ai` : on ne template pas
+> un format pas encore eprouve.

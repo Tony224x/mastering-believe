@@ -14,7 +14,7 @@ Maitriser la conception, l'implementation et le deploiement de systemes IA agent
 
 Le parcours se fait en deux temps : **S1-S2 = fondations** (J1-J14, du single-agent au multi-agent en production), puis **S3-S4 = niveau avance/frontier 2025-2026** (J15-J28 : context engineering, memoire long-horizon, verifiers, protocoles inter-agents, durabilite, coding & computer-use agents, serving a l'echelle, capstone avance). Les S3-S4 supposent les S1-S2 acquises.
 
-> 🎮 **Suis ta progression en mode jeu** : [`PROGRESS.md`](./PROGRESS.md) — carnet XP / niveaux / badges + carte de quete (skill-tree). Chaque point est branche sur un principe d'apprentissage prouve (active recall, pratique deliberee, repetition espacee).
+> 🎮 **Suis ta progression en mode jeu** : [`PROGRESS.md`](./PROGRESS.md) — carnet XP / niveaux (avec jalon verifiable par rang) / badges + carte du parcours. Chaque point est branche sur un principe d'apprentissage prouve (active recall, pratique deliberee, repetition espacee).
 
 ### Semaine 1 — Fondations Agent
 
