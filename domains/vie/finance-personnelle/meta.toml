@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "finance-personnelle"
+title = "Finance personnelle & investissement"
+track = "vie"
+status = "stable"
+level = "debutant"
+duration = "14 modules (~45 min chacun), ~11 h"
+stack = ["Python"]
+focus = "Fondamentaux Pareto-first de la finance perso : interets composes, budget, dette, fonds indiciels, psychologie, independance financiere."
+pillar = "Argent"
+guardrail = "Contenu purement educatif, pas un conseil financier personnalise ; actif vs passif par la donnee (SPIVA) ; risque de perte en capital."
+prerequisites = []
+tags = ["finance", "investissement", "budget", "interets-composes", "fire", "vie"]

@@ -70,7 +70,7 @@ Le lien YouTube pointe **directement** vers la vidéo concernée (pas la playlis
 
 ## Mapping cours ↔ domaines du repo
 
-### `domains/neural-networks-llm/`
+### `domains/tech/neural-networks-llm/`
 - **Stanford CS230** — fondations deep learning, backprop, optim, régularisation (modules 01-fundamentals, 02-intermediate)
 - **Stanford CS231N** — convnets, vision, transfer learning (compléments visuels)
 - **Stanford CS25** — architecture Transformer en profondeur (module Transformer)
@@ -83,7 +83,7 @@ Le lien YouTube pointe **directement** vers la vidéo concernée (pas la playlis
 - **CMU 11-711 (Welleck)** — pretraining, alignement, perspective 2025 complémentaire (modules pre-training, fine-tuning)
 - **Harvard CS 2881R** — RLHF, alignement, safety (module fine-tuning + safety)
 
-### `domains/agentic-ai/`
+### `domains/tech/agentic-ai/`
 - **Stanford CME295** — eval LLM, benchmarks, judge models (module Eval)
 - **Stanford CS329H** — préférences humaines, alignement (contexte produits agentiques)
 - **Stanford CS25** — architecture Transformer (rappel pour comprendre les bases)
@@ -93,8 +93,8 @@ Le lien YouTube pointe **directement** vers la vidéo concernée (pas la playlis
 - **CMU 11-711 (Welleck)** — agents et alignement vu côté NLP (module Eval, RAG agentique)
 - **Harvard CS 2881R** — safety/alignement appliqué aux agents (module Security)
 
-### `domains/system-design/`
+### `domains/tech/system-design/`
 - **MIT 6.5940** — efficient ML computing, distributed training, LLM serving (modules Inference, LLM Infra)
 
-### `domains/algorithmie-python/`
+### `domains/tech/algorithmie-python/`
 Pas de référence universitaire directe pour le moment (cours plus orientés ML/IA). Ressources externes propres à ce domaine à ajouter au besoin.

@@ -16,34 +16,47 @@ Chaque domaine est concu autour de techniques d'apprentissage prouvees :
 
 ## Domaines disponibles
 
-**Track Tech** — maitrise d'ingenierie :
+Les domaines sont ranges par **track** dans `domains/<track>/<domaine>/` (`tech`, `vie`, `exploratoire`). Le tableau ci-dessous est **genere** depuis les `meta.toml` ; inventaire complet (modules, prerequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).
 
-| Domaine | Stack | Focus |
-|---------|-------|-------|
-| [Algorithmie Python](./domains/algorithmie-python/) | Python | Live coding, patterns LeetCode, entretiens tech |
-| [System Design](./domains/system-design/) | Diagrammes + Python | Architecture backend & IA, entretiens senior |
-| [Neural Networks & LLMs](./domains/neural-networks-llm/) | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
-| [Agentic AI](./domains/agentic-ai/) | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
-| [Robotics & AI](./domains/robotics-ai/) | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies) |
+<!-- CATALOG:START -->
+**Track Tech — maitrise d'ingenierie** :
 
-**Track Vie** — l'ecole de la vie (competences de vie a fort levier, sources tier-1, posture anti-clivant) :
+| Domaine | Stack | Focus | Duree |
+|---|---|---|---|
+| [Systemes IA Agentiques](./domains/tech/agentic-ai/) | Python, LangGraph, MCP, Claude/OpenAI APIs | Concevoir des agents autonomes du single-agent au multi-agent en production, jusqu'aux patterns frontier 2025-2026. | 4 semaines (J1-J28) |
+| [Algorithmie & Data Structures — Live Coding Python](./domains/tech/algorithmie-python/) | Python, stdlib | Structures de donnees et algorithmes pour le live coding : patterns LeetCode, complexite, entretiens tech FAANG. | ~45h sur 2 semaines (14 modules) |
+| [Gouvernance de l'IA](./domains/tech/gouvernance-ia/) | Python, stdlib | Gouverner une flotte d'agents : EU AI Act, NIST RMF, ISO 42001, RGPD + 4 piliers (identite, owner, permissions, audit). | 15 modules (~45-60 min chacun) |
+| [Réseaux de Neurones & LLMs](./domains/tech/neural-networks-llm/) | Python, numpy, PyTorch | Mécanismes internes des LLMs from scratch, du neurone au Transformer puis frontière NN 2026. | 3 semaines (core J1-J14 ≈ 75-80h + bloc frontière J15-J22 ≈ 38h optionnel) |
+| [Robotics & AI](./domains/tech/robotics-ai/) | Python, PyTorch, MuJoCo, Gymnasium, NumPy, LeRobot | Robotique moderne : fondations classiques (SE(3), FK/IK, contrôle), RL/IL, diffusion policies, VLA frontier, capstone Diffusion Policy from scratch. | 28 jours |
+| [System Design — Architecture Backend & IA](./domains/tech/system-design/) | Python, Kafka, RabbitMQ, Redis, gRPC, GraphQL, TorchServe, Triton, vLLM, Langfuse | Architectures scalables backend et IA (RAG, agents) pour entretiens senior/staff et ML en production. | 2 semaines (14 modules / ~43h complet, 12-15h express) |
 
-| Domaine | Pilier | Focus |
-|---------|--------|-------|
-| [Finance personnelle](./domains/finance-personnelle/) | Argent | Interets composes, budget, investissement long terme, independance financiere |
-| [Sante & longevite](./domains/sante-longevite/) | Corps | Sommeil, activite physique, nutrition fondee sur preuves, lien social |
-| [Apprendre a apprendre](./domains/apprendre-a-apprendre/) | Esprit | Retrieval practice, spaced repetition, deep work, apprendre avec l'IA |
-| [Rationalite & decision](./domains/rationalite-decision/) | Jugement | Probas/Bayes, biais, decision, calibration, verification d'info |
-| [Communication & persuasion](./domains/communication-persuasion/) | Relations | Rhetorique, ecoute, ecriture, negociation (persuasion ethique) |
-| [Psychedeliques, creativite & IA](./domains/psychedeliques-creativite-ia/) | *exploratoire* | Educatif & **reduction des risques** : science, esprit critique, integration legale, art & IA |
+**Track Vie — l'ecole de la vie** :
 
-Les domaines tech sont organises sur ~14-28 jours ; les domaines de vie sur ~6 modules + capstone. Le format reste indicatif — un domaine peut etre plus court ou plus long selon le sujet.
+| Domaine | Pilier | Focus | Duree |
+|---|---|---|---|
+| [Apprendre a apprendre](./domains/vie/apprendre-a-apprendre/) | Esprit | Meta-competence fondatrice : retrieval practice, spaced repetition, deep work, metacognition, apprendre avec l'IA. | 14 modules x ~45 min (~10 h 30) |
+| [Communication, persuasion & influence](./domains/vie/communication-persuasion/) | Relations | Communiquer clairement et persuader honnetement : ecoute, clarte, recit, negociation, feedback, prise de parole, influence ethique. | 14 modules (~45 min chacun), sur 2 semaines |
+| [Finance personnelle & investissement](./domains/vie/finance-personnelle/) | Argent | Fondamentaux Pareto-first de la finance perso : interets composes, budget, dette, fonds indiciels, psychologie, independance financiere. | 14 modules (~45 min chacun), ~11 h |
+| [Pensee critique, rationalite & decision](./domains/vie/rationalite-decision/) | Jugement | Methode de raisonnement neutre : probas/Bayes, biais, decision sous incertitude, calibration (Brier), verification (SIFT). | 14 modules (~45 min chacun) |
+| [Sante, nutrition & longevite](./domains/vie/sante-longevite/) | Corps | Fondations evidence-based: sommeil, activite physique, nutrition, sante metabolique, stress & lien social, plan sante personnel. | 7 modules (~45 min chacun), ~8-10h sur 2-3 semaines |
+
+**Exploratoire — ajouts sous cadrage adverse** :
+
+| Domaine | Stack | Focus | Duree |
+|---|---|---|---|
+| [Psychedeliques, creativite & IA — Comprendre sans consommer](./domains/exploratoire/psychedeliques-creativite-ia/) | — | Etude educative, evidence-based et reduction des risques : securite/legalite, neuroscience, esprit critique creativite, integration legale, art & IA. | 6 modules + capstone (~45 min chacun) |
+
+> Inventaire complet (modules, prerequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).
+<!-- CATALOG:END -->
+
+Le format de duree reste indicatif — un domaine peut etre plus court ou plus long selon le sujet.
 
 ## Structure d'un domaine
 
 ```
-domains/<domain>/
+domains/<track>/<domain>/    # track = tech | vie | exploratoire
 ├── README.md                # Scope, planning (duree libre), criteres de reussite
+├── meta.toml                # Metadonnees (track, statut, niveau, stack, focus, prerequis...) -> CATALOG.md
 ├── 01-theory/               # Theorie progressive (Markdown)
 ├── 02-code/                 # Exemples runnable, commentes ligne a ligne
 ├── 03-exercises/
@@ -74,14 +87,14 @@ Le dossier `domains/<domain>/03-exercises/workspace/` est **ignore par git** : s
 
 ```bash
 # Exemple : faire le premier exercice d'algorithmie
-cat domains/algorithmie-python/03-exercises/01-easy/01-complexite-big-o.md
+cat domains/tech/algorithmie-python/03-exercises/01-easy/01-complexite-big-o.md
 # Coder la solution
-$EDITOR domains/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py
+$EDITOR domains/tech/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py
 # Executer
-python domains/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py
+python domains/tech/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py
 # Comparer avec la correction
-diff domains/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py \
-     domains/algorithmie-python/03-exercises/solutions/01-complexite-big-o.py
+diff domains/tech/algorithmie-python/03-exercises/workspace/01-easy/01-complexite-big-o.py \
+     domains/tech/algorithmie-python/03-exercises/solutions/01-complexite-big-o.py
 ```
 
 ## Installation

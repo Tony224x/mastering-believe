@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "apprendre-a-apprendre"
+title = "Apprendre a apprendre"
+track = "vie"
+status = "stable"
+level = "debutant"
+duration = "14 modules x ~45 min (~10 h 30)"
+stack = ["Python"]
+focus = "Meta-competence fondatrice : retrieval practice, spaced repetition, deep work, metacognition, apprendre avec l'IA."
+pillar = "Esprit"
+guardrail = ""
+prerequisites = []
+tags = ["apprentissage", "memoire", "metacognition", "spaced-repetition", "deep-work", "evidence-based"]

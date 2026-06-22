@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "rationalite-decision"
+title = "Pensee critique, rationalite & decision"
+track = "vie"
+status = "stable"
+level = "debutant"
+duration = "14 modules (~45 min chacun)"
+stack = ["Python"]
+focus = "Methode de raisonnement neutre : probas/Bayes, biais, decision sous incertitude, calibration (Brier), verification (SIFT)."
+pillar = "Jugement"
+guardrail = "Methode > conclusions ; exemples 100% neutres, aucun sujet politique/religieux/clivant."
+prerequisites = []
+tags = ["rationalite", "bayes", "biais", "calibration", "decision", "sift"]

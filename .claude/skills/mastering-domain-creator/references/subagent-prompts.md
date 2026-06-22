@@ -65,7 +65,7 @@ Copy-paste-ready. Adapte les `<placeholders>` au domaine en cours.
 
 > Tu construis le module **Jour <N>** du domaine `<nom>` dans le repo `mastering-believe`.
 >
-> **Lis d'abord** le contrat fige : `domains/<nom>/PLAN.md`. C'est ta source de verite pour ce que ce jour doit couvrir et ce que les autres jours couvrent. Ne lis PAS les autres jours, ils n'existent pas encore.
+> **Lis d'abord** le contrat fige : `domains/<track>/<nom>/PLAN.md`. C'est ta source de verite pour ce que ce jour doit couvrir et ce que les autres jours couvrent. Ne lis PAS les autres jours, ils n'existent pas encore.
 >
 > **Sujet du jour** (extrait de PLAN.md) : <module title>
 > **Concepts cles** : <bullets de PLAN.md>
@@ -77,7 +77,7 @@ Copy-paste-ready. Adapte les `<placeholders>` au domaine en cours.
 >
 > Produis exactement **5 fichiers** :
 >
-> 1. `domains/<nom>/01-theory/<NN>-<slug>.md`
+> 1. `domains/<track>/<nom>/01-theory/<NN>-<slug>.md`
 >    - Francais. 30-60 min de lecture.
 >    - H1 = titre du module. Section "Pourquoi ce module" en 3 lignes max.
 >    - **Exemple concret AVANT principe abstrait.**
@@ -86,7 +86,7 @@ Copy-paste-ready. Adapte les `<placeholders>` au domaine en cours.
 >    - Au moins 1 citation explicite vers une source autorisee (`[Auteur, Annee, ch. X]`).
 >    - Bloc final `## Spaced repetition` avec 3-5 Q&A flash-card.
 >
-> 2. `domains/<nom>/02-code/<NN>-<slug>.py` — **fichier .py PLAT, PAS un dossier**.
+> 2. `domains/<track>/<nom>/02-code/<NN>-<slug>.py` — **fichier .py PLAT, PAS un dossier**.
 >    - Code English (identifiers + comments).
 >    - Docstring d'en-tete : ce que le script demontre.
 >    - `if __name__ == "__main__":` toujours.
@@ -94,14 +94,14 @@ Copy-paste-ready. Adapte les `<placeholders>` au domaine en cours.
 >    - Dependances en commentaire en tete : `# requires: torch>=2.0` ou `# stdlib only`.
 >    - Doit AU MINIMUM compiler : `python -m py_compile <fichier>` reussit.
 >
-> 3. `domains/<nom>/03-exercises/01-easy/<NN>-<slug>.md` (meme slug)
+> 3. `domains/<track>/<nom>/03-exercises/01-easy/<NN>-<slug>.md` (meme slug)
 >    - Format : `## Objectif`, `## Consigne`, `## Criteres de reussite`.
-> 4. `domains/<nom>/03-exercises/02-medium/<NN>-<slug>.md` (meme slug, contenu medium)
-> 5. `domains/<nom>/03-exercises/03-hard/<NN>-<slug>.md` (meme slug, contenu hard)
+> 4. `domains/<track>/<nom>/03-exercises/02-medium/<NN>-<slug>.md` (meme slug, contenu medium)
+> 5. `domains/<track>/<nom>/03-exercises/03-hard/<NN>-<slug>.md` (meme slug, contenu hard)
 >
 > Plus :
 >
-> 6. `domains/<nom>/03-exercises/solutions/<NN>-<slug>.py` — un seul fichier qui couvre easy/medium/hard, separe par `# === EASY ===` etc., avec smoke test dans `if __name__ == "__main__":`.
+> 6. `domains/<track>/<nom>/03-exercises/solutions/<NN>-<slug>.py` — un seul fichier qui couvre easy/medium/hard, separe par `# === EASY ===` etc., avec smoke test dans `if __name__ == "__main__":`.
 >
 > **REGLES STRICTES — interdictions absolues** :
 > - Tu ne touches QUE les 6 fichiers ci-dessus. Pas de creation/modification ailleurs.
@@ -111,8 +111,8 @@ Copy-paste-ready. Adapte les `<placeholders>` au domaine en cours.
 >
 > **Avant de rendre, verifie** :
 > ```bash
-> python -m py_compile domains/<nom>/02-code/<NN>-<slug>.py
-> python -m py_compile domains/<nom>/03-exercises/solutions/<NN>-<slug>.py
+> python -m py_compile domains/<track>/<nom>/02-code/<NN>-<slug>.py
+> python -m py_compile domains/<track>/<nom>/03-exercises/solutions/<NN>-<slug>.py
 > ```
 > Les deux doivent passer (exit 0).
 >
@@ -129,7 +129,7 @@ Copy-paste-ready. Adapte les `<placeholders>` au domaine en cours.
 >
 > **Tools requis** : Read + WebFetch + WebSearch.
 >
-> **Mission** : relis tous les fichiers `domains/<nom>/01-theory/*.md`. Pour chaque claim numerique, historique, ou attribution, verifie-le contre des sources web fiables.
+> **Mission** : relis tous les fichiers `domains/<track>/<nom>/01-theory/*.md`. Pour chaque claim numerique, historique, ou attribution, verifie-le contre des sources web fiables.
 >
 > **Concentre-toi sur** :
 > - Dates (annee de publication d'un paper, sortie d'un framework)
@@ -166,10 +166,10 @@ Copy-paste-ready. Adapte les `<placeholders>` au domaine en cours.
 > **Cross-platform** : utilise toujours `python` (PAS `python3`). Sur Windows, le binaire `python` est aussi disponible si Python est dans le PATH. Si `python` n'existe pas, essayer `py -3`.
 >
 > **Etapes** :
-> 1. `Glob domains/<nom>/02-code/*.py` puis pour chaque fichier :
+> 1. `Glob domains/<track>/<nom>/02-code/*.py` puis pour chaque fichier :
 >    - `python -m py_compile <fichier>` (compile-check)
 >    - `python <fichier>` (run-check) — **timeout 60s**.
-> 2. `Glob domains/<nom>/03-exercises/solutions/*.py` puis idem.
+> 2. `Glob domains/<track>/<nom>/03-exercises/solutions/*.py` puis idem.
 >
 > **Gestion des dependances manquantes** :
 > - **NE PAS faire `pip install`** automatiquement. Tu n'es pas autorise.

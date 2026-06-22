@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "agentic-ai"
+title = "Systemes IA Agentiques"
+track = "tech"
+status = "stable"
+level = "avance"
+duration = "4 semaines (J1-J28)"
+stack = ["Python", "LangGraph", "MCP", "Claude/OpenAI APIs"]
+focus = "Concevoir des agents autonomes du single-agent au multi-agent en production, jusqu'aux patterns frontier 2025-2026."
+pillar = ""
+guardrail = ""
+prerequisites = []
+tags = ["agents", "langgraph", "mcp", "multi-agent", "production"]

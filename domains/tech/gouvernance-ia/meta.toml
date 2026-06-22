@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "gouvernance-ia"
+title = "Gouvernance de l'IA"
+track = "tech"
+status = "stable"
+level = "intermediaire"
+duration = "15 modules (~45-60 min chacun)"
+stack = ["Python", "stdlib"]
+focus = "Gouverner une flotte d'agents : EU AI Act, NIST RMF, ISO 42001, RGPD + 4 piliers (identite, owner, permissions, audit)."
+pillar = ""
+guardrail = ""
+prerequisites = ["algorithmie-python"]
+tags = ["gouvernance", "eu-ai-act", "nist-rmf", "iso-42001", "rgpd", "agents"]
