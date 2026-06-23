@@ -51,15 +51,22 @@ ENV/
 artifacts/
 eval_j28/
 out_j28_solutions/
+out_j26*/
+
+# --- Artefacts de review de domaine (locaux, jamais commites) ---
+# Convention repo : les passes de verification (skill mastering-domain-creator)
+# restent locales et ne sont jamais versionnees.
+REVIEW-pass*.md
 
 # --- Espace de travail personnel des exercices (les users y mettent leurs solutions) ---
-domains/*/03-exercises/workspace/**
-!domains/*/03-exercises/workspace/
-!domains/*/03-exercises/workspace/README.md
-!domains/*/03-exercises/workspace/01-easy/
-!domains/*/03-exercises/workspace/02-medium/
-!domains/*/03-exercises/workspace/03-hard/
-!domains/*/03-exercises/workspace/**/.gitkeep
+# Domaines ranges par track : domains/<track>/<domaine>/03-exercises/workspace/
+domains/*/*/03-exercises/workspace/**
+!domains/*/*/03-exercises/workspace/
+!domains/*/*/03-exercises/workspace/README.md
+!domains/*/*/03-exercises/workspace/01-easy/
+!domains/*/*/03-exercises/workspace/02-medium/
+!domains/*/*/03-exercises/workspace/03-hard/
+!domains/*/*/03-exercises/workspace/**/.gitkeep
 shared/templates/03-exercises/workspace/**
 !shared/templates/03-exercises/workspace/
 !shared/templates/03-exercises/workspace/README.md

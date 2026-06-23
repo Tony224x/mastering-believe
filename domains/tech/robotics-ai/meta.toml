@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "robotics-ai"
+title = "Robotics & AI"
+track = "tech"
+status = "wip"
+level = "avance"
+duration = "28 jours"
+stack = ["Python", "PyTorch", "MuJoCo", "Gymnasium", "NumPy", "LeRobot"]
+focus = "Robotique moderne : fondations classiques (SE(3), FK/IK, contrôle), RL/IL, diffusion policies, VLA frontier, capstone Diffusion Policy from scratch."
+pillar = ""
+guardrail = ""
+prerequisites = ["neural-networks-llm"]
+tags = ["robotique", "rl", "diffusion-policy", "vla", "sim-to-real", "pytorch"]

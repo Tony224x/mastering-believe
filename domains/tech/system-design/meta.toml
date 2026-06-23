@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "system-design"
+title = "System Design — Architecture Backend & IA"
+track = "tech"
+status = "stable"
+level = "avance"
+duration = "2 semaines (14 modules / ~43h complet, 12-15h express)"
+stack = ["Python", "Kafka", "RabbitMQ", "Redis", "gRPC", "GraphQL", "TorchServe", "Triton", "vLLM", "Langfuse"]
+focus = "Architectures scalables backend et IA (RAG, agents) pour entretiens senior/staff et ML en production."
+pillar = ""
+guardrail = ""
+prerequisites = []
+tags = ["system-design", "backend", "ml-systems", "rag", "scalabilite", "entretiens"]

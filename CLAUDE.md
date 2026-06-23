@@ -31,7 +31,10 @@ mastering-believe/
 ├── .claude/skills/
 │   └── mastering-domain-creator/   # Skill Claude Code : pipeline 7 phases de creation de domaine
 ├── domains/
-│   └── <domain-name>/       # One folder per mastery domain
+│   ├── CATALOG.md           # GENERE par shared/tools/build_catalog.py (inventaire, ne pas editer)
+│   └── <track>/             # track = tech | vie | exploratoire
+│       └── <domain-name>/   # One folder per mastery domain
+│       ├── meta.toml        # Metadonnees (track, statut, niveau, stack, focus, prerequis...) — source du CATALOG
 │       ├── README.md        # Domain overview, learning path, time budget
 │       ├── PLAN.md          # (si cree via le skill) Plan fige du curriculum
 │       ├── REFERENCES.md    # (si cree via le skill) Sources tier-1 par module
@@ -53,9 +56,13 @@ mastering-believe/
 │           └── ...
 └── shared/
     ├── templates/           # Templates for new domains
+    ├── tools/
+    │   └── build_catalog.py # Genere domains/CATALOG.md + injecte le tableau du README (stdlib, --check pour CI)
     ├── external-courses.md  # Index de cours universitaires (Stanford, MIT, CMU, ...)
     └── logistics-context.md # Shared LogiSim context referenced by all 05-projets-guides
 ```
+
+> **Catalogue & metadonnees** : chaque domaine porte un `meta.toml` (donnees semantiques : titre, track, statut, niveau, stack, focus, pilier, garde-fou, prerequis, tags). `shared/tools/build_catalog.py` lit ces `meta.toml` + derive les faits structurels (nb de modules, presence de code) et regenere `domains/CATALOG.md` ainsi que le tableau du `README.md` (entre marqueurs `<!-- CATALOG:START/END -->`). Apres toute creation/modif de domaine : `python shared/tools/build_catalog.py` (et `--check` en CI). **Ne jamais editer `CATALOG.md` a la main.**
 
 Note : `tasks/` (todo.md, lessons/) est un espace de suivi **local et gitignore** — il peut exister sur une machine de dev mais n'est jamais commite. Idem pour `references/` et `docs/plans/`.
 
@@ -88,25 +95,29 @@ When creating content for a domain:
 **Voie recommandee** : le skill `mastering-domain-creator` (`.claude/skills/mastering-domain-creator/`) automatise tout le pipeline en 7 phases avec gates : interview en 2 vagues, recherche sourcee (→ `REFERENCES.md`), plan challenge par un subagent adverse (→ `PLAN.md`), creation parallele (1 subagent par module), 2 passes de verification (facts-checker, code-runner, pedagogy-reviewer), capstone. Modes `full` / `lite`, duree N jours parametrable. Se declenche sur "ajouter un domaine", "create a domain", etc. — uniquement dans ce repo.
 
 Voie manuelle :
-1. Copy `shared/templates/` structure into `domains/<domain-name>/`
+1. Choisir le track (`tech` | `vie` | `exploratoire`) et copier `shared/templates/` structure into `domains/<track>/<domain-name>/`
 2. Write `README.md` with: scope, prerequisites, schedule (durée libre — quelques jours à plusieurs semaines selon le sujet), success criteria
-3. Build theory → (code if applicable) → exercises in order, numbering consistently
-4. Each theory module should take 30-60 min to study
-5. Each code example (if any) should take 15-30 min to read and run
-6. Exercises: minimum 3 easy, 3 medium, 2 hard, 1 capstone project
+3. Créer `meta.toml` (slug, title, track, status, level, duration, stack, focus, pillar, guardrail, prerequisites, tags) — voir un domaine existant comme gabarit
+4. Build theory → (code if applicable) → exercises in order, numbering consistently
+5. Each theory module should take 30-60 min to study
+6. Each code example (if any) should take 15-30 min to read and run
+7. Exercises: minimum 3 easy, 3 medium, 2 hard, 1 capstone project
+8. `python shared/tools/build_catalog.py` pour enregistrer le domaine dans `CATALOG.md` + le README
 
 ## Domaines actifs (Track Tech)
 
+> Référence rapide ci-dessous ; l'**inventaire généré** (à jour, avec modules/statuts/prérequis) est dans [`domains/CATALOG.md`](./domains/CATALOG.md).
+
 | Domain | Folder | Stack | Focus |
 |--------|--------|-------|-------|
-| Algorithmie Python | `domains/algorithmie-python/` | Python | Live coding, LeetCode patterns, entretiens tech |
-| System Design | `domains/system-design/` | Diagrammes + Python/infra | Architecture backend & IA, entretiens senior |
-| Neural Networks & LLMs | `domains/neural-networks-llm/` | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
-| Agentic AI | `domains/agentic-ai/` | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
-| Robotics & AI | `domains/robotics-ai/` | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies), capstone Diffusion Policy 28j — **en cours** : pas encore de `04-projects/` ni `05-projets-guides/` |
-| Gouvernance de l'IA | `domains/gouvernance-ia/` | Python stdlib | Gouverner une flotte d'agents (EU AI Act, NIST RMF, ISO 42001, RGPD + 4 piliers : identite/owner/permissions/audit), 15j, capstone Agent Governance Toolkit + projets guides FleetSim |
+| Algorithmie Python | `domains/tech/algorithmie-python/` | Python | Live coding, LeetCode patterns, entretiens tech |
+| System Design | `domains/tech/system-design/` | Diagrammes + Python/infra | Architecture backend & IA, entretiens senior |
+| Neural Networks & LLMs | `domains/tech/neural-networks-llm/` | Python, PyTorch | Mecanismes internes des LLMs, from scratch |
+| Agentic AI | `domains/tech/agentic-ai/` | Python, LangGraph, MCP | Agents autonomes, multi-agent, production |
+| Robotics & AI | `domains/tech/robotics-ai/` | Python, MuJoCo, PyTorch, LeRobot | Robotique moderne (VLA, world models, diffusion policies), capstone Diffusion Policy 28j — **en cours** : pas encore de `04-projects/` ni `05-projets-guides/` |
+| Gouvernance de l'IA | `domains/tech/gouvernance-ia/` | Python stdlib | Gouverner une flotte d'agents (EU AI Act, NIST RMF, ISO 42001, RGPD + 4 piliers : identite/owner/permissions/audit), 15j, capstone Agent Governance Toolkit + projets guides FleetSim |
 
-**Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
+**Projets guides (contexte logistique automatisee)** : les domaines finalises ont un dossier `05-projets-guides/` avec 3 projets appliques a un contexte d'editeur de simulation logistique (inspire de LogiSim / produit FleetSim, fictif). Voir `shared/logistics-context.md` pour le contexte metier complet. Le projet phare est `domains/tech/agentic-ai/05-projets-guides/02-supervisor-swarm-multi-tier/` qui illustre la combinaison des patterns supervisor et swarm de LangGraph sur un scenario d'operation multi-flotte.
 
 ## Domaines actifs (Track Vie — l'ecole de la vie)
 
@@ -114,12 +125,12 @@ Ces domaines elargissent le repo au-dela de la tech : memes conventions, meme st
 
 | Domaine | Folder | Pilier | Focus | Garde-fou |
 |---------|--------|--------|-------|-----------|
-| Finance personnelle & investissement | `domains/finance-personnelle/` | **Argent** | Interets composes, budget, dette, fonds indiciels/allocation, psychologie de l'argent, independance financiere | Actif vs passif par la donnee (SPIVA) ; disclaimer "pas un conseil financier" |
-| Sante, nutrition & longevite | `domains/sante-longevite/` | **Corps** | Sommeil, activite physique, nutrition fondee sur preuves, sante metabolique, lien social | Consensus, pas de guerres de regimes ; **disclaimer medical** par fichier |
-| Apprendre a apprendre | `domains/apprendre-a-apprendre/` | **Esprit** | Retrieval practice, spaced repetition (SM-2), difficultes desirables, deep work, metacognition, apprendre avec l'IA | Debunk des neuromythes (styles d'apprentissage) |
-| Pensee critique, rationalite & decision | `domains/rationalite-decision/` | **Jugement** | Probas/Bayes, heuristiques & biais, decision sous incertitude, calibration (Brier), verification d'info (SIFT) | Methode > conclusions ; **exemples 100% neutres** |
-| Communication, persuasion & influence | `domains/communication-persuasion/` | **Relations** | Rhetorique, ecoute active, ecriture claire, messages qui collent, principes de persuasion, negociation | Persuasion **ethique** (charte CTR) ; pas de manipulation |
-| Experiences psychedeliques, creativite & IA | `domains/psychedeliques-creativite-ia/` | *(exploratoire)* | Securite/legalite, neuroscience, esprit critique sur la creativite, integration legale, art & IA | **Reduction des risques** ; double disclaimer medical+legal par fichier ; **zero contenu operationnel** ; integration *apres/sobre*, jamais sous influence ; capstone reflexif legal |
+| Finance personnelle & investissement | `domains/vie/finance-personnelle/` | **Argent** | Interets composes, budget, dette, fonds indiciels/allocation, psychologie de l'argent, independance financiere | Actif vs passif par la donnee (SPIVA) ; disclaimer "pas un conseil financier" |
+| Sante, nutrition & longevite | `domains/vie/sante-longevite/` | **Corps** | Sommeil, activite physique, nutrition fondee sur preuves, sante metabolique, lien social | Consensus, pas de guerres de regimes ; **disclaimer medical** par fichier |
+| Apprendre a apprendre | `domains/vie/apprendre-a-apprendre/` | **Esprit** | Retrieval practice, spaced repetition (SM-2), difficultes desirables, deep work, metacognition, apprendre avec l'IA | Debunk des neuromythes (styles d'apprentissage) |
+| Pensee critique, rationalite & decision | `domains/vie/rationalite-decision/` | **Jugement** | Probas/Bayes, heuristiques & biais, decision sous incertitude, calibration (Brier), verification d'info (SIFT) | Methode > conclusions ; **exemples 100% neutres** |
+| Communication, persuasion & influence | `domains/vie/communication-persuasion/` | **Relations** | Rhetorique, ecoute active, ecriture claire, messages qui collent, principes de persuasion, negociation | Persuasion **ethique** (charte CTR) ; pas de manipulation |
+| Experiences psychedeliques, creativite & IA | `domains/exploratoire/psychedeliques-creativite-ia/` | *(exploratoire)* | Securite/legalite, neuroscience, esprit critique sur la creativite, integration legale, art & IA | **Reduction des risques** ; double disclaimer medical+legal par fichier ; **zero contenu operationnel** ; integration *apres/sobre*, jamais sous influence ; capstone reflexif legal |
 
 **Mnemo des 5 piliers** : **A**rgent · **C**orps · **E**sprit · **J**ugement · **R**elations. (Le domaine psychedeliques est un ajout exploratoire, construit sous cadrage adverse securite/ethique strict — cf. `shared/track-vie/psychedeliques-creativite-ia-framing-curriculum.md`.)
 
@@ -131,8 +142,8 @@ Ces domaines elargissent le repo au-dela de la tech : memes conventions, meme st
 
 Code examples are standalone scripts — run them directly (Python 3.11+ recommande):
 - **Python**: `python domains/<domain>/02-code/<file>.py`
-- **Neural Networks & LLMs**: `python domains/neural-networks-llm/02-code/<file>.py` (les `02-code/` sont en **numpy** + stdlib, pas de torch ; `torch` n'est requis que pour certains `05-projets-guides/`)
-- **LangGraph**: `python domains/agentic-ai/02-code/<file>.py` (requires `langgraph`, `langchain` — mocks LLM fournis, pas de cle API obligatoire)
-- **Robotics**: `python domains/robotics-ai/02-code/<file>.py` (deps **selon le module** : `numpy` partout, `torch` + `gymnasium` pour les modules RL/learning — classic-control `CartPole`/`Pendulum` + `PushT`, `matplotlib`/`scipy` ponctuels ; `mujoco` est **optionnel**, utilise seulement par quelques modules — voir l'entete `# requires:` de chaque fichier ; headless mujoco : `MUJOCO_GL=osmesa`)
+- **Neural Networks & LLMs**: `python domains/tech/neural-networks-llm/02-code/<file>.py` (les `02-code/` sont en **numpy** + stdlib, pas de torch ; `torch` n'est requis que pour certains `05-projets-guides/`)
+- **LangGraph**: `python domains/tech/agentic-ai/02-code/<file>.py` (requires `langgraph`, `langchain` — mocks LLM fournis, pas de cle API obligatoire)
+- **Robotics**: `python domains/tech/robotics-ai/02-code/<file>.py` (deps **selon le module** : `numpy` partout, `torch` + `gymnasium` pour les modules RL/learning — classic-control `CartPole`/`Pendulum` + `PushT`, `matplotlib`/`scipy` ponctuels ; `mujoco` est **optionnel**, utilise seulement par quelques modules — voir l'entete `# requires:` de chaque fichier ; headless mujoco : `MUJOCO_GL=osmesa`)
 - Algorithmie & System Design : stdlib seulement
 - Pas de suite de tests ni de linter au niveau repo — verifier un exemple = le lancer

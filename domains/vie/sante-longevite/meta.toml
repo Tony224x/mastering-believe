@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "sante-longevite"
+title = "Sante, nutrition & longevite"
+track = "vie"
+status = "stable"
+level = "debutant"
+duration = "7 modules (~45 min chacun), ~8-10h sur 2-3 semaines"
+stack = []
+focus = "Fondations evidence-based: sommeil, activite physique, nutrition, sante metabolique, stress & lien social, plan sante personnel."
+pillar = "Corps"
+guardrail = "Strictement educatif, pas un avis medical: toute decision sante a valider avec un professionnel de sante qualifie."
+prerequisites = []
+tags = ["sante", "sommeil", "nutrition", "longevite", "exercice", "evidence-based"]

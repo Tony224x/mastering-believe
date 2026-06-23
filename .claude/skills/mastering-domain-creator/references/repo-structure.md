@@ -5,7 +5,7 @@
 ## Arborescence reelle
 
 ```
-domains/<nom-du-domaine>/
+domains/<track>/<nom-du-domaine>/
 ├── README.md                          # scope, prereqs, planning, criteres
 ├── REFERENCES.md                      # Phase 1 du skill (nouveau, pas dans domaines existants)
 ├── PLAN.md                            # Phase 3 du skill — fige le brief de chaque jour
@@ -47,10 +47,10 @@ domains/<nom-du-domaine>/
 
 1. **`02-code/` contient des fichiers `.py` plats**, PAS des dossiers `<NN>-<slug>/main.py`. Exemples reels :
    ```
-   domains/algorithmie-python/02-code/01-complexite-big-o.py
-   domains/algorithmie-python/02-code/02-arrays-strings.py
-   domains/system-design/02-code/01-principes-fondamentaux.py
-   domains/agentic-ai/02-code/01-anatomie-agent.py
+   domains/tech/algorithmie-python/02-code/01-complexite-big-o.py
+   domains/tech/algorithmie-python/02-code/02-arrays-strings.py
+   domains/tech/system-design/02-code/01-principes-fondamentaux.py
+   domains/tech/agentic-ai/02-code/01-anatomie-agent.py
    ```
 
 2. **`03-exercises/` reproduit le MEME slug dans les 3 niveaux** :
@@ -180,6 +180,6 @@ A chaque nouveau domaine :
 Toutes les commandes shell utilisees dans le pipeline doivent etre portables ou utiliser le tool natif de l'OS courant :
 - `python -m py_compile <fichier>` : portable
 - `python <fichier>` : portable (le binaire `python` ou `py` selon Windows)
-- `Glob "domains/<nom>/**/*"` (tool Glob) : portable, remplace `tree`, `find`, `dir /s`
+- `Glob "domains/<track>/<nom>/**/*"` (tool Glob) : portable, remplace `tree`, `find`, `dir /s`
 - `git` : portable
 - Eviter : `tree`, `find ... -exec`, `/dev/null`, `python3` hardcode

@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "neural-networks-llm"
+title = "Réseaux de Neurones & LLMs"
+track = "tech"
+status = "stable"
+level = "avance"
+duration = "3 semaines (core J1-J14 ≈ 75-80h + bloc frontière J15-J22 ≈ 38h optionnel)"
+stack = ["Python", "numpy", "PyTorch"]
+focus = "Mécanismes internes des LLMs from scratch, du neurone au Transformer puis frontière NN 2026."
+pillar = ""
+guardrail = ""
+prerequisites = []
+tags = ["transformers", "attention", "llm", "backpropagation", "from-scratch", "pytorch"]

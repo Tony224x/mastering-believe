@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "algorithmie-python"
+title = "Algorithmie & Data Structures — Live Coding Python"
+track = "tech"
+status = "stable"
+level = "intermediaire"
+duration = "~45h sur 2 semaines (14 modules)"
+stack = ["Python", "stdlib"]
+focus = "Structures de donnees et algorithmes pour le live coding : patterns LeetCode, complexite, entretiens tech FAANG."
+pillar = ""
+guardrail = ""
+prerequisites = []
+tags = ["algorithmes", "structures-de-donnees", "leetcode", "entretiens", "python", "big-o"]

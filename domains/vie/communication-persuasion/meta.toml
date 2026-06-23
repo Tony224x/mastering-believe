@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "communication-persuasion"
+title = "Communication, persuasion & influence"
+track = "vie"
+status = "stable"
+level = "debutant"
+duration = "14 modules (~45 min chacun), sur 2 semaines"
+stack = []
+focus = "Communiquer clairement et persuader honnetement : ecoute, clarte, recit, negociation, feedback, prise de parole, influence ethique."
+pillar = "Relations"
+guardrail = "Persuasion ethique (charte CTR : Consentement, Transparence, Reciprocite) ; pas de manipulation ni dark patterns."
+prerequisites = []
+tags = ["communication", "persuasion", "negociation", "ecoute", "rhetorique", "ethique"]

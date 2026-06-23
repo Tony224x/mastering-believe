@@ -19,6 +19,15 @@ Cette pipeline lance ~20 subagents (research + challenge + N modules + 3 reviewe
 - **full** : N modules + 3 reviewers Phase 6 (defaut)
 - **lite** : N/2 modules consolides + 1 reviewer (code-runner) en Phase 6 — pour un POC ou un domaine bien maitrise
 
+## Track du domaine
+
+Les domaines sont ranges par **track** dans `domains/<track>/<nom>/`. Partout dans ce skill, `<track>` est l'un de :
+- **tech** — maitrise d'ingenierie (algorithmie, system design, neural networks, agentic AI, robotics, gouvernance...).
+- **vie** — competences de vie a fort levier (les 5 piliers : Argent, Corps, Esprit, Jugement, Relations). Code souvent leger/optionnel ; ajouter `pillar` au `meta.toml`.
+- **exploratoire** — ajouts experimentaux/sensibles sous cadrage adverse (securite/ethique). Statut `exploratoire`, `guardrail` obligatoire.
+
+Le `<track>` est fixe en Phase 0 et substitue dans tous les chemins ci-dessous.
+
 ---
 
 ## Phase 0 — Discovery interview
@@ -28,17 +37,17 @@ Avant tout, demande des questions de clarification. Cout d'asker = bas ; cout de
 **Pose les questions en 2 vagues** (utiliser `AskUserQuestion` si dispo, max 4 questions par vague) :
 
 **Vague 1 — Cadrage**
-1. **Domaine & scope** : Quel domaine exactement ? Frontieres ? Qu'est-ce qu'on EXCLUT ?
-2. **Niveau de depart** : Prerequis acquis ? Background pertinent ?
+1. **Domaine & scope** : Quel domaine exactement ? Frontieres ? Qu'est-ce qu'on EXCLUT ? **Quel track (tech / vie / exploratoire) ?**
+2. **Niveau de depart** : Prerequis acquis ? Background pertinent ? (prerequis = slugs de domaines existants pour le `meta.toml`)
 3. **Niveau cible** : "World-class" veut dire quoi ici ? (entretien senior / shipper un projet / ecrire un papier / expliquer a un junior)
-4. **Stack / langage** : Python ? PyTorch ? LangGraph ? Rust ? K8s ? Autre ?
+4. **Stack / langage** : Python ? PyTorch ? LangGraph ? Rust ? K8s ? Autre ? (vide si domaine de vie sans code)
 
 **Vague 2 — Contraintes & ambition**
 5. **Capstone** : Projet final reve ? Sinon on en propose un en Phase 2.
 6. **Contexte metier optionnel** : Veut-il un `05-projets-guides/` rattache a `shared/logistics-context.md` (LogiSim/FleetSim), un autre fil-rouge a creer, ou rien ?
 7. **Contraintes** : Temps reel/jour ? GPU ? Budget API ? Hors-ligne requis ? **Mode full ou lite ?** **N jours (defaut 14) ?**
 
-**Gate** : reformule la cible en 3 lignes (domaine, public cible, capstone, mode, N) et fais valider explicitement avant Phase 1.
+**Gate** : reformule la cible en 3 lignes (domaine, **track**, public cible, capstone, mode, N) et fais valider explicitement avant Phase 1.
 
 ## Phase 1 — Sourced research
 
@@ -53,7 +62,7 @@ Lance des subagents `general-purpose` (PAS `Explore` — il n'a pas WebFetch/Web
 
 Pour chaque source : titre, auteur, annee, URL, **pourquoi elle est dans la liste** (1 phrase), **modules qu'elle alimente**.
 
-Stocke dans `domains/<nom>/REFERENCES.md`. C'est la source de verite pour Phase 5/6.
+Stocke dans `domains/<track>/<nom>/REFERENCES.md`. C'est la source de verite pour Phase 5/6.
 
 **Gate** : presente les references a l'utilisateur. Demande "manque-t-il une source que tu utilises personnellement ?"
 
@@ -83,9 +92,10 @@ Cree la structure squelette EXACTE selon `references/repo-structure.md` (fichier
 
 **Etapes** :
 1. Cree les dossiers vides : `01-theory/`, `02-code/`, `03-exercises/{01-easy,02-medium,03-hard,solutions}/`, `04-projects/`, et `05-projets-guides/` si Phase 0 le demande.
-2. Copie `shared/templates/README.md` dans `domains/<nom>/README.md`, remplis scope/prereqs/planning/criteres.
-3. Copie `REFERENCES.md` issu de Phase 1.
-4. **Cree `domains/<nom>/PLAN.md`** : fige le brief de chaque jour. C'est le contrat que liront les subagents Phase 4 — ils ne se lisent PAS entre eux.
+2. Copie `shared/templates/README.md` dans `domains/<track>/<nom>/README.md`, remplis scope/prereqs/planning/criteres.
+3. **Cree `domains/<track>/<nom>/meta.toml`** : `slug, title, track, status` (= `draft` au depart, `stable` a la cloture), `level, duration, stack` (= `[]` si pas de code), `focus, pillar` (vie only), `guardrail` (sujets sensibles), `prerequisites` (slugs de domaines existants), `tags`. Prends un `meta.toml` existant comme gabarit. **Ne PAS** y mettre de faits structurels (nb de modules, has_code) — ils sont derives par `build_catalog.py`.
+4. Copie `REFERENCES.md` issu de Phase 1.
+5. **Cree `domains/<track>/<nom>/PLAN.md`** : fige le brief de chaque jour. C'est le contrat que liront les subagents Phase 4 — ils ne se lisent PAS entre eux.
 
 Format de `PLAN.md` :
 ```markdown
@@ -101,22 +111,22 @@ Format de `PLAN.md` :
 ...
 ```
 
-5. Met a jour `tasks/todo.md` du repo avec checklist J1..JN.
-6. Met a jour la section "Domains actifs" du `CLAUDE.md` racine.
+6. Met a jour `tasks/todo.md` du repo avec checklist J1..JN.
+7. **`python shared/tools/build_catalog.py`** pour enregistrer le domaine (statut `draft`) dans `domains/CATALOG.md` + le tableau du README. (Quick-ref `CLAUDE.md` "Domaines actifs" : optionnel, 1 ligne.)
 
-**Gate** : verifier l'arborescence avec `Glob "domains/<nom>/**/*"`. PLAN.md couvre N jours.
+**Gate** : verifier l'arborescence avec `Glob "domains/<track>/<nom>/**/*"`. PLAN.md couvre N jours.
 
 ## Phase 4 — Creation parallele des cours
 
 Pour chaque jour J1..JN, **lance un subagent `general-purpose` dedie** qui produit les 3 livrables (theorie + code + exercices+solutions). Spawne **par lots de 3 a 5** dans un seul message pour la concurrence, mais lance les lots sequentiellement.
 
 **Regle anti-collision** : chaque subagent peut UNIQUEMENT ecrire dans :
-- `domains/<nom>/01-theory/<NN>-<slug>.md`
-- `domains/<nom>/02-code/<NN>-<slug>.py`
-- `domains/<nom>/03-exercises/01-easy/<NN>-<slug>.md`
-- `domains/<nom>/03-exercises/02-medium/<NN>-<slug>.md`
-- `domains/<nom>/03-exercises/03-hard/<NN>-<slug>.md`
-- `domains/<nom>/03-exercises/solutions/<NN>-<slug>.py`
+- `domains/<track>/<nom>/01-theory/<NN>-<slug>.md`
+- `domains/<track>/<nom>/02-code/<NN>-<slug>.py`
+- `domains/<track>/<nom>/03-exercises/01-easy/<NN>-<slug>.md`
+- `domains/<track>/<nom>/03-exercises/02-medium/<NN>-<slug>.md`
+- `domains/<track>/<nom>/03-exercises/03-hard/<NN>-<slug>.md`
+- `domains/<track>/<nom>/03-exercises/solutions/<NN>-<slug>.py`
 
 **Interdit** : toucher `tasks/todo.md`, `CLAUDE.md` racine, `PLAN.md`, `REFERENCES.md`, autres jours. Ces fichiers sont reserves a Claude principal en Phase 7.
 
@@ -133,7 +143,7 @@ Briefing complet dans `references/subagent-prompts.md` section Phase 4.
 
 **Checkpoint commit** apres Phase 4 reussie :
 ```
-git add domains/<nom>/ && git commit -m "chore(<nom>): scaffold + day modules [WIP]"
+git add domains/<track>/<nom>/ && git commit -m "chore(<nom>): scaffold + day modules [WIP]"
 ```
 Ca evite de perdre 56 fichiers si Phase 6 crash.
 
@@ -145,7 +155,7 @@ Lis CHAQUE `01-theory/<NN>-<slug>.md`. Pour chacun :
 3. Q&A spaced-repetition existent (3-5) et sont non-triviaux.
 4. Le module **commence par un exemple concret** avant la theorie abstraite.
 
-Logue dans `domains/<nom>/REVIEW-pass1.md` (probleme, fichier, severite).
+Logue dans `domains/<track>/<nom>/REVIEW-pass1.md` (probleme, fichier, severite).
 
 **Definition des severites** :
 - **HIGH** : citation hallucinee (auteur/annee/page faux verifiable), code qui ne compile pas, fait demonstrablement faux dans la theorie, structure cassee (manque Q&A, manque exemple concret).
@@ -175,13 +185,14 @@ Consolide dans `REVIEW-pass2.md`. Applique les fixes.
 
 1. Verifie que J(N-1) ou JN dans `02-code/` constitue le capstone runnable de bout en bout (convention du repo : pas de dossier `04-projects/<capstone>/`, le capstone vit dans le code du dernier jour).
 2. Si Phase 0 a demande un fil-rouge metier : cree `05-projets-guides/01-<projet>/`, `02-...`, `03-...` chacun avec `README.md` + `solution/`. Chaque projet reference `shared/logistics-context.md` (ou nouveau contexte cree par Phase 0).
-3. Met a jour `CLAUDE.md` racine — section "## Domains actifs" (1 ligne dans le tableau).
+3. Passe `status = "stable"` dans `domains/<track>/<nom>/meta.toml`, puis **`python shared/tools/build_catalog.py`** (regenere `CATALOG.md` + README). Optionnel : 1 ligne quick-ref dans la section "## Domaines actifs" du `CLAUDE.md` racine.
 4. Met a jour `tasks/todo.md` (cocher J1..JN).
-5. Commit final :
+5. Commit final — **staging explicite, jamais `git add -A`** (d'autres agents peuvent avoir des WIP non lies ; ne jamais commiter les `REVIEW-pass*.md` qui restent locaux) :
    ```
-   git add -A && git commit -m "feat(<nom>): full <N>-day mastery track for <domaine>"
+   git add domains/<track>/<nom>/ domains/CATALOG.md README.md CLAUDE.md tasks/todo.md
+   git commit -m "feat(<nom>): full <N>-day mastery track for <domaine>"
    ```
-   Ou si le checkpoint Phase 4 existe, amend ou nouveau commit selon preference utilisateur.
+   (`.gitignore` exclut les `REVIEW-pass*.md` — ils restent locaux. Verifie `git status` avant de committer.) Ou si le checkpoint Phase 4 existe, nouveau commit.
 
 **Gate final** : resume 8-10 lignes a l'utilisateur — quoi cree, combien de fichiers, capstone, points faibles connus restants (issus de REVIEW-pass1/2 medium-severity).
 
