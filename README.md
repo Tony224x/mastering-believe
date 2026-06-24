@@ -40,12 +40,6 @@ Les domaines sont ranges par **track** dans `domains/<track>/<domaine>/` (`tech`
 | [Pensee critique, rationalite & decision](./domains/vie/rationalite-decision/) | Jugement | Methode de raisonnement neutre : probas/Bayes, biais, decision sous incertitude, calibration (Brier), verification (SIFT). | 14 modules (~45 min chacun) |
 | [Sante, nutrition & longevite](./domains/vie/sante-longevite/) | Corps | Fondations evidence-based: sommeil, activite physique, nutrition, sante metabolique, stress & lien social, plan sante personnel. | 7 modules (~45 min chacun), ~8-10h sur 2-3 semaines |
 
-**Exploratoire — ajouts sous cadrage adverse** :
-
-| Domaine | Stack | Focus | Duree |
-|---|---|---|---|
-| [Psychedeliques, creativite & IA — Comprendre sans consommer](./domains/exploratoire/psychedeliques-creativite-ia/) | — | Etude educative, evidence-based et reduction des risques : securite/legalite, neuroscience, esprit critique creativite, integration legale, art & IA. | 6 modules + capstone (~45 min chacun) |
-
 > Inventaire complet (modules, prerequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).
 <!-- CATALOG:END -->
 

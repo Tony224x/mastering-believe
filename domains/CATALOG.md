@@ -2,7 +2,7 @@
 
 > Fichier **genere** par `shared/tools/build_catalog.py` — ne pas editer a la main. Les metadonnees vivent dans `domains/<track>/<domaine>/meta.toml`.
 
-**12 domaines** — tech : 6 · vie : 5 · exploratoire : 1.
+**11 domaines** — tech : 6 · vie : 5 · exploratoire : 0.
 
 ## Track Tech — maitrise d'ingenierie
 
@@ -32,11 +32,3 @@
 - **Finance personnelle & investissement** — garde-fou : Contenu purement educatif, pas un conseil financier personnalise ; actif vs passif par la donnee (SPIVA) ; risque de perte en capital.
 - **Pensee critique, rationalite & decision** — garde-fou : Methode > conclusions ; exemples 100% neutres, aucun sujet politique/religieux/clivant.
 - **Sante, nutrition & longevite** — garde-fou : Strictement educatif, pas un avis medical: toute decision sante a valider avec un professionnel de sante qualifie.
-
-## Exploratoire — ajouts sous cadrage adverse
-
-| Domaine | Niveau | Duree | Modules | Code | Stack / Focus | Statut |
-|---|---|---|---|---|---|---|
-| [Psychedeliques, creativite & IA — Comprendre sans consommer](./domains/exploratoire/psychedeliques-creativite-ia/) | debutant | 6 modules + capstone (~45 min chacun) | 7 | non | Etude educative, evidence-based et reduction des risques : securite/legalite, neuroscience, esprit critique creativite, integration legale, art & IA. | exploratoire |
-
-- **Psychedeliques, creativite & IA — Comprendre sans consommer** — garde-fou : Educatif/non-promotionnel : zero how-to, zero dosage, integration apres jamais pendant ; double disclaimer medical + legal (psilocybine = stupefiant en France).
