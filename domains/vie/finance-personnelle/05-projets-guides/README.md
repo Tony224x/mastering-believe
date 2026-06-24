@@ -6,7 +6,7 @@
 > non garantis** ; tout investissement comporte un risque de perte en capital.
 > Pour des décisions réelles, consultez un conseiller agréé.
 >
-> Contexte métier partagé : [`shared/logistics-context.md`](../../../logistics-context.md).
+> Contexte métier partagé : [`shared/logistics-context.md`](../../../../shared/logistics-context.md).
 
 ## Le pont avec le contexte LogiSim
 

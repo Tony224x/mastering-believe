@@ -4,7 +4,7 @@
 > financier, fiscal ou en investissement personnalisé. Les taux sont
 > illustratifs et non garantis ; tout investissement comporte un risque de
 > perte en capital. Contexte métier partagé :
-> [`shared/logistics-context.md`](../../../logistics-context.md).
+> [`shared/logistics-context.md`](../../../../../shared/logistics-context.md).
 
 **Niveau** : facile → moyen · **Modules mobilisés** : 01 (intérêts composés),
 02 (épargne automatique), 05 (impact des frais).
