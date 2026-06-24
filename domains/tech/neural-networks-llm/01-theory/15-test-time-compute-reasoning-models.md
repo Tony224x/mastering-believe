@@ -232,7 +232,7 @@ Budget total = Training + Inference
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-280 — Lec. 12 (Inference-Time Techniques for LLM Reasoning — Xinyun Chen)** — best-of-N, self-consistency, MCTS, etat de l'art 2025.
 - **Berkeley CS294-280 — Lec. 11 (Learning to Reason — Weston)** — comment on entraine un modele a raisonner (RLVR, GRPO).

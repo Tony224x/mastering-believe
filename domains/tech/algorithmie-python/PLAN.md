@@ -176,7 +176,7 @@
 
 ## Projets guidés (contexte logistique FleetSim, transversal)
 
-Appliquent les patterns vus en théorie à des cas réels du moteur de simulation FleetSim (voir [`../../shared/logistics-context.md`](../../shared/logistics-context.md)). Tous **déterministes** (rejouabilité).
+Appliquent les patterns vus en théorie à des cas réels du moteur de simulation FleetSim (voir [`../../shared/logistics-context.md`](../../../shared/logistics-context.md)). Tous **déterministes** (rejouabilité).
 
 | # | Projet | Concepts | Difficulté |
 |---|--------|----------|------------|

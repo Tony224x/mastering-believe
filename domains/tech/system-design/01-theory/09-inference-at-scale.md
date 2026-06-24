@@ -274,7 +274,7 @@ R: Queue depth + p99 latency. Jamais le CPU seul. GPU utilization > 80% soutenu 
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **MIT 6.5940 — Lec. 12 (Transformer & LLM)** — pivot pour comprendre les couts d'inference d'un LLM (KV cache, attention).
 - **Stanford CS336 — Lec. 10 (Inference)** — perspective build-from-scratch sur l'inference, batching, paged attention.

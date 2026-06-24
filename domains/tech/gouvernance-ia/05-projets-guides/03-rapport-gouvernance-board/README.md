@@ -1,6 +1,6 @@
 # Projet 03 — Rapport de gouvernance board-ready + crosswalk de conformite
 
-> **Difficulte** : medium | **Contexte metier** : [`shared/logistics-context.md`](../../../../shared/logistics-context.md) | **Solution** : [`solution/governance_report.py`](solution/governance_report.py)
+> **Difficulte** : medium | **Contexte metier** : [`shared/logistics-context.md`](../../../../../shared/logistics-context.md) | **Solution** : [`solution/governance_report.py`](solution/governance_report.py)
 > **Theorie mobilisee** : J4 (scoring NIST AI RMF), J5 (EU AI Act, obligatoire vs volontaire), J7 (normes & crosswalk AIMS), J12 (documentation & assurance).
 
 ## Contexte metier

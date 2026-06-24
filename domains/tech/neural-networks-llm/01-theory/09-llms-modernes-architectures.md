@@ -649,7 +649,7 @@ Utilise par : DeepSeek V2, V3, R1. C'est une des innovations architecturales maj
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 3 (Architectures), Lec. 4 (MoE)** — variantes modernes (LLaMA, GQA, RoPE, MoE) en detail.
 - **CMU 11-711 (Neubig) — Lec. 14 (Ensembling & MoE)** — tour d'horizon des architectures sparses.

@@ -332,7 +332,7 @@ Les chiffres "contexte effectif" ci-dessous sont des **estimations communautaire
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CMU 11-711 (Neubig) — Lec. 13 (Long Sequence Models), Lec. 23 (MagicPIG & Factor — Long Context)** — etat de l'art pre/post 2024 sur le long contexte.
 - **CMU 11-711 (Welleck) — Lec. 16 (Long-Context Models)** — techniques 2025 (RoPE scaling, sliding window, attention sinks).

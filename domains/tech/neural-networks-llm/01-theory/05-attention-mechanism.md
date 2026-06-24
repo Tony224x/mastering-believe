@@ -479,7 +479,7 @@ Cout computationnel : **identique** a une seule tete avec d_model dims, car les 
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS25 V2 — Karpathy (Introduction to Transformers)** — la conference de reference pour l'intuition self-attention.
 - **CMU 11-711 (Neubig, Fa24) — Lec. 4 (Attention & Transformers)** — derivation pas-a-pas Q/K/V et multi-head.

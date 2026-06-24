@@ -315,6 +315,6 @@ Contexte typique > 128k tokens ET throughput critique ?
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS25 V6 — Lec. 1 (Tradeoffs of State Space Models and Transformers)** — comparatif rigoureux SSM vs attention, par les auteurs Mamba.

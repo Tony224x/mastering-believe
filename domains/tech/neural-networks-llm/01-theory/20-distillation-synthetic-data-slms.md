@@ -266,7 +266,7 @@ La majorite des equipes **sautent l'etape 3** et vont directement a distiller. R
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **MIT 6.5940 — Lec. 9 (Knowledge Distillation)** — fondations theoriques distillation et soft targets.
 - **CMU 11-711 (Neubig) — Lec. 11 (Distillation, Quantization, Pruning)** — distillation moderne pour LLM/SLM.

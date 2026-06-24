@@ -343,7 +343,7 @@ Faux. Les modeles edge/on-device (Phi-4, Gemma 3, les variantes 3B-8B) restent *
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 4 (Mixture of Experts)** — derivation complete du routing, load balancing, training MoE.
 - **CMU 11-711 (Neubig) — Lec. 14 (Ensembling & Mixture of Experts)** — perspective NLP sur les architectures sparses.

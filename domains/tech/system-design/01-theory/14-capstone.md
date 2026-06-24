@@ -338,7 +338,7 @@ R: Le cout des tokens en input (RAG context long). D'ou l'importance de chunking
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 5-8 (GPUs, Kernels, Parallelism)** — boite a outils complete pour defendre un design d'infra LLM en entretien.
 - **Berkeley CS294-196 Fa25 — Lec. 10 (System Designs — Yangqing Jia)** — retour de terrain sur les choix d'architecture qui ont scale, indispensable pour calibrer ses tradeoffs.

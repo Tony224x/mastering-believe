@@ -455,7 +455,7 @@ Si une case n'est pas cochee, tu as un risque identifie a traiter avant producti
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Harvard CS 2881R — Lec. 3 (Robustness), Lec. 8 (Scheming)** — vue academique sur la robustesse adversariale et le scheming des modeles.
 - **Berkeley CS294-196 (Fa25) — Lec. 1 (Agentic AI Safety & Security, Dawn Song)** — tour d'horizon recent des menaces et defenses pour agents.

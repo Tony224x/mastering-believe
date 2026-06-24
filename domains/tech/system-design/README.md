@@ -70,7 +70,7 @@ Ce domaine a un **double palier** : la Semaine 1 (fondations system design, auto
 
 Les exercices de `03-exercises/` couvrent tous les modules, avec les niveaux medium et hard concentres sur les fondamentaux (modules 01-03) — la ou la pratique deliberee rapporte le plus.
 
-Le dossier [`05-projets-guides/`](05-projets-guides/) propose 3 projets appliques au contexte LogiSim (simulation logistique automatisee, voir [`shared/logistics-context.md`](../../shared/logistics-context.md)) : simulation distribuee, pipeline EOD, plateforme multi-tenant air-gapped.
+Le dossier [`05-projets-guides/`](05-projets-guides/) propose 3 projets appliques au contexte LogiSim (simulation logistique automatisee, voir [`shared/logistics-context.md`](../../../shared/logistics-context.md)) : simulation distribuee, pipeline EOD, plateforme multi-tenant air-gapped.
 
 ## Criteres de reussite
 

@@ -439,7 +439,7 @@ La semaine 2 : pretraining, fine-tuning, RLHF, tokenization avancee, scaling law
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 1-3 (Tokenization, PyTorch, Architectures)** — build complet from scratch en PyTorch.
 - **Stanford CS25 V2 — Karpathy (Introduction to Transformers)** — intuition self-attention pour debugger ton implementation.

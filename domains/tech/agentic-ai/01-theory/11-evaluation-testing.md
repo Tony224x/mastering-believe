@@ -415,7 +415,7 @@ Plusieurs frameworks dedies a l'evaluation LLM/agent ont emerge en 2024-2025 et 
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CME295 — Lec. 8 (LLM Evaluation)** — vue d'ensemble compacte des methodes d'eval.
 - **Berkeley CS294-196 (Fa25) — Lec. 6 (Predictable Noise in LLM Benchmarks, Sida Wang)** — comprendre la variance des benchmarks pour eviter les conclusions hatives.

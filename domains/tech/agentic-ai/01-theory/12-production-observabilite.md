@@ -483,7 +483,7 @@ Deux metriques agent-specifiques a retenir absolument :
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours terrain sur la mise en prod et l'observabilite d'agents.
 - **Berkeley CS294-196 (Fa25) — Lec. 10 (Evolution of System Designs, Yangqing Jia)** — patterns d'infra LLM en production.

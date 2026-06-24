@@ -847,7 +847,7 @@ asyncio.run(main())
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CMU 11-711 (Neubig, Fa24) — Lec. 15 (Tool Use and LLM Agent Basics)** — fondations academiques du function calling.
 - **Berkeley CS294-196 (Fa24) — Lec. 7 (Agents for Software Development, Neubig)** — tool use applique au code.

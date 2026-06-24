@@ -337,7 +337,7 @@ Ces exercices te forcent a **penser comme un builder** : refactorer un systeme r
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours production qui informent un capstone realiste.
 - **Berkeley CS294-196 (Fa25) — Lec. 8 (Training Agentic Models, Weizhu Chen)** — vue Microsoft sur l'entrainement et l'evaluation d'agents complets.

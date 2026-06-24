@@ -351,7 +351,7 @@ Apres beaucoup d'etapes, le contexte deborde.
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa24) — Lec. 11 (LLM Agents: History & Overview, Shunyu Yao)** — vue d'ensemble fondatrice par l'auteur de ReAct.
 - **CMU 11-711 (Welleck, Sp25) — Lec. 13 (Agents)** — perspective NLP 2025 sur l'anatomie d'un agent.

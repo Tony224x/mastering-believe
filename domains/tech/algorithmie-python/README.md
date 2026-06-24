@@ -65,7 +65,7 @@ Tu n'as pas toujours 2 semaines. Voici comment prioriser selon ton temps :
 - `02-code/` — exemples executables alignes sur la theorie
 - `03-exercises/` — easy couvre tous les modules ; medium et hard se concentrent sur les modules 01-03 (fondamentaux)
 - `04-projects/` — mini-projets libres (vide pour l'instant)
-- `05-projets-guides/` — 3 projets appliques au contexte LogiSim (voir [`shared/logistics-context.md`](../../shared/logistics-context.md))
+- `05-projets-guides/` — 3 projets appliques au contexte LogiSim (voir [`shared/logistics-context.md`](../../../shared/logistics-context.md))
 
 ## Criteres de reussite
 

@@ -177,7 +177,7 @@ ancrees sur les [criteres de reussite](./README.md#criteres-de-reussite) du doma
 L'arme secrete : ne pas seulement avancer, mais **re-tester** les flash-cards des
 modules passes a intervalles croissants (rythme type Leitner, inspire de SM-2 :
 J+1, J+3, J+7, J+14). Cf. le domaine
-[`apprendre-a-apprendre`](../apprendre-a-apprendre/) (repetition espacee,
+[`apprendre-a-apprendre`](../../vie/apprendre-a-apprendre/) (repetition espacee,
 difficultes desirables) — note que le *vrai* SM-2 adapte l'intervalle au facteur
 de facilite ; ici on fige une echelle simple. Chaque revision d'un module deja vu
 = **+5 XP**, **plafonne aux 4 intervalles ci-dessus** (J+1, J+3, J+7, J+14) =
@@ -196,7 +196,7 @@ de facilite ; ici on fige une echelle simple. Chaque revision d'un module deja v
 ## Regles du jeu
 
 Cette couche n'est pas du vernis : chaque mecanique mappe un principe de la
-[methodologie du repo](../../CLAUDE.md#learning-methodology-rules).
+[methodologie du repo](../../../CLAUDE.md#learning-methodology-rules).
 
 | Mecanique | Principe evidence-based | Pourquoi ca marche |
 |---|---|---|

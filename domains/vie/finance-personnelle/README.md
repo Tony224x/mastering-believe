@@ -118,7 +118,7 @@ domains/vie/finance-personnelle/
 ## Projets guidés (Module 05-projets-guides)
 
 Trois projets appliqués qui mettent vos acquis en situation, sur le décor métier
-partagé LogiSim (cf. [`shared/logistics-context.md`](../../shared/logistics-context.md)) :
+partagé LogiSim (cf. [`shared/logistics-context.md`](../../../shared/logistics-context.md)) :
 les protagonistes sont des personnes travaillant chez/autour de LogiSim
 confrontées à des décisions d'argent ordinaires (finance **personnelle**, pas
 finance d'entreprise). Chaque projet fournit un script exécutable (stdlib) + une

@@ -511,7 +511,7 @@ Le planning n'est pas toujours beneficiaire. Il peut :
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa24) — Lec. 12 (LLM Reasoning, Denny Zhou)** — vue Google DeepMind sur le reasoning, CoT et self-consistency.
 - **Berkeley CS294-280 (Sp25) — Lec. 11 (Learning to Reason, Weston)** — comment on apprend le reasoning aux modeles.

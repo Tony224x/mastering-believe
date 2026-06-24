@@ -549,7 +549,7 @@ Utilise partout en 2024, integre dans PyTorch (`torch.nn.functional.scaled_dot_p
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 10 (Inference)** — KV cache, batching, quantization vus from scratch.
 - **MIT 6.5940 — Lec. 12 (Transformer & LLM)** — TinyML/efficient AI, optimisations bas niveau.

@@ -326,7 +326,7 @@ Conclusion pratique : **Q4 est le point sweet**. En dessous, la qualite chute no
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **MIT 6.5940 — Lec. 5-6 (Quantization Part I & II)** — fondations quantization (linear, NF4, GPTQ, AWQ).
 - **CMU 11-711 (Welleck) — Lec. 14 (Quantization — Tim Dettmers guest)** — par l'auteur de LLM.int8/QLoRA, perspective recherche.

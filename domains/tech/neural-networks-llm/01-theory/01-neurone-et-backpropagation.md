@@ -529,7 +529,7 @@ En pratique, on utilise toujours mini-batch.
 
 ## Pour aller plus loin
 
-Lectures couvrant les fondations neurone / backprop / optimisation (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant les fondations neurone / backprop / optimisation (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS230 — Lec. 1 (Introduction to Deep Learning), Lec. 2 (Supervised Learning)** — Andrew Ng, on-ramp DL.
 - **Stanford CS231N — Lec. 3 (Regularization & Optimization), Lec. 4 (Neural Networks & Backpropagation)** — backprop expliqué pas-à-pas.

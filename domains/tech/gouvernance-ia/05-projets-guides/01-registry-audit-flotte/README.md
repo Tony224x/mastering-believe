@@ -1,6 +1,6 @@
 # Projet 01 — Registry de gouvernance & audit des agents orphelins
 
-> Difficulte : **medium** — contexte metier LogiSim/FleetSim : voir [`shared/logistics-context.md`](../../../../shared/logistics-context.md).
+> Difficulte : **medium** — contexte metier LogiSim/FleetSim : voir [`shared/logistics-context.md`](../../../../../shared/logistics-context.md).
 
 ## Contexte metier
 

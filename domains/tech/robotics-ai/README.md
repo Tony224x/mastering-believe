@@ -139,4 +139,4 @@ Top 5 si tu ne devais en garder que 5 :
 
 ## Projets guides
 
-À venir : 3 projets en contexte LogiSim/FleetSim (entrepôts robotisés, AGV, picking automatisé) dans un futur dossier `05-projets-guides/` (pas encore créé) — voir aussi [`shared/logistics-context.md`](../../shared/logistics-context.md).
+À venir : 3 projets en contexte LogiSim/FleetSim (entrepôts robotisés, AGV, picking automatisé) dans un futur dossier `05-projets-guides/` (pas encore créé) — voir aussi [`shared/logistics-context.md`](../../../shared/logistics-context.md).

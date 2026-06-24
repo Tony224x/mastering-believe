@@ -293,7 +293,7 @@ R: Quand le domaine est homogene, le contexte court, la latence critique et que 
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 Fa25 — Lec. 10 (Evolution of System Designs — Yangqing Jia)** — retour d'experience sur l'evolution des architectures de systemes IA en production.
 - **Berkeley CS294-196 Fa25 — Lec. 4 (Practical Lessons from Deploying — Bavor / Sierra)** — lecons concretes du deploiement d'agents en prod chez Sierra.

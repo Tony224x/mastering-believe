@@ -641,6 +641,6 @@ Le gradient ne met a jour que les lignes correspondant aux tokens du batch (mise
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CMU 11-711 (Neubig, Fa24) — Lec. 2 (Representing Words)** — du one-hot aux embeddings denses, intuitions Word2Vec / GloVe.

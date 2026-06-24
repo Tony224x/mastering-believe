@@ -404,7 +404,7 @@ Si tu comprends cet agent de bout en bout, tu comprends 80% des agents en produc
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours terrain sur la mise en prod d'agents complets.
 - **Berkeley CS294-196 (Fa24) — Lec. 6 (AI Agents for Enterprise Workflows, Chapados)** — patterns pour agents qui orchestrent des workflows reels.

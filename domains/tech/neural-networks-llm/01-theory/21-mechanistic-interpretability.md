@@ -308,6 +308,6 @@ Etat de l'art honnete :
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Harvard CS 2881R — Lec. 10 (Mechanistic Interpretability)** — la conference dediee mech interp dans le cours AI safety de Harvard.
