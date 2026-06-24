@@ -132,8 +132,16 @@ def _md_escape(text: str) -> str:
     return str(text).replace("|", "\\|")
 
 
-def _link(d: dict) -> str:
-    return f"[{_md_escape(d['title'])}](./{d['_path']}/)"
+def _link(d: dict, base: str = "") -> str:
+    # _path est relatif a la racine repo (ex: domains/tech/agentic-ai).
+    # base="domains" pour CATALOG.md (qui vit dans domains/) -> lien relatif au dossier ;
+    # base="" pour le README racine -> lien relatif a la racine.
+    path = d["_path"]
+    if base:
+        prefix = base + "/"
+        if path.startswith(prefix):
+            path = path[len(prefix):]
+    return f"[{_md_escape(d['title'])}](./{path}/)"
 
 
 def _slug_title_map(domains: list[dict]) -> dict[str, str]:
@@ -172,7 +180,7 @@ def render_catalog(domains: list[dict]) -> str:
         for d in sorted(ds, key=lambda x: x["slug"]):
             stack = ", ".join(d["stack"]) if d["stack"] else "—"
             sf = f"{stack} · {_md_escape(d['focus'])}" if d["stack"] else _md_escape(d["focus"])
-            row = [_link(d)]
+            row = [_link(d, base="domains")]
             if is_vie:
                 row.append(_md_escape(d.get("pillar") or "—"))
             row += [
