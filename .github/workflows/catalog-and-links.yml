@@ -1,0 +1,30 @@
+# CI minimale du depot mastering-believe.
+#
+# Deux garde-fous deterministes (stdlib seulement, pas de deps a installer) :
+#   1. Le catalogue genere est a jour (CATALOG.md + bloc README sync avec les meta.toml).
+#   2. Aucun lien relatif casse dans les .md suivis par git.
+#
+# Le point 2 aurait fait echouer la PR du reorg en 3 tracks (liens decales non reecrits).
+name: catalog-and-links
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11" # tomllib requiert 3.11+
+
+      - name: Catalogue a jour (CATALOG.md + bloc README)
+        run: python shared/tools/build_catalog.py --check
+
+      - name: Liens relatifs valides dans les .md
+        run: python shared/tools/check_links.py
