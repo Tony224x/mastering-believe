@@ -126,6 +126,15 @@ Utilise par : GPT-4 Turbo, Claude, Gemini, et tous les grands providers.
 - **EAGLE** : apprend un petit draft qui re-utilise les hidden states du target
 - **Lookahead decoding** : decode par paquets de N tokens en parallele sans draft model
 
+### Ce qu'en font les frontier en 2026
+
+Kimi K3 illustre la forme aboutie de la variante EAGLE, et deux details valent le detour :
+
+1. **Le draft n'est pas un modele separe : il vient du pre-training.** Le modele est pre-entraine avec une couche **MTP** (*multi-token prediction*) qui a la meme structure qu'un bloc du backbone. Au moment de servir, cette couche est **fine-tunee en draft EAGLE-3**, target gele. Autrement dit le draft est deja aligne sur le target par construction — c'est ce qui fait monter le taux d'acceptation.
+2. **On optimise le bon objectif.** Le speedup est gouverne par le **taux d'acceptation** `sum_x min(p(x), q(x))` entre distribution target `p` et draft `q`. La pratique courante — entrainer le draft par KL-divergence — n'est qu'un proxy : minimiser la KL ne maximise pas ce taux quand le draft a une capacite limitee. K3 optimise donc **directement** `L = -log sum_x min(p(x), q(x))`.
+
+> **Transferable** : chaque fois que tu entraines un modele auxiliaire (draft, reranker, classifieur de garde), demande-toi si ta loss optimise la metrique qui t'interesse ou seulement un proxy commode.
+
 ---
 
 ## 4. Quantization — reduire les bits
@@ -338,6 +347,19 @@ Avec prefix cache : on prefill une seule fois et on reutilise le KV cache. Gain 
 
 Pour les applications agent-based a forte charge, le prefix caching seul peut diviser la facture par 10.
 
+### Ce que les architectures hybrides cassent (2026)
+
+Tout ce qui precede suppose un cache **par token** : on hache des blocs de KV, on reutilise ceux qui matchent. Les modeles hybrides lineaire/attention (Kimi K3, cf. J17) ont **deux** caches de natures incompatibles :
+
+| | KV cache MLA (attention globale) | Etat recurrent KDA (attention lineaire) |
+|---|---|---|
+| Taille | croit avec la sequence, 1 entree/token | **fixe**, un gros bloc par sequence |
+| Granularite naturelle de reuse | fine (blocs de 512 tokens) | grossiere : snapshotter l'etat coute cher, donc **checkpoints rares** |
+
+Et un prefixe n'est reutilisable que si **les deux** sont restaurables **au meme point**. Naivement, on aligne tout sur la granularite la plus grossiere — et le prefix caching devient quasi inutile (les requetes plus courtes qu'un bloc ne matchent jamais). La solution de K3 : **decoupler les deux granularites** — hachage fin cote MLA, checkpoints KDA persistes seulement a un sous-ensemble des frontieres de hash (typiquement les tours de conversation). Un hit se resout en deux etapes : on trouve la plus longue frontiere valable **des deux** cotes, on restaure l'etat KDA, on reprend le prefill a partir de la.
+
+> **Ce qu'il faut en retenir sans coder d'inference engine** : quand tu evalues une architecture "efficace", regarde son comportement **en cache**, pas seulement ses FLOPs. Un etat de taille fixe economise de la memoire mais peut couter tres cher en re-prefill — et sur un agent qui rejoue un prefixe de 400 K tokens a chaque appel d'outil, c'est ce poste qui domine la facture.
+
 ---
 
 ## 9. FP4 quantization et Blackwell
@@ -359,6 +381,8 @@ FP4 est mieux adapte aux **distributions des poids d'un LLM** (gaussiennes centr
 - **Accuracy** : perte < 1% sur Llama 3 70B et DeepSeek V3 comparativement a FP16, pour peu qu'on utilise un bon scheme de calibration (par block avec outliers separes)
 
 En production 2025, les deployments frontier (OpenAI, Anthropic, DeepMind) sont probablement en FP4 sur B200.
+
+**Confirmation open-weight (2026)** : **Kimi K3** (Moonshot AI, 2.78 T params) est livre avec ses **poids d'experts MoE en MXFP4** et ses **activations en MXFP8**, tout le reste (projections d'attention, projections latentes MoE, shared experts, routeurs) restant en precision superieure. Le format `MX` (*Microscaling*) = FP4/FP8 + un scale partage par petit bloc, standardise cote hardware. Point cle : ce n'est pas de la PTQ post-hoc — le modele a ete entraine en **QAT** sur tout le post-training avec ce schema exact (cf. J19 §5). C'est la premiere fois qu'on peut lire le detail complet d'un deploiement FP4 frontier dans un rapport public.
 
 ### BitNet b1.58 — jusqu'a 1.58 bit
 

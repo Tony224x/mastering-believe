@@ -1,7 +1,7 @@
 """
 Solutions HARD — Jour 9 : LLMs modernes (RoPE, RMSNorm, SwiGLU, GQA)
 ===================================================================
-Exercices 7, 8 (hard). Pur NumPy.
+Exercices 7, 8, 9 (hard). Pur NumPy.
 
 7. RoPE complexe + preuve relative + extension de contexte (PI, NTK).
 8. Mini-bloc LLaMA complet (RMSNorm + RoPE + GQA + SwiGLU) en NumPy.
@@ -224,6 +224,119 @@ print("\n  Impact des 4 ameliorations:")
 print("    (a) qualite          : SwiGLU + RMSNorm (gains de loss)")
 print("    (b) vitesse inference: GQA (moins de K/V -> cache plus petit, decode plus rapide)")
 print("    (c) memoire          : GQA (cache reduit) + RoPE (pas de table positionnelle)")
+
+# ===========================================================================
+# EXERCICE 9 - SiTU-GLU : borner une activation pour survivre au FP4
+# ===========================================================================
+print("\n" + "=" * 70)
+print("EXERCICE 9 - SiTU-GLU (Kimi K3, 2026)")
+print("=" * 70)
+
+B1, B2 = 4.0, 25.0
+FP8_E4M3_MAX = 448.0
+
+
+def _sigmoid(x):
+    # clip avant exp : sans lui, exp(710) deborde et renvoie inf. On borne
+    # l'ARGUMENT, pas le resultat, donc la valeur retournee reste exacte.
+    return 1.0 / (1.0 + np.exp(-np.clip(x, -60.0, 60.0)))
+
+
+def softcap(x, beta):
+    """beta * tanh(x / beta) : identite pres de 0, plafonne a beta a l'infini."""
+    return beta * np.tanh(x / beta)
+
+
+def swiglu(gate_pre, up_pre):
+    """Swish(gate) * up. Rien ne borne la sortie : elle suit les outliers."""
+    return gate_pre * _sigmoid(gate_pre) * up_pre
+
+
+def situ_glu(gate_pre, up_pre, b1=B1, b2=B2):
+    """[b1*tanh(g/b1) * Sigmoid(g)] * [b2*tanh(u/b2)]."""
+    gate_branch = softcap(gate_pre, b1) * _sigmoid(gate_pre)
+    up_branch = softcap(up_pre, b2)
+    return gate_branch * up_branch
+
+
+# --- 1. Borne theorique ----------------------------------------------------
+print("\n  1. Borne theorique")
+print(f"     |b1*tanh(g/b1)| <= b1 = {B1}   et   0 < Sigmoid(g) < 1")
+print(f"     |b2*tanh(u/b2)| <= b2 = {B2}")
+print(f"     -> |y| <= b1 * b2 = {B1 * B2:.0f}")
+print("     Le facteur Sigmoid <= 1 ne peut que REDUIRE la borne, jamais")
+print("     l'augmenter : la borne dure est donc 100.")
+print("     SwiGLU, lui, n'est borne par rien : Swish(g) ~ g quand g grandit,")
+print("     donc la sortie croit comme le PRODUIT de deux pre-activations.")
+
+# --- 3. Regime normal ------------------------------------------------------
+print("\n  3. Regime normal (gate, up ~ N(0,1))")
+rng9 = np.random.default_rng(42)
+gate = rng9.standard_normal((512, 1024))
+up = rng9.standard_normal((512, 1024))
+
+y_swi = swiglu(gate, up)
+y_situ = situ_glu(gate, up)
+rel = np.abs(y_situ - y_swi) / (np.abs(y_swi) + 1e-9)
+print(f"     ecart relatif median = {np.median(rel):.2%}")
+print(f"     ecart relatif p95    = {np.percentile(rel, 95):.2%}")
+print("     -> dans le regime ou vivent 99 % des activations, SiTU-GLU est une")
+print("        reparametrisation quasi transparente de SwiGLU.")
+print("        C'est une condition NECESSAIRE : si la fonction changeait")
+print("        partout, on ne bornerait pas SwiGLU, on le remplacerait par")
+print("        autre chose - et tout ce que l'on sait de son comportement")
+print("        (gains de loss, dynamique d'entrainement) serait a revalider.")
+
+# --- 4. Regime outlier -----------------------------------------------------
+print("\n  4. Regime outlier (20 canaux x60 : les 'massive activations')")
+gate_o, up_o = gate.copy(), up.copy()
+bad = rng9.choice(1024, size=20, replace=False)
+gate_o[:, bad] *= 60.0
+up_o[:, bad] *= 60.0
+
+max_swi = float(np.max(np.abs(swiglu(gate_o, up_o))))
+max_situ = float(np.max(np.abs(situ_glu(gate_o, up_o))))
+print(f"     max|SwiGLU|   = {max_swi:10.2f}   "
+      f"({'DEBORDE' if max_swi > FP8_E4M3_MAX else 'ok'} FP8 E4M3, max "
+      f"{FP8_E4M3_MAX:.0f})")
+print(f"     max|SiTU-GLU| = {max_situ:10.2f}   "
+      f"({'DEBORDE' if max_situ > FP8_E4M3_MAX else 'ok'} FP8 E4M3)")
+print(f"     depassement SwiGLU : x{max_swi / FP8_E4M3_MAX:.1f} le maximum")
+print("     representable. En FP8 ces valeurs deviennent des inf, et un inf")
+print("     dans une activation contamine tout le reste du forward.")
+
+# --- 5. Soft cap vs hard clamp --------------------------------------------
+print("\n  5. Soft cap vs hard clamp : la derivee en x = 100")
+h = 1e-4
+x0 = 100.0
+# Difference AVANT (a droite). Le clip a un point anguleux exactement en 100 :
+# une difference centree l'enjamberait et renverrait 0.5, une moyenne entre
+# les deux pentes qui n'existe nulle part. C'est la derivee a droite qui
+# decrit ce que vit un neurone sature.
+d_soft = (softcap(x0 + h, B2) - softcap(x0, B2)) / h
+d_clip = (np.clip(x0 + h, -100, 100) - np.clip(x0, -100, 100)) / h
+print(f"     d/dx [b2*tanh(x/b2)] en x=100+ = {d_soft:.6f}   (b2={B2:.0f})")
+print(f"     d/dx [clip(x,-100,100)] en x=100+ = {d_clip:.6f}")
+print("     -> le clip donne un gradient EXACTEMENT nul. Un neurone qui sature")
+print("        ne recoit plus aucun signal : il ne peut plus jamais revenir")
+print("        dans la zone utile, meme si c'est ce que la loss demande.")
+print("        Le soft cap garde un gradient minuscule mais non nul, donc une")
+print("        voie de retour. Meme borne, dynamique d'apprentissage opposee.")
+
+# --- 6. Synthese -----------------------------------------------------------
+print("\n  6. Synthese : un format numerique a modifie la fonction du reseau")
+print("     Autre cas du meme type, jour 17 : le gate de decroissance de KDA.")
+print("     Kimi K3 le borne par g_min = -5 non pas pour une raison")
+print("     mathematique, mais pour que 1/Gamma tienne dans la dynamique du")
+print("     BF16 sur une tuile de 16 tokens - ce qui permet de calculer TOUTES")
+print("     les tuiles causales, diagonales comprises, en matmul dense sur")
+print("     Tensor Cores.")
+print("     Jour 19, meme logique : le format MX fixe un bloc de 32 elements et")
+print("     une echelle en puissance de deux, moins precis que NF4, mais")
+print("     dequantifiable dans le datapath du Tensor Core.")
+print("     Dans les trois cas la contrainte materielle remonte jusqu'au design")
+print("     mathematique. A l'echelle frontier, ce n'est plus l'exception.")
+
 
 print("\n" + "=" * 70)
 print("FIN DES SOLUTIONS HARD (Jour 9)")

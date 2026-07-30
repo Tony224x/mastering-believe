@@ -109,3 +109,60 @@ Quantifier rigoureusement la limite fondamentale des SSM (idee fausse n°4) : l'
 - [ ] La capacite utile ~ lineaire en D est verifiee empiriquement (M_saturation vs D)
 - [ ] L'analyse relie a MQAR, argumente la limite informationnelle, justifie les hybrides
 - [ ] Code numpy, seed, commente WHY
+
+---
+
+## Exercice 10 : KDA — regle delta et gate borne (Kimi K3, 2026)
+
+### Objectif
+
+Implementer les deux idees qui ont fait passer l'attention lineaire a l'echelle frontier : la **regle delta** (corriger l'etat au lieu de seulement l'accumuler) et le **gate de decroissance borne** (une contrainte mathematique posee pour une raison purement materielle).
+
+### Consigne
+
+Rappel des deux recurrences, avec `S` l'etat de shape `(d_k, d_v)` :
+
+```
+accumulation   : S_t = diag(alpha_t) S_{t-1} + k_t v_t^T
+regle delta    : S_t = (I - beta_t k_t k_t^T) diag(alpha_t) S_{t-1} + beta_t k_t v_t^T
+lecture        : o_t = S_t^T q_t
+```
+
+**Partie A — la regle delta**
+
+1. Implementer `linear_attention_additive(keys, values, alpha)` et `linear_attention_delta(keys, values, alpha, beta)` en NumPy, en boucle explicite (la version chunkwise n'est pas demandee).
+
+2. Montrer algebriquement que le terme `-beta_t k_t (k_t^T S_{t-1}')` est exactement "ce que la cle `k_t` lirait dans l'etat courant", donc que la regle delta **efface l'ancienne association avant d'ecrire la nouvelle**. Quel est le lien avec la regle d'apprentissage du perceptron (`w <- w + eta (cible - prediction) x`) ?
+
+3. **Tache d'ecrasement.** Ecrire 40 paires cle -> valeur (cles L2-normalisees, `d_k = d_v = 64`), puis **reecrire** 10 de ces cles avec une nouvelle valeur. Avec `alpha = 1` et `beta = 1` (aucun oubli, pour isoler une seule variable), mesurer `cosine(lecture, derniere valeur vraie)` separement sur :
+   - les cles **jamais reecrites**
+   - les cles **reecrites**
+
+4. Interpreter les deux colonnes separement. Sur quelle colonne l'ecart est-il un vrai effet de la regle delta, et sur quelle colonne mesure-t-on surtout de la diaphonie (40 associations comprimees dans un etat 64x64) ? Relier au constat du jour 17 sur MQAR : le rappel associatif est la faiblesse historique des backbones lineaires.
+
+**Partie B — pourquoi le gate doit etre borne**
+
+Le kernel chunkwise de KDA doit calculer `1/Gamma`, l'inverse de la decroissance **cumulee** sur une tuile de 16 tokens. Deux parametrisations du log-decroissance par pas :
+
+```
+Kimi Linear (2025) : g = -exp(A_h) * Softplus(z)          non borne
+Kimi K3     (2026) : g = g_min * Sigmoid(exp(A_h) * z)    avec g_min = -5
+```
+
+5. Implementer les deux. Tirer `z ~ N(0, 2)` de shape `(16, 4096)` (16 tokens de tuile, 4096 canaux).
+
+6. `A_h` est un parametre **appris** : le **balayer** dans `{0, 1, 2, 3}` plutot que de le fixer. Pour chaque valeur, reporter le pire `1/Gamma` de la tuile (en log : `max(-somme des g sur les 16 pas)`) et le nombre de canaux qui depassent le maximum representable en BF16 (`3.39e38`, soit `e^88.7`). Rester en espace log — sinon la demo deborde elle-meme, ce qui est precisement le sujet.
+
+7. Montrer que la version bornee admet une borne **par construction**, independante de `z` et de `A_h` : `alpha >= e^-5`, donc sur 16 tokens le log-decroissance cumule ne peut pas descendre sous `-80`, et `1/Gamma <= e^80 ~ 5.5e34 < 3.39e38`.
+
+8. **Question de synthese.** Sans cette borne, les tuiles diagonales (celles ou le masque causal coupe la tuile en deux) doivent etre traitees par un chemin de code separe, plus lent, hors Tensor Cores. Avec la borne, toutes les tuiles passent par un `matmul` dense. Expliquer en une phrase pourquoi c'est un exemple de **co-design algorithme/systeme**, et non un detail d'implementation.
+
+### Criteres de reussite
+
+- [ ] Les deux recurrences sont implementees et donnent des etats de shape `(d_k, d_v)`
+- [ ] Le lien avec le perceptron est explicite : la regle delta est une correction d'erreur, l'accumulation ne corrige rien
+- [ ] Tache d'ecrasement : sur les cles reecrites, la regle delta obtient une cosine nettement superieure (~0.9 contre ~0.6)
+- [ ] Sur les cles jamais reecrites, l'ecart entre les deux regles est faible et attribue a la diaphonie, pas a la regle
+- [ ] Le balayage de `A_h` montre que le gate non borne finit par deborder BF16 quand `A_h` grandit, alors que le gate borne plafonne autour de `e^75` quoi qu'il arrive
+- [ ] La borne `-5 * 16 = -80` est demontree analytiquement, pas seulement constatee
+- [ ] La synthese enonce clairement : la parametrisation d'un gate a decide de la possibilite d'utiliser les Tensor Cores

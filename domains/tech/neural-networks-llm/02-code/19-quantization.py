@@ -8,6 +8,14 @@ We implement, from scratch:
     PART 4 — Outlier impact: naive INT8 vs SmoothQuant-like channel migration.
     PART 5 — NF4 (NormalFloat 4-bit) via Gaussian quantile lookup,
              compared with linear INT4.
+    PART 6 — MX (Microscaling) formats, the 2026 frontier default:
+             6a. MXFP4 (FP4 E2M1 + power-of-two shared scale per 32
+                 elements) benchmarked against NF4 and linear INT4 at the
+                 SAME block size. MXFP4 loses on accuracy — and wins anyway.
+             6b. The mixed-precision map used by Kimi K3: experts in MXFP4,
+                 routers / latent projections / shared experts left alone.
+             6c. The train-vs-inference divergence that quantization-aware
+                 training exists to remove, measured in KL.
 
 Run:
     python 19-quantization.py
@@ -337,5 +345,236 @@ report("NF4         per-block (block=64)", x5, x5_nf4_hat)
 # improvement depends on block size; with block=64 we typically see ~10-25%.
 
 
+# ---------------------------------------------------------------------------
+# PART 6 — MX (Microscaling) formats: MXFP4 / MXFP8, the 2026 frontier default
+# ---------------------------------------------------------------------------
+# NF4 and per-block INT4 both store a floating-point scale per block. MX
+# standardises the idea and makes it cheap enough to put in silicon:
+#     block of 32 elements
+#   + ONE shared scale, constrained to a power of two (E8M0: 8 exponent
+#     bits, no mantissa — so the scale is exactly a bit-shift)
+#   + each element in a tiny float format (FP4 E2M1, or FP8 E4M3)
+# The power-of-two constraint is what makes it hardware-friendly, and it is
+# also why MX is NOT the most accurate 4-bit format. Trade-off, not free lunch.
+
+MX_BLOCK = 32
+
+# FP4 E2M1: 2 exponent bits, 1 mantissa bit, 1 sign bit -> 8 magnitudes.
+FP4_E2M1_MAGNITUDES = np.array([0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0],
+                               dtype=np.float32)
+FP4_MAX = 6.0
+
+# FP8 E4M3 (the variant used for activations): 4 exponent bits, 3 mantissa
+# bits. We only need its max value and its mantissa resolution here.
+FP8_E4M3_MAX = 448.0
+FP8_E4M3_MANTISSA_BITS = 3
+
+
+def round_to_fp4_e2m1(x):
+    """Round each element to the nearest representable FP4 E2M1 value."""
+    sign = np.sign(x)
+    mag = np.abs(x)
+    # Nearest magnitude in the 8-entry table (ties go to the larger one,
+    # which is what round-to-nearest-even does on this grid in practice).
+    idx = np.argmin(np.abs(mag[..., None] - FP4_E2M1_MAGNITUDES), axis=-1)
+    return sign * FP4_E2M1_MAGNITUDES[idx]
+
+
+def quantize_mx(x, elem_max, round_fn, block=MX_BLOCK):
+    """Quantize to an MX format: shared power-of-two scale per block.
+
+    Returns the dequantized array. Follows the OCP MX recipe: the shared
+    exponent is chosen so the block maximum lands just inside the element
+    format's range.
+    """
+    flat = x.astype(np.float32).flatten()
+    pad = (-flat.size) % block
+    if pad:
+        flat = np.concatenate([flat, np.zeros(pad, dtype=np.float32)])
+    blocks = flat.reshape(-1, block)
+
+    amax = np.max(np.abs(blocks), axis=1, keepdims=True)
+    amax = np.where(amax == 0, 1.0, amax)
+    # E8M0: the scale is 2^e, e an integer. No mantissa, so we FLOOR the
+    # exponent difference — never round up, or the block max would clip.
+    shared_exp = np.floor(np.log2(amax)) - np.floor(np.log2(elem_max))
+    scale = np.exp2(shared_exp).astype(np.float32)
+
+    q = round_fn(np.clip(blocks / scale, -elem_max, elem_max))
+    out = (q * scale).flatten()
+    if pad:
+        out = out[:-pad]
+    return out.reshape(x.shape)
+
+
+def round_to_fp8_e4m3(x):
+    """Round to FP8 E4M3 by truncating the mantissa to 3 bits per exponent."""
+    mag = np.abs(x)
+    safe = np.where(mag == 0, 1.0, mag)
+    exp = np.floor(np.log2(safe))
+    step = np.exp2(exp - FP8_E4M3_MANTISSA_BITS)   # spacing at this exponent
+    return np.sign(x) * np.where(mag == 0, 0.0, np.round(mag / step) * step)
+
+
+section("PART 6a — MXFP4 vs NF4 vs linear INT4 (all per-block, b=32)")
+
+x6 = np.random.randn(1024, 1024).astype(np.float32)
+print(f"  block size for all three = {MX_BLOCK}")
+print("  FP4 E2M1 magnitudes      = "
+      f"{[float(v) for v in FP4_E2M1_MAGNITUDES]}")
 print()
-print("Done. All five demos finished successfully.")
+
+x6_mxfp4 = quantize_mx(x6, FP4_MAX, round_to_fp4_e2m1)
+report("MXFP4 (E2M1 + power-of-2 shared scale)", x6, x6_mxfp4)
+
+
+# Same block size for the two baselines, so the comparison is about the
+# FORMAT and not about how much scale metadata we are allowed to store.
+# (The PART 5 helpers hardcode block=64, hence these 32-sized variants.)
+def _perblock_int4(x, block):
+    flat = x.flatten()
+    pad = (-flat.size) % block
+    if pad:
+        flat = np.concatenate([flat, np.zeros(pad, dtype=flat.dtype)])
+    blocks = flat.reshape(-1, block)
+    amax = np.max(np.abs(blocks), axis=1, keepdims=True)
+    amax = np.where(amax == 0, 1.0, amax)
+    scale = amax / 7.0
+    q = np.clip(np.round(blocks / scale), -7, 7)
+    out = (q * scale).flatten()
+    return (out[:-pad] if pad else out).reshape(x.shape)
+
+
+def _perblock_nf4(x, block):
+    flat = x.flatten()
+    pad = (-flat.size) % block
+    if pad:
+        flat = np.concatenate([flat, np.zeros(pad, dtype=flat.dtype)])
+    blocks = flat.reshape(-1, block)
+    amax = np.max(np.abs(blocks), axis=1, keepdims=True)
+    amax = np.where(amax == 0, 1.0, amax)
+    norm = blocks / amax
+    idx = np.argmin(np.abs(norm[..., None] - NF4_CODEBOOK), axis=-1)
+    out = (NF4_CODEBOOK[idx] * amax).flatten()
+    return (out[:-pad] if pad else out).reshape(x.shape)
+
+
+report("linear INT4 (fp32 scale)", x6, _perblock_int4(x6, MX_BLOCK))
+report("NF4         (fp32 scale)", x6, _perblock_nf4(x6, MX_BLOCK))
+
+print()
+print("  -> MXFP4 is NOT the most accurate 4-bit format on Gaussian weights.")
+print("     Its scale is restricted to a power of two, so a block whose max")
+print("     sits just above a power of two wastes up to half the range; NF4")
+print("     additionally places its 16 levels at Gaussian quantiles.")
+print("     MX wins on a different axis: the scale is a bit-shift, the block")
+print("     is 32 elements, and both are fixed by the OCP spec — so the")
+print("     dequantize step can live inside the Tensor Core datapath instead")
+print("     of costing a separate kernel. Accuracy per bit is traded for")
+print("     throughput, and the gap is closed by QAT rather than by the format.")
+
+section("PART 6b — What Kimi K3 actually quantizes (and what it does not)")
+
+# Toy MoE layer, same shape conventions as day 16 (2 matrices per expert:
+# up and down; the real SiTU-GLU FFN has 3, so absolute sizes are low).
+D, LATENT, D_FF = 7168, 3584, 3072
+N_ROUTED, N_SHARED = 896, 2
+
+parts = [
+    # name,                        params,                             bits
+    ("routed experts (MXFP4)", N_ROUTED * 2 * LATENT * D_FF, 4.25),
+    ("shared experts (BF16)", N_SHARED * 2 * D * D_FF, 16.0),
+    ("latent projections (BF16)", 2 * D * LATENT, 16.0),
+    ("router (BF16)", D * N_ROUTED, 16.0),
+]
+
+print(f"  MXFP4 effective bits/weight = 4 + 8/{MX_BLOCK} = "
+      f"{4 + 8 / MX_BLOCK:.2f}  (element + shared scale amortised)")
+print()
+print(f"  {'component':<28}{'params':>16}{'bits/w':>9}{'GB':>9}{'GB if BF16':>13}")
+total_k3 = total_bf16 = 0.0
+for name, n, bits in parts:
+    gb = n * bits / 8 / 1e9
+    gb16 = n * 16 / 8 / 1e9
+    total_k3 += gb
+    total_bf16 += gb16
+    print(f"  {name:<28}{n:>16,}{bits:>9.2f}{gb:>9.2f}{gb16:>13.2f}")
+print(f"  {'TOTAL':<28}{'':>16}{'':>9}{total_k3:>9.2f}{total_bf16:>13.2f}"
+      f"   ({total_bf16 / total_k3:.2f}x smaller)")
+print()
+print("  -> The experts are ~99% of the parameters, so quantizing THEM is the")
+print("     whole game; keeping routers, latent projections and shared experts")
+print("     in high precision costs almost nothing and protects the two most")
+print("     error-sensitive things in the layer: the routing decision and the")
+print("     path every single token goes through.")
+print("     Activations follow MXFP8 (E4M3, max "
+      f"{FP8_E4M3_MAX:.0f}) — which is exactly why the")
+print("     activation function had to be bounded (see day 09, SiTU-GLU).")
+
+section("PART 6c — The mismatch QAT removes")
+
+# A policy head: hidden state -> logits over a vocabulary.
+D_H, V = 512, 4096
+h = np.random.randn(256, D_H).astype(np.float32)
+W = (np.random.randn(D_H, V) / np.sqrt(D_H)).astype(np.float32)
+
+W_q = quantize_mx(W, FP4_MAX, round_to_fp4_e2m1)
+
+
+def softmax(z):
+    z = z - z.max(axis=-1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(axis=-1, keepdims=True)
+
+
+print("  Same hidden states, two copies of the same weights:")
+print("    'training'  = full precision")
+print("    'inference' = MXFP4 (post-training quantization, no adaptation)")
+print()
+print("  Random weights give a nearly flat softmax, where any two policies")
+print("  look identical. A trained head is PEAKED, so we sweep a logit scale")
+print("  to show how the mismatch depends on how confident the model is.")
+print()
+print(f"  {'logit std':>11}{'mean top-1 prob':>18}{'KL(train||infer)':>20}"
+      f"{'top-1 agree':>14}{'top-5 overlap':>16}")
+
+for logit_std in [1.0, 3.0, 6.0, 10.0]:
+    lo_hi = (h @ W) * logit_std
+    lo_lo = (h @ W_q) * logit_std
+    p_hi, p_lo = softmax(lo_hi), softmax(lo_lo)
+    kl = float(np.mean(np.sum(
+        p_hi * np.log((p_hi + 1e-12) / (p_lo + 1e-12)), axis=-1)))
+    top1 = float(np.mean(p_hi.argmax(-1) == p_lo.argmax(-1)))
+    t5h = np.argsort(-lo_hi, axis=-1)[:, :5]
+    t5l = np.argsort(-lo_lo, axis=-1)[:, :5]
+    overlap = float(np.mean([len(set(a) & set(b)) / 5 for a, b in zip(t5h, t5l)]))
+    conf = float(p_hi.max(axis=-1).mean())
+    print(f"  {logit_std:>11.1f}{conf:>18.1%}{kl:>20.4f}"
+          f"{top1:>14.1%}{overlap:>16.1%}")
+
+print()
+print("  Note the top-1 / top-5 columns do not move with the scale: rescaling")
+print("  logits cannot reorder them. What moves is the KL - the same ranking")
+print("  disagreement costs more the more confident the policy is.")
+print("  Do not read those two columns as a benchmark: these weights are")
+print("  random, so the top logits are near-ties and flip easily. A trained")
+print("  head separates its top candidates far better. What generalises is")
+print("  the SHAPE - a real, scale-dependent divergence between two things")
+print("  that the training algorithm assumes are one and the same model.")
+print()
+print("  -> For plain text generation this gap is a quality question and a")
+print("     benchmark point or two. For RL it is a CORRECTNESS question: the")
+print("     rollouts are sampled from the inference engine, but the gradient")
+print("     is computed against the training weights. If the two policies")
+print("     differ, the on-policy assumption behind the update is false and")
+print("     the algorithm is silently off-policy.")
+print("     Quantization-aware training makes the training forward pass use")
+print("     the SAME quantized weights, so this gap is zero by construction.")
+print("     That — not the memory saving — is why Kimi K3 keeps QAT on")
+print("     through the whole of post-training, SFT and RL included.")
+print("     (This demo measures the gap; it does not train, so it does not")
+print("      show QAT recovering accuracy. That claim is the paper's.)")
+
+
+print()
+print("Done. All six demos finished successfully.")

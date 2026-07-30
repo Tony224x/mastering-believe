@@ -1,7 +1,7 @@
 """
 Solutions HARD — Jour 17 : State Space Models
 =============================================
-Exercices 7, 8, 9 (hard). Pur NumPy, comme 02-code/17-state-space-models.py.
+Exercices 7, 8, 9, 10 (hard). Pur NumPy, comme 02-code/17-state-space-models.py.
 Chaque etape non triviale est commentee avec le POURQUOI.
 
 Run: python 03-exercises/solutions/17-state-space-models-hard.py
@@ -330,8 +330,182 @@ def exercice_9():
     print("\n  [OK] Exercice 9")
 
 
+# ===========================================================================
+# EXERCICE 10 - KDA : regle delta et gate borne (Kimi K3, 2026)
+# ===========================================================================
+
+def l2_normalize(v):
+    return v / (np.linalg.norm(v, axis=-1, keepdims=True) + 1e-9)
+
+
+def linear_attention_additive(keys, values, alpha):
+    """S_t = diag(alpha_t) S_{t-1} + k_t v_t^T.
+
+    L'etat ne fait qu'ACCUMULER des produits exterieurs. Rien, dans cette
+    recurrence, ne peut retirer une association devenue fausse : le seul
+    mecanisme d'oubli est la decroissance alpha, qui efface tout uniformement
+    et pas seulement l'association a corriger.
+    """
+    d_k, d_v = keys.shape[1], values.shape[1]
+    S = np.zeros((d_k, d_v))
+    for k, v, a in zip(keys, values, alpha):
+        S = a[:, None] * S + np.outer(k, v)
+    return S
+
+
+def linear_attention_delta(keys, values, alpha, beta):
+    """S_t = (I - beta_t k_t k_t^T) diag(alpha_t) S_{t-1} + beta_t k_t v_t^T.
+
+    Developpe, cela vaut :   S = S' - beta * k (k^T S') + beta * k v^T
+    ou k^T S' est EXACTEMENT ce que la cle k lirait dans l'etat courant.
+    On soustrait donc l'ancienne valeur associee a k avant d'ecrire la
+    nouvelle : c'est une correction d'erreur, pas une accumulation.
+
+    C'est la regle du perceptron, w <- w + eta (cible - prediction) x :
+    ici la "prediction" est k^T S', la "cible" est v, et beta joue eta.
+    """
+    d_k, d_v = keys.shape[1], values.shape[1]
+    S = np.zeros((d_k, d_v))
+    for k, v, a, b in zip(keys, values, alpha, beta):
+        S_decayed = a[:, None] * S
+        old = k @ S_decayed              # ce que k lit deja : la "prediction"
+        S = S_decayed - b * np.outer(k, old) + b * np.outer(k, v)
+    return S
+
+
+def retrieve(S, query):
+    return S.T @ query
+
+
+def cosine(a, b):
+    return float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-9))
+
+
+def bounded_decay(z, A_h, g_min=-5.0):
+    """Kimi K3 : g = g_min * Sigmoid(exp(A_h) * z), donc g dans (g_min, 0)."""
+    return g_min * (1.0 / (1.0 + np.exp(-np.exp(A_h) * z)))
+
+
+def unbounded_decay(z, A_h):
+    """Kimi Linear : g = -exp(A_h) * Softplus(z), sans borne inferieure."""
+    softplus = np.log1p(np.exp(np.clip(z, -60, 60)))
+    return -np.exp(A_h) * softplus
+
+
+def exercice_10():
+    print("\n" + "=" * 70)
+    print("EXERCICE 10 - KDA : regle delta et gate borne")
+    print("=" * 70)
+
+    rng = np.random.default_rng(17)
+
+    # --- PARTIE A : la regle delta -----------------------------------------
+    print("\n  [A] Tache d'ecrasement : 40 cles ecrites, 10 reecrites")
+
+    d_k = d_v = 64
+    n_pairs, n_over = 40, 10
+    base_keys = l2_normalize(rng.standard_normal((n_pairs, d_k)))
+    base_vals = rng.standard_normal((n_pairs, d_v))
+
+    over_idx = rng.choice(n_pairs, size=n_over, replace=False)
+    new_vals = rng.standard_normal((n_over, d_v))
+
+    keys = np.vstack([base_keys, base_keys[over_idx]])
+    values = np.vstack([base_vals, new_vals])
+
+    truth = base_vals.copy()
+    truth[over_idx] = new_vals
+
+    # alpha = 1 et beta = 1 : AUCUN oubli. On isole une seule variable, la
+    # regle de mise a jour. Tout ecart observe vient d'elle et de rien d'autre.
+    alpha = np.ones((len(keys), d_k))
+    beta = np.ones(len(keys))
+
+    S_add = linear_attention_additive(keys, values, alpha)
+    S_del = linear_attention_delta(keys, values, alpha, beta)
+    kept_idx = np.setdiff1d(np.arange(n_pairs), over_idx)
+
+    def mean_cos(S, idx):
+        return float(np.mean([cosine(retrieve(S, base_keys[i]), truth[i])
+                              for i in idx]))
+
+    print(f"      etat S de taille {d_k}x{d_v} ; metrique = "
+          f"cosine(lecture, DERNIERE valeur vraie)")
+    print()
+    print(f"      {'':<26}{'cles intactes':>16}{'cles reecrites':>18}")
+    print(f"      {'accumulation':<26}"
+          f"{mean_cos(S_add, kept_idx):>16.3f}{mean_cos(S_add, over_idx):>18.3f}")
+    print(f"      {'regle delta (KDA)':<26}"
+          f"{mean_cos(S_del, kept_idx):>16.3f}{mean_cos(S_del, over_idx):>18.3f}")
+    print()
+    print("      Lire les deux colonnes SEPAREMENT.")
+    print("      - cles intactes : les deux regles se valent a peu pres.")
+    print("        L'ecart residuel est de la DIAPHONIE (40 associations")
+    print("        comprimees dans un etat 64x64, les cles ne sont pas")
+    print("        orthogonales) - aucune regle de mise a jour ne l'enleve.")
+    print("      - cles reecrites : la ou tout se joue. L'accumulation rend un")
+    print("        MELANGE ancienne+nouvelle valeur, faute d'avoir efface. La")
+    print("        regle delta soustrait d'abord ce que la cle lisait, donc")
+    print("        elle rend la valeur courante.")
+    print("      C'est le mecanisme derriere l'avantage de KDA en rappel")
+    print("      associatif (MQAR), faiblesse historique des backbones lineaires.")
+
+    # --- PARTIE B : pourquoi le gate doit etre borne -----------------------
+    print("\n  [B] Le gate de decroissance, et la contrainte materielle")
+
+    TILE = 16
+    N_CH = 4096
+    BF16_MAX = 3.3895314e38
+    LOG_BF16_MAX = np.log(BF16_MAX)
+
+    z = rng.standard_normal((TILE, N_CH)) * 2.0
+
+    print(f"      tuile = {TILE} tokens, {N_CH} canaux, logits z ~ N(0, 2)")
+    print(f"      BF16 deborde au-dela de e^{LOG_BF16_MAX:.1f}")
+    print("      On reste en espace LOG : sinon la demo deborderait")
+    print("      elle-meme, ce qui est precisement le sujet.")
+    print()
+    print(f"      {'A_h appris':<14}{'non borne : pire 1/Gamma':>28}"
+          f"{'canaux KO':>12}{'borne : pire':>16}")
+
+    for A_h in [0.0, 1.0, 2.0, 3.0]:
+        g_un = unbounded_decay(z, A_h)
+        g_bd = bounded_decay(z, A_h)
+        worst_un = float((-g_un.sum(axis=0)).max())
+        worst_bd = float((-g_bd.sum(axis=0)).max())
+        n_ko = int((-g_un.sum(axis=0) > LOG_BF16_MAX).sum())
+        print(f"      {A_h:<14.1f}{'e^' + format(worst_un, '.1f'):>28}"
+              f"{str(n_ko) + '/' + str(N_CH):>12}"
+              f"{'e^' + format(worst_bd, '.1f'):>16}")
+
+    print()
+    print("      A_h est APPRIS. Rien, dans la version non bornee, n'empeche")
+    print("      l'entrainement de le faire monter - et le pire cas monte avec.")
+    print("      Aucune borne ne peut donc etre prouvee a l'avance.")
+    print()
+    print(f"      Version bornee, demonstration : alpha >= e^-5 = "
+          f"{np.exp(-5):.2e},")
+    print(f"      donc sur {TILE} tokens le log-decroissance cumule est borne")
+    print(f"      par {-5} * {TILE} = {-5 * TILE}, et 1/Gamma <= e^{5 * TILE} = "
+          f"{np.exp(5 * TILE):.1e}")
+    print(f"      soit strictement moins que {BF16_MAX:.2e}. Quels que soient")
+    print("      les donnees et ce que l'entrainement fait de A_h.")
+    print()
+    print("      Consequence : sans cette garantie, les tuiles diagonales")
+    print("      (celles que le masque causal coupe en deux) doivent passer")
+    print("      par un chemin de code separe, hors Tensor Cores. Avec elle,")
+    print("      TOUTES les tuiles sont un matmul dense.")
+    print("      -> la parametrisation d'un gate a decide de la possibilite")
+    print("         d'utiliser le materiel. Co-design algorithme/systeme, pas")
+    print("         un detail d'implementation.")
+
+    print("\n  [OK] Exercice 10")
+
+
+
 if __name__ == "__main__":
     exercice_7()
     exercice_8()
     exercice_9()
+    exercice_10()
     print("\nDone (HARD).")

@@ -217,6 +217,56 @@ Mamba + Sliding Window Attention au lieu de full attention. Le SWA gere le local
 
 Pas un SSM stricto sensu mais meme philosophie : recurrence lineaire formulee comme une attention "time-mixing" avec parametres exponentiels. Mode entrainable parallele, mode inference recurrent. Versions 5 et 6 (Eagle, Finch) competitives en 2025-2026, surtout en inference offline.
 
+### Kimi K3 (Moonshot AI, juillet 2026) : l'hybride passe a l'echelle frontier
+
+C'est **le** point de bascule de ce module. Jusqu'en 2025, les hybrides recurrent/attention etaient des modeles de 1 a 52 B — impressionnants, mais jamais au sommet des classements. **Kimi K3** est un modele open-weight de **2.78 T de parametres (104 B actifs)** dont **74 % des couches d'attention sont lineaires** :
+
+```
+93 couches = 69 couches KDA (lineaire) + 24 couches Gated MLA (attention globale)
+Motif repete : 3 KDA -> 1 Gated MLA        (ratio 3:1, 23 blocs)
++ 1 couche Gated MLA supplementaire en fin de backbone
+  -> la derniere couche fait toujours de l'attention globale
+Contexte d'entrainement : 1 M de tokens
+```
+
+**KDA** = *Kimi Delta Attention*. Attention : **ce n'est pas un SSM facon Mamba**, c'est une **attention lineaire a delta rule** (lignee DeltaNet / Gated Linear Attention), heritee de *Kimi Linear* (Moonshot, 2025). La distinction est plus academique que pratique — Mamba-2/SSD (§5) a justement etabli la dualite entre les deux familles — mais la **regle de mise a jour** differe :
+
+```
+Recurrence Mamba-like (additive)  :  S_t = Diag(alpha_t) S_{t-1} + k_t v_t^T
+                                     on ajoute, on ne corrige jamais
+
+Recurrence KDA (delta rule)       :  S_t = (I - beta_t k_t k_t^T) Diag(alpha_t) S_{t-1}
+                                              + beta_t k_t v_t^T
+                                     o_t = S_t^T q_t
+```
+
+Le terme `(I - beta_t k_t k_t^T)` **efface d'abord ce qui etait deja associe a cette cle**, puis ecrit la nouvelle valeur. C'est litteralement une regle d'apprentissage en ligne (delta rule de Widrow-Hoff) appliquee a l'etat. Interet direct par rapport a §7 : c'est une reponse partielle au probleme du **recall associatif** — un etat qui peut se corriger sature moins vite qu'un etat qui ne fait qu'accumuler.
+
+Deux parametres pilotent la memoire :
+- `alpha_t ∈ (0,1)^{d_k}` : le facteur de retention **par canal** (chaque canal oublie a son propre rythme — la porte d'oubli selective de Mamba, mais canal par canal)
+- `beta_t ∈ (0,1)` : la force d'ecriture de la delta rule
+
+### Le detail qui vaut le detour : borner la decroissance pour rester sur les Tensor Cores
+
+Kimi Linear (2025) parametrait le log-decay par `g = -e^A * Softplus(z)`, qui est **non borne par le bas**. Or la forme chunkwise divise les cles par la decroissance cumulee `Gamma` — et si `Gamma` devient minuscule, `1/Gamma` **deborde** en precision finie. Consequence : les tuiles diagonales devaient etre calculees par des boucles explicites paire-de-positions, **hors Tensor Cores**. C'etait le bottleneck intra-chunk.
+
+Kimi K3 remplace la parametrisation par un **sigmoide borne** :
+
+```
+g_t = g_min * Sigmoid(e^A * z_t)     avec g_min = -5 (fixe), A appris par head
+alpha_t = exp(g_t)  ∈  (e^-5, 1)     ->  retention >= ~6.7e-3 par pas
+```
+
+Sur une tuile de 16 tokens, le log-decay cumule reste donc dans `(-80, 0)` : `1/Gamma < e^80`, ce qui tient dans la dynamique du BF16. **Toutes** les tuiles (diagonales comprises) redeviennent de simples matmuls denses sur Tensor Cores.
+
+> **La lecon generale, plus importante que la formule** : le choix de la parametrisation d'une porte n'est pas qu'une question d'expressivite mathematique — il decide si le kernel peut ou non utiliser le hardware matriciel. C'est de l'**algorithm-system co-design**, le motif dominant des architectures 2026.
+
+### Ce que ca change pour l'inference
+
+Un modele hybride doit gerer **deux caches de natures differentes** : le KV cache MLA (croit avec la sequence, une entree par token) et l'etat recurrent KDA (**taille fixe**, un gros bloc par sequence). Kimi K3 les range dans **le meme pool de blocs pagines**, mais avec deux granularites : hachage de prefixe fin cote MLA (blocs de 512 tokens), checkpoints **rares** cote KDA (l'etat est trop gros pour etre snapshotte a chaque token). Un prefixe n'est reutilisable que si **les deux** sont restaurables au meme point.
+
+C'est le vrai prix de l'hybride, et il est rarement mentionne : l'etat fixe economise de la memoire, mais complique le **prefix caching**, qui est justement l'optimisation dont dependent les workloads agentiques a 1 M de tokens.
+
 ---
 
 ## 7. Forces & faiblesses : ou SSM gagne, ou il perd
@@ -242,15 +292,27 @@ Pas un SSM stricto sensu mais meme philosophie : recurrence lineaire formulee co
 
 ### Le verdict pragmatique 2026
 
-- **Pure SSM** : excellent pour throughput sur longs contextes, recherche, niches non-textuelles.
-- **Pure Transformer** : encore le defaut pour LMs frontier qualite max < 128k.
-- **Hybride (Jamba-like)** : **le sweet spot** pour les LMs production qui ont besoin de contexte > 128k. Tous les labs frontier explorent cette voie.
+- **Pure SSM / pure lineaire** : excellent pour throughput sur longs contextes, recherche, niches non-textuelles. Toujours pas de modele **pur** au sommet des classements LM.
+- **Pure Transformer** : encore un defaut solide pour les LMs qualite max en dessous de ~128k.
+- **Hybride** : ce n'est plus "prometteur", c'est **fait**. Avec Kimi K3 (juillet 2026), un hybride recurrent/attention detient le titre de plus gros modele open-weight et se classe juste derriere les meilleurs proprietaires sur les suites coding/agentic/vision.
+
+**Le deplacement a retenir** — le ratio d'attention globale a **augmente**, pas diminue :
+
+| Modele | Annee | Couches lineaires : attention globale | Echelle |
+|---|---|---|---|
+| Jamba | 2024 | 7 : 1 | 52 B |
+| Samba | 2024 | 1 : 1 (attention = sliding window) | < 4 B |
+| Kimi K3 | 2026 | **3 : 1** (attention = MLA globale) | 2.78 T |
+
+Contre-intuitif si on croit que "l'objectif est de supprimer l'attention". La lecture correcte est l'inverse : **on garde autant d'attention globale que le budget le permet, et on remplace le reste par du lineaire**. L'attention n'est pas le probleme a eliminer, c'est la ressource a rationner.
 
 ---
 
 ## 8. Idees fausses repandues
 
-1. **"Mamba va remplacer le transformer"** : faux. Mamba egale le transformer a echelle moyenne mais perd sur le recall associatif. Les hybrides gagnent. Mamba est une **brique**, pas un remplacement.
+1. **"Mamba va remplacer le transformer"** : faux. Mamba egale le transformer a echelle moyenne mais perd sur le recall associatif. Les hybrides gagnent. Mamba est une **brique**, pas un remplacement. Kimi K3 (2.78 T, 2026) le confirme a l'echelle frontier : 74 % de couches lineaires, mais **1 couche sur 4 reste en attention globale**, et la derniere couche du backbone en fait partie.
+
+1bis. **"Recurrence lineaire = SSM"** : imprecis. Trois familles cohabitent — SSM structures (S4, Mamba), attention lineaire (Katharopoulos, GLA, DeltaNet, **KDA**), RNN lineaires (RWKV). Elles convergent vers la meme forme (etat de taille fixe, cout lineaire, forme chunkwise parallelisable) et Mamba-2/SSD a formalise leur dualite, mais elles ne se mettent pas a jour pareil : Mamba **accumule** dans l'etat, une delta rule **corrige** l'etat.
 
 2. **"SSM = RNN"** : non. Un RNN classique a une non-linearite (tanh, gate LSTM) dans la recurrence, ce qui interdit le mode convolutionnel parallele. Un SSM est **lineaire en h** dans la recurrence (la non-linearite est ailleurs, dans le bloc gating). C'est ce qui le rend parallelisable.
 
@@ -268,7 +330,9 @@ Pas un SSM stricto sensu mais meme philosophie : recurrence lineaire formulee co
 Question : quel backbone pour mon LM ?
 
 Contexte typique > 128k tokens ET throughput critique ?
-  ├── Oui  ──> Hybride Mamba+Attn (Jamba-style) ou MoE+Mamba
+  ├── Oui  ──> Hybride lineaire + attention globale
+  │            (Jamba-style 7:1, ou K3-style 3:1 si le recall compte)
+  │            + MoE si tu as le budget infra
   └── Non
       └── Recall associatif critique (RAG dense, code, agents) ?
             ├── Oui ──> Transformer classique (FlashAttn-2, GQA)
@@ -299,6 +363,12 @@ Contexte typique > 128k tokens ET throughput critique ?
 **Q5** — Pourquoi Jamba garde 1 layer d'attention sur 8 et pas zero ?
 > Les rares layers d'attention sauvent le recall ponctuel (associatif dense) que Mamba seul rate. Les 7 autres layers Mamba font le gros du travail en O(N). On obtient ~95% des benefices Mamba (memoire, throughput, long context) tout en gardant la qualite recall d'un transformer. Le ratio empirique "1 attention pour 7 Mamba dans un bloc de 8 layers" vient de l'experimentation interne d'AI21.
 
+**Q6** — En quoi la recurrence de KDA (Kimi K3) differe-t-elle de celle de Mamba ?
+> Mamba **accumule** : `S_t = Diag(alpha_t) S_{t-1} + k_t v_t^T`. KDA applique une **delta rule** : `S_t = (I - beta_t k_t k_t^T) Diag(alpha_t) S_{t-1} + beta_t k_t v_t^T` — le terme `(I - beta_t k_t k_t^T)` **efface d'abord** la valeur deja associee a cette cle avant d'ecrire la nouvelle. Un etat qui se corrige sature moins vite qu'un etat qui ne fait qu'ajouter, ce qui attenue (sans le supprimer) le point faible historique des backbones lineaires : le recall associatif.
+
+**Q7** — Pourquoi Kimi K3 borne-t-il la decroissance de KDA par le bas (`g_min = -5`) ?
+> La forme chunkwise divise les cles par la decroissance cumulee `Gamma`. Non bornee, `Gamma` tend vers 0 et `1/Gamma` deborde en BF16 — obligeant a calculer les tuiles diagonales hors Tensor Cores, par des boucles paire-de-positions. Avec `alpha_t ∈ (e^-5, 1)`, le log-decay cumule sur une tuile de 16 tokens reste dans `(-80, 0)`, `1/Gamma` tient dans la dynamique BF16, et **toutes** les tuiles redeviennent des matmuls denses. Cas d'ecole d'algorithm-system co-design : la parametrisation d'une porte decide de l'utilisation du hardware.
+
 ---
 
 ## Sources
@@ -309,6 +379,9 @@ Contexte typique > 128k tokens ET throughput critique ?
 - Dao, Gu (2024) — *Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality* (Mamba-2). https://arxiv.org/abs/2405.21060
 - Lieber et al., AI21 (2024) — *Jamba: A Hybrid Transformer-Mamba Language Model*. https://arxiv.org/abs/2403.19887
 - Peng et al. (2023) — *RWKV: Reinventing RNNs for the Transformer Era*. https://arxiv.org/abs/2305.13048
+- Yang, Wang, Shen, Panda, Kim (2023/ICML 2024) — *Gated Linear Attention Transformers with Hardware-Efficient Training* (GLA). https://arxiv.org/abs/2312.06635 — la famille "attention lineaire gatee" dont KDA descend.
+- Kimi Team / Moonshot AI (2025) — *Kimi Linear: An Expressive, Efficient Attention Architecture*. https://arxiv.org/abs/2510.26692 — introduction de KDA (delta rule + porte d'oubli par canal).
+- Kimi Team / Moonshot AI (2026) — *Kimi K3: Open Frontier Intelligence* (rapport technique, §2.1 Hybrid Attention, §5.1 co-design KDA). https://github.com/MoonshotAI/Kimi-K3 — premier hybride lineaire/attention a l'echelle frontier (2.78 T, 69 KDA + 24 MLA).
 
 
 ---

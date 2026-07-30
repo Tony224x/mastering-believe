@@ -146,7 +146,28 @@ Plus rapide a calibrer que GPTQ (pas de Hessienne a inverser), perte de precisio
 
 ### Quantization-Aware Training (QAT)
 
-On entraine (ou fine-tune) le modele en simulant la quantization dans le forward (`x_hat = quantize(x)`) tout en gardant les gradients en FP32. Le modele apprend a etre robuste au rounding error. Plus precis que PTQ, surtout en INT2/INT3, mais coute aussi cher qu'un training. Rare en pratique pour les LLM frontier (trop cher).
+On entraine (ou fine-tune) le modele en simulant la quantization dans le forward (`x_hat = quantize(x)`) tout en gardant les gradients en FP32. Le modele apprend a etre robuste au rounding error. Plus precis que PTQ, surtout en INT2/INT3, mais coute aussi cher qu'un training.
+
+**Mise a jour 2026 — le QAT est arrive chez les frontier.** Ce module disait jusqu'ici que le QAT etait trop cher pour les gros modeles. Ce n'est plus vrai : **Kimi K3** (Moonshot AI, 2.78 T params, juillet 2026) applique le QAT **sur tout le post-training**, du SFT jusqu'au RL.
+
+Le schema, et pourquoi il est instructif :
+
+```
+Poids des experts MoE   -> MXFP4   (ils dominent la memoire de parametres)
+Activations             -> MXFP8
+Tout le reste           -> precision superieure
+  (projections d'attention, projections latentes MoE, shared experts, routeurs MoE)
+```
+
+Trois choses a retenir, applicables meme sans jamais toucher un modele de cette taille :
+
+1. **On ne quantize pas uniformement, on quantize ce qui pese.** Sur un MoE tres sparse, les experts routes representent l'ecrasante majorite des parametres — les descendre en 4 bits paie presque tout le gain. Le routeur, lui, reste en haute precision : une erreur d'arrondi sur un score de routing change **quel expert est appele**, pas juste de combien la sortie est fausse. Meme logique que le mixed-precision de LLM.int8() (§6), a l'echelle du module et non du canal.
+2. **MX (Microscaling)** = un facteur d'echelle partage par petit bloc de valeurs, encode dans le format lui-meme. C'est exactement la granularite "per-group" de §3, standardisee au niveau hardware (Blackwell & co.) au lieu d'etre bricolee dans le kernel. La spec OCP fige trois choses : un bloc de **32** elements, **une** echelle contrainte a etre une **puissance de deux** (E8M0 : 8 bits d'exposant, zero mantisse), et un mini-format flottant par element — `MXFP4` = FP4 E2M1 (8 magnitudes : 0, 0.5, 1, 1.5, 2, 3, 4, 6), `MXFP8` = FP8 E4M3 (max representable **448**).
+
+   **A ne pas confondre avec "meilleur format 4 bits".** A taille de bloc egale, MXFP4 est *moins* precis que NF4 ou meme que l'INT4 lineaire : son echelle en puissance de deux gaspille jusqu'a un facteur 2 de dynamique, et il ne place pas ses niveaux aux quantiles de la distribution des poids. Ce qu'il achete est ailleurs — une echelle 2^e est un decalage d'exposant, pas une multiplication, et bloc comme format sont figes par la spec : la dequantification tient dans le datapath du Tensor Core au lieu de couter un kernel. On echange de la **precision par bit** contre du **debit**, et l'ecart se rattrape par le QAT (point 3), pas par le format. Le code du module mesure les trois formats a bloc egal pour rendre ce compromis visible.
+3. **Le vrai argument n'est pas la precision, c'est l'absence de mismatch train/inference.** En RL, rollout et training partagent le meme schema de quantization. Sans QAT, la policy qui genere les trajectoires n'est pas exactement celle qu'on optimise — un decalage silencieux qui empoisonne l'apprentissage. Le QAT devient rentable **quand le pipeline de post-training est long**, pas seulement quand on veut gratter de la qualite.
+
+En clair : QAT reste cher, mais il n'est plus reserve aux petits modeles ; il est devenu le moyen normal de livrer un frontier model en FP4 sans perte a la mise en service.
 
 ### QLoRA (Dettmers et al., 2023)
 
@@ -320,6 +341,8 @@ Conclusion pratique : **Q4 est le point sweet**. En dessous, la qualite chute no
 - Lin et al. (2023) — *AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration*. https://arxiv.org/abs/2306.00978
 - Dettmers, Pagnoni, Holtzman, Zettlemoyer (2023) — *QLoRA: Efficient Finetuning of Quantized LLMs*. https://arxiv.org/abs/2305.14314
 - Xiao, Lin, Seznec, Wu, Demouth, Han (2022) — *SmoothQuant: Accurate and Efficient Post-Training Quantization for LLMs*. https://arxiv.org/abs/2211.10438
+- Rouhani et al. (2023) — *Microscaling Data Formats for Deep Learning* (formats MX : MXFP4, MXFP8). https://arxiv.org/abs/2310.10537
+- Kimi Team / Moonshot AI (2026) — *Kimi K3: Open Frontier Intelligence* (rapport technique, §4.1.4 MXFP4 Quantization-Aware Post-Training). https://github.com/MoonshotAI/Kimi-K3
 
 
 ---

@@ -1,7 +1,7 @@
 """
 Solutions HARD — Jour 19 : Quantization
 =======================================
-Exercices 7, 8, 9 (hard). Pur NumPy, comme 02-code/19-quantization.py.
+Exercices 7, 8, 9, 10 (hard). Pur NumPy, comme 02-code/19-quantization.py.
 Chaque etape non triviale est commentee avec le POURQUOI.
 
 Run: python 03-exercises/solutions/19-quantization-hard.py
@@ -303,5 +303,210 @@ print("  -> negligeable : les scales sont peu nombreux et lisses, donc leur")
 print("     quantization (8 bits) n'ajoute presque pas d'erreur sur W.")
 print("  Danger : si block tres petit -> beaucoup de scales -> leur quantization")
 print("     compterait davantage dans l'erreur totale.")
+
+# ===========================================================================
+# EXERCICE 10 - MXFP4, carte de precision mixte, et le vrai argument du QAT
+# ===========================================================================
+print("\n" + "=" * 70)
+print("EXERCICE 10 - MX formats et QAT (Kimi K3, 2026)")
+print("=" * 70)
+
+MX_BLOCK = 32
+FP4_MAGNITUDES = np.array([0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0])
+FP4_MAX = 6.0
+FP8_E4M3_MAX = 448.0
+
+
+def round_to_fp4_e2m1(x):
+    """Arrondi au plus proche des 8 magnitudes representables en FP4 E2M1."""
+    sign = np.sign(x)
+    idx = np.argmin(np.abs(np.abs(x)[..., None] - FP4_MAGNITUDES), axis=-1)
+    return sign * FP4_MAGNITUDES[idx]
+
+
+def quantize_mx(x, elem_max=FP4_MAX, block=MX_BLOCK, round_fn=round_to_fp4_e2m1):
+    """Format MX : bloc de 32, UNE echelle partagee en puissance de deux."""
+    flat = x.flatten().astype(np.float64)
+    pad = (-flat.size) % block
+    if pad:
+        flat = np.concatenate([flat, np.zeros(pad)])
+    blocks = flat.reshape(-1, block)
+
+    amax = np.max(np.abs(blocks), axis=1, keepdims=True)
+    amax = np.where(amax == 0, 1.0, amax)
+    # E8M0 : l'echelle est 2^e avec e entier, aucune mantisse. On FLOOR la
+    # difference d'exposants. Un arrondi vers le haut donnerait une echelle
+    # trop grande : le maximum du bloc, divise par elle, tomberait au-dessus
+    # de elem_max et serait CLIPPE - on perdrait la plus grande valeur du
+    # bloc, exactement celle qu'il fallait preserver.
+    shared_exp = np.floor(np.log2(amax)) - np.floor(np.log2(elem_max))
+    scale = np.exp2(shared_exp)
+
+    q = round_fn(np.clip(blocks / scale, -elem_max, elem_max))
+    out = (q * scale).flatten()
+    return (out[:-pad] if pad else out).reshape(x.shape)
+
+
+def _perblock(x, block, quant_fn):
+    flat = x.flatten().astype(np.float64)
+    pad = (-flat.size) % block
+    if pad:
+        flat = np.concatenate([flat, np.zeros(pad)])
+    blocks = flat.reshape(-1, block)
+    amax = np.max(np.abs(blocks), axis=1, keepdims=True)
+    amax = np.where(amax == 0, 1.0, amax)
+    out = quant_fn(blocks, amax).flatten()
+    return (out[:-pad] if pad else out).reshape(x.shape)
+
+
+def int4_linear(blocks, amax):
+    scale = amax / 7.0
+    return np.clip(np.round(blocks / scale), -7, 7) * scale
+
+
+def rel_mse(x, x_hat):
+    return float(np.mean((x - x_hat) ** 2) / np.mean(x ** 2))
+
+
+# --- A. MXFP4 vs INT4 vs NF4, a bloc EGAL ----------------------------------
+print("\n  [A] Trois formats 4 bits, tous avec block=32")
+rng10 = np.random.default_rng(42)
+w = rng10.standard_normal((1024, 1024))
+
+# NF4 : les 16 niveaux places aux quantiles d'une gaussienne (voir exercice 6).
+nf4_codebook = np.array([
+    -1.0, -0.6961928, -0.5250730, -0.3949175, -0.2844175, -0.1848030,
+    -0.09105003, 0.0, 0.07958029, 0.16093020, 0.24611230, 0.33791524,
+    0.44070983, 0.56261700, 0.72295684, 1.0])
+
+
+def nf4(blocks, amax):
+    norm = blocks / amax
+    idx = np.argmin(np.abs(norm[..., None] - nf4_codebook), axis=-1)
+    return nf4_codebook[idx] * amax
+
+
+results = {
+    "MXFP4 (echelle 2^e)": rel_mse(w, quantize_mx(w)),
+    "INT4 lineaire (echelle fp32)": rel_mse(w, _perblock(w, MX_BLOCK, int4_linear)),
+    "NF4 (echelle fp32)": rel_mse(w, _perblock(w, MX_BLOCK, nf4)),
+}
+for name, v in sorted(results.items(), key=lambda kv: kv[1]):
+    print(f"      {name:<32} MSE relative = {v:.4%}")
+
+print("\n      MXFP4 est le MOINS precis des trois. Deux causes distinctes :")
+print("      (a) l'echelle est une puissance de deux : si amax tombe juste")
+print("          au-dessus d'une puissance de deux, on gaspille jusqu'a un")
+print("          facteur 2 de dynamique utile ;")
+print("      (b) NF4 place en plus ses 16 niveaux aux quantiles d'une")
+print("          gaussienne, la ou les poids sont effectivement denses.")
+print("      Sur quel axe MX gagne-t-il alors ? La dequantification. Une")
+print("      echelle 2^e est un DECALAGE D'EXPOSANT, pas une multiplication ;")
+print("      le bloc de 32 et le format sont figes par la spec OCP. Le")
+print("      dequantize tient donc dans le datapath du Tensor Core au lieu")
+print("      de couter un kernel separe. On echange de la precision par bit")
+print("      contre du debit - et l'ecart de precision se rattrape par le")
+print("      QAT, pas par le format.")
+
+# --- B. La carte de precision ---------------------------------------------
+print("\n  [B] Budget memoire d'une couche MoE Kimi K3")
+D, LATENT, D_FF = 7168, 3584, 3072
+N_ROUTED, N_SHARED = 896, 2
+MXFP4_BITS = 4 + 8 / MX_BLOCK          # element + echelle partagee amortie
+
+composants = [
+    ("experts routes (MXFP4)", N_ROUTED * 2 * LATENT * D_FF, MXFP4_BITS),
+    ("experts partages (BF16)", N_SHARED * 2 * D * D_FF, 16.0),
+    ("projections latentes (BF16)", 2 * D * LATENT, 16.0),
+    ("routeur (BF16)", D * N_ROUTED, 16.0),
+]
+print(f"      bits effectifs MXFP4 = 4 + 8/{MX_BLOCK} = {MXFP4_BITS:.2f}")
+print()
+print(f"      {'composant':<30}{'params':>16}{'bits':>7}{'Go':>8}{'Go BF16':>10}")
+tot, tot16, n_all = 0.0, 0.0, 0
+for name, n, bits in composants:
+    tot += n * bits / 8 / 1e9
+    tot16 += n * 16 / 8 / 1e9
+    n_all += n
+    print(f"      {name:<30}{n:>16,}{bits:>7.2f}"
+          f"{n * bits / 8 / 1e9:>8.2f}{n * 16 / 8 / 1e9:>10.2f}")
+print(f"      {'TOTAL':<30}{n_all:>16,}{'':>7}{tot:>8.2f}{tot16:>10.2f}"
+      f"   ({tot16 / tot:.2f}x)")
+
+frac = composants[0][1] / n_all
+print(f"\n      Les experts routes pesent {frac:.1%} des parametres.")
+print("      Consequence directe : quantifier EUX est tout le gain, et")
+print("      laisser routeur, projections latentes et experts partages en")
+print("      haute precision ne coute presque rien. Or ce sont precisement")
+print("      les composants a proteger : le routeur decide de la SELECTION")
+print("      (une erreur y change d'expert, pas juste de quelques chiffres")
+print("      apres la virgule), et les experts partages sont sur le chemin")
+print("      de CHAQUE token, donc leur erreur ne se moyenne jamais.")
+print(f"\n      Les activations, elles, sont en MXFP8 E4M3 (max "
+      f"{FP8_E4M3_MAX:.0f}). C'est")
+print("      exactement la contrainte qui a impose SiTU-GLU au jour 9 : une")
+print("      activation non bornee produit des valeurs qui deviennent des inf")
+print("      dans ce format. Le format d'activation a dicte la fonction")
+print("      d'activation.")
+
+# --- C. L'ecart que le QAT supprime ---------------------------------------
+print("\n  [C] L'ecart train/inference, mesure en KL")
+D_H, V = 512, 4096
+h_state = rng10.standard_normal((256, D_H))
+W_head = rng10.standard_normal((D_H, V)) / np.sqrt(D_H)
+W_head_q = quantize_mx(W_head)
+
+
+def softmax_rows(z):
+    z = z - z.max(axis=-1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(axis=-1, keepdims=True)
+
+
+base_hi = h_state @ W_head
+base_lo = h_state @ W_head_q
+
+print("      Des poids aleatoires donnent un softmax presque plat, ou deux")
+print("      politiques quelconques se ressemblent. On balaye donc une")
+print("      echelle de logits pour couvrir plusieurs niveaux de confiance.")
+print()
+print(f"      {'echelle':>9}{'proba top-1':>14}{'KL(train||inf)':>17}"
+      f"{'accord top-1':>15}{'recouv. top-5':>16}")
+for s in [1.0, 3.0, 6.0, 10.0]:
+    p_hi, p_lo = softmax_rows(base_hi * s), softmax_rows(base_lo * s)
+    kl = float(np.mean(np.sum(
+        p_hi * np.log((p_hi + 1e-12) / (p_lo + 1e-12)), axis=-1)))
+    acc1 = float(np.mean(p_hi.argmax(-1) == p_lo.argmax(-1)))
+    t5h = np.argsort(-base_hi, axis=-1)[:, :5]
+    t5l = np.argsort(-base_lo, axis=-1)[:, :5]
+    ov = float(np.mean([len(set(a) & set(b)) / 5 for a, b in zip(t5h, t5l)]))
+    print(f"      {s:>9.1f}{float(p_hi.max(-1).mean()):>14.1%}{kl:>17.4f}"
+          f"{acc1:>15.1%}{ov:>16.1%}")
+
+print("\n      L'accord top-1 et le recouvrement top-5 NE BOUGENT PAS avec")
+print("      l'echelle : multiplier tous les logits par une constante ne peut")
+print("      pas les reordonner. Ce qui bouge, c'est la KL - le meme desaccord")
+print("      de classement coute d'autant plus cher que la politique est")
+print("      confiante. Morale : ces trois metriques ne mesurent pas la meme")
+print("      chose, et seule la KL voit la confiance.")
+print("      (Ne pas lire l'accord top-1 comme un benchmark : ces poids sont")
+print("       aleatoires, donc les premiers logits sont quasi ex aequo et")
+print("       basculent facilement. Une tete entrainee separe bien mieux.)")
+
+print("\n      Pourquoi cet ecart est une question de CORRECTION en RL :")
+print("      les rollouts sont echantillonnes depuis le moteur d'inference")
+print("      (poids quantifies), mais le gradient est calcule contre les poids")
+print("      d'entrainement (pleine precision). L'algorithme croit corriger la")
+print("      politique qui a genere les donnees ; ce n'est pas la meme. Il est")
+print("      donc silencieusement off-policy, avec un biais que personne ne")
+print("      mesure et que la KL ci-dessus quantifie.")
+print("      Le QAT fait passer le forward d'entrainement par les MEMES poids")
+print("      quantifies : l'ecart devient nul PAR CONSTRUCTION. C'est cet")
+print("      argument-la - pas l'economie de memoire - qui justifie de garder")
+print("      le QAT actif pendant tout le post-training, SFT et RL compris.")
+print("\n      Honnetete : cette experience MESURE l'ecart. Elle n'entraine")
+print("      rien, donc elle ne demontre pas que le QAT recupere la qualite")
+print("      perdue - cela reste une affirmation du papier, a lire comme telle.")
+
 
 print("\nDone (HARD).")
