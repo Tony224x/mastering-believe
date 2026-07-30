@@ -207,6 +207,23 @@ Claude Code (Anthropic) ajoute :
 
 Cursor (Anysphere) maintient un **shadow workspace** : une copie du code sur laquelle l'agent travaille en parallele de l'editeur humain. Les suggestions n'apparaissent qu'apres validation, ce qui evite de perturber le flux de travail.
 
+### 5.4 Le harnais fait partie de ce que le modele apprend (2026)
+
+Les trois outils ci-dessus ont des ACI tres differents : outils distincts, prompts systeme distincts, gestion du contexte distincte. Question naturelle : **est-ce que le modele voit la difference ?**
+
+Le rapport technique de **Kimi K3** (Moonshot AI, 2026) repond par l'affirmative, et en tire une consequence sur l'entrainement :
+
+> Entrainer avec un **harnais d'agent unique et fige** fait surapprendre le modele a ce schema d'outils, ce prompt systeme, cette strategie de gestion du contexte, ce protocole d'interaction.
+
+Leur reponse est un **environnement RL "boite blanche"** qui traite le harnais comme un assemblage de modules configurables — interfaces d'outils, prompts systeme, strategies de gestion du contexte, skills, memoires, sous-agents. En combinant ces modules par configuration, l'environnement reinstancie des harnais existants (Kimi Code, Claude Code, Codex, OpenClaw, Hermes) ou en fabrique de nouveaux, et **change de configuration selon le groupe de taches** pendant l'entrainement. Meme demarche sur les taches de developpement web, deroulees sous des scaffolds varies plutot qu'un seul, explicitement pour favoriser la **generalisation inter-scaffold**.
+
+Deux lectures, selon de quel cote de l'API vous etes :
+
+- **Si vous construisez un harnais** : le fait qu'un modele soit excellent dans un outil ne garantit pas qu'il le soit dans le votre — sa performance depend en partie de la proximite entre votre ACI et ce qu'il a vu. C'est un argument concret pour ne pas inventer un schema d'outils exotique quand un schema conventionnel fait l'affaire. La lecon du §2.3 (les interfaces humaines sont mauvaises pour les LLM) a donc un pendant : les interfaces **trop originales** le sont aussi.
+- **Si vous evaluez un modele** : mesurer sur un seul harnais mesure le couple modele+harnais, pas le modele. Un ecart entre deux modeles peut n'etre qu'un ecart d'affinite avec votre scaffold. C'est la meme precaution qu'en J11 sur les benchmarks, appliquee a l'ACI.
+
+> A relier a J17 (§6bis) : diversifier les harnais pendant l'entrainement releve de la meme logique que le verifier cache. Dans les deux cas, on empeche le modele d'optimiser un detail du dispositif de mesure ou d'execution au lieu de la tache.
+
 ---
 
 ## 6. Relation avec J2 (tool use)
@@ -255,3 +272,4 @@ Les outils de l'ACI sont exactement les tools de J2 : des fonctions avec schema 
 - **SWE-agent repo** : https://github.com/SWE-agent/SWE-agent — Code source complet, outils ACI, scripts d'evaluation.
 - **Jimenez et al. — "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?" (ICLR 2024)** : https://arxiv.org/abs/2310.06770 — Le papier du benchmark. Voir aussi le leaderboard : https://www.swebench.com/verified.html
 - **Aider** : https://aider.chat — Documentation de l'ACI, repo-map, edit blocks. Code source : https://github.com/Aider-AI/aider
+- **Kimi Team / Moonshot AI, "Kimi K3: Open Frontier Intelligence" (2026)** — rapport technique : https://github.com/MoonshotAI/Kimi-K3 — §4.2.1 (environnement RL boite blanche : le harnais comme modules composables, entrainement multi-harnais) et §4.2.7 (taches web sous scaffolds varies).

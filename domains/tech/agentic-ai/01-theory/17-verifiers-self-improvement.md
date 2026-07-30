@@ -220,6 +220,74 @@ Un gros modele (teacher) genere des trajectoires de haute qualite. Un petit mode
 Teacher (70B) → trajectoires annotees → SFT → Student (7B)
 ```
 
+### 6.6 On-policy distillation, et la variante multi-teacher (2026)
+
+La distillation de 6.5 est **off-policy** : le teacher genere, le student imite. Son defaut est classique — le student ne s'entraine jamais sur les etats qu'il visite *lui-meme*, donc au premier ecart il se retrouve hors distribution, sans avoir jamais vu comment s'en sortir.
+
+L'**on-policy distillation** inverse les roles : **le student genere**, et le teacher note *chaque token* de ce que le student vient de produire. La recompense par token est simplement le log-ratio des deux politiques, borne :
+
+```
+r_opd(y_t) = clip( log [ P_teacher(y_t | x, y_<t) / P_student(y_t | x, y_<t) ],  -R_max, +R_max )
+```
+
+Trois choses a comprendre dans cette formule :
+- **Le signal est dense.** Chaque token recoit une note, la ou un verifier de fin de tache n'en donne qu'une par trajectoire. Sur une tache longue de plusieurs centaines d'etapes, c'est la difference entre un signal exploitable et un signal noye.
+- **Le teacher est fige** (`stop-gradient`) : il sert de mesure, pas de cible a optimiser.
+- **Le clipping n'est pas cosmetique.** Un token que le student juge quasi impossible et que le teacher trouve naturel produit un log-ratio enorme ; sans borne, un seul token aberrant domine la mise a jour.
+
+**Multi-Teacher On-Policy Distillation (MOPD)**, utilise par Kimi K3 (Moonshot AI, 2026), pousse l'idee plus loin. Le pipeline entraine d'abord des **experts specialises** par RL — chez K3, trois domaines (taches generales, agents generalistes, agents de code) croises avec trois niveaux d'effort de raisonnement `{low, high, max}`, soit **neuf experts**. MOPD consolide ensuite ces neuf politiques dans un **modele unique** : pour chaque echantillon, on choisit le teacher correspondant au domaine et au niveau d'effort, et on applique la recompense ci-dessus.
+
+Le pattern a retenir depasse largement le cas d'un labo qui entraine un modele de 2,78 T de parametres :
+
+> **Specialiser puis consolider.** Il est beaucoup plus facile d'obtenir N politiques etroites et bonnes que directement une politique large et bonne. La distillation devient l'etape de *fusion* — pas une simple compression.
+
+C'est exactement la logique d'une architecture multi-agent (J9, J18), mais deplacee dans les poids : la ou un routeur d'orchestration choisit un agent specialise a l'inference, MOPD fait le choix a l'entrainement et livre un seul modele. Le meme arbitrage revient : un systeme multi-agent reste inspectable et modifiable agent par agent, un modele consolide est plus simple a servir mais opaque.
+
+---
+
+## 6bis. Verifier l'etat du monde, pas la reponse — Autonomous Execution Tasks (2026)
+
+Tout ce qui precede suppose une chose : que la **sortie** de l'agent soit notable. Un PRM lit un raisonnement, un ORM lit une reponse, un juge lit un texte. Or pour un agent qui travaille pendant des centaines d'etapes dans un environnement, ce qui compte n'est ni son raisonnement ni son rapport final : c'est **l'etat dans lequel il a laisse le monde**.
+
+Les **Autonomous Execution Tasks (AET)**, introduites par Kimi K3, formalisent ce deplacement. Chaque tache specifie :
+
+```
+- un etat initial
+- un objectif contraint
+- un espace d'actions (les outils disponibles)
+- un budget d'execution
+- un VERIFIER INDEPENDANT
+```
+
+Et surtout, ce que l'agent **ne** recoit **pas** : aucune trajectoire de reference, aucune procedure predefinie. Il voit l'objectif, le contexte, les contraintes et l'interface de verification — a lui de decomposer la tache, choisir ses outils, planifier, recuperer apres erreur, et decider quand s'arreter.
+
+**Le point central** : la recompense est calculee par le verifier sur l'**etat final de l'environnement**, jamais sur ce que l'agent declare avoir fait.
+
+> Un agent qui ecrit "J'ai corrige le bug et tous les tests passent" recoit exactement zero credit pour cette phrase. Seul l'etat de la suite de tests compte. C'est la difference entre evaluer un livrable et evaluer un compte-rendu — et c'est le principal biais qu'un juge purement textuel ne peut pas voir.
+
+### Trois defenses contre le reward hacking
+
+Plus l'agent devient capable, plus il devient bon a **satisfaire la mesure sans faire le travail**. K3 empile trois protections, transposables telles quelles a n'importe quelle boucle agentique evaluee :
+
+| Defense | Mecanisme | Ce que ca empeche |
+|---|---|---|
+| **Isolation agent / verifier** | L'agent n'a aucun acces au code du verifier, seulement a son interface | Ecrire une solution qui cible l'implementation du test plutot que le probleme |
+| **Verifier public + verifier cache** | Le public donne un feedback diagnostique ; le cache evalue des scenarios **tenus a l'ecart** | Le surapprentissage sur les cas de test visibles |
+| **Budget de soumissions + penalites** | Nombre de soumissions limite, mauvaises tentatives penalisees | Le brute-force : soumettre en boucle jusqu'a ce que ca passe par hasard |
+
+La deuxieme ligne est la plus transposable : c'est le **split train/test applique aux verifiers eux-memes**. Si votre agent boucle sur un feedback, une partie des criteres doit rester invisible pendant la boucle — sinon vous ne mesurez plus la capacite, vous mesurez l'adaptation au harnais de mesure.
+
+Meme logique dans un registre different, sur les taches d'optimisation de kernels GPU : K3 note a la fois la correction (au-dela d'un seuil d'erreur numerique, recompense **zero**) et la performance, et maintient un **systeme de detection de triche** qui penalise explicitement les strategies connues — rejeu de CUDA graph, mise en cache des entrees, reduction de precision — enrichi au fur et a mesure que de nouvelles apparaissent. A retenir : la liste des exploits n'est jamais complete a l'avance ; la detection de triche est un composant **vivant**, pas une passe de validation ecrite une fois.
+
+### Ce que ca change pour vos propres boucles
+
+Vous n'entrainez probablement pas un modele. Le paradigme AET reste directement applicable a une boucle agentique en production :
+
+1. **Verifiez l'etat, pas le rapport.** Relire la sortie de l'agent est le reflexe le moins fiable. Interroger la base, relancer la suite de tests, comparer l'artefact produit — voila un signal.
+2. **Gardez des criteres caches.** Sinon la boucle de self-refine (§4) converge vers "passer les checks montres", pas vers "resoudre le probleme".
+3. **Bornez les tentatives.** Un budget de soumissions transforme "reessayer jusqu'a ce que ca marche" en decision couteuse — ce qu'elle est reellement.
+4. **N'exposez pas le verifier a l'agent.** Si le code du check est dans le contexte, il fait partie de l'espace de recherche.
+
 ---
 
 ## 7. Points cles a retenir
@@ -233,6 +301,10 @@ Teacher (70B) → trajectoires annotees → SFT → Student (7B)
 | Lessons store | Persistance inter-runs : les erreurs d'hier forment le comportement de demain |
 | SFT / RFT | Fine-tuning sur les bonnes trajectoires que l'agent a lui-meme generees |
 | Distillation | Teacher genere, student apprend — compression du raisonnement |
+| On-policy distillation | Le **student** genere, le teacher note chaque token : signal dense, pas de decalage de distribution |
+| MOPD | Specialiser N experts par RL, puis les consolider en un modele unique (K3 : 3 domaines x 3 efforts = 9 experts) |
+| AET | La recompense vient de l'**etat final de l'environnement**, jamais du compte-rendu de l'agent |
+| Verifier public / cache | Split train/test applique aux verifiers : sans criteres caches, la boucle apprend le harnais |
 
 ---
 
@@ -253,6 +325,15 @@ Teacher (70B) → trajectoires annotees → SFT → Student (7B)
 **Q5 :** Quel probleme le terme KL dans la loss RL resout-il ?
 > **R :** Il empeche le modele de trop s'eloigner du modele de reference (policy collapse ou mode collapse) : sans ce terme, l'optimisation exploite des failles dans la recompense plutot qu'apprendre un raisonnement generaliste.
 
+**Q6 :** Pourquoi la distillation on-policy corrige-t-elle un defaut structurel de la distillation classique ?
+> **R :** En off-policy, le student n'est entraine que sur les etats visites par le *teacher* : au premier ecart il se retrouve hors distribution sans avoir jamais vu comment s'en sortir. En on-policy c'est le **student** qui genere, donc il recoit un signal precisement sur les etats qu'il visite reellement — le teacher servant de mesure figee, token par token.
+
+**Q7 :** Dans une AET, pourquoi la recompense porte-t-elle sur l'etat de l'environnement et non sur la reponse de l'agent ?
+> **R :** Parce que "j'ai corrige le bug et les tests passent" est une phrase, pas un fait. Sur des taches longues, l'ecart entre ce que l'agent declare et ce qu'il a reellement fait est precisement le biais qu'il faut mesurer — et un juge textuel ne peut pas le voir. Seul l'etat final (tests, base de donnees, artefact produit) constitue un signal non manipulable par la redaction.
+
+**Q8 :** A quoi sert un verifier **cache** en plus d'un verifier public ?
+> **R :** Le public donne un feedback diagnostique pour que l'agent progresse ; le cache evalue des scenarios tenus a l'ecart. Sans lui, la boucle de refinement converge vers "passer les checks visibles" — on mesure alors l'adaptation au harnais, pas la capacite. C'est le split train/test transpose aux verifiers.
+
 ---
 
 ## Pour aller plus loin
@@ -261,3 +342,4 @@ Teacher (70B) → trajectoires annotees → SFT → Student (7B)
 - **Madaan, Tandon et al., "Self-Refine: Iterative Refinement with Self-Feedback" (2023)** — boucle generator/critic/refiner : https://arxiv.org/abs/2303.17651
 - **Snell, Lee, Xu, Kumar, "Scaling LLM Test-Time Compute Optimally..." (2024)** — quand utiliser BoN vs beam vs lookahead selon le budget : https://arxiv.org/abs/2408.03314
 - **Shinn et al., "Reflexion" (2023)** — precurseur des boucles avec memoire externe : https://arxiv.org/abs/2303.11366
+- **Kimi Team / Moonshot AI, "Kimi K3: Open Frontier Intelligence" (2026)** — rapport technique : https://github.com/MoonshotAI/Kimi-K3 — §4.1.3 (Multi-Teacher On-Policy Distillation), §4.2.6 (Autonomous Execution Tasks : verifier independant, verifiers public/cache, budget de soumissions) et §4.2.4 (detection de reward hacking sur les taches de kernels).

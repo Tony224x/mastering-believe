@@ -449,6 +449,30 @@ On paie cher **seulement** la ou le raisonnement est critique (le plan et les de
 
 > **Regle 2026** : extended thinking = tool pour les decisions difficiles. Pas un defaut. Active-le dans les phases planning / review critiques, pas dans les phases execution / formattage.
 
+### L'effort de raisonnement devient un axe entraine, pas un curseur
+
+Un detail du rapport technique de **Kimi K3** (Moonshot AI, 2026) explique pourquoi les niveaux d'effort (`low` / `high` / `max`) exposes par les API 2026 se comportent comme trois modeles differents plutot que comme un simple plafond de tokens.
+
+Le mecanisme est un **controle de budget par probleme, applique pendant le RL** :
+
+```
+1. Estimer un budget initial b0(x) pour chaque probleme x, a partir du modele de depart
+2. Pendant le RL : si la trajectoire depasse tau * b0(x) tokens
+      -> la recompense de la tache est ECRASEE a -1
+3. Curriculum : entrainer d'abord un variant "max" (tau grand),
+   puis recuire tau vers des valeurs plus petites -> variants "high" puis "low"
+```
+
+Trois consequences pratiques :
+
+- **Le budget est relatif, pas absolu.** `tau * b0(x)` s'adapte a la difficulte estimee du probleme. Un plafond fixe en tokens penaliserait exactement les problemes qui meritent qu'on y reflechisse — un anti-pattern classique quand on borne le raisonnement dans un agent maison.
+- **Ce qui est compte change selon le type de tache.** Pour une tache de raisonnement, on compte les *thinking tokens*. Pour une tache **agentique**, on compte les tokens de sortie cumules, **arguments des appels d'outils compris**. La distinction est importante : un agent bavard n'est pas seulement lent, il consomme son budget en arguments verbeux plutot qu'en raisonnement utile.
+- **Une recompense a -1, pas une troncature.** Depasser le budget n'est pas "la reponse est coupee", c'est "cette trajectoire est un echec". Le modele apprend a *tenir* dans le budget, pas a etre interrompu.
+
+Le pipeline de K3 croise ensuite ces trois niveaux d'effort avec trois domaines (taches generales, agents generalistes, agents de code), entraine les **neuf** experts correspondants, puis les consolide en un seul modele (voir J17 §6.6 sur la distillation multi-teacher).
+
+> **Ce que ca change pour vous** : quand vous choisissez un niveau d'effort dans une API, vous ne reglez pas un curseur de verbosite sur un modele unique — vous selectionnez une politique qui a ete *entrainee* a resoudre le probleme sous cette contrainte. D'ou le fait qu'un niveau bas soit souvent plus concis **et** plus direct, au lieu d'etre simplement une version tronquee du niveau haut.
+
 ---
 
 ## 10. Quand NE PAS utiliser de planning
@@ -517,3 +541,4 @@ Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../
 - **Berkeley CS294-280 (Sp25) — Lec. 11 (Learning to Reason, Weston)** — comment on apprend le reasoning aux modeles.
 - **Berkeley CS294-280 (Sp25) — Lec. 12 (Inference-Time Techniques, Chen)** — techniques au moment de l'inference (ToT, search, reflexion).
 - **CME295 — Lec. 6 (LLM Reasoning)** — synthese compacte des patterns de raisonnement.
+- **Kimi Team / Moonshot AI, "Kimi K3: Open Frontier Intelligence" (2026)** — rapport technique : https://github.com/MoonshotAI/Kimi-K3 — §4.1.2, paragraphe *Reasoning Effort RL* : budget de tokens par probleme, recompense a -1 au-dela du seuil, curriculum sur tau pour obtenir les niveaux low/high/max.
