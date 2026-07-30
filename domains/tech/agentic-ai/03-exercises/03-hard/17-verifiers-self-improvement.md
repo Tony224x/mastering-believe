@@ -62,3 +62,49 @@ Construis un `ExecutionRefineLoop` qui gouverne le cycle pour une specification 
 - [ ] Une candidate intermediaire incorrecte n'est jamais retournee comme acceptee
 - [ ] `run` retourne `converged`, `attempts_used`, `score_history`, `final_code`
 - [ ] Execution offline, deterministe, sans dependance externe
+
+---
+
+## Exercice 3 : Autonomous Execution Tasks — verifier l'etat, cacher une partie des criteres, borner les soumissions
+
+### Objectif
+
+L'exercice 1 durcit le **contenu** d'un verifier (des controles plus difficiles a berner). Celui-ci porte sur le **protocole** qui l'entoure, tel que formalise par les *Autonomous Execution Tasks* de Kimi K3 (2026) : d'ou vient la recompense, ce que l'agent a le droit de voir, et combien de fois il a le droit d'essayer. Trois defenses independantes, contre trois echecs differents.
+
+Le scenario est celui du papier : **replication de systeme en boite noire**. Un systeme cache classe des entiers ; l'agent peut l'interroger un nombre limite de fois, puis doit soumettre une replique.
+
+### Consigne
+
+1. **Le systeme cache.** `HiddenSystem` implemente une regle non triviale (par exemple une classification `both / three / five / none` selon la divisibilite) et **compte ses appels**. L'agent n'a jamais acces au code, uniquement aux sorties.
+
+2. **Deux agents.**
+   - `generalizing_agent(oracle, probes)` : interroge l'oracle, en infere une regle generale, renvoie une replique qui s'applique a **n'importe quelle** entree.
+   - `memorizing_agent(oracle, probes)` : construit une table des cas observes et renvoie une etiquette par defaut ailleurs.
+
+   Le second n'est pas un homme de paille : c'est ce que produit la pression d'optimisation quand le seul signal disponible est un jeu de controles fixe et visible. Reproduire les reponses est strictement plus facile que trouver la regle.
+
+3. **(a) Etat vs compte-rendu.** Faire produire a l'agent memorisant un compte-rendu affirmant la reussite ("j'ai replique le systeme, tous les cas passent"). Montrer par assertion qu'un jugement fonde sur le **texte** l'accepte, alors qu'un verifier qui interroge l'**etat** (la replique, sur des cas tenus a l'ecart) le rejette. Conclure sur ce que mesure reellement un juge textuel dans une tache longue.
+
+4. **(b) Verifier public + verifier cache.** Construire `make_verifier(cases, ground_truth)` qui renvoie un callable exposant **un score, jamais sa liste de cas**. Instancier :
+   - un verifier **public** sur exactement les entrees que l'agent a pu sonder,
+   - un verifier **cache** sur des entrees jamais montrees.
+
+   Prouver par assertion que les deux agents sont **indiscernables** sur le public (score identique, proche de 1.0) et **nettement separes** sur le cache. En tirer la formulation generale : c'est le split train/test applique aux verifiers.
+
+5. **(c) Budget de soumissions.** Implementer `run_with_submission_budget(attempt_factory, verifier, max_submissions, penalty)` qui renvoie `{submissions, raw_score, reward}` avec `reward = meilleur_score - penalty * (soumissions - 1)`, et qui s'arrete des qu'un score parfait est atteint. Comparer une strategie "essais successifs" a une strategie "raisonne puis soumet une fois". Montrer par assertion que la penalite **inverse le classement** par rapport au score brut seul, ou du moins que le raisonnement unique domine.
+
+6. **Question de synthese.** Les trois defenses sont **independantes** : chacune laisse passer un echec que les deux autres attrapent. Pour chaque paire de defenses retirees, decrire l'exploit qui redevient rentable.
+
+7. **Transposition.** Vous n'entrainez pas de modele. Reformuler les trois defenses en regles applicables a une boucle de self-refine en production (section 4 du cours) : quoi mesurer, quoi ne pas montrer a l'agent, quoi borner.
+
+### Criteres de reussite
+
+- [ ] `HiddenSystem` est une boite noire : l'agent ne recoit que des sorties, et le nombre d'appels est comptabilise
+- [ ] Les deux agents sont implementes et atteignent tous deux ~100 % sur le verifier public
+- [ ] (a) Assertion : le jugement textuel accepte le compte-rendu mensonger, le verifier d'etat le rejette
+- [ ] (b) Assertion : ecart faible ou nul sur le verifier public, ecart large sur le verifier cache — les deux agents ne deviennent distinguables **que** grace au cache
+- [ ] (b) `make_verifier` n'expose jamais ses cas au code appelant cote agent
+- [ ] (c) `run_with_submission_budget` respecte `max_submissions`, s'arrete a 1.0, et calcule la recompense penalisee
+- [ ] (c) Assertion : la strategie "raisonne puis soumet" domine "essais successifs" **une fois la penalite appliquee**
+- [ ] La synthese decrit un exploit concret pour chaque paire de defenses retirees
+- [ ] Execution offline, deterministe, stdlib uniquement

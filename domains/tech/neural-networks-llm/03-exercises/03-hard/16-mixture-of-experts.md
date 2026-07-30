@@ -114,3 +114,49 @@ Construire un modele de cout end-to-end d'un MoE distribue : params totaux/actif
 - [ ] Le modele de cout all-to-all donne la fraction comm/total et son explosion a basse bande passante
 - [ ] L'analyse relie le verdict au cours (infra-dependant, DualPipe/FP8)
 - [ ] Code numpy, commente WHY
+
+---
+
+## Exercice 10 : Quantile Balancing — equilibrer un MoE sans loss auxiliaire (Kimi K3, 2026)
+
+### Objectif
+
+Implementer la regle d'equilibrage de Kimi K3 et la comparer honnetement a la regle a pas fixe de DeepSeek-V3, en mesurant aussi le **plancher de bruit** en dessous duquel aucun equilibrage ne peut descendre.
+
+### Consigne
+
+Rappel : le routage biaise choisit les `k` experts de plus grand `s_ij + b_j`. Le biais `b` agit sur la **selection** uniquement — les poids du melange restent les `s_ij` bruts, ce qui evite de deformer la fonction apprise.
+
+1. **Setup.** `n_experts = 896`, `k = 16`, `n_tokens = 4096`, 40 pas. Le desequilibre est une propriete du **routeur**, pas d'un batch : ajouter un biais decroissant persistant aux 100 premiers experts, et **retirer un batch neuf a chaque pas** (comme un vrai entrainement). Utiliser le meme seed pour toutes les strategies, sinon la comparaison ne veut rien dire. Metrique : `max_load / mean_load`.
+
+2. **Top-(k+1) gratuit.** Ecrire `route_topk_with_cutoff(scores, bias, k)` qui renvoie les `k` experts choisis **et** le score biaise du `(k+1)`-eme, appele `alpha_i`. Pourquoi ce seuil est-il disponible sans cout supplementaire, et que signifie exactement `s_ij + b_j - alpha_i > 0` ?
+
+3. **La regle quantile.** Pour chaque expert `j`, on veut le biais qui le ferait selectionner par exactement une fraction `k/n` des tokens. Implementer :
+   ```
+   marges  = s[:, j] - alpha        (vecteur sur les tokens)
+   b_hat_j = -quantile(marges, 1 - k/n)
+   b       = b_hat - mean(b_hat)
+   ```
+   Justifier le recentrage par la moyenne : qu'est-ce qui serait casse sans lui ?
+
+4. **La regle a pas fixe (baseline DeepSeek-V3).** `b_j <- b_j + gamma * sign(charge_cible - charge_j)`. Balayer `gamma` dans `{0.001, 0.01, 0.05}` — un seul `gamma` ne suffit pas pour conclure quoi que ce soit.
+
+5. **Niveau du hasard.** Avant de comparer, calculer le desequilibre obtenu par une affectation **uniformement aleatoire** de `k` experts par token. Attention a ce que ce chiffre est : ce n'est **pas** une borne inferieure universelle (une regle qui egalise activement sur un batch fige peut faire mieux), c'est le niveau atteint sans aucune preference. Comme chaque pas voit un batch neuf et que le biais est calcule sur le batch precedent, aucune regle causale ne peut annuler le bruit multinomial du batch courant : en dessous de ce niveau on ne mesure plus rien de reel.
+
+6. **Comparaison.** Sur 40 pas, tracer (ou tabuler) `max_load / mean_load` pour : aucun equilibrage, les trois `gamma`, et la regle quantile. Reporter aussi le **nombre de pas necessaires pour passer sous 2.0x**. Conclure.
+
+7. **Causalite.** Dans l'implementation reelle, le biais calcule au pas `t` n'est applique qu'au pas `t+1`. Expliquer pourquoi, et pourquoi le biais est **gele** a l'inference.
+
+8. **Passage a l'echelle.** En production, les marges ne tiennent pas en memoire sur un seul rang (des millions de tokens x 896 experts, repartis sur des centaines de GPUs). Expliquer comment un **histogramme par expert + un all-reduce** permet d'estimer le quantile sans jamais materialiser le tableau complet, et quelle approximation on accepte en echange.
+
+### Criteres de reussite
+
+- [ ] `route_topk_with_cutoff` renvoie bien les k choisis et le seuil `alpha` du (k+1)-eme ; la marge est interpretee comme "de combien l'expert a passe (ou rate) la selection"
+- [ ] La regle quantile est implementee en 3 lignes et le recentrage est justifie (sans lui, `b` derive globalement et le seuil perd son sens ; seules les differences entre biais comptent)
+- [ ] Le balayage de `gamma` montre un compromis : trop petit -> convergence lente, trop grand -> oscillation autour de la cible
+- [ ] Le niveau du hasard est calcule et **cite** dans la conclusion (~1.4x dans cette configuration) — sans lui on sur-interprete un ecart de 1.5 vs 1.6
+- [ ] La nature de ce chiffre est correctement enoncee : niveau de reference du bruit d'echantillonnage, pas une borne inferieure absolue
+- [ ] La regle quantile descend au niveau du bruit en **1 pas** ; le pas fixe met plusieurs dizaines de pas (gamma=0.05) ou n'y arrive pas du tout en 40 pas (gamma <= 0.01)
+- [ ] La conclusion note que le bon `gamma` depend du nombre d'experts, donc doit etre re-regle a chaque changement d'echelle
+- [ ] Le decalage causal et le gel a l'inference sont correctement expliques (le biais ne doit pas dependre des tokens futurs ; a l'inference le batch n'a plus de sens statistique)
+- [ ] L'estimation par histogramme est decrite : on troque une precision exacte du quantile contre une communication en O(n_experts * n_bins)

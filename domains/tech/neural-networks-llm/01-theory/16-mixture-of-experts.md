@@ -168,6 +168,57 @@ C'est **~14x plus de params totaux que Mixtral pour ~3x plus de compute** (671/4
 
 ---
 
+## 4bis. Stable LatentMoE : pousser la sparsite a ~10^3 experts (Kimi K3, 2026)
+
+DeepSeek-V3 avait 256 experts routes. **Kimi K3** (Moonshot AI, juillet 2026) en met **896 par couche, top-16, + 2 shared experts** — 2.78 T params totaux, 104.2 B actifs.
+
+> **Attention, deux "sparsites" circulent** — ne pas les confondre :
+> - **sparsite du routage** = `N_routed / k` : DeepSeek-V3 = 256/8 = **32** ; Kimi K3 = 896/16 = **56**. C'est la definition utilisee dans le rapport K3.
+> - **ratio params totaux / params actifs** : DeepSeek-V3 = 671/37 ≈ **18** ; Kimi K3 = 2780/104.2 ≈ **27**. C'est celle qui parle du cout d'inference.
+>
+> Les deux montent, mais pas au meme rythme — parce que K3 elargit aussi les experts (`d_ff` par expert : 2048 -> 3072) et double les shared experts.
+
+Le probleme : en MoE classique, chaque expert selectionne recoit le token en **pleine largeur** `d = 7168`. Multiplier les experts actifs (8 -> 16) multiplie donc directement la communication all-to-all et le trafic de poids.
+
+### L'idee LatentMoE — router dans un espace latent
+
+On **separe la largeur du modele de la largeur des experts routes** :
+
+```
+Shared experts (toujours actifs)  : travaillent en pleine largeur d = 7168
+Routed experts (top-16 sur 896)   : travaillent dans un espace latent l = 3584 (0.5 x d)
+
+z = W_down @ x                          # d -> l   (une seule fois par token)
+u = sum_{i in top-16} p_i * Expert_i(z) # tout se passe en dimension l
+y = sum_j Shared_j(x) + W_up @ RMSNorm(u)  # l -> d
+```
+
+Les transformations communes restent en pleine largeur via les shared experts ; les experts specialises operent sur une representation compacte. C'est ce qui rend l'expansion a ~10^3 experts payable.
+
+### Les deux modes de casse — et les deux correctifs "Stable"
+
+Pousser la sparsite aussi loin fait apparaitre deux problemes que la version vanilla ne gere pas :
+
+| Probleme | Cause | Correctif Kimi K3 |
+|---|---|---|
+| **Explosion des activations** | Le chemin route enchaine `W_down` -> expert gate -> `W_up`, soit ~4 matmuls consecutifs. A 2.78 T params, les activations internes divergent | **RMSNorm insere avant l'up-projection** (`W_up @ RMSNorm(u)`) + activation **SiTU-GLU** bornee (cf. J9 §4) |
+| **Load balancing casse** | Le bias adaptatif "auxiliary-loss-free" de DeepSeek se regle par petits pas ; avec ~10^3 experts il n'a pas le temps de converger | **Quantile Balancing** (§5, Solution 4) |
+
+### Les chiffres Kimi K3
+
+```
+2.78 T params totaux
+104.2 B params actifs par token  (3.7% du total)
+896 routed experts + 2 shared experts, top-16   ->  sparsite de routage = 56
+d_ff par expert route : 3072   (DeepSeek-V3 : 2048)
+largeur du modele d = 7168 ; largeur latente des experts routes l = 3584
+93 couches, dont 1 couche a FFN dense (les 92 autres sont des couches MoE)
+```
+
+**Ce qu'il faut retenir** : la trajectoire MoE 2021 -> 2026 va de "peu de gros experts" (Switch, Mixtral) vers "beaucoup de petits experts" (DeepSeek), puis vers "beaucoup de petits experts **dans un espace plus etroit que le modele**" (LatentMoE). A chaque etape, la contrainte qui bouge n'est pas la qualite — c'est le **cout de communication et la stabilite numerique**.
+
+---
+
 ## 5. Le probleme du load balancing
 
 Si on laisse le routeur libre, **un piege** : il converge vers **2-3 experts favoris** qui gagnent toutes les requetes. Les autres experts ne recoivent jamais de tokens, ne s'entrainent pas, et meurent.
@@ -212,6 +263,39 @@ Expert-choice : expert → top-M tokens       (peut dropper un token)
 ```
 
 DeepSeek-V3 a utilise une variante : **auxiliary-loss-free balancing** via un biais ajoute aux logits du routeur, ajuste dynamiquement par expert (si un expert est sur-utilise on baisse son biais). Plus simple, pas de loss auxiliaire a tuner.
+
+### Solution 4 — Quantile Balancing (Kimi K3, 2026)
+
+Le biais adaptatif de DeepSeek se met a jour **par petits pas de taille fixe** :
+
+```
+b_j <- b_j + gamma * sign(charge_cible - charge_observee_j)     # gamma petit
+```
+
+Ca marche avec 256 experts. Avec **896 experts par couche**, ca ne suit plus : `gamma` trop petit -> les biais n'ont jamais rattrape le desequilibre ; `gamma` trop grand -> oscillation. Or un routage desequilibre ralentit tout l'entrainement expert-parallele (on attend le rang le plus charge) et laisse des experts sous-entraines.
+
+**Quantile Balancing (QB)** remplace le tatonnement par un calcul direct. Idee : si on veut que chaque expert recoive exactement `q = m*k/n` tokens sur un batch de `m` tokens, alors le bon biais est celui qui place le seuil de selection **pile au (q+1)-eme meilleur candidat**. C'est un quantile — on peut le lire, pas le chercher.
+
+```
+1. Routing en Top-(k+1) au lieu de Top-k sur le score biaise s_i + b
+      -> les k premieres entrees sont les routes reellement prises
+      -> la (k+1)-eme donne le seuil alpha_i que l'expert doit depasser pour
+         entrer dans le Top-k du token i  (une seule passe forward, pas de calcul en plus)
+
+2. Pour chaque expert j, on regarde les "marges"  s_i,j - alpha_i  sur tous les tokens
+      b_j  <-  - quantile_{1 - k/n} ( marges de l'expert j )
+      b    <-  b - mean(b)          # on retire l'offset commun : le Top-k est inchange
+
+3. Le nouveau biais ne s'applique qu'a l'etape SUIVANTE (causalite : un batch
+   n'est jamais route avec un biais derive de lui-meme)
+```
+
+Deux points qui comptent en pratique :
+- Comme chez DeepSeek, **`b` n'entre pas dans les poids de melange** `p_i` — il pilote le *dispatch*, pas le gradient du routeur. Pas de gradient parasite, pas d'`alpha` a tuner.
+- A l'echelle reelle, les marges se comptent en **millions par step, eparpillees sur tous les rangs GPU**. Calculer un quantile exact est impossible ; Kimi K3 estime le quantile via un **histogramme** (quelques centaines de bins par expert, un seul `all-reduce` sur les comptes). Les comptes etant additifs, l'histogramme represente bien le batch global.
+- Le biais est **gele a l'inference**.
+
+**Le pattern a retenir** : `loss auxiliaire (2017)` -> `bias adaptatif sans loss (2024)` -> `quantile calcule directement (2026)`. A chaque fois on retire un hyperparametre et on gagne en stabilite quand le nombre d'experts monte d'un ordre de grandeur.
 
 ---
 
@@ -261,6 +345,13 @@ L'all-to-all sature vite la bande passante (NVLink ~600 GB/s, Ethernet beaucoup 
 
 C'est pourquoi MoE est un **investissement infra** : sans NVLink/IB, le MoE perd ses gains. C'est aussi pourquoi DeepSeek a eu besoin d'innovations specifiques (DualPipe, FP8 communication) pour scaler V3.
 
+> **2026 — l'equilibre parfait plutot que le capacity factor.** Kimi K3 (896 experts) attaque le probleme autrement avec **MoonEP** : au lieu de tolerer un desequilibre puis de le tamponner (capacity factor, token dropping), on **replique dynamiquement les experts sur-charges** ("redundant experts") pour que **chaque rang recoive exactement `S * K` tokens**. Trois consequences en cascade, toutes utiles a comprendre meme si on ne code pas d'infra MoE :
+> - **Formes statiques** : le nombre de tokens par expert est connu a l'avance, donc plus besoin de synchroniser CPU<->GPU a chaque couche pour lire les comptes reels. Le pipeline ne cale plus entre les couches.
+> - **Zero-copy** : le plan de routage etant precalcule, les tokens sont ecrits directement a leur place sur le rang distant, sans buffer intermediaire.
+> - **Buffer borne** : `S * K` fixe au lieu de `S * K * R` dans le pire cas.
+>
+> Le fil rouge de tout ce module : sur les MoE a tres grande echelle, **la difficulte n'est pas la qualite du modele, c'est de rendre la charge previsible**.
+
 ---
 
 ## 8. Tradeoffs en pratique : MoE ou dense ?
@@ -280,7 +371,7 @@ C'est pourquoi MoE est un **investissement infra** : sans NVLink/IB, le MoE perd
 
 1. **Tu sers du volume** : throughput-bound, pas latency-bound. MoE excelle.
 2. **Tu as la VRAM** : H100/B200 cluster. Si tu es sur RTX 4090, oublie.
-3. **Tu fais du pretraining a grande echelle** : MoE donne plus de qualite par GPU-hour. C'est pour ca que tous les frontier models 2025-2026 (GPT-5, Gemini 2.5, Claude 4.5/4.6, DeepSeek V3) sont MoE.
+3. **Tu fais du pretraining a grande echelle** : MoE donne plus de qualite par GPU-hour. C'est pour ca que tous les frontier models 2025-2026 (GPT-5, Gemini 2.5, Claude 4.5/4.6, DeepSeek V3, Kimi K2/K3) sont MoE.
 
 ### Quand **ne pas** utiliser MoE
 
@@ -302,7 +393,7 @@ Faux. MoE consomme **plus** de VRAM totale (tous les experts doivent etre charge
 Vrai pour Mixtral (paper Mistral §5) : les experts se specialisent sur des **patterns syntaxiques** (ponctuation, tokens numeriques, debuts de mots) plutot que sur des domaines semantiques. La semantique reste distribuee. **Pour DeepSeek-V3 cependant, le fine-grained routing produit une specialisation par domaine plus marquee** — la granularite plus fine permet aux experts de capturer des niches semantiques que les 8 gros experts de Mixtral ne pouvaient pas isoler.
 
 **Idee fausse 4 — "Plus d'experts = toujours mieux"**
-Faux. Au-dela d'une certaine sparsite, le routeur devient instable, les experts collapse, et la communication GPU explose. Le sweet spot est typiquement 16-256 experts avec sparsite ~5-15% (DeepSeek-V3 = 5.5%).
+A nuancer. Ce n'est pas gratuit : au-dela d'une certaine sparsite, le routeur devient instable, les experts collapse, et la communication GPU explose. Le sweet spot **avec les techniques standards** reste 16-256 experts et une sparsite de ~5-15% de params actifs (DeepSeek-V3 = 5.5%). Kimi K3 monte a 896 experts et 3.7% d'actifs — mais **seulement parce qu'il paie le prix** : experts en espace latent (LatentMoE), RMSNorm avant l'up-projection, activation bornee (SiTU-GLU), Quantile Balancing, et une infra EP dediee. Retenir la regle, pas le record : chaque cran de sparsite se paie en stabilite numerique et en ingenierie de communication.
 
 **Idee fausse 5 — "Le MoE remplace le dense partout"**
 Faux. Les modeles edge/on-device (Phi-4, Gemma 3, les variantes 3B-8B) restent **dense**. MoE n'a de sens qu'a l'echelle du datacenter.
@@ -326,6 +417,12 @@ Faux. Les modeles edge/on-device (Phi-4, Gemma 3, les variantes 3B-8B) restent *
 **Q5** — Quand ne PAS utiliser MoE ?
 > Sur un seul GPU avec VRAM limitee (RTX 4090, edge, mobile) : MoE consomme la VRAM des experts dormants pour rien. En fine-tuning sur petit dataset : le routing equilibre se degrade. Pour des taches tres specialisees ou un dense fine-tune fait mieux.
 
+**Q6** — Qu'apporte LatentMoE (Kimi K3) par rapport au MoE fine-grained de DeepSeek-V3 ?
+> Les experts **routes** ne travaillent plus dans la pleine largeur du modele (`d = 7168`) mais dans un **espace latent** deux fois plus etroit (`l = 3584`) ; seuls les 2 shared experts restent en pleine largeur. Comme le cout de dispatch/communication est proportionnel a la largeur envoyee a chaque expert, cela rend payable le passage a **896 experts routes, top-16** — soit une sparsite de routage de 56 (contre 32 pour DeepSeek-V3), et un ratio params totaux/actifs de ~27 (2.78 T / 104.2 B) contre ~18.
+
+**Q7** — Pourquoi le bias adaptatif de DeepSeek ne suffit plus a 896 experts, et que fait Quantile Balancing ?
+> Le bias adaptatif avance **par pas fixes** (`b_j += gamma * sign(...)`) : avec ~10^3 experts, il converge trop lentement (ou oscille si on augmente `gamma`). Quantile Balancing **calcule** le bias au lieu de le chercher : en routant en Top-(k+1), la (k+1)-eme entree donne gratuitement le seuil d'entree de chaque token ; le bias de l'expert `j` est alors le **quantile (1 - k/n) des marges** `s_i,j - alpha_i`. Une passe, pas d'hyperparametre de pas, et le quantile est estime par histogramme (`all-reduce` de comptes) pour rester calculable sur des millions de marges.
+
 ---
 
 ## Sources
@@ -337,6 +434,8 @@ Faux. Les modeles edge/on-device (Phi-4, Gemma 3, les variantes 3B-8B) restent *
 - Jiang et al. / Mistral AI (2024) — *Mixtral of Experts*. https://arxiv.org/abs/2401.04088
 - DeepSeek-AI (2024) — *DeepSeekMoE: Towards Ultimate Expert Specialization*. https://arxiv.org/abs/2401.06066
 - DeepSeek-AI (2024) — *DeepSeek-V3 Technical Report*. https://arxiv.org/abs/2412.19437
+- Elango et al. (2026) — *LatentMoE: Toward Optimal Accuracy per FLOP and Parameter in Mixture of Experts*. https://arxiv.org/abs/2601.18089
+- Kimi Team / Moonshot AI (2026) — *Kimi K3: Open Frontier Intelligence* (rapport technique, §2.3 Stable LatentMoE, §2.3.3 Quantile Balancing, §5.2.1 MoonEP). https://github.com/MoonshotAI/Kimi-K3 — poids : https://huggingface.co/moonshotai/Kimi-K3
 
 
 ---

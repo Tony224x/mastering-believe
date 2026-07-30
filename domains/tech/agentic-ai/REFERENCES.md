@@ -39,6 +39,7 @@
 - **Shinn, Cassano, Berman, Gopinath, Narasimhan, Yao (2023/NeurIPS 2023). *Reflexion: Language Agents with Verbal Reinforcement Learning*. arXiv:2303.11366** — https://arxiv.org/abs/2303.11366 — self-critique verbale stockée en mémoire épisodique ; le pattern Reflexion du module.
 
 ---
+- **Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique** — https://github.com/MoonshotAI/Kimi-K3 — §4.1.2, *Reasoning Effort RL* : l'effort de raisonnement entraîné comme un axe à part entière (budget de tokens par problème `tau * b0(x)`, récompense écrasée à -1 au-delà, curriculum sur `tau` produisant les niveaux low/high/max). Explique pourquoi les niveaux d'effort exposés par les API 2026 se comportent comme des politiques distinctes et non comme un simple plafond.
 
 ## Module 05 — LangGraph fondamentaux (StateGraph, nodes, edges, conditional routing, HITL)
 
@@ -101,6 +102,7 @@
 - **LangChain. *LangSmith — Evaluation* (docs).** — https://docs.langchain.com/langsmith/evaluation — outillage pratique : datasets, evaluators (LLM-as-judge, heuristiques), regression testing ; pont vers l'implémentation du harness d'éval.
 
 ---
+- **Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique** — https://github.com/MoonshotAI/Kimi-K3 — §4.1.2, *Agentic Generative Reward Model* : protocole de jugement en 4 étapes où le juge **génère** sa grille avant de scorer, et contrôle de verbosité par seuil (`sigma * l0`) contre le length bias — une parade mécanique là où une consigne de prompt ne suffit pas.
 
 ## Module 12 — Production & Observabilité (tracing, cost/latency, error recovery, guardrails)
 
@@ -197,6 +199,7 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **Self-Refine: Iterative Refinement with Self-Feedback** — Madaan, Tandon et al., 2023 (NeurIPS). https://arxiv.org/abs/2303.17651 — boucle generator/critic/refiner avec un seul LLM.
 - **Let's Verify Step by Step** — Lightman, Kosaraju, Burda, Edwards, Baker, Leike, Schulman, Sutskever, Cobbe (OpenAI), 2023. https://arxiv.org/abs/2305.20050 — verifier / process reward models (PRM).
 - **Scaling LLM Test-Time Compute Optimally...** — Snell, Lee, Xu, Kumar (UC Berkeley / Google DeepMind), 2024. https://arxiv.org/abs/2408.03314 — test-time scaling (recherche vs verifiers + révision adaptative).
+- **Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique** — https://github.com/MoonshotAI/Kimi-K3 — §4.1.3 (Multi-Teacher On-Policy Distillation : le student génère, le teacher note chaque token ; consolidation de 9 experts domaine x effort en un modèle unique), §4.2.6 (**Autonomous Execution Tasks** : récompense sur l'état final de l'environnement, vérificateur indépendant, split vérificateur public / caché, budget de soumissions) et §4.2.4 (détection continue de reward hacking sur les tâches de kernels GPU).
 
 ### J18 — Frameworks d'orchestration comparés
 - **LangGraph — Multi-agent** — LangChain (docs), 2025. https://docs.langchain.com/oss/python/langchain/multi-agent — supervisor / swarm / handoffs, modèle graphe d'états.
@@ -234,6 +237,7 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **SWE-agent (repo)** — 2024-. https://github.com/SWE-agent/SWE-agent — boucle navigation/édition/test sur issue GitHub.
 - **SWE-bench: Can LMs Resolve Real-World GitHub Issues?** — Jimenez et al. (Princeton), 2023 (ICLR'24). https://arxiv.org/abs/2310.06770 (https://www.swebench.com/verified.html) — 2 294 issues réelles.
 - **Aider (repo + doc)** — Gauthier / Aider-AI, 2023-. https://github.com/Aider-AI/aider (https://aider.chat) — repo-map, edit blocks, auto-commit git.
+- **Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique** — https://github.com/MoonshotAI/Kimi-K3 — §4.2.1 (*Unified White-Box RL Environment* : le harnais d'agent traité comme des modules composables — outils, prompts système, gestion du contexte, skills, mémoires, sous-agents — et varié pendant l'entraînement pour éviter le surapprentissage à un seul harnais) et §4.2.7 (tâches web déroulées sous scaffolds variés, pour la généralisation inter-scaffold).
 
 ### J23 — Sandboxing & exécution sûre + voice/realtime
 - **sandbox-runtime** — anthropic-experimental, 2025 (Apache-2.0). https://github.com/anthropic-experimental/sandbox-runtime — sandboxing OS-level (sandbox-exec/bubblewrap) + proxy réseau.
@@ -241,6 +245,7 @@ frontier J15–J28. Source-of-truth pour les passes de vérification (Phase 5/6)
 - **Operator System Card** — OpenAI, jan. 2025. https://cdn.openai.com/operator_system_card.pdf — sandboxing + safety d'un computer-use agent.
 - **Voice agents / Realtime guide** — OpenAI, 2024-2025. https://developers.openai.com/api/docs/guides/voice-agents — Realtime API speech-to-speech vs pipeline STT→LLM→TTS.
 - **openai-realtime-agents (repo)** — OpenAI, 2024-. https://github.com/openai/openai-realtime-agents — handoffs/tools/guardrails sur Realtime.
+- **Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique** — https://github.com/MoonshotAI/Kimi-K3 — §5.3.2, *Sandbox Infrastructure* (**AgentENV**) : sandboxes microVM Firecracker, checkpointing incrémental (133 ms checkpoint / 49 ms resume), primitives pause-resume / fork / snapshot, motivées par le constat qu'un sandbox d'agent passe jusqu'à **98 %** de sa vie à attendre le modèle ; 51 219 741 sandboxes créés sur 1 505 678 images durant l'entraînement.
 
 ### J24 — Model routing & coût/latence
 - **RouteLLM: Learning to Route LLMs with Preference Data** — Ong et al. (LMSYS / UC Berkeley), 2024. https://arxiv.org/abs/2406.18665 — routeur strong/weak, >2× réduction de coût.

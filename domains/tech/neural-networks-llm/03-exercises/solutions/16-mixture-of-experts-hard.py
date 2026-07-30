@@ -1,7 +1,7 @@
 """
 Solutions HARD — Jour 16 : Mixture of Experts
 =============================================
-Exercices 7, 8, 9 (hard). Pur NumPy, comme 02-code/16-mixture-of-experts.py.
+Exercices 7, 8, 9, 10 (hard). Pur NumPy, comme 02-code/16-mixture-of-experts.py.
 Chaque etape non triviale est commentee avec le POURQUOI.
 
 Run: python 03-exercises/solutions/16-mixture-of-experts-hard.py
@@ -411,8 +411,182 @@ def exercice_9():
     print("\n  [OK] Exercice 9")
 
 
+# ===========================================================================
+# EXERCICE 10 - Quantile Balancing (Kimi K3, 2026)
+# ===========================================================================
+
+def route_topk_with_cutoff(scores, bias, k):
+    """Top-k biaise + le score du (k+1)-eme, obtenu GRATUITEMENT.
+
+    Le kernel de routage trie deja les scores biaises pour extraire le top-k :
+    lire un element de plus ne coute rien. C'est ce (k+1)-eme score, note
+    alpha_i, qui sert de seuil de selection pour le token i.
+
+    Interpretation de la marge s_ij + b_j - alpha_i :
+        > 0  -> l'expert j a ete selectionne, et de combien il a passe
+        < 0  -> il a ete recale, et de combien il a manque.
+    """
+    biased = scores + bias
+    order = np.argsort(-biased, axis=1)[:, :k + 1]
+    chosen = order[:, :k]
+    rows = np.arange(scores.shape[0])
+    cutoff = biased[rows, order[:, k]]
+    return chosen, cutoff
+
+
+def loads_from_choices(chosen, n_experts):
+    return np.bincount(chosen.ravel(), minlength=n_experts).astype(np.float64)
+
+
+def imbalance(loads):
+    """max_load / mean_load : 1.0 = parfait, plus grand = pire."""
+    return float(loads.max() / (loads.mean() + 1e-12))
+
+
+def update_bias_quantile(scores, cutoff, k, n_experts):
+    """La regle de Kimi K3, en trois lignes.
+
+    Pour l'expert j on veut le biais qui le ferait selectionner par exactement
+    une fraction k/n des tokens. La marge s_ij - alpha_i dit de combien il
+    manque (ou depasse) pour chaque token ; le quantile d'ordre 1 - k/n de ces
+    marges est donc EXACTEMENT le decalage cherche.
+    """
+    margins = scores - cutoff[:, None]
+    b_hat = -np.quantile(margins, 1.0 - k / n_experts, axis=0)
+    # Recentrage : seules les DIFFERENCES entre biais changent la selection.
+    # Sans lui, b derive globalement d'un pas a l'autre (tous les biais montent
+    # ou descendent ensemble), les marges se decalent avec, et l'estimation du
+    # quantile suivant part d'une reference qui a bouge. On fixe la jauge.
+    return b_hat - b_hat.mean()
+
+
+def update_bias_fixed_step(bias, loads, target, gamma):
+    """La regle DeepSeek-V3 : un pas de taille FIXE, dans le bon sens.
+
+    Elle connait la direction mais pas la distance : c'est tout le probleme.
+    """
+    return bias + gamma * np.sign(target - loads)
+
+
+def exercice_10():
+    print("\n" + "=" * 70)
+    print("EXERCICE 10 - Quantile Balancing vs biais a pas fixe")
+    print("=" * 70)
+
+    rng = np.random.default_rng(42)
+    N_EXPERTS, TOP_K, N_TOKENS, STEPS = 896, 16, 4096, 40
+    target = N_TOKENS * TOP_K / N_EXPERTS
+
+    # --- 1. Un routeur desequilibre ---------------------------------------
+    # Le desequilibre est une propriete du ROUTEUR, pas d'un batch : certains
+    # experts sont intrinsequement plus attractifs tot dans l'entrainement.
+    # On le modelise par un biais persistant sur les 100 premiers experts,
+    # et on retire un batch neuf a chaque pas - comme un vrai entrainement.
+    skew = np.zeros(N_EXPERTS)
+    skew[:100] = np.linspace(2.5, 0.5, 100)
+
+    def draw_batch(gen):
+        return gen.standard_normal((N_TOKENS, N_EXPERTS)) + skew
+
+    print(f"  n_experts={N_EXPERTS}  top_k={TOP_K}  n_tokens={N_TOKENS}")
+    print(f"  charge cible par expert = {target:.1f} tokens")
+
+    # --- 5. Reference "hasard pur" ----------------------------------------
+    # Attention a ce que ce chiffre est et n'est PAS. Ce n'est pas une borne
+    # inferieure : une regle qui egalise activement les charges peut faire
+    # mieux. C'est le niveau atteint par un routage sans aucune preference -
+    # donc le niveau en dessous duquel un ecart de 1.5 vs 1.6 ne mesure plus
+    # que du bruit d'echantillonnage multinomial (~73 tokens par expert).
+    ref = []
+    for s in range(5):
+        g = np.random.default_rng(1000 + s)
+        rand_choice = g.integers(0, N_EXPERTS, size=(N_TOKENS, TOP_K))
+        ref.append(imbalance(loads_from_choices(rand_choice, N_EXPERTS)))
+    chance_level = float(np.mean(ref))
+    print(f"  reference hasard pur (aucune preference) = {chance_level:.2f}x")
+
+    # --- 4 + 6. Les strategies ---------------------------------------------
+    strategies = {
+        "aucun equilibrage": None,
+        "pas fixe gamma=0.001": 0.001,
+        "pas fixe gamma=0.01": 0.01,
+        "pas fixe gamma=0.05": 0.05,
+        "quantile (Kimi K3)": "quantile",
+    }
+
+    results = {}
+    for name, mode in strategies.items():
+        # Meme seed pour toutes les strategies : elles voient exactement les
+        # memes batches, sinon la comparaison ne veut rien dire.
+        gen = np.random.default_rng(1234)
+        bias = np.zeros(N_EXPERTS)
+        history = []
+        for _ in range(STEPS):
+            scores = draw_batch(gen)
+            # 7. CAUSALITE : on route avec le biais calcule au pas PRECEDENT.
+            # Le biais issu de ce batch ne sera applique qu'au pas suivant -
+            # sinon la selection du token i dependrait de la statistique du
+            # batch dont il fait partie, donc de tokens futurs.
+            chosen, cutoff = route_topk_with_cutoff(scores, bias, TOP_K)
+            loads = loads_from_choices(chosen, N_EXPERTS)
+            history.append(imbalance(loads))
+
+            if mode is None:
+                continue
+            if mode == "quantile":
+                bias = update_bias_quantile(scores, cutoff, TOP_K, N_EXPERTS)
+            else:
+                bias = update_bias_fixed_step(bias, loads, target, mode)
+        results[name] = history
+
+    def steps_to_reach(hist, threshold=2.0):
+        for i, v in enumerate(hist):
+            if v < threshold:
+                return str(i)
+        return f">{len(hist)}"
+
+    print(f"\n  {'strategie':<24}{'pas 0':>9}{'pas 5':>9}{'pas 40':>9}"
+          f"{'pas -> <2.0x':>15}")
+    for name, hist in results.items():
+        print(f"  {name:<24}{hist[0]:>9.2f}{hist[5]:>9.2f}{hist[-1]:>9.2f}"
+              f"{steps_to_reach(hist):>15}")
+
+    print(f"\n  Lecture : le hasard pur donne deja {chance_level:.2f}x. La regle")
+    print("  quantile descend au niveau du bruit des le PREMIER pas, parce")
+    print("  qu'elle ne devine pas la direction : elle CALCULE la distance")
+    print("  exacte a partir des marges. Le pas fixe, lui, doit choisir entre")
+    print("  lent (gamma petit) et oscillant (gamma grand) - il connait le")
+    print("  signe, jamais l'amplitude. Et le bon gamma depend du nombre")
+    print("  d'experts, donc il faut le re-regler a chaque changement d'echelle.")
+    print("  Personne n'atteint 1.00x, et c'est normal : a ~73 tokens par")
+    print("  expert, le tirage lui-meme met le plus charge quelques ecarts-")
+    print("  types au-dessus de la moyenne.")
+
+    # --- 8. Passage a l'echelle --------------------------------------------
+    print("\n  A l'echelle reelle, les marges (des millions de tokens x 896")
+    print("  experts, eclatees sur des centaines de GPUs) ne tiennent nulle")
+    print("  part. On remplace np.quantile par : un histogramme par expert")
+    print("  calcule localement, un all-reduce des histogrammes, puis le")
+    print("  quantile lu dans l'histogramme cumule. Cout de communication")
+    print("  O(n_experts * n_bins) au lieu du tableau complet ; en echange on")
+    print("  accepte un quantile discretise a la largeur d'un bin - sans")
+    print("  importance, puisqu'on ne cherche qu'un decalage de selection.")
+
+    print("\n  A l'inference le biais est GELE : un batch de service n'a plus")
+    print("  aucune signification statistique (1 requete, parfois 1 token), et")
+    print("  reequilibrer dessus rendrait la sortie dependante des requetes")
+    print("  voisines. Le routage doit rester une fonction du seul token.")
+    print("  Rappel : le biais n'agit que sur la SELECTION ; les poids du")
+    print("  melange restent les scores bruts, donc la fonction apprise n'est")
+    print("  jamais deformee par l'equilibrage.")
+
+    print("\n  [OK] Exercice 10")
+
+
+
 if __name__ == "__main__":
     exercice_7()
     exercice_8()
     exercice_9()
+    exercice_10()
     print("\nDone (HARD).")

@@ -71,3 +71,46 @@ En t'inspirant de `02-code/14-capstone.py` (LLaMA en PyTorch, a transposer en Nu
 - [ ] La causalite end-to-end est verifiee (< 1e-10)
 - [ ] Le compte de parametres LLaMA-block vs GPT-2-block est correct et commente
 - [ ] La reponse hierarchise correctement l'impact des 4 ameliorations
+
+---
+
+## Exercice 9 : SiTU-GLU — borner une activation pour survivre au FP4 (Kimi K3, 2026)
+
+### Objectif
+
+Comprendre pourquoi un modele entraine en precision tres basse ne peut pas garder SwiGLU tel quel, et pourquoi la solution retenue est un *soft cap* (tanh) et non un `clip`.
+
+### Consigne
+
+Rappel des deux formules (`d` = dimension du modele, `x` un vecteur d'activations) :
+
+```
+SwiGLU   : y = Swish(W_g x)             * (W_u x)
+SiTU-GLU : y = [b1*tanh(W_g x / b1) * Sigmoid(W_g x)] * [b2*tanh(W_u x / b2)]
+           avec b1 = 4, b2 = 25   (valeurs Kimi K3)
+```
+
+1. **Borne theorique.** `tanh` est borne par 1 et `Sigmoid` par 1. En deduire la borne dure de `|y|` pour SiTU-GLU avec `b1 = 4, b2 = 25`. Comparer a SwiGLU, dont la sortie n'est bornee par rien.
+
+2. **Implementer** `situ_glu(gate_pre, up_pre, b1=4, b2=25)` et `swiglu(gate_pre, up_pre)` en NumPy (attention a la stabilite numerique du `Sigmoid` : `np.clip` de l'argument de `exp`).
+
+3. **Regime normal.** Tirer `gate_pre, up_pre ~ N(0, 1)` de shape `(512, 1024)`. Mesurer l'ecart relatif median entre les deux sorties. Conclusion attendue : dans le regime ou vivent 99 % des activations, SiTU-GLU est une *reparametrisation quasi transparente* de SwiGLU. Pourquoi est-ce une condition necessaire pour que le remplacement soit acceptable ?
+
+4. **Regime outlier.** Reprendre le meme tirage, puis multiplier 20 canaux choisis au hasard par 60 (les "massive activations" observees dans les LLMs reels). Recalculer `max|y|` pour les deux fonctions. Comparer chacune au maximum representable de FP8 E4M3, soit **448**. Laquelle deborde ?
+
+5. **Soft cap vs hard clamp.** On pourrait obtenir la meme borne avec `y = np.clip(y, -100, 100)`. Calculer numeriquement la derivee des deux options en `x = 100`, par difference finie **a droite** (`(f(x+h) - f(x)) / h`, `h = 1e-4`). Attention : le `clip` a un point anguleux exactement en 100, donc une difference *centree* l'enjamberait et renverrait 0.5 — une pente moyenne qui n'existe nulle part. C'est la derivee a droite qui decrit ce que vit un neurone sature.
+   - `d/dx [b2 * tanh(x / b2)]` avec `b2 = 25`
+   - `d/dx [clip(x, -100, 100)]`
+
+   Que se passe-t-il pour un neurone sature si l'on choisit le `clip` ? Relier a la notion de gradient mort.
+
+6. **Question de synthese.** Le format numerique choisi pour l'inference a impose une modification de la fonction d'activation, donc de la *fonction* que le reseau peut representer. Donner un autre exemple, vu dans le cours, ou une contrainte materielle a remonte jusqu'au design mathematique du modele. (Indice : jour 17, le gate de decroissance de KDA.)
+
+### Criteres de reussite
+
+- [ ] Borne calculee : `|y| <= b1 * b2 = 4 * 25 = 100` (le facteur `Sigmoid <= 1` ne l'augmente pas)
+- [ ] Les deux fonctions sont implementees et `Sigmoid` est numeriquement stable
+- [ ] Regime normal : ecart relatif median de l'ordre de 1 %, donc reparametrisation quasi transparente
+- [ ] Regime outlier : `max|SwiGLU|` depasse largement 448 (debordement FP8 E4M3), `max|SiTU-GLU|` reste sous 100
+- [ ] Derivee a droite en x=100 : ~1.3e-3 pour le soft cap, exactement 0 pour le `clip` (et le piege de la difference centree est identifie) -> le clip tue le gradient, un neurone sature ne peut plus jamais se corriger
+- [ ] La synthese cite un second cas de co-design algorithme/materiel (gate borne de KDA, ou le format MX du jour 19)

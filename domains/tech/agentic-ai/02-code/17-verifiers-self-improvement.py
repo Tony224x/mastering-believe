@@ -12,6 +12,10 @@ Demonstrates:
                              injects them into generation, and writes new
                              lessons at the end — improvement is measurable
                              run-over-run without touching model weights.
+  8. AET-style verification -- (Kimi K3, 2026) score the ENVIRONMENT STATE
+                             rather than the agent's self-report; public vs
+                             hidden verifiers; submission budgets. The three
+                             defenses that keep a feedback loop honest.
 
 The "LLM" is entirely mocked with deterministic heuristics so the file
 runs with stdlib only and zero API keys.
@@ -550,6 +554,116 @@ class SelfImprovingAgent:
 
 
 # ===========================================================================
+# 10. AUTONOMOUS-EXECUTION-STYLE VERIFICATION (Kimi K3, 2026)
+# ===========================================================================
+# Everything above scores what the agent SAYS. This part scores what the
+# agent DID: the reward is read off the environment, not off the report.
+#
+# Three ideas, each defending against a different failure:
+#   10a  state-based verification   vs  self-reported completion
+#   10b  public + hidden verifiers  vs  overfitting the visible checks
+#   10c  submission budget          vs  brute-forcing until something passes
+#
+# The task is black-box system replication (the paradigm's own example): a
+# hidden system classifies integers, the agent may query it a limited number
+# of times, then must submit a replica.
+
+
+class HiddenSystem:
+    """The black box. The agent never sees this rule, only its outputs."""
+
+    def __init__(self) -> None:
+        self.n_queries = 0
+
+    def __call__(self, n: int) -> str:
+        self.n_queries += 1
+        # The rule the agent has to discover. Deliberately simple: the point
+        # is not the difficulty of the rule but the shape of the evaluation.
+        if n % 15 == 0:
+            return "both"
+        if n % 3 == 0:
+            return "three"
+        if n % 5 == 0:
+            return "five"
+        return "none"
+
+
+def generalizing_agent(oracle, probes: list[int]):
+    """Infers the rule from the probes, then applies it to anything."""
+    observations = {n: oracle(n) for n in probes}
+    # A real agent would search a hypothesis space here. The mock jumps
+    # straight to the correct rule, because this demo is about the shape of
+    # the EVALUATION, not about induction. We keep the observations only to
+    # make the query cost visible.
+    assert len(observations) == len(probes)
+
+    def replica(n: int) -> str:
+        if n % 15 == 0:
+            return "both"
+        if n % 3 == 0:
+            return "three"
+        if n % 5 == 0:
+            return "five"
+        return "none"
+
+    return replica
+
+
+def memorizing_agent(oracle, probes: list[int]):
+    """Records exactly what it was shown; guesses the majority label elsewhere.
+
+    This is not a strawman. It is what optimization pressure produces when
+    the only signal available is a fixed, visible set of checks: reproducing
+    the answers is strictly easier than finding the rule.
+    """
+    table = {n: oracle(n) for n in probes}
+
+    def replica(n: int) -> str:
+        return table.get(n, "none")   # "none" is the most frequent label
+
+    return replica
+
+
+def make_verifier(cases: list[int], ground_truth) -> Callable[[Callable], float]:
+    """A verifier is a set of held cases + the ground truth to compare against.
+
+    Note what the returned callable does NOT expose: the case list. The agent
+    receives a score (and, for the public one, diagnostics) — never the code.
+    """
+
+    def verify(replica: Callable[[int], str]) -> float:
+        ok = sum(1 for n in cases if replica(n) == ground_truth(n))
+        return ok / len(cases)
+
+    return verify
+
+
+def run_with_submission_budget(
+    attempt_factory,
+    verifier,
+    max_submissions: int = 3,
+    penalty: float = 0.15,
+) -> dict:
+    """Reward = best verifier score - penalty * (submissions after the first).
+
+    Without this, "submit until something sticks" is free, and the optimal
+    policy is to guess repeatedly rather than to reason once.
+    """
+    best = 0.0
+    used = 0
+    for i in range(max_submissions):
+        used = i + 1
+        best = max(best, verifier(attempt_factory(i)))
+        if best >= 1.0:
+            break
+    return {
+        "submissions": used,
+        "raw_score": best,
+        "reward": best - penalty * (used - 1),
+    }
+
+
+# ===========================================================================
 # DEMO
 # ===========================================================================
 
@@ -650,5 +764,64 @@ if __name__ == "__main__":
     # Clean up lessons file after demo
     if LESSONS_FILE.exists():
         LESSONS_FILE.unlink()
+
+    # --- 10. Autonomous-Execution-style verification -------------------------
+    _banner("10a. Verifier l'ETAT, pas le compte-rendu")
+
+    # The agent's own report, and what the environment actually says.
+    agent_report = "J'ai replique le systeme, tous les cas passent."
+    system = HiddenSystem()
+    probes = [1, 3, 5, 9, 15, 20]
+    bad_replica = memorizing_agent(system, probes)
+
+    truth = HiddenSystem()
+    held_out = [7, 12, 25, 30, 33, 45, 50, 99]
+    state_score = sum(1 for n in held_out if bad_replica(n) == truth(n)) / len(held_out)
+
+    print(f"  Compte-rendu de l'agent : {agent_report!r}")
+    print("  Un juge purement textuel  -> ACCEPTE (la phrase est plausible)")
+    print(f"  Un verifier d'etat        -> {state_score:.0%} des cas tenus a l'ecart")
+    print("  -> La phrase et le fait sont deux choses. Seul l'etat est un signal.")
+
+    _banner("10b. Verifier public vs verifier cache")
+
+    public_cases = probes                    # exactly what the agent could see
+    hidden_cases = held_out                  # held out, never shown
+    public_verifier = make_verifier(public_cases, truth)
+    hidden_verifier = make_verifier(hidden_cases, truth)
+
+    print(f"  {'agent':<26}{'verifier public':>18}{'verifier cache':>18}")
+    for name, factory in [("generalise la regle", generalizing_agent),
+                          ("memorise les cas vus", memorizing_agent)]:
+        replica = factory(HiddenSystem(), probes)
+        print(f"  {name:<26}{public_verifier(replica):>18.0%}"
+              f"{hidden_verifier(replica):>18.0%}")
+
+    print()
+    print("  Les deux agents sont PARFAITS sur le verifier public. Sans le")
+    print("  verifier cache, ils sont indistinguables — et l'entrainement")
+    print("  (ou la boucle de self-refine) n'a aucune raison de preferer le bon.")
+    print("  C'est le split train/test, applique aux verifiers eux-memes.")
+
+    _banner("10c. Budget de soumissions")
+
+    # An agent that keeps guessing: each attempt memorizes a bit more.
+    def guessing_attempts(i: int):
+        return memorizing_agent(HiddenSystem(), probes[: 2 * (i + 1)])
+
+    def reasoning_attempt(i: int):
+        return generalizing_agent(HiddenSystem(), probes)
+
+    print(f"  {'strategie':<24}{'soumissions':>13}{'score brut':>12}{'recompense':>13}")
+    for name, factory in [("essais successifs", guessing_attempts),
+                          ("raisonne puis soumet", reasoning_attempt)]:
+        r = run_with_submission_budget(factory, hidden_verifier)
+        print(f"  {name:<24}{r['submissions']:>13}{r['raw_score']:>12.0%}"
+              f"{r['reward']:>13.2f}")
+
+    print()
+    print("  La penalite ne punit pas l'erreur : elle rend le brute-force")
+    print("  couteux. Sans elle, reessayer est gratuit et devient la strategie")
+    print("  optimale — on entraine un agent a deviner, pas a raisonner.")
 
     print("\nAll demos completed successfully.\n")

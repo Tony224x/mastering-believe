@@ -1,4 +1,4 @@
-# Jour 9 — Architecture des LLMs modernes : de GPT-2 a DeepSeek V3
+# Jour 9 — Architecture des LLMs modernes : de GPT-2 a Kimi K3
 
 > **Temps estime** : 6h | **Prerequis** : Jours 1-8 (transformers, attention, tokenization)
 
@@ -8,11 +8,11 @@
 
 > **Pont / ordre de lecture** — ce module empile 7-8 innovations. Ne cherche pas a tout absorber d'un coup. Lis-le en deux passes :
 > - **Core (a maitriser absolument)** : RoPE (§2), RMSNorm (§3), SwiGLU (§4), GQA (§5). Ces 4 briques sont le standard 2024 (Llama 3, Mistral, Qwen 2.5) — c'est le minimum vital pour lire un paper SOTA.
-> - **Approfondissement (frontiere, 2e passe)** : MLA (§6), MoE fine-grained (§7), SSM hybrides (§8). Ces 3 definissent la frontiere 2025-2026 ; elles sont creusees en profondeur dans les modules dedies J16 (MoE) et J17 (SSM). Survole-les ici, reviens-y avec ces modules.
+> - **Approfondissement (frontiere, 2e passe)** : MLA (§6), MoE fine-grained (§7), attention hybride lineaire + globale (§8), attention residuals (§8bis). Ces 4 definissent la frontiere 2025-2026 ; les deux premieres sont creusees en profondeur dans les modules dedies J16 (MoE) et J17 (SSM / attention lineaire). Survole-les ici, reviens-y avec ces modules.
 >
 > Strategie : fais d'abord les 4 sections core en comprenant le *pourquoi* de chaque remplacement, puis attaque la frontiere.
 
-Le Transformer original (Vaswani et al., 2017) a tenu 5 ans avec peu de modifications. Mais entre 2022 et 2025, **7 innovations** sont devenues standard dans les LLMs SOTA :
+Le Transformer original (Vaswani et al., 2017) a tenu 5 ans avec peu de modifications. Mais entre 2022 et 2026, **8 innovations** sont devenues standard dans les LLMs SOTA :
 
 1. **RoPE** (Rotary Position Embedding) remplace les positional embeddings sinusoidaux
 2. **RMSNorm** remplace LayerNorm
@@ -20,23 +20,26 @@ Le Transformer original (Vaswani et al., 2017) a tenu 5 ans avec peu de modifica
 4. **GQA** (Grouped Query Attention) remplace la Multi-Head Attention classique
 5. **MLA** (Multi-Latent Attention, DeepSeek V3) pousse la compression du KV cache plus loin
 6. **MoE fine-grained** (Mixture of Experts) decouple params totaux et flops actifs
-7. **SSM hybrides** (Mamba + attention) pour le tres long contexte
+7. **SSM / attention lineaire hybrides** (Mamba, KDA + attention) pour le tres long contexte
+8. **Attention residuals** (AttnRes, Kimi K3) : chaque couche va rechercher selectivement les representations des couches precedentes au lieu de les accumuler uniformement
 
-Les 4 premieres sont le standard 2024 (Llama 3, Mistral, Qwen 2.5). Les 3 dernieres definissent la frontiere 2025-2026 (Llama 4, DeepSeek V3/R1, Qwen 3, Jamba ; les familles fermees comme Gemini et GPT-5 sont presumees utiliser des recettes MoE similaires, sans details publics).
+Les 4 premieres sont le standard 2024 (Llama 3, Mistral, Qwen 2.5). Les 4 dernieres definissent la frontiere 2025-2026 (Llama 4, DeepSeek V3/R1, Qwen 3, Jamba, Kimi K3 ; les familles fermees comme Gemini et GPT-5 sont presumees utiliser des recettes MoE similaires, sans details publics).
 
 ### Vue d'ensemble des differences
 
-| | GPT-2 (2019) | LLaMA 2 (2023) | Llama 3 / Qwen 2.5 (2024) | DeepSeek V3 / Llama 4 (2025) |
-|---|---|---|---|---|
-| Position encoding | Learned absolute | RoPE | RoPE (+ YaRN) | RoPE (YaRN, 1M+ tokens) |
-| Normalization | LayerNorm | RMSNorm | RMSNorm | RMSNorm |
-| Norm position | Pre-norm | Pre-norm | Pre-norm | Pre-norm |
-| FFN activation | GeLU | SwiGLU | SwiGLU | SwiGLU |
-| Attention | MHA | MHA/GQA | GQA | **MLA** (DeepSeek) / GQA (Llama 4) |
-| Dense vs MoE | Dense | Dense | Dense | **MoE fine-grained** (256 experts, top-8) |
-| Vocab size | 50 257 | 32 000 | 128 256 | 129 280 (DeepSeek V3) |
+| | GPT-2 (2019) | LLaMA 2 (2023) | Llama 3 / Qwen 2.5 (2024) | DeepSeek V3 / Llama 4 (2025) | Kimi K3 (2026) |
+|---|---|---|---|---|---|
+| Position encoding | Learned absolute | RoPE | RoPE (+ YaRN) | RoPE (YaRN, 1M+ tokens) | **NoPE** — position portee par la recurrence KDA |
+| Normalization | LayerNorm | RMSNorm | RMSNorm | RMSNorm | RMSNorm (+ un RMSNorm insere avant l'up-projection MoE) |
+| Norm position | Pre-norm | Pre-norm | Pre-norm | Pre-norm | Pre-norm + **AttnRes** (residuel par attention sur la profondeur) |
+| FFN activation | GeLU | SwiGLU | SwiGLU | SwiGLU | **SiTU-GLU** (SwiGLU borne) |
+| Attention | MHA | MHA/GQA | GQA | **MLA** (DeepSeek) / GQA (Llama 4) | **Hybride KDA + Gated MLA** (3 couches lineaires : 1 globale) |
+| Dense vs MoE | Dense | Dense | Dense | **MoE fine-grained** (256 experts, top-8) | **Stable LatentMoE** (896 routed top-16 + 2 shared) |
+| Vocab size | 50 257 | 32 000 | 128 256 | 129 280 (DeepSeek V3) | 160 000 |
 
-**Modeles SOTA 2025-2026** : Llama 4 (Meta, 2025, MoE), DeepSeek V3 (dec 2024, 671B totaux/37B actifs) et R1 (jan 2025, reasoning), Qwen 3 (Alibaba, 2025), Gemini 2 (Google, 2025), GPT-5 (OpenAI, 2025), Claude 4 (Anthropic, 2025). GPT-3 et LLaMA 2 servent encore de repere historique mais ne sont plus SOTA.
+**Modeles SOTA 2025-2026** : Llama 4 (Meta, 2025, MoE), DeepSeek V3 (dec 2024, 671B totaux/37B actifs) et R1 (jan 2025, reasoning), Qwen 3 (Alibaba, 2025), Gemini 2 (Google, 2025), GPT-5 (OpenAI, 2025), Claude 4 (Anthropic, 2025), **Kimi K3** (Moonshot AI, juillet 2026, 2.78T totaux / 104B actifs, open-weight). GPT-3 et LLaMA 2 servent encore de repere historique mais ne sont plus SOTA.
+
+> **Le repere open-weight de 2026 — Kimi K3.** Publie le 16 juillet 2026 avec son rapport technique et ses poids, c'est le plus gros modele open-weight a ce jour : **2.78 T de parametres totaux, 104.2 B actifs par token, 93 couches, contexte d'entrainement de 1 M de tokens, multimodal natif** (encodeur vision MoonViT-V2, 401 M). Son interet pedagogique n'est pas la taille mais le fait qu'il deplace **trois** briques du tableau ci-dessus d'un coup : l'attention (hybride lineaire/globale), le FFN (SiTU-GLU + experts en espace latent) et le chemin residuel (AttnRes). Moonshot annonce ~**2.5x d'efficacite de scaling** par rapport a Kimi K2 (meme loss de validation pour 2.5x moins de FLOPs, Fig. 7 du rapport). C'est la reference a lire quand on veut voir comment les briques de ce module se combinent reellement a l'echelle frontier.
 
 > **Note sur les tailles** : seules les tailles des modeles open-weight (DeepSeek, Qwen, Llama) sont confirmees. Pour les modeles fermes (GPT-4/GPT-5, Claude, Gemini), aucune taille n'est officielle — les chiffres qui circulent sont **non confirmes, estimations**.
 
@@ -210,6 +213,28 @@ Shazeer (2020) a teste toutes les variantes (GeLU, ReLU, Swish, GLU avec chaque 
 
 Hypothese intuitive : le gating permet au modele de desactiver dynamiquement des neurones en fonction de l'input, un peu comme un MoE (Mixture of Experts) a echelle fine.
 
+### 2026 — SiTU-GLU : borner SwiGLU pour survivre au FP4
+
+Les **deux** facteurs de SwiGLU (`Swish(W_gate @ x)` et `W_up @ x`) sont non bornes. Si deux grandes coordonnees tombent au meme endroit, le produit explose : ce sont les **activation outliers**, et ils deviennent un vrai risque d'overflow des qu'on calcule en basse precision (FP8, FP4 — cf. J19).
+
+Kimi K3 remplace SwiGLU par **SiTU-GLU** (Sigmoid Tanh Unit GLU) : on applique un *soft cap* `softcap(x, beta) = beta * tanh(x / beta)` **independamment** sur les deux branches.
+
+```
+SiTU-GLU(x) = [ beta_1 * tanh(W_gate @ x / beta_1) * sigmoid(W_gate @ x) ]
+              * [ beta_2 * tanh(W_up   @ x / beta_2) ]
+
+Kimi K3 : beta_1 = 4 (branche gate), beta_2 = 25 (branche up)
+     ->  |SiTU-GLU(x)| <= beta_1 * beta_2 = 100   (borne dure)
+```
+
+Deux proprietes recherchees :
+- **Pres de 0**, `tanh(u) ≈ u`, donc SiTU-GLU se comporte quasi exactement comme SwiGLU — on ne perd pas ce qui fait marcher SwiGLU.
+- **Loin de 0**, la sortie sature a 100 au lieu de diverger.
+
+Pourquoi **100** et pas une autre valeur ? Parce que les activations de Kimi K3 sont servies en **MXFP8 E4M3**, dont le maximum representable est **448** (cf. J19). La borne est donc choisie avec une marge confortable sous le plafond du format : au-dela, les valeurs ne sont pas "imprecises", elles deviennent des `inf` — et un `inf` dans une activation contamine tout le reste du forward. Le code du module mesure les deux regimes : en activations normales SiTU-GLU s'ecarte de SwiGLU d'environ 1 % (reparametrisation quasi transparente), mais des qu'on injecte des *massive activations*, SwiGLU depasse 448 de plusieurs ordres de grandeur la ou SiTU-GLU reste sous 100.
+
+Difference avec un simple `clamp` : le soft cap garde un **gradient non nul** au-dela du seuil, la ou un clamp dur tue le gradient. Retenir la logique generale : a mesure que le training descend en precision numerique, les activations non bornees deviennent le maillon faible, et les architectures se mettent a **borner par construction**.
+
 ---
 
 ## 5. GQA — Grouped Query Attention
@@ -322,6 +347,15 @@ MLA  : cache = projection latente c_kv      [cache = 1/10, qualite equivalente M
 
 MLA est plus complexe a implementer mais c'est la nouvelle frontiere pour les modeles frontier.
 
+### 2026 — Gated MLA : MLA gardee, mais devenue minoritaire
+
+Kimi K3 conserve MLA, avec deux modifications, et surtout **ne la met plus que dans 1 couche sur 4** (les 3 autres sont en attention lineaire KDA, cf. §8) :
+
+1. **Gate de sortie full-rank** : `y = W_o [ sigmoid(W_g @ x) * o_MLA ]`. Une porte dependante de l'input, canal par canal, laisse chaque token moduler ce qu'il lit de l'attention globale.
+2. **NoPE** — *No Positional Encoding*. Aucun RoPE n'est applique aux queries/keys des couches MLA. La position est portee implicitement par la **recurrence et les gates de decroissance** des couches KDA intercalees ; les couches MLA ne font plus que de l'interaction globale de contenu.
+
+Consequence pratique majeure : **plus de "decoupled RoPE" a gerer, et plus de RoPE scaling du tout** pour etendre le contexte — pas de retuning de base RoPE, pas de YaRN (cf. J18). C'est ce qui permet a K3 d'extrapoler jusqu'a 1 M de tokens en jouant seulement sur le curriculum de longueur (8K -> 64K en pre-training, 256K -> 1M en cooldown).
+
 ---
 
 ## 7. MoE modernes — decoupler params et flops
@@ -357,11 +391,12 @@ Chaque token n'active que k experts sur N (ex: k=2, N=8 pour Mixtral ; k=8, N=25
 - **DeepSeek V3** (dec 2024) : 256 experts **fine-grained** + 1 expert partage, top-8 actifs -> 671B totaux, **37B actifs**. "Fine-grained" = experts plus petits mais plus nombreux, meilleur balance
 - **Qwen 3 MoE** (Alibaba, 2025) : variantes 30B et 235B avec MoE fine-grained
 - **Llama 4** (Meta, 2025) : architecture MoE confirmee, plusieurs tailles
+- **Kimi K3** (Moonshot, juillet 2026) : **896 routed experts + 2 shared, top-16** -> 2.78T totaux, **104B actifs** (3.7%). Les experts routes ne travaillent plus en pleine largeur `d = 7168` mais dans un **espace latent** de 3584 (0.5x) — voir J16 §4bis
 - **GPT-5** et **Claude 4** : rumored MoE (architecture non publique mais indices par la tarification et les patterns de latence)
 
 ### Challenges
 
-1. **Load balancing** : si le routeur envoie toujours les memes experts, les autres sont sous-utilises (expert collapse). Solution : auxiliary loss qui penalise le desequilibre (DeepSeek V3 va plus loin avec un "auxiliary-loss-free" balancing par bias adaptatif).
+1. **Load balancing** : si le routeur envoie toujours les memes experts, les autres sont sous-utilises (expert collapse). Solution : auxiliary loss qui penalise le desequilibre (DeepSeek V3 va plus loin avec un "auxiliary-loss-free" balancing par bias adaptatif ; Kimi K3, avec ~10^3 experts par couche, remplace l'ajustement pas-a-pas du bias par un calcul de **quantile** — voir J16 §5).
 2. **Expert parallelism** : distribuer les experts sur plusieurs GPUs. All-to-all communication devient le bottleneck entrainement.
 3. **Inference** : batching MoE est delicat car les tokens d'un batch n'activent pas les memes experts. vLLM et SGLang ont des kernels dedies.
 
@@ -373,7 +408,7 @@ Chaque token n'active que k experts sur N (ex: k=2, N=8 pour Mixtral ; k=8, N=25
 
 ---
 
-## 8. Mamba et SSM hybrides — au-dela de l'attention
+## 8. Hybrides lineaire + global — au-dela de l'attention quadratique
 
 ### Motivation : l'attention est O(n^2)
 
@@ -393,18 +428,66 @@ Mamba introduit la **S6 layer** (Selective SSM). La nouveaute par rapport aux SS
 
 Mamba **pur** n'a pas battu les Transformers sur les benchmarks LLM (GSM8K, MMLU, HumanEval). L'attention reste superieure sur le in-context learning et le reasoning a courte portee. Mais les **hybrides** — mettre un bloc d'attention toutes les N couches Mamba — sont prometteurs pour le long contexte et l'edge inference.
 
-Exemples 2024-2025 :
+Exemples 2024-2026 :
 - **Jamba** (AI21, 2024) : 52B params, alternance Mamba + attention + MoE. 256k context
 - **Zamba** (Zyphra, 2024) : hybride SSM + attention partagee
 - **Gemini 2** (Google, 2025) : rumored d'utiliser une architecture hybride pour son 1M+ token context
 - **Llama 4** : rumeurs d'elements hybrides pour le long contexte
+- **Kimi K3** (Moonshot, juillet 2026) : **la premiere demonstration a l'echelle frontier**. 93 couches = **69 couches KDA (attention lineaire) + 24 couches Gated MLA (attention globale)**, en blocs de `3 KDA -> 1 MLA`, avec une derniere couche MLA en fin de backbone pour que la sortie passe toujours par de l'attention globale. 2.78T params, open-weight, contexte 1M
 
-### Quand utiliser Mamba/SSM
+**KDA** (*Kimi Delta Attention*) n'est pas un SSM au sens Mamba : c'est une **attention lineaire a delta rule** (lignee DeltaNet / Gated Linear Attention) avec une **porte d'oubli par canal**. Meme promesse pratique que Mamba — etat recurrent de taille **fixe**, cout lineaire en longueur — mais une regle de mise a jour differente (`S_t = (I - beta_t k_t k_t^T) Diag(alpha_t) S_{t-1} + beta_t k_t v_t^T` : on *efface* la valeur deja associee a cette cle avant d'ecrire la nouvelle). Detail dans J17.
+
+### Quand utiliser un backbone lineaire (SSM / attention lineaire)
 
 - **Oui** : tres long contexte (> 200k tokens) ou l'O(n^2) de l'attention devient prohibitif
 - **Oui** : edge inference (memoire fixe, pas de cache croissant)
-- **Non** : raisonnement complexe a courte portee, ou l'attention reste reine
-- **Compromis** : les hybrides (Mamba + attention) semblent etre le sweet spot et remplacent progressivement les Transformers purs sur les modeles very-long-context
+- **Non** : en **pur**, pour du raisonnement ou du recall associatif dense — l'attention globale reste necessaire
+- **Compromis** : les hybrides sont le sweet spot. Le ratio empirique s'est deplace de `1 attention / 7 Mamba` (Jamba, 2024) a `1 attention globale / 3 lineaires` (Kimi K3, 2026) : plus d'attention globale que Jamba, mais toujours 75 % de couches en cout lineaire
+
+---
+
+## 8bis. Attention Residuals — quand le residuel devient de l'attention (Kimi K3, 2026)
+
+Les 8 sections precedentes optimisent toutes le **melange des tokens** (attention) ou le **melange des canaux** (FFN/MoE). AttnRes s'attaque a une troisieme dimension, restee inchangee depuis ResNet (2015) : le melange **des couches**.
+
+### Le constat
+
+La connexion residuelle standard fait ceci :
+
+```
+h_l = h_{l-1} + f_l(h_{l-1})
+```
+
+Toute l'information des couches precedentes est **compressee dans un unique etat** `h_{l-1}`. C'est exactement le goulot d'etranglement d'un RNN — mais sur la profondeur au lieu du temps. Une couche 60 qui aurait besoin de la sortie brute de la couche 12 doit esperer qu'elle a survecu a 48 additions successives.
+
+Or on connait le remede a ce goulot, puisque c'est le probleme que le Transformer a resolu en 2017 sur la dimension temporelle : **remplacer l'accumulation par de l'attention**. AttnRes applique la meme methode a la profondeur.
+
+### Le mecanisme
+
+Chaque couche `l` porte une **pseudo-query apprise** `q_l = w_l` (un simple vecteur de parametres, pas une projection de l'input). Les cles/valeurs sont les **sorties des couches precedentes** (plus l'embedding) :
+
+```
+k_i = v_i = f_i(h_i)        pour 1 <= i <= l-1
+k_0 = v_0 = h_1             (l'embedding de token, toujours accessible)
+
+alpha_{i->l} = softmax_i( exp( q_l^T RMSNorm(k_i) ) )
+h_l = sum_i  alpha_{i->l} * v_i
+```
+
+Chaque couche **choisit** dans quelles couches anterieures elle va lire, au lieu de recevoir une somme imposee. Le `RMSNorm` sur les cles est indispensable : sans lui, une couche a forte magnitude ecraserait les poids d'attention de toutes les autres.
+
+### Pourquoi c'est payable
+
+Naivement c'est `O(L^2 d)` en calcul — mais la profondeur d'un LLM reste modeste (`L < 100`), donc le calcul n'est pas le probleme. Le vrai cout est la **memoire** `O(L * d)` : il faut garder vivantes les sorties de toutes les couches (et les transmettre entre etages sous pipeline parallelism).
+
+D'ou la variante reellement deployee, **Block AttnRes** : on decoupe les `L` couches en `N` blocs ; a l'interieur d'un bloc on somme (residuel classique), et l'attention ne porte que sur les `N` representations **de bloc**. La memoire retombe a `O(N * d)`.
+
+```
+Kimi K3 : 93 couches decoupees en blocs de 12 couches
+          -> l'essentiel du benefice est deja atteint vers N ~ 8 blocs
+```
+
+> **A retenir** : le motif "remplacer une accumulation aveugle par une selection apprise" est le meme geste intellectuel que l'attention de 2017 — applique cette fois a la profondeur du reseau. Quand tu lis un rapport d'architecture, demande-toi toujours **sur quelle dimension** l'information circule mal : les tokens, les canaux, ou les couches.
 
 ---
 
@@ -618,7 +701,7 @@ Utilise par : DeepSeek V2, V3, R1. C'est une des innovations architecturales maj
 
 **Challenges** : load balancing (eviter qu'un expert prenne toute la charge), expert parallelism (distribuer les experts sur plusieurs GPUs), inference batching. DeepSeek V3 utilise un auxiliary-loss-free balancing par bias adaptatif.
 
-**Autres exemples MoE 2024-2025** : Mixtral 8x22B, Qwen 3 MoE, Llama 4 (MoE confirme), GPT-5 et Claude 4 (rumored).
+**Autres exemples MoE 2024-2026** : Mixtral 8x22B, Qwen 3 MoE, Llama 4 (MoE confirme), Kimi K3 (896 routed top-16 + 2 shared, 2.78T/104B), GPT-5 et Claude 4 (rumored).
 
 </details>
 
@@ -638,9 +721,9 @@ Utilise par : DeepSeek V2, V3, R1. C'est une des innovations architecturales maj
 - **Reasoning complexe a courte portee** : l'attention reste superieure (in-context learning, retrieval precis)
 - **Benchmarks LLM standards** : Mamba pur n'a pas battu les Transformers
 
-**Realite 2026** : Mamba PUR n'a pas gagne, mais les **hybrides** (Mamba + attention toutes les N couches) sont la voie promise. Exemples : Jamba (AI21, 52B, 256k context), Zamba (Zyphra), Gemini 2 (rumored hybrid pour son 1M+ context), possiblement Llama 4 long-context.
+**Realite 2026** : le backbone lineaire PUR n'a pas gagne, mais les **hybrides** (couches lineaires + attention globale toutes les N couches) ont gagne. Exemples : Jamba (AI21, 52B, 256k context, 1 attn / 7 Mamba), Zamba (Zyphra), Gemini 2 (rumored hybrid pour son 1M+ context), et surtout **Kimi K3** (Moonshot, juillet 2026) qui porte le pattern a l'echelle frontier : 69 couches KDA (attention lineaire a delta rule) + 24 couches Gated MLA, ratio 3:1, 2.78T params open-weight, contexte 1M.
 
-**Intuition** : Mamba excelle pour compresser le passe ancien (resume), l'attention excelle pour rappeler exactement un token precis (retrieval). Les hybrides combinent les deux forces.
+**Intuition** : la couche lineaire excelle pour compresser le passe ancien (resume, etat de taille fixe), l'attention excelle pour rappeler exactement un token precis (retrieval). Les hybrides combinent les deux forces.
 
 </details>
 

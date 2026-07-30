@@ -3,6 +3,7 @@
 > Sources de tier-1 par module : papiers fondateurs, manuels canoniques, docs officielles.
 > Source de vérité pour les modules J1..J22 (core J1-J14 + frontière J15-J22).
 > Toutes les références ont été vérifiées (titre / auteurs / année / arXiv id) via WebSearch/WebFetch (juin 2026).
+> Mise à jour juillet 2026 : ajout des sources liées au rapport technique **Kimi K3** (Moonshot AI, 16 juillet 2026) sur les modules 09, 11, 16, 17, 18 et 19 — entrées vérifiées directement dans la bibliographie du rapport.
 > Convention de citation : `Auteurs (année). *Titre*. arXiv:id / venue — note de pertinence.`
 > Marqueur `(à vérifier)` ajouté aux rares entrées dont un détail reste incertain.
 
@@ -70,6 +71,7 @@
 - Ainslie et al. (2023). *GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints*. arXiv:2305.13245 — Grouped Query Attention, réduit le KV cache.
 - Touvron et al. (2023). *LLaMA: Open and Efficient Foundation Language Models*. arXiv:2302.13971 — recette open d'un LLM moderne (RoPE + RMSNorm + SwiGLU).
 - Grattafiori et al. / Meta (2024). *The Llama 3 Herd of Models*. arXiv:2407.21783 — détails d'architecture et d'entraînement d'une famille SOTA 2024.
+- Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique — https://github.com/MoonshotAI/Kimi-K3 (poids : https://huggingface.co/moonshotai/Kimi-K3) — le repère open-weight 2026 (2.78 T / 104 B actifs, 93 couches, contexte 1 M, multimodal natif) ; §2 pour l'architecture (attention hybride KDA + Gated MLA, AttnRes, Stable LatentMoE, SiTU-GLU, NoPE), Table 1 pour le comparatif K2 vs K3.
 
 ## Module 10 — Fine-tuning & alignment
 
@@ -85,6 +87,8 @@
 - Frantar, Ashkboos, Hoefler, Alistarh (2022). *GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers*. arXiv:2210.17323 — PTQ 3-4 bits via information de second ordre.
 - Lin et al. (2023). *AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration*. arXiv:2306.00978 (MLSys 2024 best paper) — quantization protégeant les 1% de poids saillants.
 - Kwon et al. (2023). *Efficient Memory Management for Large Language Model Serving with PagedAttention* (vLLM). arXiv:2309.06180 — gestion mémoire du KV cache façon pagination OS.
+- Li et al. (2025). *EAGLE-3: Scaling up Inference Acceleration of Large Language Models via Training-Time Test*. arXiv:2503.01840 — la variante de speculative decoding déployée en production (draft issu d'une couche MTP du modèle cible).
+- Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique, §4.1.4 (draft EAGLE-3 depuis la couche MTP, loss LK sur le taux d'acceptation) et §5.4.1 (prefix caching d'une architecture hybride KDA–MLA) — https://github.com/MoonshotAI/Kimi-K3
 
 ## Module 12 — Multimodalité & au-delà
 
@@ -124,6 +128,8 @@
 - Fedus, Zoph, Shazeer (2021). *Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity*. arXiv:2101.03961 — routing top-1, load balancing, expert parallelism.
 - Jiang et al. / Mistral (2024). *Mixtral of Experts*. arXiv:2401.04088 — SMoE 8x7B open (47B params, 13B actifs), MoE accessible.
 - DeepSeek-AI (2024). *DeepSeek-V3 Technical Report*. arXiv:2412.19437 — fine-grained + shared experts, load balancing auxiliary-loss-free, MoE 671B/37B SOTA.
+- Elango et al. (2026). *LatentMoE: Toward Optimal Accuracy per FLOP and Parameter in Mixture of Experts*. arXiv:2601.18089 — experts routés opérant dans un espace latent plus étroit que le modèle ; base du Stable LatentMoE de Kimi K3.
+- Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique, §2.3 (Stable LatentMoE : 896 routed top-16 + 2 shared, RMSNorm avant up-projection, SiTU-GLU), §2.3.3 (Quantile Balancing) et §5.2.1 (MoonEP, expert-parallélisme parfaitement équilibré) — https://github.com/MoonshotAI/Kimi-K3
 
 ## Module 17 — State Space Models (SSM)
 
@@ -132,6 +138,10 @@
 - Dao, Gu (2024). *Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality* (Mamba-2 / SSD). arXiv:2405.21060 — dualité attention↔SSM, framework SSD.
 - Peng et al. (2023). *RWKV: Reinventing RNNs for the Transformer Era*. arXiv:2305.13048 (Findings EMNLP 2023) — RNN linéaire parallélisable, alternative SSM-like.
 - Lieber et al. / AI21 (2024). *Jamba: A Hybrid Transformer-Mamba Language Model*. arXiv:2403.19887 — hybride attention+Mamba+MoE à grande échelle.
+- Yang, Wang, Shen, Panda, Kim (2023 ; ICML 2024). *Gated Linear Attention Transformers with Hardware-Efficient Training* (GLA). arXiv:2312.06635 — attention linéaire gatée + forme chunkwise IO-aware ; la lignée dont descend KDA.
+- Yang, Kautz, Hatamizadeh (ICLR 2025). *Gated Delta Networks: Improving Mamba2 with Delta Rule* — https://openreview.net/forum?id=r8H7xhYPwz — delta rule + gating, chaînon direct vers KDA.
+- Kimi Team / Moonshot AI (2025). *Kimi Linear: An Expressive, Efficient Attention Architecture*. arXiv:2510.26692 — introduction de Kimi Delta Attention (delta rule + porte d'oubli par canal).
+- Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique, §2.1 (attention hybride 69 KDA + 24 Gated MLA, décroissance bornée `g_min = -5`) et §5.1 (FlashKDA, KDA Context Parallelism) — https://github.com/MoonshotAI/Kimi-K3 — premier hybride linéaire/attention à l'échelle frontier.
 
 ## Module 18 — Long context & attention scaling
 
@@ -141,6 +151,7 @@
 - Liu, Zaharia, Abbeel (2023). *Ring Attention with Blockwise Transformers for Near-Infinite Context*. arXiv:2310.01889 — distribue la séquence sur N devices, contexte ~illimité.
 - Beltagy, Peters, Cohan (2020). *Longformer: The Long-Document Transformer*. arXiv:2004.05150 — sliding window + global attention, origine des patterns d'attention sparse/locale.
 - Xiao et al. (2023). *Efficient Streaming Language Models with Attention Sinks* (StreamingLLM). arXiv:2309.17453 — attention sinks, streaming à contexte long sans réentraînement.
+- Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique, §3.4 (contexte 1 M **sans encodage positionnel** — NoPE ; curriculum 8K→64K→256K→1M ; synthèse de tâches longues) — https://github.com/MoonshotAI/Kimi-K3 — l'alternative au RoPE scaling.
 
 ## Module 19 — Quantization deep dive
 
@@ -148,6 +159,8 @@
 - Lin et al. (2023). *AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration*. arXiv:2306.00978 (MLSys 2024 best paper) — scaling per-channel guidé par les activations.
 - Dettmers, Pagnoni, Holtzman, Zettlemoyer (2023). *QLoRA: Efficient Finetuning of Quantized LLMs*. arXiv:2305.14314 — NF4 + double quantization + paged optimizers ; fine-tune un 65B sur un seul GPU 48 Go.
 - Dettmers, Lewis, Belkada, Zettlemoyer (2022). *LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale*. arXiv:2208.07339 — INT8 avec gestion des outliers, base de bitsandbytes.
+- Rouhani et al. (2023). *Microscaling Data Formats for Deep Learning*. arXiv:2310.10537 — les formats MX (MXFP4, MXFP8) : scale partagé par bloc, standardisés côté hardware.
+- Kimi Team / Moonshot AI (2026). *Kimi K3: Open Frontier Intelligence*. Rapport technique, §4.1.4 — QAT MXFP4 (poids d'experts) / MXFP8 (activations) sur tout le post-training ; premier détail public complet d'un déploiement FP4 frontier — https://github.com/MoonshotAI/Kimi-K3
 - llama.cpp / GGUF. https://github.com/ggml-org/llama.cpp et https://github.com/ggml-org/ggml/blob/master/docs/gguf.md — format GGUF et schémas de quantization k-quants utilisés en pratique côté inference locale.
 
 ## Module 20 — Distillation & données synthétiques (SLMs)

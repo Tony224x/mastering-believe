@@ -50,7 +50,7 @@ Comprendre les mecanismes internes des LLMs, du neurone unique jusqu'aux archite
 | Jour | Module | Focus | Temps |
 |------|--------|-------|-------|
 | J8 | Pre-training & Tokenization | BPE, SentencePiece, pre-training objectives (CLM, MLM), scaling laws | 5h |
-| J9 | Architecture des LLMs modernes | GPT, LLaMA, Mistral — diff architecturales (RoPE, GQA, SwiGLU, RMSNorm) | 6h |
+| J9 | Architecture des LLMs modernes | GPT, LLaMA, Mistral, DeepSeek V3, Kimi K3 — diff architecturales (RoPE/NoPE, GQA, MLA, SwiGLU/SiTU-GLU, RMSNorm) | 6h |
 | J10 | Fine-tuning & Alignment | SFT, RLHF, DPO, constitutional AI — comment on passe de base model a assistant | 5h |
 | J11 | Inference optimisee | KV-cache, speculative decoding, quantization (GPTQ, AWQ), Flash Attention | 5h |
 | J12 | Multimodalite & au-dela | Vision Transformers, CLIP, modeles multimodaux, architecture encoder-decoder | 5h |
@@ -66,10 +66,10 @@ Cette semaine reste **strictement sur les reseaux de neurones** : architectures,
 | Jour | Module | Focus | Temps |
 |------|--------|-------|-------|
 | J15 | Test-time compute & reasoning models | o1/o3/R1, GRPO, reasoning vs LLM classique, training pour reasoning, self-consistency | 5h |
-| J16 | Mixture of Experts (MoE) | Mixtral, DeepSeek-V3, sparse routing, top-k gating, load balancing, expert parallelism | 5h |
-| J17 | State Space Models | Mamba, S6, RWKV, alternative a l'attention, complexite lineaire, hybrides Transformer-Mamba | 5h |
-| J18 | Long context & attention scaling | Flash Attention 2/3, RoPE scaling, YaRN, ring attention, sliding window, attention sinks | 5h |
-| J19 | Quantization deep dive | INT8/INT4, GPTQ, AWQ, QLoRA, calibration, GGUF, perplexity vs vitesse | 5h |
+| J16 | Mixture of Experts (MoE) | Mixtral, DeepSeek-V3, Kimi K3 (LatentMoE, Quantile Balancing), sparse routing, top-k gating, load balancing, expert parallelism | 5h |
+| J17 | State Space Models & attention lineaire | Mamba, S6, RWKV, delta rule / KDA, complexite lineaire, hybrides lineaire+attention (Jamba, Kimi K3) | 5h |
+| J18 | Long context & attention scaling | Flash Attention 2/3, RoPE scaling, YaRN, NoPE, ring attention, sliding window, attention sinks | 5h |
+| J19 | Quantization deep dive | INT8/INT4, GPTQ, AWQ, QLoRA, QAT & formats MX (MXFP4/MXFP8), calibration, GGUF, perplexity vs vitesse | 5h |
 | J20 | Distillation & donnees synthetiques | SLMs specialises, pipeline synthetic data, SFT/DPO, filtrage, contamination, break-even | 4h |
 | J21 | Mechanistic interpretability | Circuits, sparse autoencoders (SAEs), probing, induction heads, superposition | 5h |
 | J22 | Vision-language models | ViT, CLIP, LLaVA, SigLIP, cross-attention vs token concat, image tokenization | 5h |

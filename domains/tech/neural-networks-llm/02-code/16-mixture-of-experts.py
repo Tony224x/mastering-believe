@@ -13,6 +13,10 @@ Contents:
   PART 2 — Forward pass through a MoE FFN layer (8 experts, top-2)
   PART 3 — Load balancing loss (Shazeer 2017) and what it actually penalizes
   PART 4 — Total params vs active params: the Mixtral 8x7B accounting
+  PART 5 — LatentMoE (Kimi K3, 2026): why ~10^3 experts only became affordable
+           once routed experts stopped working in the full model width
+  PART 6 — Quantile Balancing (Kimi K3) vs the fixed-step adaptive bias:
+           the step-size dilemma, and what a sampling noise floor looks like
 
 Run: python 02-code/16-mixture-of-experts.py
 """
@@ -320,6 +324,255 @@ print("  - Both pay full VRAM cost: experts must all be loaded just-in-case.")
 print()
 
 
+# ============================================================================
+# PART 5 — LatentMoE : why 896 experts only became affordable in 2026
+# ============================================================================
+print("=" * 70)
+print("PART 5 : LatentMoE (Kimi K3) — routing in a narrower latent space")
+print("=" * 70)
+
+
+def moe_layer_cost(d_model: int, d_ff_expert: int, n_routed: int, k: int,
+                   n_shared: int, latent: int | None = None) -> dict:
+    """
+    Per-LAYER accounting for a MoE FFN, with or without the LatentMoE trick.
+
+    latent=None  -> vanilla: routed experts live in the full model width.
+    latent=l     -> LatentMoE: a single down-projection d->l feeds ALL routed
+                    experts, which operate in width l; one up-projection l->d
+                    merges the result back. Shared experts stay full-width.
+
+    The number we really care about is `dispatch_floats_per_token`: on an
+    expert-parallel cluster, each selected expert lives on a possibly remote
+    GPU, so the token representation must travel there and back. That traffic
+    is proportional to (k * width), NOT to the number of experts. This is
+    precisely the term LatentMoE halves.
+    """
+    routed_width = d_model if latent is None else latent
+
+    # A 2-matrix FFN per expert (up + down), consistent with PART 4.
+    params_one_expert = 2 * routed_width * d_ff_expert
+    params_routed = n_routed * params_one_expert
+    params_shared = n_shared * 2 * d_model * d_ff_expert
+    params_router = d_model * n_routed
+    # The down/up projections of LatentMoE are paid once per layer, not per expert.
+    params_proj = 0 if latent is None else 2 * d_model * latent
+
+    active_routed = k * params_one_expert
+    active = active_routed + params_shared + params_router + params_proj
+
+    # Round trip: send the token to k experts, receive k outputs back.
+    dispatch = 2 * k * routed_width
+
+    return {
+        "total": params_routed + params_shared + params_router + params_proj,
+        "active": active,
+        "dispatch": dispatch,
+    }
+
+
+# Kimi K3 configuration (technical report, Table 1).
+K3_D, K3_L, K3_DFF = 7168, 3584, 3072
+K3_N, K3_K, K3_SHARED = 896, 16, 2
+
+with_latent = moe_layer_cost(K3_D, K3_DFF, K3_N, K3_K, K3_SHARED, latent=K3_L)
+without_latent = moe_layer_cost(K3_D, K3_DFF, K3_N, K3_K, K3_SHARED, latent=None)
+
+print(f"\n  Kimi K3 MoE layer: d_model={K3_D}, {K3_N} routed experts top-{K3_K},")
+print(f"  {K3_SHARED} shared experts, d_ff per expert={K3_DFF}, latent width={K3_L}")
+print()
+print(f"  {'':<28}{'LatentMoE':>16}{'full-width':>16}{'ratio':>10}")
+for key, label in [("total", "params / layer"),
+                   ("active", "active / token"),
+                   ("dispatch", "floats moved / token")]:
+    a, b = with_latent[key], without_latent[key]
+    unit = (lambda v: f"{v / 1e9:.2f} B") if key != "dispatch" else (lambda v: f"{v:,}")
+    print(f"  {label:<28}{unit(a):>16}{unit(b):>16}{a / b:>9.2f}x")
+
+print()
+print("  Reading it: the latent space halves BOTH the routed-expert parameters")
+print("  and the all-to-all traffic. Going from top-8 to top-16 would have")
+print("  doubled the communication bill; routing at half width pays it back.")
+print()
+
+# Sanity check against the published figures. This is the honest way to use
+# a toy model: state what it does NOT capture.
+print("  Cross-check vs the real model (2.78 T total / 104.2 B active):")
+print(f"    this toy layer x 92 MoE layers = "
+      f"{with_latent['total'] * 92 / 1e12:.2f} T total, "
+      f"{with_latent['active'] * 92 / 1e9:.0f} B active")
+print("    -> same order of magnitude. The gap comes from what we ignore:")
+print("       attention (KDA + MLA) projections, embeddings, the vision tower,")
+print("       and the fact that real experts use a 3-matrix SwiGLU-style FFN.")
+print()
+
+
+# ============================================================================
+# PART 6 — Load balancing at 10^3 experts: fixed-step bias vs Quantile Balancing
+# ============================================================================
+print("=" * 70)
+print("PART 6 : Quantile Balancing (Kimi K3) vs auxiliary-loss-free bias")
+print("=" * 70)
+
+
+def route_topk_with_cutoff(scores: np.ndarray, bias: np.ndarray, k: int):
+    """
+    Route with Top-(k+1) instead of Top-k on the BIASED score.
+
+    Why k+1: the first k entries are the routes actually taken, and the
+    (k+1)-th one is exactly the threshold an expert must beat to enter this
+    token's Top-k. So the cutoff comes for free from the same forward pass —
+    no extra reduction, no separate cross-token quantile.
+
+    Returns:
+      chosen: (m, k) expert indices actually selected
+      cutoff: (m,)  the (k+1)-th largest biased score per token
+    """
+    biased = scores + bias                                   # (m, n)
+    order = np.argsort(-biased, axis=1)[:, :k + 1]           # (m, k+1)
+    chosen = order[:, :k]
+    rows = np.arange(scores.shape[0])
+    cutoff = biased[rows, order[:, k]]                       # (m,)
+    return chosen, cutoff
+
+
+def loads_of(chosen: np.ndarray, n_experts: int) -> np.ndarray:
+    """How many tokens each expert received this step."""
+    return np.bincount(chosen.ravel(), minlength=n_experts).astype(np.float64)
+
+
+def update_bias_fixed_step(bias, loads, target, gamma):
+    """
+    DeepSeek-V3 style auxiliary-loss-free balancing: nudge the bias of each
+    expert by a CONSTANT step in the direction that fixes its load.
+    Simple and effective at N=256 — the question is what happens at N=896.
+    """
+    return bias + gamma * np.sign(target - loads)
+
+
+def update_bias_quantile(scores, cutoff, k, n_experts):
+    """
+    Quantile Balancing (Kimi K3 §2.3.3).
+
+    For expert j, the 'margin' of token i is  s[i, j] - cutoff[i]  : how far
+    that expert is from being selected by that token. If we want expert j to
+    receive exactly q = m*k/n tokens, the right bias is the one that puts the
+    threshold precisely at the q-th best margin — i.e. a QUANTILE. We read it,
+    we do not search for it. No step size, no oscillation.
+
+    b_j   = -quantile_{1 - k/n}( s[:, j] - cutoff )
+    b    <- b - mean(b)      # a common offset does not change any Top-k
+    """
+    margins = scores - cutoff[:, None]                       # (m, n)
+    b_hat = -np.quantile(margins, 1.0 - k / n_experts, axis=0)
+    return b_hat - b_hat.mean()
+
+
+def imbalance(loads: np.ndarray) -> float:
+    """max load / mean load. 1.0 = perfect. This is what stalls an EP rank."""
+    return loads.max() / loads.mean()
+
+
+N_EXPERTS, TOP_K, N_TOKENS, STEPS = 896, 16, 4096, 40
+target_load = N_TOKENS * TOP_K / N_EXPERTS
+
+# A realistic router is NOT uniform: some experts are intrinsically more
+# attractive early in training. We bake in that skew and see who can undo it.
+expert_bias_true = np.random.randn(N_EXPERTS) * 0.35
+
+
+def make_scores(rng: np.random.Generator) -> np.ndarray:
+    """Router scores in (0,1), as in the paper: s_i = sigmoid(W_r x_i)."""
+    logits = rng.standard_normal((N_TOKENS, N_EXPERTS)) * 0.5 + expert_bias_true
+    return 1.0 / (1.0 + np.exp(-logits))
+
+
+def run_strategy(strategy: str, gamma: float = 0.0) -> list[float]:
+    """
+    Run STEPS training steps and return the imbalance seen at each step.
+    Same seed for every strategy so the batches are strictly comparable.
+    """
+    rng = np.random.default_rng(1234)
+    bias = np.zeros(N_EXPERTS)
+    out = []
+    for _ in range(STEPS):
+        scores = make_scores(rng)
+        chosen, cutoff = route_topk_with_cutoff(scores, bias, TOP_K)
+        loads = loads_of(chosen, N_EXPERTS)
+        out.append(imbalance(loads))
+        # The update takes effect only at the NEXT step: a batch is never
+        # routed with a bias derived from itself (causality, as in the paper).
+        if strategy == "fixed":
+            bias = update_bias_fixed_step(bias, loads, target_load, gamma)
+        elif strategy == "quantile":
+            bias = update_bias_quantile(scores, cutoff, TOP_K, N_EXPERTS)
+        # strategy == "none": bias stays at zero
+    return out
+
+
+# The noise floor. Even a PERFECTLY balanced router cannot reach 1.00: with
+# ~73 tokens expected per expert, sampling noise alone puts the busiest expert
+# a few standard deviations above the mean. Knowing this floor is what stops
+# us from over-reading the numbers below.
+rng_floor = np.random.default_rng(7)
+random_assign = rng_floor.integers(0, N_EXPERTS, size=N_TOKENS * TOP_K)
+noise_floor = imbalance(loads_of(random_assign.reshape(-1, TOP_K), N_EXPERTS))
+
+curves = {
+    "none": run_strategy("none"),
+    "fixed g=0.001": run_strategy("fixed", 0.001),
+    "fixed g=0.01": run_strategy("fixed", 0.01),
+    "fixed g=0.05": run_strategy("fixed", 0.05),
+    "quantile": run_strategy("quantile"),
+}
+
+print(f"\n  {N_EXPERTS} experts, top-{TOP_K}, {N_TOKENS} tokens/step, "
+      f"target load = {target_load:.1f} tokens/expert")
+print(f"  Metric: max load / mean load  (1.00 = perfect, "
+      f"{noise_floor:.2f} = sampling noise floor)")
+print()
+header = f"  {'step':>6}" + "".join(f"{name:>16}" for name in curves)
+print(header)
+for step in (0, 1, 2, 5, 10, 20, STEPS - 1):
+    row = f"  {step:>6}" + "".join(f"{curves[n][step]:>16.2f}" for n in curves)
+    print(row)
+
+
+def steps_to_reach(curve: list[float], threshold: float) -> str:
+    for i, v in enumerate(curve):
+        if v <= threshold:
+            return str(i)
+    return f">{len(curve)}"
+
+
+print()
+print(f"  {'strategy':<16}{'steps to <2.0x':>16}{'final':>10}{'worst after step 10':>22}")
+for name, curve in curves.items():
+    tail = max(curve[10:])
+    print(f"  {name:<16}{steps_to_reach(curve, 2.0):>16}"
+          f"{curve[-1]:>10.2f}{tail:>22.2f}")
+
+print()
+print("  What the numbers actually say (and what they do not):")
+print("  - Quantile Balancing is balanced from step 1 and stays at the noise")
+print("    floor. It SOLVES for the threshold instead of walking towards it,")
+print("    so the size of the initial skew does not slow it down at all.")
+print("  - The fixed-step rule does converge — but its speed and its steady")
+print("    state are both hostages of gamma. Too small (0.001) and it is still")
+print("    unbalanced 40 steps later; too large (0.05) and it overshoots and")
+print("    oscillates forever. That tuning problem is the whole point: it gets")
+print("    worse as the number of experts grows, because each expert needs a")
+print("    larger correction while gamma stays constant.")
+print("  - Nobody reaches 1.00, and they should not: with ~73 tokens per expert")
+print(f"    the sampling floor is already {noise_floor:.2f}x.")
+print()
+print("  Caveat this toy hides: at real scale the margins number in the millions")
+print("  and are sharded across GPUs, so an exact np.quantile is not an option.")
+print("  Kimi K3 estimates it from a per-expert histogram (counts are additive,")
+print("  so one all-reduce over a few hundred bins recovers the global quantile).")
+print()
+
+
 print("=" * 70)
 print("FIN. Retenir :")
 print("=" * 70)
@@ -328,3 +581,5 @@ print("  - Forward = sum of k expert outputs weighted by renormalized gate probs
 print("  - Load balancing loss = N * sum(f_i * P_i). Without it, 2-3 experts win all.")
 print("  - MoE saves FLOPs (k/N), not VRAM. All experts must stay loaded.")
 print("  - The Mixtral name '8x7B' is misleading: total ~47B (shared attn + emb).")
+print("  - LatentMoE: routing in a narrower width is what makes ~10^3 experts payable.")
+print("  - Quantile Balancing: compute the bias (a quantile), do not tune a step size.")

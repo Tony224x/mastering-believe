@@ -147,6 +147,28 @@ Resultat : meilleur fine-tune efficiency (~250M tokens pour 32K -> 128K), meille
 
 **Regle** : YaRN est le standard 2024-2026 pour etendre un modele court-contexte. PI seulement si tu n'as pas de budget de fine-tuning.
 
+### La sortie par le haut : ne pas avoir de RoPE du tout (NoPE)
+
+Tout ce qui precede resout le meme probleme : *j'ai un modele entraine avec un RoPE calibre pour L tokens, comment le faire fonctionner a 8L ?* Une autre voie, qui devient credible en 2026, consiste a **ne pas creer le probleme**.
+
+**Kimi K3** (Moonshot AI, juillet 2026, contexte 1 M) n'applique **aucun encodage positionnel explicite** : ni RoPE, ni ALiBi, ni sinusoides. C'est possible parce que son architecture est hybride (cf. J9 §8, J17 §6) :
+
+- 3 couches sur 4 sont des couches d'**attention lineaire recurrente** (KDA). Une recurrence avec portes de decroissance est **intrinsequement ordonnee** : l'information ancienne est mecaniquement attenuee. La position est portee par la dynamique de l'etat, pas par une fonction de position.
+- La 4e couche est une attention globale (MLA) **sans encodage positionnel** : elle ne fait que de l'interaction de contenu, la sensibilite a la position venant des couches KDA qui l'entourent.
+
+Consequence : **rien a re-tuner pour etendre le contexte**. Pas de base RoPE a rescaler, pas de YaRN, pas de facteur d'interpolation. L'extension se fait uniquement par un **curriculum de longueur** :
+
+```
+Pre-training :  8K  ->  64K
+Cooldown     : 256K ->  1M
+```
+
+Avec, sur la data, deux precautions qui comptent autant que l'architecture :
+- **nettoyage agressif** des documents longs (quasi-doublons, blobs binaires, fichiers tronques, logs machine) — les sources naturelles longues sont majoritairement du dechet ;
+- **synthese de taches longues** obtenues en permutant et concatenant des documents, de sorte que la reponse **exige** d'aller chercher de l'information dispersee sur tout le contexte. Sans ca, le modele apprend a resoudre localement et l'attention **degenere en pattern local** — il "a" 1 M de contexte sans savoir s'en servir.
+
+> **A retenir** : PI / NTK / YaRN restent le bon outil pour etendre un modele RoPE **existant** (ce sera ton cas 9 fois sur 10). Mais si tu lis un rapport technique 2026 et que tu ne trouves pas la section "RoPE scaling", ce n'est pas un oubli — c'est peut-etre qu'il n'y a pas de RoPE.
+
 ---
 
 ## 4. Sliding window vs full attention
@@ -177,6 +199,17 @@ Limite : ce receptive field est **theorique**. En pratique, l'information se dil
 | Bon pour streaming / long monologue | Non (trop cher) | OUI |
 
 En 2026, la plupart des modeles frontier utilisent **attention hybride** : couches paires en full, couches impaires en sliding. C'est le pattern de Llama 4 et Claude 4.x (selon les fuites). Compromis VRAM/qualite optimal.
+
+**Troisieme voie (2026) : lineaire + full au lieu de sliding + full.** Au lieu de tronquer la fenetre, on remplace la majorite des couches par de l'**attention lineaire a etat recurrent** (cf. J17). Kimi K3 : 69 couches KDA + 24 couches MLA globales, motif `3 lineaires -> 1 globale`.
+
+| | Sliding window | Attention lineaire (KDA-like) |
+|---|---|---|
+| Cout par couche | O(N x W) | O(N) |
+| Cache par sequence | W derniers KV (fenetre) | **etat de taille fixe** (independant de N) |
+| Info hors fenetre | perdue, sauf propagation inter-couches | compressee (lossy) dans l'etat |
+| Prefix caching | simple (memes blocs KV) | **complique** : il faut snapshotter l'etat recurrent, trop gros pour etre sauve a chaque token |
+
+La ligne qui compte en production est la derniere : l'attention lineaire economise de la memoire mais **rend le cache de prefixe non trivial**, ce qui mord exactement sur les workloads agentiques longs — ceux qui rejouent un prefixe de 400K tokens a chaque tour d'outil.
 
 ---
 
@@ -276,8 +309,13 @@ Les chiffres "contexte effectif" ci-dessous sont des **estimations communautaire
 | Gemini 2.5 Pro | 2M | non publie (~moitie annoncee) |
 | GPT-5.4 | 1M | non publie (~moitie annoncee) |
 | Llama 4 405B | 256K | non publie (~moitie annoncee) |
+| Kimi K3 | 1M | non publie (pas de RULER officiel — voir ci-dessous) |
 
 **Regle pragmatique** : pour de la production, considere le contexte effectif comme la moitie du contexte annonce. Au-dela, RAG ou chunking reste plus fiable.
+
+**Le signal le plus honnete vient des benchmarks agentiques, pas de NIAH.** Sur BrowseComp (recherche web multi-tours), Kimi K3 est evalue de deux facons : avec une **compaction de contexte declenchee a 300K tokens** -> 91.2 ; **sans aucune gestion de contexte, en laissant la trajectoire remplir la fenetre de 1 M** -> 90.4. L'ecart de ~0.8 point est plus informatif qu'un score NIAH : il dit que sur *cette* tache, le modele exploite reellement la longue fenetre, et que la compaction n'achete presque rien.
+
+Ce que ca change pour toi : **ne juge pas un contexte long sur NIAH, juge-le sur ta tache avec et sans compaction**. Si compacter ne coute (presque) rien en qualite, c'est le contexte effectif qui parle.
 
 ---
 
@@ -309,6 +347,9 @@ Les chiffres "contexte effectif" ci-dessous sont des **estimations communautaire
 **Q4** — Quand prefererais-tu attention sliding window vs full attention ?
 > Sliding pour streaming long, latence stricte, ou modeles avec contexte deep mais cout VRAM contraint. Full pour tasks de comprehension longue precise (Q&A doc, code review long, math multi-step). Le pattern hybride (couches alternees) est le standard 2026.
 
+**Q4bis** — Comment Kimi K3 atteint-il 1 M de tokens sans RoPE scaling ?
+> Il n'a **pas de RoPE** (NoPE). La position est portee implicitement par la recurrence et les portes de decroissance de ses couches d'attention lineaire (KDA), qui composent 3 couches sur 4 ; les couches d'attention globale (MLA) intercalees ne font que de l'interaction de contenu. Sans fonction de position calibree sur une longueur, il n'y a rien a re-interpoler : l'extension se fait par simple **curriculum de longueur** (8K -> 64K en pre-training, 256K -> 1M en cooldown), plus un gros travail de data (nettoyage des documents longs + taches longues synthetiques qui **forcent** l'attention a portee lointaine).
+
 **Q5** — Quelle est la difference entre contexte annonce et contexte effectif ?
 > Le contexte annonce est la longueur max techniquement supportee. Le contexte effectif (mesure par RULER, LongBench) est la longueur ou le modele recupere fiablement >80% des informations. Typiquement le contexte effectif est ~30-50% du annonce. Au-dela, RAG est preferable.
 
@@ -326,6 +367,7 @@ Les chiffres "contexte effectif" ci-dessous sont des **estimations communautaire
 - Liu, Zaharia, Abbeel (2023) — *Ring Attention with Blockwise Transformers*. https://arxiv.org/abs/2310.01889
 - Beltagy, Peters, Cohan (2020) — *Longformer: The Long-Document Transformer*. https://arxiv.org/abs/2004.05150
 - Liu et al. (2023) — *Lost in the Middle: How Language Models Use Long Contexts*. https://arxiv.org/abs/2307.03172
+- Kimi Team / Moonshot AI (2026) — *Kimi K3: Open Frontier Intelligence* (rapport technique, §3.4 Long-Context Extension, §5.4.1 prefix caching hybride KDA-MLA). https://github.com/MoonshotAI/Kimi-K3 — contexte 1M sans encodage positionnel (NoPE), curriculum 8K->64K->256K->1M.
 
 
 ---

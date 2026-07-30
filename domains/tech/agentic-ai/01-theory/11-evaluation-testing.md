@@ -211,6 +211,37 @@ Output a JSON object: {"score": <1-5>, "reasoning": "<your reasoning>"}
 - **Rubric-based** : un rubrique detaille avec criteres ponderes (accuracy 0.5, clarity 0.3, concision 0.2).
 - **Structured output** : forcer un JSON schema (Pydantic) pour parser le verdict sans ambiguite.
 
+### 3.6 Le juge agentique et le protocole obligatoire (2026)
+
+Le rubric-based ci-dessus a une faille discrete : si le rubrique est fourni **avec** le prompt, le juge peut le survoler et produire un score qui reflete surtout son impression generale, avec le rubrique en justification apres coup.
+
+Le rapport technique de **Kimi K3** (Moonshot AI, 2026) decrit un **Agentic Generative Reward Model** qui ferme cette porte en imposant un **protocole en 4 etapes obligatoires** :
+
+```
+1. Lire l'outcome, le produit ou le texte a juger
+2. GENERER un rubrique                     <- le juge le construit, il ne le recoit pas
+3. Scorer chaque candidat CONTRE ce rubrique
+4. Consigner les scores attribues dans un scorepad
+```
+
+Ce qui rend ce protocole interessant :
+
+- **Le rubrique est genere avant les scores, pour ce cas precis.** L'ordre force le juge a s'engager sur des criteres *avant* d'avoir un gagnant en tete. Un rubrique produit apres le verdict est une rationalisation, pas une grille.
+- **Le scorepad rend le raisonnement auditable.** On peut relire pourquoi un candidat a gagne, et surtout detecter un juge dont les criteres derivent d'un cas a l'autre.
+- **Le format reste une comparaison binaire en tournoi** (cf. *pairwise* ci-dessus), qui est plus fiable qu'un score absolu.
+
+**La partie la plus transposable : le controle de verbosite.** Un juge LLM privilegie systematiquement les reponses longues — c'est le *length bias* du §3.3, et en RL il devient un vrai canal de reward hacking, le modele apprenant a gagner en ecrivant plus. La parade appliquee est brutale et efficace :
+
+```
+Estimer une verbosite de reference l0 (sur le modele de depart)
+Si longueur(candidat) > sigma * l0
+    -> le candidat PERD automatiquement la comparaison binaire
+```
+
+C'est exactement le mecanisme de budget vu en J4 pour l'effort de raisonnement, applique cette fois a la sortie. A retenir : **contre un biais connu du juge, une regle dure en amont vaut mieux qu'une consigne dans le prompt.** Ecrire "ne privilegie pas les reponses longues" dans le prompt du juge ne supprime pas le biais — le disqualifier mecaniquement au-dela d'un seuil, si.
+
+> A ne pas confondre avec le verifier de J17 : ce juge intervient sur les taches **non verifiables** (qualite d'un texte, d'une experience conversationnelle). Des qu'un etat verifiable existe — des tests qui passent, une base dans le bon etat — c'est lui qu'il faut mesurer, pas un juge.
+
 ---
 
 ## 4. Regression testing pour agents
@@ -421,3 +452,4 @@ Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../
 - **Berkeley CS294-196 (Fa25) — Lec. 6 (Predictable Noise in LLM Benchmarks, Sida Wang)** — comprendre la variance des benchmarks pour eviter les conclusions hatives.
 - **CMU 11-711 (Welleck, Sp25) — Lec. 11 (Benchmarking and Evaluation), Lec. 12 (Experimental Design)** — methodologie rigoureuse d'evaluation.
 - **CMU 11-711 (Neubig, Fa24) — Lec. 17 (Evaluation and Multimodal)** — eval automatique et metriques modernes.
+- **Kimi Team / Moonshot AI, "Kimi K3: Open Frontier Intelligence" (2026)** — rapport technique : https://github.com/MoonshotAI/Kimi-K3 — §4.1.2, paragraphe *Agentic Generative Reward Model* : protocole de rubrique obligatoire et controle de verbosite contre le length bias.

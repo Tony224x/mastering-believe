@@ -1,12 +1,14 @@
 """
-Jour 9 — LLMs modernes: RoPE, RMSNorm, SwiGLU from scratch
-===========================================================
+Jour 9 — LLMs modernes: RoPE, RMSNorm, SwiGLU, SiTU-GLU from scratch
+=====================================================================
 PyTorch if available, NumPy fallback otherwise.
 
 Covers:
   1. RoPE — rotary positional embedding, rotation of q/k
   2. RMSNorm — root mean square normalization
   3. SwiGLU FFN — gated linear unit with Swish
+  3bis. SiTU-GLU (Kimi K3, 2026) — the bounded SwiGLU, and why low-precision
+        training forces architectures to cap their activations by design
   4. Side-by-side comparison with vanilla alternatives
 
 Run: python 02-code/09-llms-modernes-architectures.py
@@ -272,6 +274,115 @@ print(f"\nGeLU output shape:   {out_gelu.shape}")
 print(f"SwiGLU output shape: {out_swiglu.shape}")
 print(f"GeLU output norm:    {np.linalg.norm(out_gelu):.4f}")
 print(f"SwiGLU output norm:  {np.linalg.norm(out_swiglu):.4f}")
+
+
+# ============================================================================
+# PART 3bis: SiTU-GLU — the bounded SwiGLU of Kimi K3 (2026)
+# ============================================================================
+
+print("\n" + "=" * 70)
+print("PART 3bis: SiTU-GLU (Kimi K3, 2026) — bounding SwiGLU for low precision")
+print("=" * 70)
+
+
+def softcap(x, beta):
+    """
+    Smooth cap: beta * tanh(x / beta).
+
+    Two properties we care about, and they are the whole design:
+      - near 0, tanh(u) ~= u, so softcap(x, beta) ~= x  (we do not distort
+        the regime where the network actually operates most of the time)
+      - far from 0, the output saturates at +/- beta instead of diverging
+
+    WHY not np.clip: a hard clamp has EXACTLY ZERO gradient past the
+    threshold, so any unit that overshoots once can never be pulled back.
+    tanh keeps a small but non-zero slope everywhere.
+    """
+    return beta * np.tanh(x / beta)
+
+
+def situ_glu(gate_pre, up_pre, beta1=4.0, beta2=25.0):
+    """
+    SiTU-GLU (Sigmoid Tanh Unit GLU), Kimi K3 §2.3.2.
+
+      SiTU-GLU = [ softcap(g, beta1) * sigmoid(g) ] * [ softcap(u, beta2) ]
+
+    where g = W_gate @ x and u = W_up @ x are the two pre-activations.
+
+    Compare with SwiGLU = [ g * sigmoid(g) ] * [ u ]:
+    the ONLY change is that the linear factor of each branch is passed
+    through a soft cap. Both branches of SwiGLU are unbounded, so a single
+    coincidence of two large coordinates produces a huge product.
+
+    Kimi K3 uses beta1 = 4 (gate branch) and beta2 = 25 (up branch),
+    hence a hard bound |SiTU-GLU(x)| <= beta1 * beta2 = 100.
+    """
+    sigmoid = 1.0 / (1.0 + np.exp(-np.clip(gate_pre, -60, 60)))
+    gate_branch = softcap(gate_pre, beta1) * sigmoid
+    up_branch = softcap(up_pre, beta2)
+    return gate_branch * up_branch
+
+
+def swiglu_raw(gate_pre, up_pre):
+    """SwiGLU written on pre-activations, to compare apples to apples."""
+    return swish(gate_pre) * up_pre
+
+
+BETA1, BETA2 = 4.0, 25.0
+
+# --- 1. In the normal regime, the two activations agree ------------------
+# This matters: if SiTU-GLU changed the behavior of the network in its
+# ordinary operating range, it would not be adopted, however safe it is.
+g_normal = np.random.randn(4096) * 1.0
+u_normal = np.random.randn(4096) * 1.0
+a = swiglu_raw(g_normal, u_normal)
+b = situ_glu(g_normal, u_normal, BETA1, BETA2)
+rel = np.abs(a - b) / (np.abs(a) + 1e-9)
+print(f"\n  Normal regime (pre-activations ~ N(0,1)):")
+print(f"    median relative deviation SiTU-GLU vs SwiGLU : {np.median(rel) * 100:.2f} %")
+print(f"    max |SwiGLU|  = {np.abs(a).max():8.2f}")
+print(f"    max |SiTU-GLU|= {np.abs(b).max():8.2f}")
+
+# --- 2. With activation outliers, SwiGLU diverges ------------------------
+# Real LLMs develop outlier features (see J19 section 6): a handful of
+# channels with magnitudes 20-100x the mean. We simulate exactly that.
+g_out = g_normal.copy()
+u_out = u_normal.copy()
+outlier_idx = np.random.choice(g_out.size, size=20, replace=False)
+g_out[outlier_idx] = np.random.uniform(30, 80, size=20)
+u_out[outlier_idx] = np.random.uniform(30, 80, size=20)
+
+a_out = swiglu_raw(g_out, u_out)
+b_out = situ_glu(g_out, u_out, BETA1, BETA2)
+
+# FP8 E4M3 (the format used for activations on Hopper/Blackwell) saturates
+# at 448. Anything above that is an overflow, i.e. an inf or a clamp.
+FP8_E4M3_MAX = 448.0
+print(f"\n  With 20 outlier channels (pre-activations in [30, 80]):")
+print(f"    max |SwiGLU|   = {np.abs(a_out).max():8.2f}"
+      f"   -> overflows FP8 E4M3 (max {FP8_E4M3_MAX:.0f}) : "
+      f"{np.abs(a_out).max() > FP8_E4M3_MAX}")
+print(f"    max |SiTU-GLU| = {np.abs(b_out).max():8.2f}"
+      f"   -> theoretical bound beta1*beta2 = {BETA1 * BETA2:.0f}")
+print(f"    values above FP8 E4M3 max: SwiGLU {int((np.abs(a_out) > FP8_E4M3_MAX).sum())}"
+      f", SiTU-GLU {int((np.abs(b_out) > FP8_E4M3_MAX).sum())}")
+
+# --- 3. Soft cap vs hard clamp: the gradient argument --------------------
+# Same saturation, very different trainability.
+probe = np.array([0.0, 2.0, 10.0, 40.0, 100.0])
+eps = 1e-4
+grad_softcap = (softcap(probe + eps, BETA2) - softcap(probe - eps, BETA2)) / (2 * eps)
+grad_clamp = ((np.clip(probe + eps, -BETA2, BETA2)
+               - np.clip(probe - eps, -BETA2, BETA2)) / (2 * eps))
+print(f"\n  Gradient of the cap, at x = {probe.tolist()}  (beta = {BETA2:.0f}):")
+print(f"    softcap (tanh) : {np.array2string(grad_softcap, precision=6, suppress_small=False)}")
+print(f"    hard clamp     : {np.array2string(grad_clamp, precision=6)}")
+print("    -> past the threshold the clamp gradient is exactly 0 (unit is dead),")
+print("       while the soft cap keeps a small non-zero slope: it can still learn.")
+
+print("\n  Takeaway: as training precision drops (BF16 -> FP8 -> FP4), unbounded")
+print("  activations become the weak link. 2026 architectures bound them BY DESIGN")
+print("  instead of patching outliers afterwards at quantization time.")
 
 
 # ============================================================================

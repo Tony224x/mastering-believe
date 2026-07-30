@@ -143,6 +143,35 @@ Ce modele — une VM par execution — est celui qu'AWS Lambda utilise. Il garan
 | Firecracker microVM | Maximale | ~125ms (kernel boot) | Execution code arbitraire, multi-tenant |
 | sandbox-runtime | Legere-Moyenne | ~5-50ms | Agents locaux, dev sans Docker |
 
+### 4.4 Le cycle de vie compte autant que l'isolation (AgentENV, 2026)
+
+Le modele du §4.2 — **une VM par execution, detruite a la fin** — est celui de Lambda, et il est excellent pour une fonction qui vit 200 ms. Il devient un mauvais modele des que l'agent travaille **longtemps**.
+
+Le chiffre qui renverse l'intuition vient de l'infrastructure **AgentENV**, decrite dans le rapport technique de Kimi K3 (Moonshot AI, 2026) :
+
+> Un sandbox d'agent passe jusqu'a **98 % de sa duree de vie a attendre la reponse du modele.**
+
+C'est evident une fois enonce : la boucle agentique alterne *appel LLM* (secondes) et *execution d'outil* (millisecondes). Pendant l'appel LLM, le sandbox ne fait rien — mais il occupe sa RAM et ses vCPU. Detruire puis recreer entre chaque etape n'est pas une option non plus : on perdrait tout l'etat (fichiers, processus, services demarres) qui constitue precisement le travail accompli.
+
+La reponse d'AgentENV est de traiter le sandbox comme un objet **suspendable et clonable**, via du checkpointing incremental (seules les pages memoire salies depuis le dernier point de controle sont ecrites) :
+
+| Operation | Ce que ca fait | A quoi ca sert |
+|---|---|---|
+| **Pause / Resume** | Un sandbox en pause ne consomme ni memoire ni CPU | Liberer les ressources pendant l'appel LLM — les fameux 98 % |
+| **Fork** | Cree un sandbox a partir de l'**etat exact** d'un autre, l'original continuant a tourner | Evaluer une solution **sans effet de bord** sur l'environnement de travail |
+| **Snapshot** | Point de controle periodique | Reprise apres erreur au lieu de repartir de l'etat initial |
+
+Latences rapportees : **133 ms** pour un checkpoint, **49 ms** pour un resume — soit moins qu'un demarrage a froid de microVM (~125 ms), tout en **conservant l'etat**.
+
+Le `fork` merite un arret. C'est la primitive qui rend un verifier sur, au sens de J17 : au lieu de laisser le juge executer ses controles dans l'environnement de travail de l'agent — ou ils peuvent modifier l'etat qu'ils sont censes mesurer —, on forke, on evalue dans la copie, on jette la copie. **La mesure ne perturbe plus le mesure.**
+
+Deux autres enseignements de ce retour d'experience :
+
+- **Pourquoi microVM et pas conteneur, concretement.** Le rapport signale que les premiers essais sur un runtime a base de conteneurs ont produit des *kernel panics* et des *deadlocks* declenches par les operations imprevues des agents. L'argument n'est donc pas seulement securitaire : c'est aussi de la **fidelite** et de la **stabilite**. Un agent capable doit pouvoir monter un disque, lancer des conteneurs, voire demarrer une VM — un conteneur partage le noyau de l'hote, donc chacune de ces operations est soit interdite, soit un risque pour la machine entiere.
+- **L'echelle rend le probleme different, pas juste plus gros.** Sur l'ensemble de l'entrainement et de l'evaluation de K3 : **51 219 741 sandboxes** crees, a partir de **1 505 678 images** distinctes. A ce rythme, le temps de demarrage et la distribution des images deviennent le goulot d'etranglement, d'ou le format d'image en couches partagees, le transport P2P et un ratio de **surallocation memoire jusqu'a 6,5x** obtenu par copy-on-write.
+
+> **A retenir pour vos propres agents** : la question "quel niveau d'isolation ?" (§4.3) est la premiere, pas la seule. Des que l'agent tourne longtemps, posez-vous aussi : *que devient le sandbox pendant que le modele reflechit ?* et *ou s'execute le code qui verifie le travail ?* Meme sans microVM, les deux idees se transposent — suspendre un conteneur inactif (`docker pause`) et evaluer dans une copie plutot que dans l'original.
+
 ---
 
 ## 5. Capability-based access aux tools
@@ -275,3 +304,4 @@ Chaque couche a un adversaire different qu'elle arrete :
 - **bubblewrap** (bwrap) : https://github.com/containers/bubblewrap
 - **Linux user namespaces** (man 7 user_namespaces) — mecanisme sous-jacent de bubblewrap
 - **seccomp-BPF** (man 2 seccomp) — filtrage des syscalls au niveau kernel
+- **Kimi Team / Moonshot AI, "Kimi K3: Open Frontier Intelligence" (2026)** — rapport technique : https://github.com/MoonshotAI/Kimi-K3 — §5.3.2 (AgentENV : sandboxes microVM Firecracker, checkpointing incremental, pause/resume/fork/snapshot, 51,2 M sandboxes crees).
