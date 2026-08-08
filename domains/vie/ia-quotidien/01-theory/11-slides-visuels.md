@@ -10,6 +10,12 @@
 
 > **En une phrase :** Une idee, trois puces, titre = conclusion.
 
+### Ecran exemple — slide sobre
+
+![Capture pedagogique : PowerPoint slide Solution 3 puces](../assets/screens/screen-powerpoint-slide-sobre.png)
+
+> 1 idee, 3 puces, titre = conclusion. Reproduis ce niveau de sobriete sur 4 slides.
+
 
 ## 1. Scene concrete : le mur de texte
 

@@ -38,3 +38,7 @@ Chaque SVG a un `<title>` et un `<desc>` pour l accessibilite. Le module reprend
 ## Ludique (sans dark patterns)
 
 Voir `../PROGRESS.md` : badges = micro-victoires, **pas** de streak culpabilisante.
+
+## Captures d ecran
+
+Voir [`screens/README.md`](./screens/README.md) — ChatGPT, Excel, PowerPoint + docs officielles.

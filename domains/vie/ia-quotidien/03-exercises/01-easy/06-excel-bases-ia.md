@@ -19,6 +19,10 @@
 
 **Calcul manuel attendu :** entrees **600** · sorties **150** · solde **450**
 
+## Ecran de reference
+
+![Ecran exemple](../../assets/screens/screen-excel-somme-si.png)
+
 ## A faire
 
 1. Colle le tableau.

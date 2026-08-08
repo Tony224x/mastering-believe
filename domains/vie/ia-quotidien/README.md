@@ -82,6 +82,18 @@ A la fin du parcours, tu peux :
 
 Suivi badges (sans classement) : [`PROGRESS.md`](./PROGRESS.md).
 
+## Ecrans d exemple (vrais parcours)
+
+| Ecran | Fichier |
+|-------|---------|
+| ChatGPT prompt 3 blocs | [`assets/screens/screen-chatgpt-prompt-3-blocs.png`](./assets/screens/screen-chatgpt-prompt-3-blocs.png) |
+| Excel SOMME.SI (600) | [`assets/screens/screen-excel-somme-si.png`](./assets/screens/screen-excel-somme-si.png) |
+| PowerPoint slide sobre | [`assets/screens/screen-powerpoint-slide-sobre.png`](./assets/screens/screen-powerpoint-slide-sobre.png) |
+| Doc Microsoft SOMME.SI | [`assets/screens/screen-docs-excel-somme-si.png`](./assets/screens/screen-docs-excel-somme-si.png) |
+| Doc OpenAI prompting | [`assets/screens/screen-docs-openai-prompting.png`](./assets/screens/screen-docs-openai-prompting.png) |
+
+Detail : [`assets/screens/README.md`](./assets/screens/README.md).
+
 ## Visuels
 
 Ce domaine est **pense pour un apprentissage visuel** (chaque module de theorie ouvre sur un schema) :

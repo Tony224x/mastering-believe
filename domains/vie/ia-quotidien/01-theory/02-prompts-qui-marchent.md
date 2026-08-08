@@ -10,6 +10,16 @@
 
 > **En une phrase :** regarde ce schema avant de lire le reste.
 
+### Ecran exemple — prompt en 3 blocs
+
+![Capture pedagogique : chat ChatGPT avec prompt Contexte Demande Resultat et formule Excel](../assets/screens/screen-chatgpt-prompt-3-blocs.png)
+
+> Maquette pedagogique (contenu fictif). Tu peux t en inspirer pour coller le meme style de prompt.
+
+![Doc officielle OpenAI — prompt engineering](../assets/screens/screen-docs-openai-prompting.png)
+
+> Capture publique : [OpenAI Prompt engineering](https://platform.openai.com/docs/guides/prompt-engineering).
+
 
 ```mermaid
 flowchart LR

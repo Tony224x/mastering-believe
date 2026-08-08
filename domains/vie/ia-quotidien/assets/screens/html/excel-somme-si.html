@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<title>Exemple Excel — SOMME.SI</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: #f3f2f1; width: 1100px; min-height: 680px; color: #242424; }
+  .ribbon { background: #217346; color: #fff; padding: 8px 16px; font-size: 13px; display: flex; gap: 18px; align-items: center; }
+  .ribbon .app { font-weight: 700; font-size: 15px; }
+  .titlebar { background: #fff; padding: 8px 16px; border-bottom: 1px solid #e1dfdd; font-size: 13px; }
+  .formula-bar { display: flex; background: #fff; border-bottom: 1px solid #e1dfdd; align-items: center; }
+  .fx { width: 40px; text-align: center; color: #217346; font-weight: 700; font-style: italic; padding: 6px; }
+  .fx-input { flex: 1; padding: 6px 10px; font-family: Consolas, monospace; font-size: 13px; border: none; outline: none; }
+  .grid-wrap { padding: 0; overflow: auto; background: #fff; }
+  table.sheet { border-collapse: collapse; font-size: 13px; }
+  .sheet th, .sheet td { border: 1px solid #d0d0d0; min-width: 100px; height: 24px; padding: 2px 6px; }
+  .sheet th { background: #f3f2f1; font-weight: 600; color: #605e5c; text-align: center; }
+  .sheet td.rowh { background: #f3f2f1; text-align: center; color: #605e5c; min-width: 36px; font-weight: 600; }
+  .sheet td.sel { outline: 2px solid #217346; outline-offset: -2px; background: #e8f5ee; }
+  .sheet td.head { background: #e8f5ee; font-weight: 600; }
+  .note { margin: 14px 16px; background: #fff4ce; border-left: 4px solid #f7b900; padding: 10px 14px; font-size: 13px; border-radius: 4px; }
+  .badge { display: inline-block; background: #217346; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-right: 8px; }
+</style>
+</head>
+<body>
+  <div class="ribbon"><span class="app">Excel</span><span>Fichier</span><span>Accueil</span><span>Insertion</span><span>Formules</span><span style="margin-left:auto;opacity:.85">Budget-PME-Demo.xlsx · fictif</span></div>
+  <div class="titlebar">Feuille : Transactions</div>
+  <div class="formula-bar"><div class="fx">fx</div><div class="fx-input">=SOMME.SI(D2:D7;"entrée";C2:C7)</div></div>
+  <div class="grid-wrap">
+    <table class="sheet">
+      <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+      <tr><td class="rowh">1</td><td class="head">Date</td><td class="head">Libellé</td><td class="head">Montant</td><td class="head">Type</td><td class="head">Sens</td></tr>
+      <tr><td class="rowh">2</td><td>2026-01-02</td><td>Vente A</td><td>200</td><td>entrée</td><td></td></tr>
+      <tr><td class="rowh">3</td><td>2026-01-03</td><td>Vente B</td><td>250</td><td>entrée</td><td></td></tr>
+      <tr><td class="rowh">4</td><td>2026-01-04</td><td>Vente C</td><td>150</td><td>entrée</td><td></td></tr>
+      <tr><td class="rowh">5</td><td>2026-01-05</td><td>Loyer</td><td>80</td><td>sortie</td><td></td></tr>
+      <tr><td class="rowh">6</td><td>2026-01-06</td><td>Fournitures</td><td>40</td><td>sortie</td><td></td></tr>
+      <tr><td class="rowh">7</td><td>2026-01-07</td><td>Pub</td><td>30</td><td>sortie</td><td></td></tr>
+      <tr><td class="rowh">8</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="rowh">9</td><td></td><td style="font-weight:600">Total entrées</td><td class="sel">600</td><td></td><td></td></tr>
+      <tr><td class="rowh">10</td><td></td><td style="font-weight:600">Total sorties</td><td>150</td><td></td><td></td></tr>
+      <tr><td class="rowh">11</td><td></td><td style="font-weight:600">Solde</td><td>450</td><td></td><td></td></tr>
+    </table>
+  </div>
+  <div class="note"><span class="badge">Mission J6</span> Cellule C9 sélectionnée : la barre de formule montre <strong>SOMME.SI</strong>. Total attendu = 600 (200+250+150).</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<title>Exemple PowerPoint — slide sobre</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: #f3f2f1; width: 1200px; min-height: 720px; color: #242424; }
+  .ribbon { background: #c43e1c; color: #fff; padding: 8px 16px; font-size: 13px; display: flex; gap: 16px; align-items: center; }
+  .ribbon .app { font-weight: 700; }
+  .workspace { display: flex; height: 640px; }
+  .thumbs { width: 160px; background: #e6e6e6; padding: 12px; overflow: auto; }
+  .thumb { background: #fff; border: 1px solid #c8c6c4; height: 90px; margin-bottom: 10px; border-radius: 4px; font-size: 10px; padding: 8px; color: #605e5c; position: relative; }
+  .thumb.active { border: 2px solid #c43e1c; }
+  .thumb .n { position: absolute; bottom: 4px; left: 6px; font-weight: 700; }
+  .stage { flex: 1; display: flex; align-items: center; justify-content: center; background: #d2d0ce; padding: 24px; }
+  .slide { width: 860px; height: 484px; background: #fff; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 48px 56px; display: flex; flex-direction: column; justify-content: center; }
+  .slide h1 { font-size: 36px; font-weight: 700; color: #1b1b1b; margin-bottom: 28px; line-height: 1.2; }
+  .slide ul { list-style: none; }
+  .slide li { font-size: 22px; margin: 14px 0; padding-left: 28px; position: relative; color: #323130; }
+  .slide li::before { content: "●"; position: absolute; left: 0; color: #0f766e; font-size: 14px; top: 6px; }
+  .notes { background: #fff; border-top: 1px solid #e1dfdd; padding: 10px 20px; font-size: 12px; color: #605e5c; }
+  .tag { display: inline-block; background: #fff4ce; color: #835c00; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-right: 8px; }
+</style>
+</head>
+<body>
+  <div class="ribbon"><span class="app">PowerPoint</span><span>Fichier</span><span>Accueil</span><span>Insertion</span><span>Diaporama</span><span style="margin-left:auto">Pitch-PME-Final.pptx · fictif</span></div>
+  <div class="workspace">
+    <div class="thumbs">
+      <div class="thumb"><div class="n">1</div>Accroche</div>
+      <div class="thumb"><div class="n">2</div>Enjeu</div>
+      <div class="thumb active"><div class="n">3</div>Solution</div>
+      <div class="thumb"><div class="n">4</div>Comment</div>
+      <div class="thumb"><div class="n">5</div>Preuve</div>
+      <div class="thumb"><div class="n">6</div>Chiffres</div>
+      <div class="thumb"><div class="n">7</div>Risques</div>
+      <div class="thumb"><div class="n">8</div>Demande</div>
+    </div>
+    <div class="stage">
+      <div class="slide">
+        <h1>Un solde clair chaque lundi en 10 minutes</h1>
+        <ul>
+          <li>Un seul tableau entrées / sorties</li>
+          <li>Trois formules seulement</li>
+          <li>Routine IA pour expliquer les écarts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="notes"><span class="tag">Mission J11 / J14</span> Notes orateur : raconter l’histoire en 10 s sans lire les puces. 1 idée · max 3 puces · titre = conclusion.</div>
+</body>
+</html>

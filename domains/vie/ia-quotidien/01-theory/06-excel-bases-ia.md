@@ -10,6 +10,16 @@
 
 > **En une phrase :** regarde ce schema avant de lire le reste.
 
+### Ecran exemple — mission J6 dans Excel
+
+![Capture pedagogique : Excel avec SOMME.SI et total 600](../assets/screens/screen-excel-somme-si.png)
+
+> Classeur fictif `Budget-PME-Demo` — total entrees **600**. Compare avec ta feuille.
+
+![Doc Microsoft SOMME.SI](../assets/screens/screen-docs-excel-somme-si.png)
+
+> Capture publique : [Fonction SOMME.SI (Microsoft)](https://support.microsoft.com/fr-fr/office/fonction-somme-si-169b8c99-c05c-4483-a712-1697a653039b).
+
 
 ```mermaid
 flowchart TD

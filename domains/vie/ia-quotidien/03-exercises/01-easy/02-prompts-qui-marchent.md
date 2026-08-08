@@ -9,6 +9,10 @@
 ### Prompt flou (mauvais)
 > « Ameliore mon Excel. »
 
+## Ecran de reference
+
+![Ecran exemple](../../assets/screens/screen-chatgpt-prompt-3-blocs.png)
+
 ## A faire
 
 1. Reecris en 3 blocs :

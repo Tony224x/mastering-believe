@@ -14,6 +14,10 @@
 | Notes sur 3 slides | 4 slides |
 | Journal 5 puces | page complete |
 
+## Ecran de reference
+
+![Ecran exemple](../../assets/screens/screen-powerpoint-slide-sobre.png)
+
 ## A faire
 
 1. Choisis les 5 slides les plus chargees.

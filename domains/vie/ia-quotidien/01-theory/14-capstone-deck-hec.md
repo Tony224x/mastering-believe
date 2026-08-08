@@ -12,6 +12,12 @@
 
 > **En une phrase :** regarde ce schema avant de lire le reste.
 
+### Ecran exemple — cible visuelle du deck
+
+![Capture pedagogique : PowerPoint pitch PME slide sobre](../assets/screens/screen-powerpoint-slide-sobre.png)
+
+> Niveau de clarte vise pour le **minimum 8 slides**.
+
 
 ```mermaid
 flowchart LR
