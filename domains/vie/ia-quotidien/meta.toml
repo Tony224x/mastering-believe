@@ -1,0 +1,16 @@
+# Metadonnees du domaine — source de verite (editees a la main / par le skill).
+# Les faits structurels (nb de modules, presence de code...) sont derives a la volee
+# par shared/tools/build_catalog.py — ne pas les dupliquer ici.
+
+slug = "ia-quotidien"
+title = "IA au quotidien (non-tech)"
+track = "vie"
+status = "stable"
+level = "debutant"
+duration = "14 modules x ~45 min (~10 h 30)"
+stack = ["ChatGPT", "Excel", "PowerPoint"]
+focus = "Utiliser l'IA pour reflechir, ecrire, automatiser Excel et produire un deck HEC — sans code ni data science."
+pillar = "Esprit"
+guardrail = "Jamais de donnees reelles ONG/clients/personnelles dans les prompts ; verifier les faits avant usage scolaire/pro ; pas de copier-coller aveugle pour HEC ; Codex optionnel (hors chemin critique)."
+prerequisites = []
+tags = ["ia", "chatgpt", "excel", "powerpoint", "productivite", "hec", "non-tech", "prompting", "vie"]

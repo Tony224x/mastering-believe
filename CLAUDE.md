@@ -130,6 +130,7 @@ Ces domaines elargissent le repo au-dela de la tech : memes conventions, meme st
 | Apprendre a apprendre | `domains/vie/apprendre-a-apprendre/` | **Esprit** | Retrieval practice, spaced repetition (SM-2), difficultes desirables, deep work, metacognition, apprendre avec l'IA | Debunk des neuromythes (styles d'apprentissage) |
 | Pensee critique, rationalite & decision | `domains/vie/rationalite-decision/` | **Jugement** | Probas/Bayes, heuristiques & biais, decision sous incertitude, calibration (Brier), verification d'info (SIFT) | Methode > conclusions ; **exemples 100% neutres** |
 | Communication, persuasion & influence | `domains/vie/communication-persuasion/` | **Relations** | Rhetorique, ecoute active, ecriture claire, messages qui collent, principes de persuasion, negociation | Persuasion **ethique** (charte CTR) ; pas de manipulation |
+| IA au quotidien (non-tech) | `domains/vie/ia-quotidien/` | **Esprit** | ChatGPT + Excel + PowerPoint pour non-tech ; capstone deck HEC ; projet Excel tresorerie fictive | Confidentialite donnees ; verification faits ; Codex hors chemin critique |
 **Mnemo des 5 piliers** : **A**rgent · **C**orps · **E**sprit · **J**ugement · **R**elations.
 
 **Vivier (candidats futurs)** : Entrepreneuriat & creation de valeur a l'ere de l'IA ; IA appliquee au quotidien & souverainete numerique ; Psychologie, emotions & relations ; Climat, energie & durabilite ; Langues (immersion + IA).
