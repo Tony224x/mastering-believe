@@ -1,15 +1,16 @@
 # Hallucinations & verification — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Hallucinations & verification** en moins de 20 minutes, avec ChatGPT si utile.
+Appliquer la checklist V-A-I-R sur une reponse unique.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `03-hallucinations-verification`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Prompt :
+   > "Cite une loi canadienne precise de 2024 sur l'usage de l'IA en entreprise, avec numero d'article."
+2. Remplis pour la reponse : **V**erifiable / **A**ncree / **I**nvention possible / **R**isque si faux (oui/non + commentaire).
+3. Fais **une** verification web (site .gc.ca ou equivalent) et note le resultat.
+4. Decision finale : utiliser / modifier / jeter.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] Grille V-A-I-R complete
+- [ ] Preuve d'une verif externe (URL ou "introuvable")
+- [ ] Decision explicite

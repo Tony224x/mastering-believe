@@ -1,15 +1,15 @@
 # Formules, tableaux & modeles — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Formules, tableaux & modeles** en moins de 20 minutes, avec ChatGPT si utile.
+Ajouter une colonne calculee Sens (+montant / -montant) via l'IA.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `07-formules-tableaux`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Reprends un tableau Transactions (min 8 lignes).
+2. Demande a ChatGPT une formule SI pour colonne Sens.
+3. Implemente et verifie que somme(Sens) = solde.
+4. Documente formule + 1 capture de totaux.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] Colonne Sens presente
+- [ ] Somme(Sens) = entrees - sorties
+- [ ] Formule expliquee en 1 phrase (par toi)

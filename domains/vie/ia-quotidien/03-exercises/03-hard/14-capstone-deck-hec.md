@@ -1,20 +1,21 @@
 # Capstone final : deck HEC — niveau hard
 
 ## Objectif
-Enchainer le module **Capstone final : deck HEC** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Livrable final portfolio presentable en 6–8 minutes.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Fichiers :
+   - `Pitch-HEC-Final.pptx` (8–12 slides)
+   - notes orateur (integrees ou doc annexe)
+   - `journal-ia.md`
+   - optionnel `Budget-PME-Demo.xlsx`
+2. Oral chrono 6–8 min + 5 questions pieges preparees.
+3. Rubrique ≥ 14/20.
+4. Utilise le validateur d'outline si tu veux (script `02-code/14-capstone-deck-hec.py`) en exportant titres/bullets.
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] PPTX final 8–12 slides
+- [ ] Journal IA
+- [ ] Oral prepare (chrono + questions)
+- [ ] Score ≥ 14/20
+- [ ] Outil principal documente : ChatGPT

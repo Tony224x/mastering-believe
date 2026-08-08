@@ -1,20 +1,16 @@
 # Nettoyer, analyser, visualiser — niveau hard
 
 ## Objectif
-Enchainer le module **Nettoyer, analyser, visualiser** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+1 graphique sobre + 3 insights rediges par toi.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. A partir du tableau propre, cree un graphique en barres des sorties par categorie.
+2. Demande a ChatGPT un avis Presentation/Few sur ton choix de graphique, puis ajuste si besoin.
+3. Ecris 3 insights (pas generes tels quels — tu peux te faire challenger).
+4. Titre du graphique = conclusion (pas "Graphique 1").
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] Graphique barres
+- [ ] Titre conclusif
+- [ ] 3 insights humains
+- [ ] Trace d'iteration design

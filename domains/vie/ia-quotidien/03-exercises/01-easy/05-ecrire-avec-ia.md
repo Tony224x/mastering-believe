@@ -1,15 +1,16 @@
 # Ecrire avec l'IA — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Ecrire avec l'IA** en moins de 20 minutes, avec ChatGPT si utile.
+Obtenir un **plan** de rapport (pas le devoir entier) a partir de notes brutes.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `05-ecrire-avec-ia`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Ecris 8 puces de notes brutes sur un sujet HEC-like (ex. "innovation dans une PME de services", fictif).
+2. Prompt : outline en 5 parties max 1 phrase chacune + liste des trous dans tes notes.
+3. Valide ou renomme 2 titres a la main.
+4. Ne demande **pas** la redaction complete.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] 8 puces brutes
+- [ ] Outline 5 parties
+- [ ] 2 titres modifies a la main
+- [ ] Pas de devoir entier genere

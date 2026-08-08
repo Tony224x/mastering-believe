@@ -1,20 +1,16 @@
 # Excel + IA : les bases — niveau hard
 
 ## Objectif
-Enchainer le module **Excel + IA : les bases** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Fiche "formules de base" reutilisable + classeur demo propre.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Classeur `demo-excel-bases.xlsx` avec Transactions + Resume.
+2. Resume : total entrees, sorties, solde, nombre de transactions (NB).
+3. Document `fiche-formules.md` : chaque formule expliquee en 1 phrase + piege FR/EN.
+4. Section "ce que l'IA a mal dit" (au moins 1 correction que tu as due faire).
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] 2 onglets
+- [ ] 4 indicateurs formules
+- [ ] Fiche + 1 correction IA
+- [ ] 100 % fictif

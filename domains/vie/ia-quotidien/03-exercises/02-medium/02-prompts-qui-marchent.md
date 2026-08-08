@@ -1,19 +1,16 @@
 # Prompts qui marchent — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Prompts qui marchent**.
+Creer **3 prompts modeles** reutilisables (reflexion, Excel, slides) et les tester une fois chacun.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Redige 3 prompts RCCFC distincts pour : (a) clarification carriere (b) formule Excel (c) outline PowerPoint HEC.
+2. Execute chacun **une fois** dans ChatGPT.
+3. Pour chaque : note note/5 (utilite) + 1 iteration d'amelioration ("raccourcis", "plus concret"...).
+4. Livre `j02-medium-prompts.md` avec les 3 versions finales.
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] 3 prompts complets RCCFC
+- [ ] Trace d'execution (extrait) pour chacun
+- [ ] 1 iteration documentee par prompt
+- [ ] Aucune donnee reelle sensible

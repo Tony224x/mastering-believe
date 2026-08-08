@@ -1,15 +1,15 @@
 # Capstone final : deck HEC — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Capstone final : deck HEC** en moins de 20 minutes, avec ChatGPT si utile.
+Couper 20 % du texte du brouillon et uniformiser les titres.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `14-capstone-deck-hec`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Sur le deck v1, identifie les 5 slides les plus chargees.
+2. Avec ChatGPT : raccourcis bullets (garde le sens).
+3. Uniformise le style des titres (meme pattern).
+4. Avant/apres sur 2 slides (copie texte).
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] 5 slides allegees
+- [ ] Avant/apres sur 2 slides
+- [ ] Titres homogenes

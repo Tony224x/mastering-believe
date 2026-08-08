@@ -1,15 +1,14 @@
 # Notes orateur & repetition — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Notes orateur & repetition** en moins de 20 minutes, avec ChatGPT si utile.
+Ecrire des notes orateur pour **1 slide** critique (accroche).
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `12-notes-orateur`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Format du module : ouverture 10s, 2 details hors slide, transition, filet de securite.
+2. Tu rediges d'abord sans IA, puis tu demandes une amelioration de clarte seulement.
+3. Chronometre l'ouverture (vise 10–15 s).
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] 4 parties du format presentes
+- [ ] Version humaine initiale
+- [ ] Temps d'ouverture note

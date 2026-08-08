@@ -1,15 +1,16 @@
 # Prompts qui marchent — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Prompts qui marchent** en moins de 20 minutes, avec ChatGPT si utile.
+Reecrire un prompt flou en prompt RCCFC complet.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `02-prompts-qui-marchent`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Prompt flou de depart (a ne PAS envoyer tel quel) :
+   > "Ameliore mon Excel."
+2. Reecris-le avec **Role, Contexte, Tache, Format, Contraintes** (RCCFC).
+3. Envoie le prompt structure a ChatGPT.
+4. Dans `j02-easy.md` : colle flou + structure + 5 premieres lignes de reponse + 1 phrase "ce qui a change".
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] Les 5 lettres RCCFC sont visibles dans ton prompt
+- [ ] Contexte decrit des colonnes ou un cas concret (meme fictif)
+- [ ] Comparaison flou vs structure presente

@@ -1,15 +1,17 @@
 # Excel + IA : les bases — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Excel + IA : les bases** en moins de 20 minutes, avec ChatGPT si utile.
+Obtenir et coller **une** formule de total conditionnel correcte.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `06-excel-bases-ia`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Cree un mini-tableau Excel (ou Google Sheets) fictif :
+   | Date | Libelle | Montant | Type |
+   avec 6 lignes (3 entree, 3 sortie).
+2. Prompt ChatGPT : formule FR pour total des montants ou Type="entree" (precise ta plage).
+3. Colle la formule, verifie le total a la main.
+4. Capture : formule + total affiche + total manuel.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] 6 lignes de donnees fictives
+- [ ] Formule visible (ex. SOMME.SI)
+- [ ] Total manuel = total formule

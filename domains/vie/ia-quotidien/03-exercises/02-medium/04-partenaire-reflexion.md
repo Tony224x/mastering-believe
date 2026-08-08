@@ -1,19 +1,15 @@
 # Partenaire de reflexion — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Partenaire de reflexion**.
+Utiliser l'avocat du diable sur une idee de projet HEC/PME fictive.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Ecris en 8 lignes ton idee de projet (fictive OK).
+2. Prompt : attaque l'idee en 7 critiques dures (marche, temps, competences, argent, ethique, execution, clarte).
+3. Pour chaque critique : reponse en 1 phrase (accepte / mitige / rejette avec raison).
+4. Livre `j04-medium-devils.md`.
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] Idee initiale 8 lignes
+- [ ] 7 critiques traitees
+- [ ] Decision explicite sur 3 critiques majeures

@@ -1,15 +1,15 @@
 # Structure d'un pitch qui tient — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Structure d'un pitch qui tient** en moins de 20 minutes, avec ChatGPT si utile.
+Ecrire le pitch en **une phrase** + le probleme en **une phrase**.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `10-structure-pitch`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Idee fictive PME/innovation (contexte HEC).
+2. Sans IA : 2 phrases (probleme, promesse).
+3. Avec IA : 3 variantes de chaque, puis tu choisis.
+4. Justifie le choix en 3 lignes.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] Phrases humaines initiales
+- [ ] Variantes IA
+- [ ] Choix justifie

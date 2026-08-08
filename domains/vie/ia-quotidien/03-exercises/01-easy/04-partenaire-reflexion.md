@@ -1,15 +1,16 @@
 # Partenaire de reflexion — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Partenaire de reflexion** en moins de 20 minutes, avec ChatGPT si utile.
+Mener 5 questions socratiques (une a la fois) sur un choix simple.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `04-partenaire-reflexion`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Choisis une question perso **non urgente** (ex. organisation de la semaine, choix d'un cours optionnel). Ne partage rien de medical/sensible.
+2. Prompt :
+   > "Pose-moi UNE question a la fois pour clarifier mon choix. Attends ma reponse. Ne conseille pas avant la 5e reponse."
+3. Reponds a 5 questions.
+4. Demande un resume en 5 puces **uniquement a partir de tes reponses**, puis corrige le resume a la main.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] 5 tours question/reponse
+- [ ] Resume base sur tes mots
+- [ ] ≥1 correction manuelle du resume

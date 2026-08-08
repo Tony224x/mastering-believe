@@ -1,20 +1,16 @@
 # Structure d'un pitch qui tient — niveau hard
 
 ## Objectif
-Enchainer le module **Structure d'un pitch qui tient** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Outline 8–12 slides prete pour J11, avec slide chiffres liee au budget fictif J9 (ou chiffres inventes assumes).
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Outline complete 8–12.
+2. Une slide "chiffres cles" avec mention **exemple fictif**.
+3. Critique prof HEC via ChatGPT (coherence /10 + 5 faiblesses) puis corrections.
+4. Map SUCCESs : pour 3 messages, quel critere Heath est vise.
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] 8–12 slides
+- [ ] Slide chiffres assumee fictive
+- [ ] Critique + corrections
+- [ ] Map SUCCESs sur 3 messages

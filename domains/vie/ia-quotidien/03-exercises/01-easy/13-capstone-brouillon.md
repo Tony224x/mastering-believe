@@ -1,15 +1,15 @@
 # Capstone brouillon deck HEC — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Capstone brouillon deck HEC** en moins de 20 minutes, avec ChatGPT si utile.
+Figer l'idee fictive finale + structure 10 titres dans PowerPoint (slides presque vides OK).
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `13-capstone-brouillon`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. 1 phrase idee finale.
+2. 10 slides creees dans PPT avec titres seulement.
+3. Mode diaporama : raconte l'histoire en 60 secondes (chrono).
+4. Note 3 trous de recit.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] PPT 10 titres
+- [ ] Histoire 60 s possible
+- [ ] 3 trous listes

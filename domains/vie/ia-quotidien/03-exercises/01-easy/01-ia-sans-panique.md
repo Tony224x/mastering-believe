@@ -1,15 +1,18 @@
 # IA sans panique — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **IA sans panique** en moins de 20 minutes, avec ChatGPT si utile.
+Distinguer "texte plausible" et "fait verifie" sur une reponse ChatGPT banale.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `01-ia-sans-panique`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Ouvre ChatGPT et envoie exactement :
+   > "Donne-moi 3 statistiques precises sur les PME quebecoises en 2025, avec sources."
+2. Dans ton workspace, cree `j01-easy.md` avec un tableau :
+   | Affirmation (extraite) | Source donnee par l'IA | Je peux ouvrir la source ? (oui/non/incertain) |
+3. Coche au moins **une** affirmation que tu refuses d'utiliser tant qu'elle n'est pas verifiee.
+4. Ecris en 2 phrases : qu'est-ce que ca change pour ton usage pro/perso.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] Prompt exact utilise (ou capture)
+- [ ] Tableau avec ≥3 affirmations
+- [ ] Au moins 1 refus explicite
+- [ ] Aucune donnee personnelle ni ONG colle

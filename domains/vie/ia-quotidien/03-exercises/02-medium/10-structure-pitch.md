@@ -1,19 +1,15 @@
 # Structure d'un pitch qui tient — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Structure d'un pitch qui tient**.
+Outline 10 slides (titre + intention seulement).
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Prompt coach HEC (RCCFC) pour 10 slides probleme→solution.
+2. Edite au moins 4 titres pour qu'ils sonnent comme toi.
+3. Verifie la checklist "outline validee" du module (probleme 20s, solution 1 phrase, demande finale...).
+4. Livre `outline-v1.md`.
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] 10 titres + intentions
+- [ ] ≥4 titres reecrits
+- [ ] Checklist cochee

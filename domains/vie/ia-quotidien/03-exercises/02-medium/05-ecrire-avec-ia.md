@@ -1,19 +1,16 @@
 # Ecrire avec l'IA — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Ecrire avec l'IA**.
+Rediger une section de 300–400 mots avec pipeline ethique (brouillon IA + reecriture).
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Utilise l'outline de l'easy (ou recree-en un).
+2. Demande UNIQUEMENT la redaction de la partie 2 (max 400 mots) avec contrainte [A_VERIFIER] pour sources.
+3. Reecris au moins 30 % du texte a la main (version trackee : barré/ajoute ou couleurs).
+4. Liste 3 faiblesses restantes (fais-toi aider par l'IA en mode critique apres ta reecriture).
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] Section 2 seule generee d'abord
+- [ ] Preuve reecriture ≥30 %
+- [ ] 3 faiblesses post-relecture
+- [ ] Aucune source inventee presentee comme reelle

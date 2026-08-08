@@ -1,20 +1,16 @@
 # Formules, tableaux & modeles — niveau hard
 
 ## Objectif
-Enchainer le module **Formules, tableaux & modeles** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Mini-modele pret pour J9 : categories + total par categorie.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Au moins 4 categories de depenses.
+2. Tableau de synthese par categorie (SOMME.SI ou tableau croise — a toi).
+3. ChatGPT t'aide mais tu valides chaque total a la main sur un echantillon.
+4. Readme 5 lignes dans le classeur (hypotheses fictives).
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] Synthese par categorie
+- [ ] Validation manuelle echantillon
+- [ ] Readme hypotheses
+- [ ] Pret a etendre en scenarios J9

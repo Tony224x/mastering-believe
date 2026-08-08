@@ -1,15 +1,15 @@
 # Projet tresorerie / budget PME — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Projet tresorerie / budget PME** en moins de 20 minutes, avec ChatGPT si utile.
+Generer un CSV fictif de 15 transactions pour une PME demo.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `09-projet-tresorerie`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Prompt ChatGPT pour un cafe mobile a Montreal (janv 2026), colonnes date,libelle,categorie,montant,type.
+2. Importe dans Excel.
+3. Verifie a la main : pas de vrais noms de personnes, montants realistes, mix entrees/sorties.
+4. Corrige au moins 2 lignes "bizarres" si besoin.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] 15 lignes importees
+- [ ] Audit anonymat OK
+- [ ] ≥2 corrections si necessaire (ou justification "rien a corriger")

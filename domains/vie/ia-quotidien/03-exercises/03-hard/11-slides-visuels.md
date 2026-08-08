@@ -1,20 +1,15 @@
 # Slides & design sobre — niveau hard
 
 ## Objectif
-Enchainer le module **Slides & design sobre** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Template personnel de style (couleurs, polices, regles) + 6 slides conformes.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Definir 5 regles de style (ex. fond clair, 1 accent, titres 28pt+...).
+2. Appliquer a 6 slides du deck.
+3. Demander a ChatGPT un audit "Presentation Zen" et corriger 3 points.
+4. Exporter PDF ou PPTX de travail.
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] 5 regles ecrites
+- [ ] 6 slides conformes
+- [ ] 3 corrections post-audit

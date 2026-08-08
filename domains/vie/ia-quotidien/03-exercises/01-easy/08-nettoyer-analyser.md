@@ -1,15 +1,21 @@
 # Nettoyer, analyser, visualiser — niveau easy
 
 ## Objectif
-Appliquer l'idee centrale du module **Nettoyer, analyser, visualiser** en moins de 20 minutes, avec ChatGPT si utile.
+Identifier les defauts d'un export "sale" fourni.
 
 ## Consigne
-1. Relis le "Key takeaway" principal du module `08-nettoyer-analyser`.
-2. Ouvre ChatGPT et execute **une** tache courte liee au module (selon le theme du jour).
-3. Copie dans ton workspace perso : (a) ton prompt (b) un extrait de reponse (c) **2 phrases de ton avis** (utile / a corriger).
-4. Si le module parle Excel ou PowerPoint : fais le geste minimal dans le logiciel (meme fichier brouillon).
+1. Copie ce jeu fictif dans Excel (tel quel) :
+```
+12/01/2026; loyer  ; 1200 ; sortie
+2026-01-15; Cafe equipe; 45,5; Sortie
+15-01-2026;Vente ;500;entree
+2026/01/20; loyer; 1200 ; Sortie
+```
+2. Sans encore corriger : liste ≥5 problemes de qualite.
+3. Demande a ChatGPT une checklist de nettoyage ordonnee (max 6 etapes) et compare a ta liste.
+4. Note 2 points que l'IA a rates ou mal priorises.
 
 ## Criteres de reussite
-- [ ] Prompt visible (pas seulement "j'ai demande a l'IA")
-- [ ] Trace de verification ou d'opinion personnelle (pas copier-coller brut)
-- [ ] Aucune donnee reelle sensible utilisee
+- [ ] ≥5 problemes listes par toi d'abord
+- [ ] Checklist IA
+- [ ] 2 ecarts notes

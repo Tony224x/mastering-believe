@@ -1,20 +1,16 @@
 # Projet tresorerie / budget PME — niveau hard
 
 ## Objectif
-Enchainer le module **Projet tresorerie / budget PME** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Livrable portfolio **Budget-PME-Demo** avec scenarios.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Onglets : Transactions, Resume, Scenarios, Readme.
+2. Scenarios base / optimiste (+10 % entrees) / pessimiste (−10 % entrees, +5 % sorties) calcules par formules.
+3. Resume executif 5 lignes (humain) : que se passe-t-il dans le cas pessimiste ?
+4. Checklist complete du module J9 cochee dans le Readme.
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] 4 onglets
+- [ ] 3 scenarios formules
+- [ ] Resume executif humain
+- [ ] Pret a annexer au deck HEC

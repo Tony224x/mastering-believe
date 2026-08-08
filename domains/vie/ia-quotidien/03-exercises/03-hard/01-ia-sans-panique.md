@@ -1,20 +1,16 @@
 # IA sans panique — niveau hard
 
 ## Objectif
-Enchainer le module **IA sans panique** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Rediger une charte personnelle d'usage IA (1 page) utilisable pendant tout le cours.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Demande a ChatGPT un brouillon de charte (max 400 mots) avec sections : buts, interdits, verification, ecole HEC, travail.
+2. Reecris **au moins 40 %** a la main (marque en gras ou italic les parties reecrites).
+3. Ajoute 3 exemples "mauvais prompt / bon prompt" tires de ta vie (fictifs si besoin).
+4. Valide la charte contre le garde-fou du README du domaine (donnees ONG, copier-coller HEC).
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] Charte ≤ 1 page, lisible sans jargon ML
+- [ ] Preuve de reecriture humaine
+- [ ] 3 paires mauvais/bon prompt
+- [ ] Alignement garde-fou domaine explicite

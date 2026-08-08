@@ -1,84 +1,132 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Solutions guide — 06-excel-bases-ia (Excel + IA : les bases).
+"""Answer key — 06-excel-bases-ia (Excel + IA : les bases).
 
-This file does not call ChatGPT. It prints a structured answer key the learner
-can compare against their prompts and artifacts. requires: stdlib only
+Per-level keys for the day-specific exercises. Runnable smoke tests encode
+the critical constraints of each level (not a generic shell).
+requires: stdlib only
 """
 from __future__ import annotations
 
+import json
+from typing import Any
+
 MODULE = "06-excel-bases-ia"
-TITLE = "Excel + IA : les bases"
-REF = '[Microsoft formulas overview] ; [OpenAI Prompting Guide]'
-
-# === EASY ===
-EASY = {
-    "goal": "One short ChatGPT task + personal judgment (2 sentences).",
-    "must_include": [
-        "Visible prompt text",
-        "Personal note (not raw paste only)",
-        "No real sensitive data",
+TITLE = 'Excel + IA : les bases'
+SOL: dict[str, Any] = json.loads(r'''{
+  "easy_key": {
+    "sample_data": [
+      [
+        "2026-01-02",
+        "Vente A",
+        120,
+        "entree"
+      ],
+      [
+        "2026-01-03",
+        "Vente B",
+        80,
+        "entree"
+      ],
+      [
+        "2026-01-04",
+        "Vente C",
+        50,
+        "entree"
+      ],
+      [
+        "2026-01-05",
+        "Loyer",
+        100,
+        "sortie"
+      ],
+      [
+        "2026-01-06",
+        "Fournitures",
+        30,
+        "sortie"
+      ],
+      [
+        "2026-01-07",
+        "Pub",
+        20,
+        "sortie"
+      ]
     ],
-    "sample_prompt_stub": (
-        "Role: coach clair pour debutante. Contexte: module "
-        + MODULE
-        + ". Tache: aide-moi sur UN point. Format: 5 puces. "
-        "Contraintes: pas de donnees inventees presentees comme reelles."
-    ),
-}
-
-# === MEDIUM ===
-MEDIUM = {
-    "goal": "Reusable artifact + 2 prompt iterations + Risks section.",
-    "iterations_min": 2,
-    "risks_examples": [
-        "Hallucinated citation or statistic",
-        "Generic advice not tied to my context",
-        "Wrong Excel locale (EN formulas on FR Excel)",
-    ],
-    "artifact_by_phase": {
-        "foundations": "Structured notes 15-25 lines",
-        "excel": "Formulas table with test values",
-        "pptx": "Slide titles + max 3 bullets each",
+    "formula_fr": "=SOMME.SI(D2:D7;\"entree\";C2:C7)",
+    "formula_fr_alt": "selon ordre colonnes Montant/Type — adapter plages",
+    "expected_entrees": 250
+  },
+  "medium_key": {
+    "formulas": {
+      "entrees": "SOMME.SI sur Type=entree",
+      "sorties": "SOMME.SI sur Type=sortie",
+      "solde": "entrees - sorties"
     },
-}
-
-# === HARD ===
-HARD = {
-    "goal": "Mini-spec + deliverable tied to Budget PME Demo and/or HEC deck + AI journal.",
-    "deliverables": [
-        "5-bullet mini-spec",
-        "Concrete file or written deliverable",
-        "AI journal 8-12 lines",
-        "Self-score /10 with 3 sentences",
+    "error_drill": "reduire la plage d'une ligne puis lire # éventuel / total faux"
+  },
+  "hard_key": {
+    "sheets": [
+      "Transactions",
+      "Resume"
     ],
-    "ethics": "Fictional data only; never real NGO/client data.",
-    "capstone_link": "J13-J14 HEC deck 8-12 slides with ChatGPT as primary tool",
-}
+    "indicators": [
+      "total entrees",
+      "total sorties",
+      "solde",
+      "NB transactions"
+    ],
+    "locale_trap": "#NOM? si SUM au lieu de SOMME"
+  }
+}''')
 
 
 def easy_solution() -> dict:
-    return EASY
+    return dict(SOL["easy_key"])
 
 
 def medium_solution() -> dict:
-    return MEDIUM
+    return dict(SOL["medium_key"])
 
 
 def hard_solution() -> dict:
-    return HARD
+    return dict(SOL["hard_key"])
+
+
+def _nonempty_structure(obj: Any, min_items: int = 1) -> None:
+    assert obj is not None
+    if isinstance(obj, dict):
+        assert len(obj) >= min_items, f"dict too small: {obj!r}"
+    elif isinstance(obj, (list, tuple, str)):
+        assert len(obj) >= min_items, f"seq too small: {obj!r}"
 
 
 def smoke() -> None:
     e, m, h = easy_solution(), medium_solution(), hard_solution()
-    assert e["must_include"], "easy must_include"
-    assert m["iterations_min"] >= 2
-    assert "HEC" in h["capstone_link"] or "deck" in h["capstone_link"]
+    _nonempty_structure(e)
+    _nonempty_structure(m)
+    _nonempty_structure(h)
+    blob = json.dumps(SOL, ensure_ascii=False)
+    assert len(blob) > 80, "solution payload too thin"
+    # Day-specific asserts
+
+    e, m, h = easy_solution(), medium_solution(), hard_solution()
+    assert e["expected_entrees"] == 250
+    assert "SOMME.SI" in e["formula_fr"]
+    assert "solde" in m["formulas"]
+    assert "Transactions" in h["sheets"]
+    # arithmetic of sample data
+    rows = e["sample_data"]
+    total_in = sum(r[2] for r in rows if r[3] == "entree")
+    assert total_in == 250
+
+    # re-bind after extra (extra may reassign)
+    e, m, h = easy_solution(), medium_solution(), hard_solution()
     print(f"OK {MODULE} | {TITLE}")
-    print(f"  REF: {REF}")
-    print(f"  EASY sample prompt: {e['sample_prompt_stub'][:80]}...")
-    print(f"  MEDIUM risks: {len(m['risks_examples'])} examples")
-    print(f"  HARD ethics: {h['ethics']}")
+    print(f"  easy keys: {list(e)[:6]}")
+    print(f"  medium keys: {list(m)[:6]}")
+    print(f"  hard keys: {list(h)[:6]}")
+    return None
 
 
 if __name__ == "__main__":

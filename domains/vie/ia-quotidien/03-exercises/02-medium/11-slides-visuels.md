@@ -1,19 +1,15 @@
 # Slides & design sobre — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Slides & design sobre**.
+Rendre **4 slides** de ton outline slide-ready.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Choisis 4 slides de l'outline J10.
+2. Pour chacune : titre + ≤3 bullets + note visuel (1 ligne).
+3. Itere une fois avec ChatGPT ("encore plus court").
+4. Assemble dans un .pptx brouillon.
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] 4 slides dans PPT
+- [ ] Respect regles 1 idee / ≤3 bullets
+- [ ] Trace d'iteration

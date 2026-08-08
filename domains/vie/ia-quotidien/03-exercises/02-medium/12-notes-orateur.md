@@ -1,19 +1,16 @@
 # Notes orateur & repetition — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Notes orateur & repetition**.
+Notes pour 3 slides cles + 5 questions pieges.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Slides cibles : accroche, solution, chiffres/demande.
+2. Prompt coach oral HEC pour notes + 5 questions prof sceptique.
+3. Filtre les reponses : supprime toute reponse qui invente un chiffre absent de ton deck.
+4. Reponds a voix haute a 3 questions (auto-eval /5).
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] Notes sur 3 slides
+- [ ] 5 questions pieges
+- [ ] Filtre anti-invention applique
+- [ ] Auto-eval orale

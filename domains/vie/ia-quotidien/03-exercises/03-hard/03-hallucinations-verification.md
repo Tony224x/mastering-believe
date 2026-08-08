@@ -1,20 +1,19 @@
 # Hallucinations & verification — niveau hard
 
 ## Objectif
-Enchainer le module **Hallucinations & verification** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Creer une checklist operationnelle 1 page pour HEC + travail (ONG), pret a reutiliser.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Produis `checklist-verification-ia.md` avec : interdits de collage, V-A-I-R, regles HEC, regles travail, exemples.
+2. Simule 3 cas :
+   - stats inventees pour un pitch
+   - formule Excel douteuse
+   - donnee sensible (que faire au lieu de coller)
+3. Pour chaque cas : action concrete en <5 puces.
+4. Fais relire la checklist par ChatGPT en mode "avocat du diable", puis integre 2 critiques.
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] Checklist autonome (lisible sans le cours)
+- [ ] 3 cas traites
+- [ ] 2 ameliorations issues de la critique IA
+- [ ] Mention CNIL/OPC ou equivalent en 1 ligne

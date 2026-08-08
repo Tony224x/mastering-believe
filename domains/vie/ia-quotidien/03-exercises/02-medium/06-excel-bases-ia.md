@@ -1,19 +1,15 @@
 # Excel + IA : les bases — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Excel + IA : les bases**.
+Obtenir 3 formules (entrees, sorties, solde) avec cas de test.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Tableau 10 lignes, colonnes Date|Libelle|Categorie|Montant|Type.
+2. Prompt RCCFC demandant un tableau | Objectif | Formule FR | Explication | Test |.
+3. Implemente les 3 formules.
+4. Provoke volontairement une erreur (mauvaise plage) puis demande a ChatGPT de diagnostiquer le message d'erreur.
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] 3 formules implementees
+- [ ] Tests numeriques documentes
+- [ ] Diagnostic d'erreur documente

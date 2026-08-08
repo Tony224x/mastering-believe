@@ -1,19 +1,16 @@
 # Formules, tableaux & modeles — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Formules, tableaux & modeles**.
+Construire onglet Resume separe avec references stables.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Feuille Transactions (12+ lignes) + feuille Resume.
+2. Resume affiche : total entrees, sorties, solde, % sorties/entrees (si entrees>0).
+3. Demande a ChatGPT les formules + 3 erreurs possibles en copiant.
+4. Teste le cas entrees=0 (garde anti #DIV/0! si pertinent).
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] 2 feuilles
+- [ ] 4 indicateurs
+- [ ] Liste de 3 erreurs possibles
+- [ ] Comportement division protege ou commente

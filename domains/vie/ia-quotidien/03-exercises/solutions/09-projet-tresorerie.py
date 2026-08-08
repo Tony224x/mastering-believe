@@ -1,84 +1,113 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Solutions guide — 09-projet-tresorerie (Projet tresorerie / budget PME).
+"""Answer key — 09-projet-tresorerie (Projet tresorerie / budget PME).
 
-This file does not call ChatGPT. It prints a structured answer key the learner
-can compare against their prompts and artifacts. requires: stdlib only
+Per-level keys for the day-specific exercises. Runnable smoke tests encode
+the critical constraints of each level (not a generic shell).
+requires: stdlib only
 """
 from __future__ import annotations
 
+import json
+from typing import Any
+
 MODULE = "09-projet-tresorerie"
-TITLE = "Projet tresorerie / budget PME"
-REF = '[CNIL IA] ; [NIST AI RMF] ; [Microsoft formulas overview]'
-
-# === EASY ===
-EASY = {
-    "goal": "One short ChatGPT task + personal judgment (2 sentences).",
-    "must_include": [
-        "Visible prompt text",
-        "Personal note (not raw paste only)",
-        "No real sensitive data",
+TITLE = 'Projet tresorerie / budget PME'
+SOL: dict[str, Any] = json.loads(r'''{
+  "easy_key": {
+    "csv_header": "date,libelle,categorie,montant,type",
+    "n_min": 15,
+    "audit": [
+      "pas de vrais noms",
+      "mix entrees/sorties",
+      "categories stables"
+    ]
+  },
+  "medium_key": {
+    "sheets": [
+      "Transactions",
+      "Resume",
+      "Readme"
     ],
-    "sample_prompt_stub": (
-        "Role: coach clair pour debutante. Contexte: module "
-        + MODULE
-        + ". Tache: aide-moi sur UN point. Format: 5 puces. "
-        "Contraintes: pas de donnees inventees presentees comme reelles."
-    ),
-}
-
-# === MEDIUM ===
-MEDIUM = {
-    "goal": "Reusable artifact + 2 prompt iterations + Risks section.",
-    "iterations_min": 2,
-    "risks_examples": [
-        "Hallucinated citation or statistic",
-        "Generic advice not tied to my context",
-        "Wrong Excel locale (EN formulas on FR Excel)",
+    "n_min": 20,
+    "resume_formulas": [
+      "SOMME.SI entrees",
+      "SOMME.SI sorties",
+      "solde"
+    ]
+  },
+  "hard_key": {
+    "sheets": [
+      "Transactions",
+      "Resume",
+      "Scenarios",
+      "Readme"
     ],
-    "artifact_by_phase": {
-        "foundations": "Structured notes 15-25 lines",
-        "excel": "Formulas table with test values",
-        "pptx": "Slide titles + max 3 bullets each",
+    "scenarios": {
+      "base": [
+        1.0,
+        1.0
+      ],
+      "optimiste": [
+        1.1,
+        1.0
+      ],
+      "pessimiste": [
+        0.9,
+        1.05
+      ]
     },
-}
-
-# === HARD ===
-HARD = {
-    "goal": "Mini-spec + deliverable tied to Budget PME Demo and/or HEC deck + AI journal.",
-    "deliverables": [
-        "5-bullet mini-spec",
-        "Concrete file or written deliverable",
-        "AI journal 8-12 lines",
-        "Self-score /10 with 3 sentences",
-    ],
-    "ethics": "Fictional data only; never real NGO/client data.",
-    "capstone_link": "J13-J14 HEC deck 8-12 slides with ChatGPT as primary tool",
-}
+    "python_helper": "domains/vie/ia-quotidien/02-code/09-projet-tresorerie.py",
+    "example_math": "base 10000/8000 -> solde 2000; pessimiste 9000/8400 -> solde 600"
+  }
+}''')
 
 
 def easy_solution() -> dict:
-    return EASY
+    return dict(SOL["easy_key"])
 
 
 def medium_solution() -> dict:
-    return MEDIUM
+    return dict(SOL["medium_key"])
 
 
 def hard_solution() -> dict:
-    return HARD
+    return dict(SOL["hard_key"])
+
+
+def _nonempty_structure(obj: Any, min_items: int = 1) -> None:
+    assert obj is not None
+    if isinstance(obj, dict):
+        assert len(obj) >= min_items, f"dict too small: {obj!r}"
+    elif isinstance(obj, (list, tuple, str)):
+        assert len(obj) >= min_items, f"seq too small: {obj!r}"
 
 
 def smoke() -> None:
     e, m, h = easy_solution(), medium_solution(), hard_solution()
-    assert e["must_include"], "easy must_include"
-    assert m["iterations_min"] >= 2
-    assert "HEC" in h["capstone_link"] or "deck" in h["capstone_link"]
+    _nonempty_structure(e)
+    _nonempty_structure(m)
+    _nonempty_structure(h)
+    blob = json.dumps(SOL, ensure_ascii=False)
+    assert len(blob) > 80, "solution payload too thin"
+    # Day-specific asserts
+
+    e, m, h = easy_solution(), medium_solution(), hard_solution()
+    assert e["n_min"] == 15
+    assert m["n_min"] == 20
+    assert h["scenarios"]["pessimiste"] == [0.9, 1.05] or h["scenarios"]["pessimiste"] == (0.9, 1.05)
+    # scenario math from helper docstring
+    base_e, base_s = 10000.0, 8000.0
+    pe, ps = 0.9, 1.05
+    assert abs((base_e*pe) - (base_s*ps) - 600.0) < 1e-6
+
+    # re-bind after extra (extra may reassign)
+    e, m, h = easy_solution(), medium_solution(), hard_solution()
     print(f"OK {MODULE} | {TITLE}")
-    print(f"  REF: {REF}")
-    print(f"  EASY sample prompt: {e['sample_prompt_stub'][:80]}...")
-    print(f"  MEDIUM risks: {len(m['risks_examples'])} examples")
-    print(f"  HARD ethics: {h['ethics']}")
+    print(f"  easy keys: {list(e)[:6]}")
+    print(f"  medium keys: {list(m)[:6]}")
+    print(f"  hard keys: {list(h)[:6]}")
+    return None
 
 
 if __name__ == "__main__":

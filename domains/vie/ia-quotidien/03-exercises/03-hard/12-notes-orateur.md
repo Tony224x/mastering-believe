@@ -1,20 +1,15 @@
 # Notes orateur & repetition — niveau hard
 
 ## Objectif
-Enchainer le module **Notes orateur & repetition** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Repetition complete 7 min + amelioration.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Presente ton brouillon de deck (meme incomplet) en 7 min chrono.
+2. Note les accrocs.
+3. Colle un transcript approximatif a ChatGPT : "raccourcis et signale digressions".
+4. 2e passage + tableau avant/apres (duree, fluidite /5, clarte /5).
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] 2 passages chronometres
+- [ ] Transcript ou puces d'accrocs
+- [ ] Tableau avant/apres

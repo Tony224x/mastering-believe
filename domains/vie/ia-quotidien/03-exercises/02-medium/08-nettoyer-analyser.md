@@ -1,19 +1,15 @@
 # Nettoyer, analyser, visualiser — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Nettoyer, analyser, visualiser**.
+Produire un tableau propre + totaux.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Nettoie le jeu (etend-le a 12 lignes fictives coherentes).
+2. Standardise : dates ISO, categories Title Case, Type en minuscules, montants nombres.
+3. Calcule totaux entrees/sorties.
+4. Documente les regles de standardisation en 5 puces.
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] 12 lignes propres
+- [ ] Totaux coherents
+- [ ] Regles de standard documentees

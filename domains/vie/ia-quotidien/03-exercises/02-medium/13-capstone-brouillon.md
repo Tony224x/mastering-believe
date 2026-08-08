@@ -1,19 +1,15 @@
 # Capstone brouillon deck HEC — niveau medium
 
 ## Objectif
-Produire un artefact reutilisable (note, tableau, outline, checklist) pour le module **Capstone brouillon deck HEC**.
+Remplir les 10 slides (bullets sobres) — brouillon v1.
 
 ## Consigne
-1. Utilise la grille RCCFC (Role, Contexte, Tache, Format, Contraintes) sauf si le module impose un autre protocole.
-2. Itere **au moins 2 fois** avec ChatGPT (ex. raccourcir, challenger, corriger une erreur).
-3. Livre un artefact dans ton workspace :
-   - J1–J5 : page de notes structuree (15–25 lignes)
-   - J6–J9 : extrait de tableau / formules documentees
-   - J10–J14 : fragment de deck (titres + bullets) ou notes orateur
-4. Ajoute une section "Risques" : 3 choses que l'IA a pu mal faire.
+1. Pour chaque slide : ≤3 bullets via prompts slide-ready.
+2. Inserer si utile 1 slide chiffres depuis Budget PME Demo (label fictif).
+3. Commentaire fichier : "Brouillon v1 — polish J14".
+4. Checklist anti-catastrophe du module cochee.
 
 ## Criteres de reussite
-- [ ] Au moins 2 iterations de prompt documentees
-- [ ] Artefact utilisable sans rouvrir le chat
-- [ ] Section Risques complete
-- [ ] Pas de sources inventees presentees comme reelles
+- [ ] 8–12 slides remplies
+- [ ] Checklist anti-catastrophe
+- [ ] Label fictif si chiffres

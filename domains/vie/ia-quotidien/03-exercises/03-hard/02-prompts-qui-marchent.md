@@ -1,20 +1,16 @@
 # Prompts qui marchent — niveau hard
 
 ## Objectif
-Enchainer le module **Prompts qui marchent** avec le fil-rouge du cours (Excel budget fictif et/ou deck HEC) de facon professionnelle.
+Construire une mini-bibliotheque de 6 prompts (fichier unique) avec few-shot sur au moins 2 d'entre eux.
 
 ## Consigne
-1. Definir un mini-cahier des charges (5 bullets) pour un livrable lie a :
-   - soit le **Budget PME Demo** (fictif),
-   - soit le **deck HEC 8–12 slides**,
-   - soit les deux si le jour s'y prete.
-2. Realiser le livrable avec ChatGPT comme assistant, en gardant la decision finale.
-3. Ecrire un "journal IA" de 8–12 lignes : ce qui a ete genere, verifie, reecrit, refuse.
-4. Auto-evaluer sur 10 : clarte / ethique / utilite.
+1. Fichier `prompts-bibliotheque.md` : 6 prompts classes (2 reflexion, 2 Excel, 2 slides).
+2. Au moins 2 prompts contiennent un **exemple few-shot** (montre le format attendu).
+3. Teste le pire prompt de ta bibliotheque : demande a ChatGPT de le critiquer, puis corrige.
+4. Ajoute une section "Anti-patterns" : 4 facons de mal prompter que tu t'interdis.
 
 ## Criteres de reussite
-- [ ] Cahier des charges explicite
-- [ ] Livrable abouti (pas seulement des idees)
-- [ ] Journal IA present
-- [ ] Score d'auto-eval justifie en 3 phrases
-- [ ] Zero donnee ONG/client reelle
+- [ ] 6 prompts distincts et reutilisables
+- [ ] ≥2 few-shot
+- [ ] Critique + correction d'un prompt
+- [ ] 4 anti-patterns listes
