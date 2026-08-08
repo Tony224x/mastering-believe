@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Answer key — 14-capstone-deck-hec (Capstone final : deck HEC).
+"""Answer key — 14-capstone-deck-hec (Capstone final : deck pitch).
 
 Per-level keys for the day-specific exercises. Runnable smoke tests encode
 the critical constraints of each level (not a generic shell).
@@ -12,7 +12,7 @@ import json
 from typing import Any
 
 MODULE = "14-capstone-deck-hec"
-TITLE = 'Capstone final : deck HEC'
+TITLE = 'Capstone final : deck pitch'
 SOL: dict[str, Any] = json.loads(r'''{
   "easy_key": {
     "cut_target_pct": 20,
@@ -26,7 +26,7 @@ SOL: dict[str, Any] = json.loads(r'''{
   },
   "hard_key": {
     "deliverables": [
-      "Pitch-HEC-Final.pptx",
+      "Pitch-PME-Final.pptx",
       "notes orateur",
       "journal-ia.md",
       "Budget-PME-Demo.xlsx (optionnel)"
@@ -79,7 +79,7 @@ def smoke() -> None:
     assert m["rubric_max"] == 20
     assert h["primary_tool"] == "ChatGPT"
     assert h["score_min"] == 14
-    assert "Pitch-HEC-Final.pptx" in h["deliverables"]
+    assert "Pitch-PME-Final.pptx" in h["deliverables"]
     assert h["outline_rules"]["min_slides"] == 8
 
     # re-bind after extra (extra may reassign)

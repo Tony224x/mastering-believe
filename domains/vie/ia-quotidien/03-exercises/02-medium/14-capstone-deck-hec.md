@@ -1,4 +1,4 @@
-# Capstone final : deck HEC — niveau medium
+# Capstone final : deck pitch — niveau medium
 
 ## Objectif
 Verification faits + notes orateur sur 4 slides + journal IA.

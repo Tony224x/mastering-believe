@@ -6,6 +6,19 @@
 
 ---
 
+![Boucle Excel + ChatGPT : decrire, formule, coller, tester, corriger](../assets/06-excel-flow.svg)
+
+```mermaid
+flowchart TD
+  D[Decrire colonnes] --> F[Demander formule FR]
+  F --> C[Coller dans Excel]
+  C --> T{Test OK ?}
+  T -->|oui| OK[Garder]
+  T -->|non| E[Copier message d erreur]
+  E --> F
+```
+
+
 ## 1. Scene concrete : "fais-moi le total"
 
 Sans IA : tu cherches dans Google "somme si excel".

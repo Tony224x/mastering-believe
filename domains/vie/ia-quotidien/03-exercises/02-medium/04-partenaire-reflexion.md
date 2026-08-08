@@ -1,7 +1,7 @@
 # Partenaire de reflexion — niveau medium
 
 ## Objectif
-Utiliser l'avocat du diable sur une idee de projet HEC/PME fictive.
+Utiliser l'avocat du diable sur une idee de projet formation/PME fictive.
 
 ## Consigne
 1. Ecris en 8 lignes ton idee de projet (fictive OK).

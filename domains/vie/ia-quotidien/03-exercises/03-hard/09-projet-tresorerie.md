@@ -13,4 +13,4 @@ Livrable portfolio **Budget-PME-Demo** avec scenarios.
 - [ ] 4 onglets
 - [ ] 3 scenarios formules
 - [ ] Resume executif humain
-- [ ] Pret a annexer au deck HEC
+- [ ] Pret a annexer au deck pitch

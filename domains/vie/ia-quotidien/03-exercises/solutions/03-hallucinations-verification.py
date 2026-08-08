@@ -36,8 +36,8 @@ SOL: dict[str, Any] = json.loads(r'''{
     "sections": [
       "Interdits collage",
       "V-A-I-R",
-      "HEC",
-      "Travail ONG",
+      "formation",
+      "Travail employeur",
       "Exemples"
     ],
     "case_actions": {

@@ -23,7 +23,7 @@ SOL: dict[str, Any] = json.loads(r'''{
     "three_templates_head": [
       "coach carriere socratique",
       "SOMME.SI entrees/sorties",
-      "outline 10 slides HEC"
+      "outline 10 slides pitch"
     ],
     "iteration_examples": [
       "Raccourcis de 30 %",

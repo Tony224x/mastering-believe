@@ -1,4 +1,4 @@
-# Capstone brouillon deck HEC — niveau medium
+# Capstone brouillon deck pitch — niveau medium
 
 ## Objectif
 Remplir les 10 slides (bullets sobres) — brouillon v1.

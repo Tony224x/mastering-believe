@@ -4,7 +4,7 @@
 Obtenir un **plan** de rapport (pas le devoir entier) a partir de notes brutes.
 
 ## Consigne
-1. Ecris 8 puces de notes brutes sur un sujet HEC-like (ex. "innovation dans une PME de services", fictif).
+1. Ecris 8 puces de notes brutes sur un sujet type formation (ex. "innovation dans une PME de services", fictif).
 2. Prompt : outline en 5 parties max 1 phrase chacune + liste des trous dans tes notes.
 3. Valide ou renomme 2 titres a la main.
 4. Ne demande **pas** la redaction complete.

@@ -1,4 +1,4 @@
-# Capstone final : deck HEC — niveau easy
+# Capstone final : deck pitch — niveau easy
 
 ## Objectif
 Couper 20 % du texte du brouillon et uniformiser les titres.

@@ -1,13 +1,18 @@
 # IA au quotidien (non-tech)
 
+![Apprendre l'IA au quotidien — illustration](assets/hero-apprendre-ia.jpg)
+
+![Parcours 14 jours — carte visuelle](assets/parcours-14j.svg)
+
+
 ## Scope
 
 Maitriser l'**usage pratique de l'IA** (surtout **ChatGPT**) pour :
 
-- reflechir et clarifier des decisions (carriere, etudes HEC) ;
+- reflechir et clarifier des decisions (carriere, formation) ;
 - ecrire des brouillons de rapports sans triche passive ;
 - **accelerer Excel** (formules, tableaux, budget / tresorerie **fictifs**) ;
-- produire un **PowerPoint de type certificat HEC** (pitch PME / innovation), 8–12 slides.
+- produire un **PowerPoint de type formation entrepreneuriat** (pitch PME / innovation), 8–12 slides.
 
 **Frontieres — on exclut :**
 
@@ -15,9 +20,9 @@ Maitriser l'**usage pratique de l'IA** (surtout **ChatGPT**) pour :
 - entrainer un modele ;
 - agents multi-outils / LangGraph ;
 - **Codex** comme chemin obligatoire (bonus optionnel pour power-users) ;
-- **donnees reelles** d'une ONG, clients, employes ou finances personnelles identifiables.
+- **donnees reelles** d'une employeur / association, clients, employes ou finances personnelles identifiables.
 
-Public type : professionnelle comptable debutante en IA, etudiante en entrepreneuriat, tres visuelle, ~45 min/jour.
+Public type : debutant·e en IA, profil Office (Excel / PowerPoint), ~45 min/jour.
 
 ## Prerequisites
 
@@ -42,8 +47,8 @@ Public type : professionnelle comptable debutante en IA, etudiante en entreprene
 | J10 | Structure d'un pitch | 45 min |
 | J11 | Slides & design sobre | 45 min |
 | J12 | Notes orateur & repetition | 45 min |
-| J13 | Capstone brouillon deck HEC | 60 min |
-| J14 | **Capstone final** deck HEC 8–12 slides | 60–90 min |
+| J13 | Capstone brouillon deck pitch | 60 min |
+| J14 | **Capstone final** deck pitch 8–12 slides | 60–90 min |
 
 Voir `PLAN.md` pour le contrat detaille par jour et `REFERENCES.md` pour les sources.
 
@@ -55,13 +60,13 @@ A la fin du parcours, tu peux :
 - [ ] Ecrire un prompt structure (role, contexte, tache, format, contraintes) pour 3 usages differents
 - [ ] Appliquer une **checklist de verification** avant d'utiliser une reponse pour l'ecole ou le travail
 - [ ] Produire un **classeur Excel fictif** "Budget / tresorerie PME" avec formules et resume
-- [ ] Livrer un **PowerPoint 8–12 slides** (pitch PME / innovation style HEC) realise principalement avec ChatGPT
+- [ ] Livrer un **PowerPoint 8–12 slides** (pitch PME / innovation style ecole de commerce) realise principalement avec ChatGPT
 - [ ] Rediger un court "journal d'usage IA" (ce qui a aide, ce que tu as reecrit a la main, ce que tu as refuse de coller)
 
 ## Garde-fous (non negociables)
 
 1. **Pas de donnees reelles** (ONG, clients, salaires, donnees de sante) dans ChatGPT.
-2. **Verifier** chiffres, citations et lois avant remise HEC ou usage pro.
+2. **Verifier** chiffres, citations et lois avant remise scolaire / pro ou usage pro.
 3. L'IA **propose** ; **toi** tu assume le livrable (ethique scolaire + professionnelle).
 4. Codex / outils developpeur : hors chemin critique de ce cours.
 
@@ -72,3 +77,17 @@ A la fin du parcours, tu peux :
 3. [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework)
 4. Duarte, *Resonate* ; Reynolds, *Presentation Zen* (slides)
 5. Liste complete : **`REFERENCES.md`**
+
+## Visuels
+
+Ce domaine est **pense pour un apprentissage visuel** :
+
+| Type | Ou | Role |
+|------|-----|------|
+| Illustrations / SVG | [`assets/`](./assets/) | Cartes mentales, grilles, parcours |
+| Diagrammes Mermaid | dans certains modules `01-theory/` | Flux (prompts, Excel, capstone) |
+| Tes propres captures | `03-exercises/workspace/` | Excel, PowerPoint, ecrans ChatGPT |
+
+Guide detaille : [`assets/README.md`](./assets/README.md).
+
+**Persona du cours** : **Alex** — personnage **fictif** utilise dans les scenes. Ce n'est personne de reel ; adapte les exemples a ta vie (sans coller de donnees sensibles).

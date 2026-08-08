@@ -1,7 +1,7 @@
 # Ecrire avec l'IA — niveau hard
 
 ## Objectif
-Livrer une mini-note de 1 page (intro + 2 sections + conclusion) HEC-like avec journal IA.
+Livrer une mini-note de 1 page (intro + 2 sections + conclusion) type formation avec journal IA.
 
 ## Consigne
 1. Sujet : "Comment une PME peut tester une innovation en 30 jours" (fictif, Quebec).

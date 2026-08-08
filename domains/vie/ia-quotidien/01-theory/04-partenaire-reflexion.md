@@ -8,11 +8,11 @@
 
 ## 1. Scene concrete : le piege du conseil tout cuit
 
-Diami : *« Est-ce que je devrais quitter mon poste pour un pivot entrepreneuriat ? »*
+Alex : *« Est-ce que je devrais quitter mon poste pour un pivot entrepreneuriat ? »*
 
 Mauvaise reponse du systeme (et de beaucoup d'usages) : une liste de 10 raisons + un plan de vie. **Ca soulage 5 minutes et ne clarifie rien.**
 
-Meilleure posture : *« Pose-moi une question a la fois pour clarifier mes contraintes (argent, energie, delai HEC, valeurs). Ne conseille pas avant d'avoir 8 reponses. »*
+Meilleure posture : *« Pose-moi une question a la fois pour clarifier mes contraintes (argent, energie, delai de formation, valeurs). Ne conseille pas avant d'avoir 8 reponses. »*
 
 > **Key takeaway :** L'IA utile pour reflechir **pose des questions** et structure *tes* reponses — elle ne decide pas a ta place.
 

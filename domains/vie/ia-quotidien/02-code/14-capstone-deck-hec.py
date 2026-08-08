@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capstone checklist validator for HEC-style deck structure (stdlib).
+"""Capstone checklist validator for formation-style deck structure (stdlib).
 Does not create a .pptx binary; validates a JSON-like outline the learner can export.
 requires: stdlib only
 """

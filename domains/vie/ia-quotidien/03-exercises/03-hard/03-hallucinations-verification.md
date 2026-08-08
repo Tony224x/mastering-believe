@@ -1,14 +1,14 @@
 # Hallucinations & verification — niveau hard
 
 ## Objectif
-Creer une checklist operationnelle 1 page pour HEC + travail (ONG), pret a reutiliser.
+Creer une checklist operationnelle 1 page pour formation + travail (employeur), pret a reutiliser.
 
 ## Consigne
-1. Produis `checklist-verification-ia.md` avec : interdits de collage, V-A-I-R, regles HEC, regles travail, exemples.
+1. Produis `checklist-verification-ia.md` avec : interdits de collage, V-A-I-R, regles ecole / formation, regles travail, exemples.
 2. Simule 3 cas :
-   - stats inventees pour un pitch
-   - formule Excel douteuse
-   - donnee sensible (que faire au lieu de coller)
+ - stats inventees pour un pitch
+ - formule Excel douteuse
+ - donnee sensible (que faire au lieu de coller)
 3. Pour chaque cas : action concrete en <5 puces.
 4. Fais relire la checklist par ChatGPT en mode "avocat du diable", puis integre 2 critiques.
 

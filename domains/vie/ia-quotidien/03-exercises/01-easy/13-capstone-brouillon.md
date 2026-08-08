@@ -1,4 +1,4 @@
-# Capstone brouillon deck HEC — niveau easy
+# Capstone brouillon deck pitch — niveau easy
 
 ## Objectif
 Figer l'idee fictive finale + structure 10 titres dans PowerPoint (slides presque vides OK).

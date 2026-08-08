@@ -1,6 +1,6 @@
 # Plan fige domaine ia-quotidien
 
-Brief Phase 0 : technicienne comptable + certificat HEC Entrepreneuriat/PME, debutante IA, ~45 min/jour, outils ChatGPT + Excel + PowerPoint. Capstone = deck HEC 8–12 slides. Projet secondaire = tresorerie/budget PME fictif. Codex = bonus hors chemin critique. Donnees reelles ONG interdites.
+Brief Phase 0 : formation entrepreneuriat / PME, debutante IA, ~45 min/jour, outils ChatGPT + Excel + PowerPoint. Capstone = deck pitch 8–12 slides. Projet secondaire = tresorerie/budget PME fictif. Codex = bonus hors chemin critique. Donnees reelles employeur / association interdites.
 
 ---
 
@@ -34,7 +34,7 @@ Brief Phase 0 : technicienne comptable + certificat HEC Entrepreneuriat/PME, deb
 
 ## J5 — Ecrire avec l'IA (Word / rapports)
 - **Concepts cles** : brouillon → structure → ton → relecture humaine ; paraphraser vs triche ; bibliographie
-- **Acquis** : produire un plan + 1 page de rapport HEC-like avec IA, puis reecrire 30 % de sa main
+- **Acquis** : produire un plan + 1 page de rapport formation avec IA, puis reecrire 30 % de sa main
 - **Sources autorisees** : Mollick 2023 ; OpenAI Prompting Guide
 - **Stack du jour** : ChatGPT + Word (ou Google Docs)
 - **Slug** : `05-ecrire-avec-ia`
@@ -68,7 +68,7 @@ Brief Phase 0 : technicienne comptable + certificat HEC Entrepreneuriat/PME, deb
 - **Slug** : `09-projet-tresorerie`
 
 ## J10 — Structure d'un pitch qui tient
-- **Concepts cles** : probleme → solution → preuve → appel ; SUCCESs (Heath) ; audience HEC vs ONG
+- **Concepts cles** : probleme → solution → preuve → appel ; SUCCESs (Heath) ; audience jury formation vs employeur
 - **Acquis** : outline 8–12 slides validee (titres seuls) pour le capstone
 - **Sources autorisees** : Duarte Resonate ; Heath Made to Stick
 - **Stack du jour** : ChatGPT
@@ -88,14 +88,14 @@ Brief Phase 0 : technicienne comptable + certificat HEC Entrepreneuriat/PME, deb
 - **Stack du jour** : ChatGPT + PowerPoint
 - **Slug** : `12-notes-orateur`
 
-## J13 — Capstone brouillon : deck HEC v1
+## J13 — Capstone brouillon : deck pitch v1
 - **Concepts cles** : assemblage bout-en-bout ; coherence narrative ; sources inventees interdites ; checklist qualite
-- **Acquis** : brouillon complet 8–12 slides (contenu) d'un pitch PME/innovation HEC-like, produit avec ChatGPT
+- **Acquis** : brouillon complet 8–12 slides (contenu) d'un pitch PME/innovation type formation, produit avec ChatGPT
 - **Sources autorisees** : Duarte ; Heath ; OpenAI Prompting Guide
 - **Stack du jour** : ChatGPT + PowerPoint
 - **Slug** : `13-capstone-brouillon`
 
-## J14 — Capstone final : deck HEC livrable
+## J14 — Capstone final : deck pitch livrable
 - **Concepts cles** : polish ; verification faits ; relecture a voix haute ; portfolio ; suite Excel
 - **Acquis** : **deck PowerPoint final 8–12 slides** presentable + resume 1 page "comment j'ai utilise l'IA" + classeur tresorerie en annexe si pertinent
 - **Sources autorisees** : ensemble des refs A–D

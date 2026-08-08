@@ -1,18 +1,30 @@
-# Module 14 — Capstone final : deck HEC livrable
+# Module 14 — Capstone final : deck pitch livrable
 
 > **Temps estime** : 60–90 min | **Prerequis** : Module 13
 >
-> **Objectif** : Livrer le **PowerPoint final 8–12 slides** presentable (style certificat HEC / pitch PME), plus un journal court d'usage de l'IA. Outil principal : **ChatGPT**.
+> **Objectif** : Livrer le **PowerPoint final 8–12 slides** presentable (style formation entrepreneuriat / pitch PME), plus un journal court d'usage de l'IA. Outil principal : **ChatGPT**.
 
 ---
+
+![Illustration : deck pitch et portfolio](../assets/hero-pitch-slides.jpg)
+
+```mermaid
+flowchart LR
+  B[Brouillon J13] --> P[Polish texte]
+  P --> V[Verifier faits]
+  V --> N[Notes orateur]
+  N --> O[Oral 6-8 min]
+  O --> L[Livrable final]
+```
+
 
 ## 1. Definition de "termine"
 
 Ton dossier capstone contient :
 
-1. **`Pitch-HEC-Final.pptx`** (8–12 slides)  
-2. **Notes orateur** (au moins sur 4 slides cles)  
-3. **Journal IA** (1/2–1 page) : ce que ChatGPT a produit, ce que tu as reecrit, ce que tu as refuse, verifications faites  
+1. **`Pitch-PME-Final.pptx`** (8–12 slides) 
+2. **Notes orateur** (au moins sur 4 slides cles) 
+3. **Journal IA** (1/2–1 page) : ce que ChatGPT a produit, ce que tu as reecrit, ce que tu as refuse, verifications faites 
 4. (Optionnel) **`Budget-PME-Demo.xlsx`** en annexe si une slide s'y refere
 
 Critere or : *tu peux presenter en 6–8 minutes sans lire les puces.*
@@ -32,9 +44,9 @@ Critere or : *tu peux presenter en 6–8 minutes sans lire les puces.*
 | 5 | Oral chronometre | Toi |
 | 6 | 5 questions pieges | IA coach puis toi |
 
-Design : restraint Presentation Zen. [Reynolds, Presentation Zen]  
-Recit : Resonate. [Duarte, Resonate]  
-Prompts : guide OpenAI. [OpenAI Prompting Guide]  
+Design : restraint Presentation Zen. [Reynolds, Presentation Zen] 
+Recit : Resonate. [Duarte, Resonate] 
+Prompts : guide OpenAI. [OpenAI Prompting Guide] 
 Donnees : jamais de reels sensibles. [CNIL IA]
 
 ---
@@ -56,9 +68,9 @@ Vise **≥ 14/20** avant de considerer le parcours reussi.
 
 ## 4. Apres le cours (maintenance 30 min/semaine)
 
-- 1 usage Excel+IA au travail **sur donnees fictives ou autorisees**  
-- 1 session reflexion carriere socratique  
-- Mettre a jour 3 prompts modeles dans une note telephone  
+- 1 usage Excel+IA au travail **sur donnees fictives ou autorisees** 
+- 1 session reflexion carriere socratique 
+- Mettre a jour 3 prompts modeles dans une note telephone 
 
 Codex / outils dev : uniquement si un jour tu en as besoin — **hors scope de maitrise minimale**.
 

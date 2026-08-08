@@ -46,12 +46,12 @@ Explique comment ecrire une colonne calculee "Sens" qui affiche +Montant si Type
 
 ## 4. Mini-modele du jour (a construire)
 
-**Feuille Transactions** (10 lignes fictives minimum)  
+**Feuille Transactions** (10 lignes fictives minimum) 
 **Feuille Resume** :
 
-- Total entrees  
-- Total sorties  
-- Solde  
+- Total entrees 
+- Total sorties 
+- Solde 
 - Top categorie de depense (tu peux la calculer a la main si la formule est trop avancee — l'IA t'aide a progresser)
 
 Prompt d'assemblage :

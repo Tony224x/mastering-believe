@@ -11,7 +11,7 @@
 Tu recois (fictif) une liste :
 
 ```
-12/01/2026; loyer  ; 1200 ; sortie
+12/01/2026; loyer ; 1200 ; sortie
 2026-01-15; Cafe equipe; 45,5; Sortie
 ...
 ```
@@ -64,8 +64,8 @@ J'ai categories en A et totaux en B. Quel type de graphique recommander et pourq
 
 ## 5. Livrable du jour
 
-- Tableau propre (fictif)  
-- 1 graphique  
+- Tableau propre (fictif) 
+- 1 graphique 
 - 3 puces d'insight **ecrites par toi** (l'IA peut proposer, tu valides)
 
 ---

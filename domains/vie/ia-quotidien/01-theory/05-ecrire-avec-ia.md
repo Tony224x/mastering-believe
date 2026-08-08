@@ -2,7 +2,7 @@
 
 > **Temps estime** : 45 min | **Prerequis** : Modules 02–04
 >
-> **Objectif** : Produire un brouillon utile (plan + page) pour un rendu type HEC, puis le reapproprier a la main.
+> **Objectif** : Produire un brouillon utile (plan + page) pour un rendu type formation, puis le reapproprier a la main.
 
 ---
 
@@ -36,7 +36,7 @@ Prompts de format : preciser longueur, public, niveau de langue. [OpenAI Prompti
 
 ---
 
-## 3. Prompt modele "rapport HEC-like"
+## 3. Prompt modele "rapport formation"
 
 ```
 Role : assistant redaction academique (niveau certificat, pas these).

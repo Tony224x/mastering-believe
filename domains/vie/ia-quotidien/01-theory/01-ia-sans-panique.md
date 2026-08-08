@@ -6,9 +6,14 @@
 
 ---
 
-## 1. Scene concrete : le lundi matin de Diami
+![LLM : plausible n'est pas vrai — ce que l'IA fait bien vs ce qu'elle ne garantit pas](../assets/01-llm-vs-knowledge.svg)
 
-Diami ouvre ChatGPT. Elle tape : *« Ecris-moi un budget pour mon association »*.
+> **Visuel** : garde cette carte sous les yeux pendant tout le parcours.
+
+
+## 1. Scene concrete : le lundi matin d'Alex
+
+Alex ouvre ChatGPT. Elle tape : *« Ecris-moi un budget pour mon association »*.
 
 La reponse arrive en 10 secondes : categories, pourcentages, ton confiant. Ca *a l'air* d'un document pro. Elle se dit : « Tout le monde sait deja faire ca. Moi je debute. Je suis en retard. »
 
@@ -53,8 +58,8 @@ Le *GPT-4 System Card* (OpenAI, 2023) documente explicitement les risques d'**ha
 **Mal (ou dangereux) :**
 
 - inventer des chiffres, lois, citations ;
-- "connaitre" les regles internes de ton ONG ;
-- remplacer ta relecture HEC ;
+- "connaitre" les regles internes de ton employeur / association ;
+- remplacer ta relecture formation ;
 - garantir la confidentialite de ce que tu colles dans le chat (regles du fournisseur + prudence).
 
 ---
@@ -62,10 +67,10 @@ Le *GPT-4 System Card* (OpenAI, 2023) documente explicitement les risques d'**ha
 ## 4. Mini-carte du parcours (14 jours)
 
 ```
-J1–J3  Bases & securite mentale
-J4–J5  Reflechir & ecrire
-J6–J9  Excel + projet tresorerie fictive
-J10–J14 PowerPoint + capstone deck HEC
+J1–J3 Bases & securite mentale
+J4–J5 Reflechir & ecrire
+J6–J9 Excel + projet tresorerie fictive
+J10–J14 PowerPoint + capstone deck pitch
 ```
 
 Outil principal : **ChatGPT**. Codex = bonus optionnel, hors chemin critique.
@@ -91,7 +96,7 @@ Complete sans l'IA :
 **R2.** Le modele optimise la *vraisemblance*, pas la verite factuelle (hallucination).
 
 **Q3.** Cite un usage IA adapte a ce cours et un usage hors scope.
-**R3.** In : plan de slides HEC. Out : entrainer un modele / coder un agent.
+**R3.** In : plan de slides pitch. Out : entrainer un modele / coder un agent.
 
 **Q4.** Que signifie "stochastic parrot" en une phrase ?
 **R4.** Un systeme qui recombine des formes de langage sans comprehension fiable du monde. [Stochastic Parrots, 2021]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Answer key — 13-capstone-brouillon (Capstone brouillon deck HEC).
+"""Answer key — 13-capstone-brouillon (Capstone brouillon deck pitch).
 
 Per-level keys for the day-specific exercises. Runnable smoke tests encode
 the critical constraints of each level (not a generic shell).
@@ -12,7 +12,7 @@ import json
 from typing import Any
 
 MODULE = "13-capstone-brouillon"
-TITLE = 'Capstone brouillon deck HEC'
+TITLE = 'Capstone brouillon deck pitch'
 SOL: dict[str, Any] = json.loads(r'''{
   "easy_key": {
     "n_titles": 10,
@@ -26,7 +26,7 @@ SOL: dict[str, Any] = json.loads(r'''{
     ],
     "checklist": [
       "pas d'etude inventee",
-      "pas de data ONG",
+      "pas de data employeur",
       "titres conclusions",
       "fil 60s",
       "label fictif"

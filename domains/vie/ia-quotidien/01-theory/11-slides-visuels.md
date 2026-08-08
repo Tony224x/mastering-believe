@@ -8,7 +8,7 @@
 
 ## 1. Scene concrete : le mur de texte
 
-Slide typique ratee : 12 puces, police 14, logo en coin, fond charge.  
+Slide typique ratee : 12 puces, police 14, logo en coin, fond charge. 
 L'orateur lit. L'audience lit. Personne n'ecoute.
 
 Reynolds (*Presentation Zen*) : restraint, simplicite, naturalite — **une idee dominante par slide**. [Reynolds, Presentation Zen]
@@ -19,10 +19,10 @@ Reynolds (*Presentation Zen*) : restraint, simplicite, naturalite — **une idee
 
 ## 2. Regles operatoires (non negotiables du cours)
 
-1. **Max 1 idee** par slide  
-2. **Max 3 bullets** (7–10 mots chacun) ou 1 phrase forte  
-3. Titre = conclusion, pas theme vague ("Marche" → "Les cafes de quartier perdent 4h/semaine en stock")  
-4. Visuel simple (icone, schema 3 blocs) > photo stock genante  
+1. **Max 1 idee** par slide 
+2. **Max 3 bullets** (7–10 mots chacun) ou 1 phrase forte 
+3. Titre = conclusion, pas theme vague ("Marche" → "Les cafes de quartier perdent 4h/semaine en stock") 
+4. Visuel simple (icone, schema 3 blocs) > photo stock genante 
 5. Notes orateur = hors slide (J12)
 
 ---

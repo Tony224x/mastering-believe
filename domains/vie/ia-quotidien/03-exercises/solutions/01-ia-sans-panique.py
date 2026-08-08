@@ -31,7 +31,7 @@ SOL: dict[str, Any] = json.loads(r'''{
   "medium_key": {
     "example_classification": [
       [
-        "Preparer un plan de slides HEC",
+        "Preparer un plan de slides pitch",
         "A"
       ],
       [
@@ -51,23 +51,23 @@ SOL: dict[str, Any] = json.loads(r'''{
         "A avec relecture"
       ]
     ],
-    "personal_rule_example": "Je ne colle jamais de noms de donateurs, montants reels ONG, ni pieces d'identite."
+    "personal_rule_example": "Je ne colle jamais de noms de donateurs, montants reels employeur, ni pieces d'identite."
   },
   "hard_key": {
     "charter_sections": [
       "Buts (3 usages max)",
       "Interdits donnees",
       "Verification V-A-I-R",
-      "HEC: reecriture obligatoire",
+      "Formation: reecriture obligatoire",
       "Travail: accord avant usage client"
     ],
     "bad_good_prompt_examples": [
       [
         "Aide-moi",
-        "Role coach HEC... Tache: outline 8 slides... Contraintes: fictif"
+        "Role coach formation... Tache: outline 8 slides... Contraintes: fictif"
       ],
       [
-        "Budget de mon ONG [vrais chiffres]",
+        "Budget de mon employeur [vrais chiffres]",
         "Budget PME Demo fictif, colonnes Date|..."
       ],
       [

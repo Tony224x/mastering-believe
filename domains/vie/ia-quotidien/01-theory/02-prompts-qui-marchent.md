@@ -6,14 +6,25 @@
 
 ---
 
+![Grille RCCFC : Role, Contexte, Tache, Format, Contraintes](../assets/02-rccfc-prompt.svg)
+
+```mermaid
+flowchart LR
+  A[Idee floue] --> B[RCCFC]
+  B --> C[1er jet]
+  C --> D[Iteration]
+  D --> E[Livrable utile]
+```
+
+
 ## 1. Scene concrete : deux prompts, deux mondes
 
 **Prompt A (flou) :**
 > « Aide-moi pour mon PowerPoint. »
 
 **Prompt B (structure) :**
-> Tu es coach de presentation pour un certificat HEC en entrepreneuriat.
-> Contexte : pitch de 7 minutes pour un projet de PME fictive de livraison locale a Montreal.
+> Tu es coach de presentation pour un formation en entrepreneuriat.
+> Contexte : pitch de 7 minutes pour un projet de PME fictive de livraison locale en ville.
 > Tache : propose une structure de 10 slides (titre + 1 phrase d'intention par slide).
 > Format : liste numerotee.
 > Contraintes : francais soutenu mais clair ; pas de jargon startup inutile ; aucune donnee inventee presentee comme reelle.
@@ -71,7 +82,7 @@ Rarement le 1er jet est le bon. Enchaine :
 ### Reflexion carriere
 ```
 Role : coach de carriere neutre.
-Contexte : technicienne comptable + etudes HEC entrepreneuriat ; je explore un pivot.
+Contexte : formation entrepreneuriat ; je explore un pivot.
 Tache : pose-moi 8 questions (une par une) pour clarifier mes contraintes avant de proposer des pistes.
 Contraintes : ne propose pas de plan avant la question 8 ; pas de cliches motivationnels.
 ```

@@ -31,7 +31,7 @@ Slide N — [Titre]
 ## 3. Prompt ChatGPT utile
 
 ```
-Role : coach d'oral HEC.
+Role : coach d'oral.
 Contexte : mon deck (titres + bullets) : [coller].
 Tache : pour les slides 1, 4, 7, 10 — generee notes orateur au format ci-dessus + 5 questions pieges d'un prof sceptique avec pistes de reponse HONNETES (y compris "je n'ai pas encore mesure X").
 Contraintes : ne pas inventer de chiffres absents de mon texte.
@@ -43,10 +43,10 @@ L'IA comme partenaire de repetition rejoint l'idee de roles assignes (coach) che
 
 ## 4. Protocole repetition 20 min
 
-1. Timer 7 min — present à voix haute  
-2. Note les accrocs  
-3. Demande a l'IA : "voici mon transcript approximatif : raccourcis"  
-4. Rejoue une fois  
+1. Timer 7 min — present à voix haute 
+2. Note les accrocs 
+3. Demande a l'IA : "voici mon transcript approximatif : raccourcis" 
+4. Rejoue une fois 
 5. Reponds a 3 questions pieges a voix haute
 
 ---

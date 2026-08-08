@@ -6,6 +6,9 @@
 
 ---
 
+![Checklist V-A-I-R : Verifiable, Ancree, Invention, Risque](../assets/03-vair-checklist.svg)
+
+
 ## 1. Scene concrete : la fausse statistique
 
 Prompt : *« Donne-moi le taux moyen de defaillance des PME au Quebec en 2024 avec source. »*
@@ -22,7 +25,7 @@ Le *GPT-4 System Card* reconnait les hallucinations comme risque central. [GPT-4
 
 ## 2. Checklist V-A-I-R (simple, memorable)
 
-Avant d'utiliser une reponse pour HEC ou le travail :
+Avant d'utiliser une reponse pour l'ecole ou le travail :
 
 | | Question | Si non → |
 |--|----------|----------|
@@ -37,7 +40,7 @@ Avant d'utiliser une reponse pour HEC ou le travail :
 
 **Interdit dans le chat (cours + vraie vie) :**
 
-- noms de clients, donateurs, beneficiaires de l'ONG ;
+- noms de clients, clients, beneficiaires, collegues ;
 - salaires, numéros de compte, documents fiscaux reels ;
 - donnees de sante, dossiers RH ;
 - mots de passe, captures d'ecran internes.
@@ -80,7 +83,7 @@ Utilise uniquement les chiffres que je fournis : [coller chiffres fictifs].
 **R2.** Ne pas la citer ; chercher une source officielle ou l'oter.
 
 **Q3.** Donne 2 exemples de donnees a ne jamais coller.
-**R3.** Identifiants clients ONG ; salaires / documents fiscaux reels.
+**R3.** Identifiants clients / beneficiaires ; salaires / documents fiscaux reels.
 
 **Q4.** A quoi sert la contrainte "ecris INCERTAIN" ?
 **R4.** Forcer le modele a signaler le doute au lieu d'inventer.

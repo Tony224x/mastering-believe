@@ -2,13 +2,16 @@
 
 > **Temps estime** : 45 min | **Prerequis** : Modules 01–05
 >
-> **Objectif** : Figer l'ossature 8–12 slides du capstone HEC (titres + intention), avant le design.
+> **Objectif** : Figer l'ossature 8–12 slides du capstone pitch (titres + intention), avant le design.
 
 ---
 
+![Recit du pitch : probleme, enjeu, solution, preuve, demande](../assets/10-pitch-story.svg)
+
+
 ## 1. Scene concrete : 12 slides, zero histoire
 
-Beaucoup de decks etudiants listent : Idee, Marche, Concurrent, Finances, Merci.  
+Beaucoup de decks etudiants listent : Idee, Marche, Concurrent, Finances, Merci. 
 Sans **tension narrative**, l'audience decroche a la slide 3.
 
 Duarte (*Resonate*) propose de penser la presentation comme un mouvement entre **ce qui est** et **ce qui pourrait etre**. [Duarte, Resonate]
@@ -19,7 +22,7 @@ Heath & Heath (*Made to Stick*) : un message colle s'il est Simple, Unexpected, 
 
 ---
 
-## 2. Canvas pitch PME / innovation (HEC-like)
+## 2. Canvas pitch PME / innovation (type formation)
 
 Structure recommandee (adaptable 8–12) :
 
@@ -41,7 +44,7 @@ Structure recommandee (adaptable 8–12) :
 ## 3. Prompt pour generer l'outline (puis editer)
 
 ```
-Role : coach pitch HEC entrepreneuriat.
+Role : coach pitch entrepreneuriat entrepreneuriat.
 Contexte : [3–5 phrases sur mon idee FICTIVE].
 Tache : structure 10 slides. Pour chaque: Titre (max 8 mots) | Intention (1 phrase) | Contenu max 3 bullets.
 Contraintes : narrative probleme→solution ; pas de jargon vide ; signale les slides faibles.
