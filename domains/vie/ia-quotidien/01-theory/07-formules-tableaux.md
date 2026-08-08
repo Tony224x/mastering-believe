@@ -6,6 +6,11 @@
 
 ---
 
+![Schema du module : Chaque formule se decoupe en morceaux comprehensibles.](../assets/07-formule-expliquee.svg)
+
+> **En une phrase :** Chaque formule se decoupe en morceaux comprehensibles.
+
+
 ## 1. Scene concrete : le modele "serviette de table"
 
 Sur une serviette : Recettes − Depenses = Solde. En Excel, le meme modele devient :
@@ -16,7 +21,7 @@ Sur une serviette : Recettes − Depenses = Solde. En Excel, le meme modele devi
 
 Few (2012) insiste : un tableau clair bat un graphique joli mais trompeur. Commence par des **nombres lisibles**. [Few, 2012]
 
-> **Key takeaway :** Un bon modele Excel est d'abord **lisible par un humain** (toi dans 2 semaines), pas "impressionnant".
+> **A retenir :** Un bon modele Excel est d'abord **lisible par un humain** (toi dans 2 semaines), pas "impressionnant".
 
 ---
 

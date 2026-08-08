@@ -8,6 +8,11 @@
 
 ![Illustration : deck pitch et portfolio](../assets/hero-pitch-slides.jpg)
 
+![Check final : verifier, repeter, livrer](../assets/14-check-final.svg)
+
+> **En une phrase :** regarde ce schema avant de lire le reste.
+
+
 ```mermaid
 flowchart LR
   B[Brouillon J13] --> P[Polish texte]
@@ -17,6 +22,17 @@ flowchart LR
   O --> L[Livrable final]
 ```
 
+
+
+## Contrat Minimum / Bonus
+
+| | Minimum (reussi) | Bonus |
+|--|------------------|-------|
+| Slides | **8** slides d histoire | 10–12 slides |
+| Notes orateur | 3 slides cles | 4 slides |
+| Journal IA | 5 puces | 1/2–1 page |
+| Oral | 6 min chrono | 6–8 min + questions pieges |
+| Excel | optionnel | annexe Budget-PME-Demo |
 
 ## 1. Definition de "termine"
 
@@ -29,7 +45,7 @@ Ton dossier capstone contient :
 
 Critere or : *tu peux presenter en 6–8 minutes sans lire les puces.*
 
-> **Key takeaway :** Le capstone prouve un **systeme d'usage** (prompts + verification + reappropriation), pas une generation one-shot.
+> **A retenir :** Le capstone prouve un **systeme d'usage** (prompts + verification + reappropriation), pas une generation one-shot.
 
 ---
 

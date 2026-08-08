@@ -1,4 +1,8 @@
-# Slides & design sobre — niveau easy
+# Mission — Slides & design sobre — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Transformer 1 slide "mur de texte" en version sobre.
@@ -15,3 +19,9 @@ Transformer 1 slide "mur de texte" en version sobre.
 - [ ] ≤3 bullets
 - [ ] Titre = conclusion
 - [ ] Slide creee dans PPT
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

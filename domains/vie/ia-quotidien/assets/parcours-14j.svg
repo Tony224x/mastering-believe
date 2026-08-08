@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360">
+<svg role="img" xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360">
+  <title>parcours 14j</title>
+  <desc>Schema pedagogique du domaine ia-quotidien : parcours 14j.</desc>
   <rect width="960" height="360" fill="#F8FAFC"/>
   <text x="480" y="36" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#0F172A">Parcours 14 jours — carte visuelle</text>
   <g font-family="Helvetica, Arial, sans-serif" font-size="13">

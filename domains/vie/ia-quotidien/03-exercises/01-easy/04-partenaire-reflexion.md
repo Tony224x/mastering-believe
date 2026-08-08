@@ -1,4 +1,8 @@
-# Partenaire de reflexion — niveau easy
+# Mission — Partenaire de reflexion — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Mener 5 questions socratiques (une a la fois) sur un choix simple.
@@ -14,3 +18,9 @@ Mener 5 questions socratiques (une a la fois) sur un choix simple.
 - [ ] 5 tours question/reponse
 - [ ] Resume base sur tes mots
 - [ ] ≥1 correction manuelle du resume
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

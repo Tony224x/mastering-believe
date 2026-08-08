@@ -6,13 +6,18 @@
 
 ---
 
+![Schema du module : Les notes portent le discours ; la slide ne se lit pas.](../assets/12-chrono-oral.svg)
+
+> **En une phrase :** Les notes portent le discours ; la slide ne se lit pas.
+
+
 ## 1. Scene concrete : l'oral qui s'ecroule
 
 Les slides sont propres. L'etudiante lit chaque puce. Chrono depasse. Une question simple ("d'ou vient ce chiffre ?") fait paniquer.
 
 Cause : le deck portait **tout** le discours. Or le deck est un **support**. [Reynolds, Presentation Zen]
 
-> **Key takeaway :** Si tu as besoin de lire le slide, le slide a trop de texte — ou tu manques de notes orateur.
+> **A retenir :** Si tu as besoin de lire le slide, le slide a trop de texte — ou tu manques de notes orateur.
 
 ---
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Nettoyer des donnees</title>
+  <desc id="d">Donnees sales, regles de nettoyage, puis tableau propre et graphique.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Sale → propre → lisible</text>
+  <rect x="60" y="90" width="240" height="110" rx="12" fill="#FEE2E2"/><text x="180" y="150" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#7F1D1D">Donnees sales</text>
+  <rect x="360" y="90" width="240" height="110" rx="12" fill="#FEF3C7"/><text x="480" y="150" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#78350F">Regles</text>
+  <rect x="660" y="90" width="240" height="110" rx="12" fill="#D1FAE5"/><text x="780" y="150" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#064E3B">Graphique sobre</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Nettoyer des donnees</text>
+</svg>

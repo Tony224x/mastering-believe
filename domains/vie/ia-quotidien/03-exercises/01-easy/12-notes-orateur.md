@@ -1,4 +1,8 @@
-# Notes orateur & repetition — niveau easy
+# Mission — Notes orateur & repetition — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Ecrire des notes orateur pour **1 slide** critique (accroche).
@@ -12,3 +16,9 @@ Ecrire des notes orateur pour **1 slide** critique (accroche).
 - [ ] 4 parties du format presentes
 - [ ] Version humaine initiale
 - [ ] Temps d'ouverture note
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

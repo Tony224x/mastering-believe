@@ -1,4 +1,8 @@
-# Projet tresorerie / budget PME — niveau easy
+# Mission — Projet tresorerie / budget PME — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Generer un CSV fictif de 15 transactions pour une PME demo.
@@ -13,3 +17,9 @@ Generer un CSV fictif de 15 transactions pour une PME demo.
 - [ ] 15 lignes importees
 - [ ] Audit anonymat OK
 - [ ] ≥2 corrections si necessaire (ou justification "rien a corriger")
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Slide avant / apres</title>
+  <desc id="d">A gauche un mur de texte, a droite une slide avec un titre fort et trois puces.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="36" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="18" font-weight="700" fill="#0F172A">Mur de texte → slide lisible</text>
+  <rect x="50" y="60" width="400" height="190" rx="12" fill="#FEE2E2" stroke="#B91C1C"/>
+  <text x="250" y="100" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700" fill="#7F1D1D">AVANT</text>
+  <text x="70" y="140" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#7F1D1D">Solution innovante collaborative digitale...</text>
+  <text x="70" y="160" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#7F1D1D">12 puces, police petite, personne n ecoute</text>
+  <rect x="510" y="60" width="400" height="190" rx="12" fill="#D1FAE5" stroke="#047857"/>
+  <text x="710" y="100" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700" fill="#064E3B">APRES</text>
+  <text x="530" y="145" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#064E3B">Un solde clair chaque lundi</text>
+  <text x="530" y="175" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#064E3B">• 3 puces max</text>
+  <text x="530" y="195" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#064E3B">• 1 idee</text>
+  <text x="530" y="215" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#064E3B">• titre = conclusion</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Slide avant / apres</text>
+</svg>

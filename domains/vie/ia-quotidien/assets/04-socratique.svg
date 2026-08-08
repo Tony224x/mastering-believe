@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Dialogue socratique</title>
+  <desc id="d">Cycle question, reponse de l apprenant, puis synthese sans conseil premature.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Partenaire de reflexion</text>
+  <rect x="60" y="80" width="220" height="90" rx="12" fill="#0F766E"/><text x="170" y="135" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">1. Question</text>
+  <rect x="370" y="80" width="220" height="90" rx="12" fill="#0D9488"/><text x="480" y="135" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">2. Ta reponse</text>
+  <rect x="680" y="80" width="220" height="90" rx="12" fill="#14B8A6"/><text x="790" y="135" text-anchor="middle" fill="#134E4A" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">3. Synthese</text>
+  <text x="480" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#334155">L IA pose des questions. Toi tu tranches.</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Dialogue socratique</text>
+</svg>

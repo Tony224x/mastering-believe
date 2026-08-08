@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Donnees vert orange rouge</title>
+  <desc id="d">Feu tricolore : fictif OK, anonymiser, ne jamais coller sante RH salaires clients.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Avant de coller dans ChatGPT</text>
+  <circle cx="180" cy="140" r="50" fill="#16A34A"/><text x="180" y="148" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">VERT</text>
+  <text x="180" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#14532D">Exemples fictifs</text>
+  <circle cx="480" cy="140" r="50" fill="#F59E0B"/><text x="480" y="148" text-anchor="middle" fill="#78350F" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">ORANGE</text>
+  <text x="480" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#78350F">Anonymiser d abord</text>
+  <circle cx="780" cy="140" r="50" fill="#DC2626"/><text x="780" y="148" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">ROUGE</text>
+  <text x="780" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#7F1D1D">Sante / RH / clients</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Donnees vert orange rouge</text>
+</svg>

@@ -6,6 +6,11 @@
 
 ---
 
+![Schema du module : Quatre onglets, zero donnee reelle d employeur.](../assets/09-classeur-onglets.svg)
+
+> **En une phrase :** Quatre onglets, zero donnee reelle d employeur.
+
+
 ```mermaid
 flowchart TB
   subgraph Classeur["Budget-PME-Demo.xlsx"]
@@ -35,7 +40,7 @@ A la fin de l'heure, tu as un fichier que tu peux montrer (ecole, entretien, ou 
 
 Ce n'est **pas** le budget de ton employeur. [CNIL IA] [NIST AI RMF]
 
-> **Key takeaway :** Un projet fictif bien fait enseigne le geste pro **sans** exposer de donnees sensibles.
+> **A retenir :** Un projet fictif bien fait enseigne le geste pro **sans** exposer de donnees sensibles.
 
 ---
 

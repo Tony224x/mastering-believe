@@ -1,15 +1,33 @@
-# Capstone final : deck pitch — niveau easy
+# Mission J14 — Polish minimum (easy)
 
-## Objectif
-Couper 20 % du texte du brouillon et uniformiser les titres.
+> **Temps :** ~20 min · **Badge :** Deck presentable
 
-## Consigne
-1. Sur le deck v1, identifie les 5 slides les plus chargees.
-2. Avec ChatGPT : raccourcis bullets (garde le sens).
-3. Uniformise le style des titres (meme pattern).
-4. Avant/apres sur 2 slides (copie texte).
+## Mission du jour
 
-## Criteres de reussite
+**But :** alleger le brouillon pour le **contrat minimum** (8 slides).
+
+## Contrat rappel
+
+| Minimum | Bonus |
+|---------|-------|
+| 8 slides | 10–12 |
+| Notes sur 3 slides | 4 slides |
+| Journal 5 puces | page complete |
+
+## A faire
+
+1. Choisis les 5 slides les plus chargees.
+2. Avec ChatGPT : « raccourcis a 3 puces max, garde mon sens ».
+3. Uniformise les titres (meme style).
+4. Avant/apres sur **2** slides (copie texte).
+
+## Indice
+Si tout est important, rien n est important : coupe 20 %.
+
+## Reussite
 - [ ] 5 slides allegees
-- [ ] Avant/apres sur 2 slides
-- [ ] Titres homogenes
+- [ ] Avant/apres ×2
+- [ ] Au moins 8 slides restantes dans le deck
+
+## Feedback
+**Badge Deck presentable** des que le minimum 8 slides se lit en mode diaporama sans mur de texte.

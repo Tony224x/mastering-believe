@@ -1,4 +1,8 @@
-# Nettoyer, analyser, visualiser — niveau easy
+# Mission — Nettoyer, analyser, visualiser — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Identifier les defauts d'un export "sale" fourni.
@@ -19,3 +23,9 @@ Identifier les defauts d'un export "sale" fourni.
 - [ ] ≥5 problemes listes par toi d'abord
 - [ ] Checklist IA
 - [ ] 2 ecarts notes
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

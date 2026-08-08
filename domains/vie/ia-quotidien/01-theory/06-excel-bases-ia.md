@@ -8,6 +8,9 @@
 
 ![Boucle Excel + ChatGPT : decrire, formule, coller, tester, corriger](../assets/06-excel-flow.svg)
 
+> **En une phrase :** regarde ce schema avant de lire le reste.
+
+
 ```mermaid
 flowchart TD
   D[Decrire colonnes] --> F[Demander formule FR]
@@ -36,7 +39,7 @@ Explique chaque partie de la formule en 1 phrase.
 
 La doc Microsoft rappelle la structure des formules (`=`, operateurs, references). [Microsoft formulas overview]
 
-> **Key takeaway :** ChatGPT ne "voit" pas ton fichier (sauf si tu utilises une fonction fichiers / Copilot). Il raisonne sur **ta description**. Sois precise.
+> **A retenir :** ChatGPT ne "voit" pas ton fichier (sauf si tu utilises une fonction fichiers / Copilot). Il raisonne sur **ta description**. Sois precise.
 
 ---
 

@@ -6,6 +6,11 @@
 
 ---
 
+![Schema du module : Brouillon complet : minimum 8 slides d histoire.](../assets/13-deck-8-slides.svg)
+
+> **En une phrase :** Brouillon complet : minimum 8 slides d histoire.
+
+
 ## 1. Definition du livrable v1
 
 Tu termines J13 avec un fichier PowerPoint (ou equivalent) qui contient :
@@ -17,7 +22,7 @@ Tu termines J13 avec un fichier PowerPoint (ou equivalent) qui contient :
 
 Ce n'est pas encore le polish final (J14), mais **plus un outline**.
 
-> **Key takeaway :** v1 = complet et imparfait. Mieux qu'un plan parfait non assemble.
+> **A retenir :** v1 = complet et imparfait. Mieux qu'un plan parfait non assemble.
 
 ---
 

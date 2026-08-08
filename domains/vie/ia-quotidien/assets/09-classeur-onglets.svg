@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Classeur budget PME</title>
+  <desc id="d">Quatre onglets : Transactions, Resume, Scenarios, Readme.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Budget-PME-Demo.xlsx</text>
+  <rect x="50" y="90" width="200" height="100" rx="10" fill="#0F766E"/><text x="150" y="150" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">Transactions</text>
+  <rect x="270" y="90" width="200" height="100" rx="10" fill="#0D9488"/><text x="370" y="150" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">Resume</text>
+  <rect x="490" y="90" width="200" height="100" rx="10" fill="#14B8A6"/><text x="590" y="150" text-anchor="middle" fill="#134E4A" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">Scenarios</text>
+  <rect x="710" y="90" width="200" height="100" rx="10" fill="#99F6E4"/><text x="810" y="150" text-anchor="middle" fill="#134E4A" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">Readme</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Classeur budget PME</text>
+</svg>

@@ -8,6 +8,9 @@
 
 ![Checklist V-A-I-R : Verifiable, Ancree, Invention, Risque](../assets/03-vair-checklist.svg)
 
+> **En une phrase :** regarde ce schema avant de lire le reste.
+
+
 
 ## 1. Scene concrete : la fausse statistique
 
@@ -19,7 +22,7 @@ Le ton est confiant. Les chiffres sont ronds. **C'est exactement le danger.**
 
 Le *GPT-4 System Card* reconnait les hallucinations comme risque central. [GPT-4 System Card, 2023]
 
-> **Key takeaway :** Traite toute stat, citation, loi ou "etude" comme **non prouvee** jusqu'a verification externe.
+> **A retenir :** Traite toute stat, citation, loi ou "etude" comme **non prouvee** jusqu'a verification externe.
 
 ---
 
@@ -36,6 +39,13 @@ Avant d'utiliser une reponse pour l'ecole ou le travail :
 
 ---
 
+
+![Feu tricolore des donnees : vert fictif, orange anonymiser, rouge ne pas coller](../assets/03b-donnees-feu.svg)
+
+> **En une phrase :** si tu ne mettrais pas l info sur un ecran de bus, ne la mets pas dans le chat.
+
+**Avant / apres :** `Marie Dupont, salaire 2450` → `Employe A, montant supprime`.
+
 ## 3. Donnees : ce qui ne se colle jamais
 
 **Interdit dans le chat (cours + vraie vie) :**
@@ -49,7 +59,7 @@ Prefere : **jeux de donnees fictifs** (comme le projet tresorerie J9).
 
 Cadre utile : guides **CNIL** sur l'IA et principes de minimisation ; au Canada, principes de l'**OPC**. [CNIL IA] Le NIST AI RMF rappelle de penser *risque* meme pour un usage "simple". [NIST AI RMF]
 
-> **Key takeaway :** Si tu n'afficherais pas cette info sur un ecran de bus, ne la mets pas dans un LLM grand public.
+> **A retenir :** Si tu n'afficherais pas cette info sur un ecran de bus, ne la mets pas dans un LLM grand public.
 
 ---
 

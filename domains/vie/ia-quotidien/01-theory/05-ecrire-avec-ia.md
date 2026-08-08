@@ -6,6 +6,11 @@
 
 ---
 
+![Schema du module : L IA aide au brouillon ; la version finale est la tienne.](../assets/05-avant-apres-texte.svg)
+
+> **En une phrase :** L IA aide au brouillon ; la version finale est la tienne.
+
+
 ## 1. Scene concrete : le rapport de 3 pages pour hier
 
 Tu as des notes de cours eparses et un enonce. ChatGPT peut :
@@ -18,7 +23,7 @@ Il ne doit **pas** devenir l'auteur cache du devoir entier (ethique + apprentiss
 
 Mollick (2023) insiste sur des usages ou l'etudiant *assigne un role* a l'IA tout en restant responsable du rendu. [Mollick, 2023]
 
-> **Key takeaway :** Pipeline honnete = **tes idees → structure IA → brouillon IA → reecriture humaine majoritaire**.
+> **A retenir :** Pipeline honnete = **tes idees → structure IA → brouillon IA → reecriture humaine majoritaire**.
 
 ---
 

@@ -8,6 +8,9 @@
 
 ![Grille RCCFC : Role, Contexte, Tache, Format, Contraintes](../assets/02-rccfc-prompt.svg)
 
+> **En une phrase :** regarde ce schema avant de lire le reste.
+
+
 ```mermaid
 flowchart LR
   A[Idee floue] --> B[RCCFC]
@@ -16,6 +19,17 @@ flowchart LR
   D --> E[Livrable utile]
 ```
 
+
+
+## Version simple (a utiliser d abord)
+
+Oublie les acronymes 2 minutes. Ecris seulement :
+
+1. **Contexte** — mon tableau / mon sujet  
+2. **Demande** — ce que je veux  
+3. **Resultat attendu** — format (liste, formule, 5 puces…)
+
+La grille **RCCFC** plus bas est la version complete (optionnelle le jour 1 des prompts).
 
 ## 1. Scene concrete : deux prompts, deux mondes
 
@@ -31,7 +45,7 @@ flowchart LR
 
 Le prompt B produit quelque chose d'*actionnable*. Le A produit du generique.
 
-> **Key takeaway :** La qualite de sortie suit la qualite d'entree. Le modele n'est pas telepathe.
+> **A retenir :** La qualite de sortie suit la qualite d'entree. Le modele n'est pas telepathe.
 
 ---
 
@@ -73,7 +87,7 @@ Rarement le 1er jet est le bon. Enchaine :
 3. "Donne 2 alternatives plus concretes pour la slide 4."
 4. "Qu'est-ce qui est faible dans cette structure ? Sois direct."
 
-> **Key takeaway :** Un bon usage = conversation courte et dirigee, pas un monologue magique.
+> **A retenir :** Un bon usage = conversation courte et dirigee, pas un monologue magique.
 
 ---
 

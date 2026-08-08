@@ -1,4 +1,8 @@
-# Structure d'un pitch qui tient — niveau easy
+# Mission — Structure d'un pitch qui tient — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Ecrire le pitch en **une phrase** + le probleme en **une phrase**.
@@ -13,3 +17,9 @@ Ecrire le pitch en **une phrase** + le probleme en **une phrase**.
 - [ ] Phrases humaines initiales
 - [ ] Variantes IA
 - [ ] Choix justifie
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

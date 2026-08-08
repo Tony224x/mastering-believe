@@ -19,43 +19,45 @@ SOL: dict[str, Any] = json.loads(r'''{
       [
         "2026-01-02",
         "Vente A",
-        120,
+        200,
         "entree"
       ],
       [
         "2026-01-03",
         "Vente B",
-        80,
+        250,
         "entree"
       ],
       [
         "2026-01-04",
         "Vente C",
-        50,
+        150,
         "entree"
       ],
       [
         "2026-01-05",
         "Loyer",
-        100,
+        80,
         "sortie"
       ],
       [
         "2026-01-06",
         "Fournitures",
-        30,
+        40,
         "sortie"
       ],
       [
         "2026-01-07",
         "Pub",
-        20,
+        30,
         "sortie"
       ]
     ],
     "formula_fr": "=SOMME.SI(D2:D7;\"entree\";C2:C7)",
     "formula_fr_alt": "selon ordre colonnes Montant/Type — adapter plages",
-    "expected_entrees": 250
+    "expected_entrees": 600,
+    "expected_sorties": 150,
+    "expected_solde": 450
   },
   "medium_key": {
     "formulas": {
@@ -111,14 +113,14 @@ def smoke() -> None:
     # Day-specific asserts
 
     e, m, h = easy_solution(), medium_solution(), hard_solution()
-    assert e["expected_entrees"] == 250
+    assert e["expected_entrees"] == 600
     assert "SOMME.SI" in e["formula_fr"]
     assert "solde" in m["formulas"]
     assert "Transactions" in h["sheets"]
     # arithmetic of sample data
     rows = e["sample_data"]
     total_in = sum(r[2] for r in rows if r[3] == "entree")
-    assert total_in == 250
+    assert total_in == 600
 
     # re-bind after extra (extra may reassign)
     e, m, h = easy_solution(), medium_solution(), hard_solution()

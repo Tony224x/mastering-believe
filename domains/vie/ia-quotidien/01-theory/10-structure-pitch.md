@@ -8,6 +8,9 @@
 
 ![Recit du pitch : probleme, enjeu, solution, preuve, demande](../assets/10-pitch-story.svg)
 
+> **En une phrase :** regarde ce schema avant de lire le reste.
+
+
 
 ## 1. Scene concrete : 12 slides, zero histoire
 
@@ -18,7 +21,7 @@ Duarte (*Resonate*) propose de penser la presentation comme un mouvement entre *
 
 Heath & Heath (*Made to Stick*) : un message colle s'il est Simple, Unexpected, Concrete, Credible, Emotional, Stories (SUCCESs). [Heath, Made to Stick]
 
-> **Key takeaway :** D'abord l'**histoire**, ensuite les slides.
+> **A retenir :** D'abord l'**histoire**, ensuite les slides.
 
 ---
 

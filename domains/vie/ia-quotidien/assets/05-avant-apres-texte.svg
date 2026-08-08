@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Ecrire avec l IA</title>
+  <desc id="d">Notes brutes, puis plan, puis reecriture humaine obligatoire.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Notes → plan → reecriture</text>
+  <rect x="50" y="80" width="250" height="120" rx="12" fill="#FEE2E2"/><text x="175" y="145" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#7F1D1D">Notes brutes</text>
+  <rect x="355" y="80" width="250" height="120" rx="12" fill="#FEF3C7"/><text x="480" y="145" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#78350F">Plan + brouillon IA</text>
+  <rect x="660" y="80" width="250" height="120" rx="12" fill="#D1FAE5"/><text x="785" y="145" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#064E3B">Ta version finale</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Ecrire avec l IA</text>
+</svg>

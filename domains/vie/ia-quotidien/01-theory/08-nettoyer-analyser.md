@@ -6,6 +6,11 @@
 
 ---
 
+![Schema du module : On nettoie avant d analyser et de dessiner.](../assets/08-nettoyage-donnees.svg)
+
+> **En une phrase :** On nettoie avant d analyser et de dessiner.
+
+
 ## 1. Scene concrete : l'export "crade"
 
 Tu recois (fictif) une liste :
@@ -20,7 +25,7 @@ Problemes : dates melangees, espaces, majuscules inconsistantes, virgules/points
 
 **Role de l'IA :** te donner une **checklist de nettoyage** et des formules (`SUPPRESPACE`, `MAJUSCULE`, `DATEVALUE` selon locale) — pas inventer des lignes manquantes.
 
-> **Key takeaway :** Garbage in, garbage out. Nettoyer **avant** d'analyser.
+> **A retenir :** Garbage in, garbage out. Nettoyer **avant** d'analyser.
 
 ---
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Formule Excel expliquee</title>
+  <desc id="d">Une formule SOMME.SI decomposable en plage, critere et somme.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="18" font-weight="700" fill="#0F172A">=SOMME.SI( plage ; critere ; somme )</text>
+  <rect x="80" y="90" width="240" height="100" rx="12" fill="#CCFBF1"/><text x="200" y="140" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">Plage Type</text><text x="200" y="165" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12">D2:D7</text>
+  <rect x="360" y="90" width="240" height="100" rx="12" fill="#FEF3C7"/><text x="480" y="140" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">Critere</text><text x="480" y="165" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12">"entree"</text>
+  <rect x="640" y="90" width="240" height="100" rx="12" fill="#DBEAFE"/><text x="760" y="140" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">Montants</text><text x="760" y="165" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12">C2:C7</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Formule Excel expliquee</text>
+</svg>

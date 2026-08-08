@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320">
+<svg role="img" xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320">
+  <title>03 vair checklist</title>
+  <desc>Schema pedagogique du domaine ia-quotidien : 03 vair checklist.</desc>
   <rect width="960" height="320" fill="#F8FAFC"/>
   <text x="480" y="40" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">Checklist V-A-I-R avant d&#39;utiliser une reponse</text>
   <g font-family="Helvetica, Arial, sans-serif">

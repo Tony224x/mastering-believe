@@ -8,8 +8,20 @@
 
 ![LLM : plausible n'est pas vrai — ce que l'IA fait bien vs ce qu'elle ne garantit pas](../assets/01-llm-vs-knowledge.svg)
 
+> **En une phrase :** regarde ce schema avant de lire le reste.
+
+
 > **Visuel** : garde cette carte sous les yeux pendant tout le parcours.
 
+
+
+## Avant tout : 3 phrases de confiance
+
+1. **ChatGPT propose du texte** a partir de ta demande.
+2. **Il peut ecrire quelque chose de faux** avec un ton sur de lui.
+3. **Ton reflexe :** demander → verifier → decider.
+
+> Le jargon (LLM, token, "perroquet stochastique") est en bas de page dans *Pour aller plus loin*. Tu n as pas besoin de le retenir pour reussir le jour 1.
 
 ## 1. Scene concrete : le lundi matin d'Alex
 
@@ -23,11 +35,16 @@ La reponse arrive en 10 secondes : categories, pourcentages, ton confiant. Ca *a
 2. L'outil a produit un *texte plausible* sur les budgets d'asso — pas le budget *de son* asso.
 3. Rien n'a ete verifie. Rien n'a ete personnalise. Rien n'a ete valide par elle.
 
-> **Key takeaway :** L'IA ne "connait" pas ta vie. Elle predit la suite la plus probable d'un texte. La confance dans le ton n'est pas une preuve.
+> **A retenir :** L'IA ne "connait" pas ta vie. Elle predit la suite la plus probable d'un texte. La confiance dans le ton n'est pas une preuve.
 
 ---
 
 ## 2. C'est quoi, concretement, ChatGPT ?
+
+<details>
+<summary>Pour aller plus loin (optionnel) — mots techniques</summary>
+
+
 
 Un **LLM** (large language model) est un systeme entraine a predire le prochain *token* (morceau de mot) a partir d'enormes quantites de texte. Bender et al. (2021) parlent de **« stochastic parrots »** : des systemes qui rassemblent des formes linguistiques sans comprehension stable du monde. [Stochastic Parrots, 2021]
 
@@ -42,9 +59,11 @@ Implications pratiques pour toi :
 
 Le *GPT-4 System Card* (OpenAI, 2023) documente explicitement les risques d'**hallucination** (invention confiante) et de mauvaise generalisation. [GPT-4 System Card, 2023]
 
-> **Key takeaway :** Tu n'as pas a "suivre le flow" de toute l'IA. Tu as a maitriser un **petit set d'usages** : reflechir, ecrire, Excel, PowerPoint.
+> **A retenir :** Tu n'as pas a "suivre le flow" de toute l'IA. Tu as a maitriser un **petit set d'usages** : reflechir, ecrire, Excel, PowerPoint.
 
 ---
+
+</details>
 
 ## 3. Ce que l'IA fait bien / mal pour un profil non-tech
 

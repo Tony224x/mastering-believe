@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="280" viewBox="0 0 960 280">
+<svg role="img" xmlns="http://www.w3.org/2000/svg" width="960" height="280" viewBox="0 0 960 280">
+  <title>02 rccfc prompt</title>
+  <desc>Schema pedagogique du domaine ia-quotidien : 02 rccfc prompt.</desc>
   <rect width="960" height="280" fill="#F8FAFC"/>
   <text x="480" y="40" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">Grille RCCFC (prompt qui marche)</text>
   <!-- 5 boxes -->

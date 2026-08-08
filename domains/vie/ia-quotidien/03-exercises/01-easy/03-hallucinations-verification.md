@@ -1,4 +1,8 @@
-# Hallucinations & verification — niveau easy
+# Mission — Hallucinations & verification — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Appliquer la checklist V-A-I-R sur une reponse unique.
@@ -14,3 +18,9 @@ Appliquer la checklist V-A-I-R sur une reponse unique.
 - [ ] Grille V-A-I-R complete
 - [ ] Preuve d'une verif externe (URL ou "introuvable")
 - [ ] Decision explicite
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

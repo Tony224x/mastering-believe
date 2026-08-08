@@ -1,32 +1,40 @@
 # Assets visuels — ia-quotidien
 
-Illustrations et schemas du domaine. **Aucun portrait de personne reelle.**
+**Visual-first :** chaque module de theorie ouvre sur un schema + une phrase.
 
-## Fichiers
+Aucun portrait de personne reelle. Persona fictive : **Alex**.
 
-| Fichier | Modules | Contenu |
-|---------|---------|---------|
-| `hero-apprendre-ia.jpg` | README | Illustration d'ambiance (apprendre avec l'IA) |
-| `hero-pitch-slides.jpg` | J14 / README | Illustration d'ambiance (pitch / slides) |
-| `parcours-14j.svg` | README | Carte des 4 blocs du parcours + 2 livrables |
-| `01-llm-vs-knowledge.svg` | J1 | Plausible vs garanti |
-| `02-rccfc-prompt.svg` | J2 | Grille RCCFC |
-| `03-vair-checklist.svg` | J3 | Checklist V-A-I-R |
-| `06-excel-flow.svg` | J6 | Boucle Excel + ChatGPT |
-| `10-pitch-story.svg` | J10 | Arc narratif du pitch |
+## Inventaire
 
-## Pourquoi SVG + Mermaid + JPG ?
+| Fichier | Module | Role |
+|---------|--------|------|
+| `hero-apprendre-ia.jpg` | README | Ambiance |
+| `hero-pitch-slides.jpg` | J14 | Ambiance pitch |
+| `parcours-14j.svg` | README | Carte 14 jours |
+| `01-llm-vs-knowledge.svg` | J1 | Plausible ≠ garanti |
+| `02-rccfc-prompt.svg` | J2 | Grille prompt |
+| `03-vair-checklist.svg` | J3 | V-A-I-R |
+| `03b-donnees-feu.svg` | J3 | Vert / orange / rouge |
+| `04-socratique.svg` | J4 | Question → reponse → synthese |
+| `05-avant-apres-texte.svg` | J5 | Notes → plan → reecriture |
+| `06-excel-flow.svg` | J6 | Boucle Excel |
+| `07-formule-expliquee.svg` | J7 | SOMME.SI en morceaux |
+| `08-nettoyage-donnees.svg` | J8 | Sale → propre |
+| `09-classeur-onglets.svg` | J9 | 4 onglets |
+| `10-pitch-story.svg` | J10 | Arc narratif |
+| `11-slide-avant-apres.svg` | J11 | Mur vs slide |
+| `12-chrono-oral.svg` | J12 | Notes orateur |
+| `13-deck-8-slides.svg` | J13 | Carte 8 slides |
+| `14-check-final.svg` | J14 | Verifier → oral → livrer |
 
-- **SVG** : texte lisible, zoomable, parfait pour grilles et checklists (pas d'hallucination de labels).
-- **Mermaid** (dans les `.md`) : flux editables en texte, rendus sur GitHub.
-- **JPG** : ambiance visuelle sans pretendre enseigner un schema precis.
+Chaque SVG a un `<title>` et un `<desc>` pour l accessibilite. Le module reprend aussi un **En une phrase**.
 
-## Pour l'apprenant·e tres visuel·le
+## Accessibilite
 
-1. Ouvre le SVG du jour **avant** de lire le module (carte mentale).
-2. En exercice, prends une **capture** de ton Excel / slide et range-la dans `../03-exercises/workspace/` (gitignore).
-3. Optionnel : demande a ChatGPT une *description d'image* pour un schema, puis redessine-le toi-meme (meilleure retention que le copier-coller).
+1. Le schema n est **jamais** la seule source d information.
+2. Les couleurs (vert/orange/rouge) sont toujours **labellees en texte**.
+3. Prefere le SVG au JPG pour les concepts (texte net).
 
-## Anonymat
+## Ludique (sans dark patterns)
 
-Les scenes parlent d'**Alex** (persona fictive). N'y mets jamais de vrais noms, photos de collegues, ni donnees employeur.
+Voir `../PROGRESS.md` : badges = micro-victoires, **pas** de streak culpabilisante.

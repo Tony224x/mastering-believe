@@ -1,4 +1,8 @@
-# Ecrire avec l'IA — niveau easy
+# Mission — Ecrire avec l'IA — niveau easy
+
+> **Temps :** ~15–20 min · **Style :** mission pratique
+
+## Mission du jour
 
 ## Objectif
 Obtenir un **plan** de rapport (pas le devoir entier) a partir de notes brutes.
@@ -14,3 +18,9 @@ Obtenir un **plan** de rapport (pas le devoir entier) a partir de notes brutes.
 - [ ] Outline 5 parties
 - [ ] 2 titres modifies a la main
 - [ ] Pas de devoir entier genere
+
+## Indice
+Relis le schema du module du jour dans `01-theory/` avant de commencer.
+
+## Feedback
+Note ce qui a marche en 1 phrase — c est deja une victoire.

@@ -6,6 +6,11 @@
 
 ---
 
+![Schema du module : Une idee, trois puces, titre = conclusion.](../assets/11-slide-avant-apres.svg)
+
+> **En une phrase :** Une idee, trois puces, titre = conclusion.
+
+
 ## 1. Scene concrete : le mur de texte
 
 Slide typique ratee : 12 puces, police 14, logo en coin, fond charge. 
@@ -13,7 +18,7 @@ L'orateur lit. L'audience lit. Personne n'ecoute.
 
 Reynolds (*Presentation Zen*) : restraint, simplicite, naturalite — **une idee dominante par slide**. [Reynolds, Presentation Zen]
 
-> **Key takeaway :** Si tout est important, rien n'est important. Coupe.
+> **A retenir :** Si tout est important, rien n'est important. Coupe.
 
 ---
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">Check final capstone</title>
+  <desc id="d">Verifier les faits, repeter a voix haute, livrer le deck et le journal IA.</desc>
+  <rect width="960" height="300" fill="#F8FAFC"/>
+  
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Verifier → repeter → livrer</text>
+  <rect x="80" y="90" width="240" height="110" rx="12" fill="#FEF3C7"/><text x="200" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">1. Verifier</text>
+  <rect x="360" y="90" width="240" height="110" rx="12" fill="#DBEAFE"/><text x="480" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">2. Oral 6-8 min</text>
+  <rect x="640" y="90" width="240" height="110" rx="12" fill="#D1FAE5"/><text x="760" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">3. Livrer</text>
+
+  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Check final capstone</text>
+</svg>

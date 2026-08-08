@@ -1,16 +1,34 @@
-# Prompts qui marchent — niveau easy
+# Mission J2 — Prompt en 3 blocs (easy)
 
-## Objectif
-Reecrire un prompt flou en prompt RCCFC complet.
+> **Temps :** ~12 min · **Badge :** Prompt clair
 
-## Consigne
-1. Prompt flou de depart (a ne PAS envoyer tel quel) :
- > "Ameliore mon Excel."
-2. Reecris-le avec **Role, Contexte, Tache, Format, Contraintes** (RCCFC).
-3. Envoie le prompt structure a ChatGPT.
-4. Dans `j02-easy.md` : colle flou + structure + 5 premieres lignes de reponse + 1 phrase "ce qui a change".
+## Mission du jour
 
-## Criteres de reussite
-- [ ] Les 5 lettres RCCFC sont visibles dans ton prompt
-- [ ] Contexte decrit des colonnes ou un cas concret (meme fictif)
-- [ ] Comparaison flou vs structure presente
+**But :** transformer un prompt flou en **Contexte + Demande + Resultat attendu** (RCCFC vient plus tard).
+
+### Prompt flou (mauvais)
+> « Ameliore mon Excel. »
+
+## A faire
+
+1. Reecris en 3 blocs :
+
+```
+Contexte : ...
+Demande : ...
+Resultat attendu : ...
+```
+
+2. Envoie ta version a ChatGPT.
+3. Note en 1 phrase ce qui a change par rapport au flou.
+
+## Indice
+Mentionne des colonnes inventees (Date, Montant, Type) meme fictives.
+
+## Reussite
+- [ ] 3 blocs visibles
+- [ ] Trace d une reponse IA
+- [ ] 1 phrase de comparaison
+
+## Feedback
+Si ChatGPT te renvoie une formule ou des etapes concretes : **badge Prompt clair.**

@@ -6,6 +6,11 @@
 
 ---
 
+![Schema du module : L IA pose des questions ; toi tu reponds et tu tranches.](../assets/04-socratique.svg)
+
+> **En une phrase :** L IA pose des questions ; toi tu reponds et tu tranches.
+
+
 ## 1. Scene concrete : le piege du conseil tout cuit
 
 Alex : *« Est-ce que je devrais quitter mon poste pour un pivot entrepreneuriat ? »*
@@ -14,7 +19,7 @@ Mauvaise reponse du systeme (et de beaucoup d'usages) : une liste de 10 raisons 
 
 Meilleure posture : *« Pose-moi une question a la fois pour clarifier mes contraintes (argent, energie, delai de formation, valeurs). Ne conseille pas avant d'avoir 8 reponses. »*
 
-> **Key takeaway :** L'IA utile pour reflechir **pose des questions** et structure *tes* reponses — elle ne decide pas a ta place.
+> **A retenir :** L'IA utile pour reflechir **pose des questions** et structure *tes* reponses — elle ne decide pas a ta place.
 
 ---
 

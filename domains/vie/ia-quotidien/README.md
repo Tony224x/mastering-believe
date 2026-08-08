@@ -78,9 +78,13 @@ A la fin du parcours, tu peux :
 4. Duarte, *Resonate* ; Reynolds, *Presentation Zen* (slides)
 5. Liste complete : **`REFERENCES.md`**
 
+## Progression ludique
+
+Suivi badges (sans classement) : [`PROGRESS.md`](./PROGRESS.md).
+
 ## Visuels
 
-Ce domaine est **pense pour un apprentissage visuel** :
+Ce domaine est **pense pour un apprentissage visuel** (chaque module de theorie ouvre sur un schema) :
 
 | Type | Ou | Role |
 |------|-----|------|
