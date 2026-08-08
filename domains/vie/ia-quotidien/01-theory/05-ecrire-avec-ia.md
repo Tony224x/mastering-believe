@@ -1,17 +1,17 @@
-# Module 05 — Ecrire avec l'IA (Word / rapports)
+# Module 05 — Écrire avec l'IA (Word / rapports)
 
-> **Temps estime** : 45 min | **Prerequis** : Modules 02–04
+> **Temps estimé** : 45 min | **Prérequis** : Modules 02–04
 >
-> **Objectif** : Produire un brouillon utile (plan + page) pour un rendu type formation, puis le reapproprier a la main.
+> **Objectif** : Produire un brouillon utile (plan + page) pour un rendu type formation, puis le réapproprier à la main.
 
 ---
 
-![Schema du module : L IA aide au brouillon ; la version finale est la tienne.](../assets/05-avant-apres-texte.svg)
+![Schéma du module : L IA aide au brouillon ; la version finale est la tienne.](../assets/05-avant-apres-texte.svg)
 
 > **En une phrase :** L IA aide au brouillon ; la version finale est la tienne.
 
 
-## 1. Scene concrete : le rapport de 3 pages pour hier
+## 1. Scène concrete : le rapport de 3 pages pour hier
 
 Tu as des notes de cours eparses et un enonce. ChatGPT peut :
 
@@ -19,29 +19,29 @@ Tu as des notes de cours eparses et un enonce. ChatGPT peut :
 2. proposer un **premier jet** section 1 ;
 3. te signaler les trous logiques.
 
-Il ne doit **pas** devenir l'auteur cache du devoir entier (ethique + apprentissage + detection).
+Il ne doit **pas** devenir l'auteur cache du devoir entier (éthique + apprentissage + detection).
 
-Mollick (2023) insiste sur des usages ou l'etudiant *assigne un role* a l'IA tout en restant responsable du rendu. [Mollick, 2023]
+Mollick (2023) insiste sur des usages ou l'étudiant *assigne un rôle* à l'IA tout en restant responsable du rendu. [Mollick, 2023]
 
-> **A retenir :** Pipeline honnete = **tes idees → structure IA → brouillon IA → reecriture humaine majoritaire**.
+> **À retenir :** Pipeline honnete = **tes idées → structure IA → brouillon IA → réécriture humaine majoritaire**.
 
 ---
 
-## 2. Pipeline en 5 etapes
+## 2. Pipeline en 5 étapes
 
-| Etape | Toi | IA |
+| Étape | Toi | IA |
 |-------|-----|----|
-| 1. Brutes | Notes, consignes, idees en vrac | — |
-| 2. Plan | Valides les titres | Propose outline |
+| 1. Brutes | Notes, consignes, idées en vrac | — |
+| 2. Plan | Valides les titrès | Propose outline |
 | 3. Brouillon | Choisis section prioritaire | Genere 300–500 mots |
-| 4. Reecriture | Reecris ~30–50 % minimum | — |
-| 5. Controles | Faits, consignes, ton | "Liste les faiblesses" |
+| 4. Réécriture | Reecris ~30–50 % minimum | — |
+| 5. Contrôles | Faits, consignes, ton | "Liste les faiblesses" |
 
 Prompts de format : preciser longueur, public, niveau de langue. [OpenAI Prompting Guide]
 
 ---
 
-## 3. Prompt modele "rapport formation"
+## 3. Prompt modèle "rapport formation"
 
 ```
 Role : assistant redaction academique (niveau certificat, pas these).
@@ -57,28 +57,28 @@ Contraintes :
 
 ## 4. Signes que tu as trop delegue
 
-- Tu ne peux pas expliquer un paragraphe a voix haute.
+- Tu ne peux pas expliquer un paragraphe à voix haute.
 - Le vocabulaire n'est pas le tien.
-- Des references "ScienceDirect 2019" non verifiees.
+- Des références "ScienceDirect 2019" non vérifiées.
 - L'intro pourrait servir a n'importe quel sujet voisin.
 
-**Remede :** fermer le chat, reecrire la section de memoire, puis rouvrir pour polish seulement.
+**Remede :** fermer le chat, réécrire la section de mémoire, puis rouvrir pour polish seulement.
 
 ---
 
-## Spaced repetition
+## Spaced répétition
 
-**Q1.** Quelle est l'etape non negociable apres un brouillon IA ?
-**R1.** Reecriture humaine substantielle + verification des faits.
+**Q1.** Quelle est l'étape non négociable après un brouillon IA ?
+**R1.** Réécriture humaine substantielle + vérification des faits.
 
-**Q2.** Que mettre dans le prompt pour eviter les fausses sources ?
+**Q2.** Que mettre dans le prompt pour éviter les fausses sources ?
 **R2.** Interdiction d'inventer ; marqueur [A_VERIFIER].
 
-**Q3.** Pourquoi generer une seule section d'abord ?
-**R3.** Controler la qualite et rester proprietaire du fond.
+**Q3.** Pourquoi générer une seule section d'abord ?
+**R3.** Contrôler la qualité et rester proprietaire du fond.
 
-**Q4.** Cite un usage ethique vs non ethique.
-**R4.** Ethique : plan + relecture. Non ethique : devoir entier non relu/non compris.
+**Q4.** Cite un usage éthique vs non éthique.
+**R4.** Éthique : plan + relecture. Non éthique : devoir entier non relu/non compris.
 
-**Q5.** Reference utile sur les roles IA en education ?
+**Q5.** Référence utile sur les rôles IA en éducation ?
 **R5.** Mollick & Mollick, Assigning AI (2023). [Mollick, 2023]

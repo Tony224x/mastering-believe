@@ -1,17 +1,26 @@
-# IA sans panique — niveau medium
+# Mission — IA sans panique — niveau medium
 
-## Objectif
+> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **medium** · module J1.
+
+## But
+
 Produire une "carte mentale d'usages" personnelle de l'IA (3 usages in, 3 hors scope).
 
-## Consigne
-1. Sans l'IA d'abord : liste 5 taches de ta semaine (compta, formation, orga).
-2. Prompt ChatGPT :
- > Role: coach productivite non-tech. Contexte: [colle tes 5 taches anonymisees]. Tache: classe chaque tache en (A) bon usage ChatGPT (B) usage risque (C) a faire sans IA. Format: tableau. Contraintes: pas de cliches motivationnels ; signale les risques de donnees.
-3. Corrige le tableau a la main (minimum 2 modifications).
-4. Livre `j01-medium-usages.md` : tableau final + 1 regle personnelle "je ne colle jamais X".
+## À faire
 
-## Criteres de reussite
-- [ ] 5 taches de depart (anonymes)
+1. Sans l'IA d'abord : liste 5 tâches de ta semaine (compta, formation, orga).
+2. Prompt ChatGPT :
+ > Rôle: coach productivite non-tech. Contexte: [colle tes 5 tâches anonymisées]. Tâche: classe chaque tâche en (A) bon usage ChatGPT (B) usage risque (C) à faire sans IA. Format: tableau. Contraintes: pas de cliches motivationnels ; signale les risques de données.
+3. Corrige le tableau à la main (minimum 2 modifications).
+4. Livre `j01-medium-usages.md` : tableau final + 1 règle personnelle "je ne colle jamais X".
+
+## Réussite
+
+- [ ] 5 tâches de depart (anonymes)
 - [ ] Tableau A/B/C present
 - [ ] ≥2 corrections humaines visibles
-- [ ] Regle anti-fuite de donnees explicite
+- [ ] Règle anti-fuite de données explicite
+
+## Indice
+
+Si tu bloques plus de 10 min : reviens à la mission **easy** du même jour, puis reviens ici.

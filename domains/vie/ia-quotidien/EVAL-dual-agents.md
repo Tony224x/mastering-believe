@@ -40,6 +40,8 @@ E1 value prop · E2 progressive disclosure · E3 design system · E4 a11y · E5 
 
 ## P0 croisés (à traiter avant publication large)
 
+> **Statut 2026-08-09** : P0 appliqués sur la branche `feat/ia-quotidien` (polish FR, purge, rename pitch, capstone multi-soir, entrée 3 puces, medium/hard bonus mission, solutions `.md`). Vérif : `python domains/vie/ia-quotidien/scripts/verify_p0.py`.
+
 1. **Passe orthographe FR** (accents) README + théorie + exercices  
 2. **Purger** `CODEX-REVIEW`, `REVIEW-pass*`, mentions atelier, `__pycache__` du chemin public  
 3. **Renommer** slugs/titres `hec` → `pitch` si pas de partenariat  

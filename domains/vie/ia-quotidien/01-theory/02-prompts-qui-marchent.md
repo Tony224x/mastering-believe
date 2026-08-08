@@ -1,20 +1,20 @@
 # Module 02 — Prompts qui marchent
 
-> **Temps estime** : 45 min | **Prerequis** : Module 01
+> **Temps estimé** : 45 min | **Prérequis** : Module 01
 >
-> **Objectif** : Remplacer les questions floues par une structure de prompt reutilisable (role, contexte, tache, format, contraintes).
+> **Objectif** : Remplacer les questions floues par une structure de prompt réutilisable (rôle, contexte, tâche, format, contraintes).
 
 ---
 
-![Grille RCCFC : Role, Contexte, Tache, Format, Contraintes](../assets/02-rccfc-prompt.svg)
+![Grille RCCFC : Rôle, Contexte, Tâche, Format, Contraintes](../assets/02-rccfc-prompt.svg)
 
-> **En une phrase :** regarde ce schema avant de lire le reste.
+> **En une phrase :** regarde ce schéma avant de lire le reste.
 
-### Ecran exemple — prompt en 3 blocs
+### Écran exemple — prompt en 3 blocs
 
 ![Capture pedagogique : chat ChatGPT avec prompt Contexte Demande Resultat et formule Excel](../assets/screens/screen-chatgpt-prompt-3-blocs.png)
 
-> Maquette pedagogique (contenu fictif). Tu peux t en inspirer pour coller le meme style de prompt.
+> Maquette pedagogique (contenu fictif). Tu peux t en inspirer pour coller le même style de prompt.
 
 ![Doc officielle OpenAI — prompt engineering](../assets/screens/screen-docs-openai-prompting.png)
 
@@ -39,23 +39,23 @@ Oublie les acronymes 2 minutes. Ecris seulement :
 2. **Demande** — ce que je veux  
 3. **Resultat attendu** — format (liste, formule, 5 puces…)
 
-La grille **RCCFC** plus bas est la version complete (optionnelle le jour 1 des prompts).
+La grille **RCCFC** plus bas est la version complète (optionnelle le jour 1 des prompts).
 
-## 1. Scene concrete : deux prompts, deux mondes
+## 1. Scène concrete : deux prompts, deux mondes
 
 **Prompt A (flou) :**
 > « Aide-moi pour mon PowerPoint. »
 
 **Prompt B (structure) :**
-> Tu es coach de presentation pour un formation en entrepreneuriat.
+> Tu es coach de présentation pour un formation en entrepreneuriat.
 > Contexte : pitch de 7 minutes pour un projet de PME fictive de livraison locale en ville.
-> Tache : propose une structure de 10 slides (titre + 1 phrase d'intention par slide).
-> Format : liste numerotee.
-> Contraintes : francais soutenu mais clair ; pas de jargon startup inutile ; aucune donnee inventee presentee comme reelle.
+> Tâche : propose une structure de 10 slides (titre + 1 phrase d'intention par slide).
+> Format : liste numérotee.
+> Contraintes : français soutenu mais clair ; pas de jargon startup inutile ; aucune donnée inventée presentee comme réelle.
 
 Le prompt B produit quelque chose d'*actionnable*. Le A produit du generique.
 
-> **A retenir :** La qualite de sortie suit la qualite d'entree. Le modele n'est pas telepathe.
+> **À retenir :** La qualité de sortie suit la qualité d'entrée. Le modèle n'est pas telepathe.
 
 ---
 
@@ -65,11 +65,11 @@ Memorise :
 
 | Lettre | Signifie | Exemple |
 |--------|----------|---------|
-| **R** | Role | "Tu es comptable pedagogue" |
-| **C** | Contexte | "Je suis debutante, tableau mensuel" |
-| **T** | Tache | "Propose 5 formules Excel..." |
+| **R** | Rôle | "Tu es comptable pedagogue" |
+| **C** | Contexte | "Je suis débutante, tableau mensuel" |
+| **T** | Tâche | "Propose 5 formules Excel..." |
 | **F** | Format | "Tableau markdown" / "liste" / "JSON simple" |
-| **C** | Contraintes | "Pas de VBA" ; "donnees fictives" ; "FR-CA" |
+| **C** | Contraintes | "Pas de VBA" ; "données fictives" ; "FR-CA" |
 
 La doc officielle OpenAI sur le *prompt engineering* insiste sur des **instructions claires**, des **exemples**, et la precision du format de sortie. [OpenAI Prompting Guide]
 
@@ -97,13 +97,13 @@ Rarement le 1er jet est le bon. Enchaine :
 3. "Donne 2 alternatives plus concretes pour la slide 4."
 4. "Qu'est-ce qui est faible dans cette structure ? Sois direct."
 
-> **A retenir :** Un bon usage = conversation courte et dirigee, pas un monologue magique.
+> **À retenir :** Un bon usage = conversation courte et dirigee, pas un monologue magique.
 
 ---
 
-## 5. Trois prompts modeles a copier
+## 5. Trois prompts modèles a copier
 
-### Reflexion carriere
+### Réflexion carrière
 ```
 Role : coach de carriere neutre.
 Contexte : formation entrepreneuriat ; je explore un pivot.
@@ -129,18 +129,18 @@ Contraintes : une idee par slide ; pas de mur de texte.
 
 ---
 
-## Spaced repetition
+## Spaced répétition
 
 **Q1.** Que signifie RCCFC ?
-**R1.** Role, Contexte, Tache, Format, Contraintes.
+**R1.** Rôle, Contexte, Tâche, Format, Contraintes.
 
-**Q2.** Pourquoi un prompt flou donne une reponse mediocre ?
-**R2.** Le modele comble les trous par du generique "moyen".
+**Q2.** Pourquoi un prompt flou donne une réponse mediocre ?
+**R2.** Le modèle comble les trous par du generique "moyen".
 
 **Q3.** Qu'est-ce qu'un few-shot ?
 **R3.** Fournir 1+ exemples du format/ton attendu dans le prompt.
 
-**Q4.** Quelle est la meilleure suite apres un 1er jet correct mais long ?
+**Q4.** Quelle est la meilleure suite après un 1er jet correct mais long ?
 **R4.** Iterer : raccourcir, preciser, challenger — pas recommencer de zero.
 
 **Q5.** Ou trouver des patterns officiels de prompting ?

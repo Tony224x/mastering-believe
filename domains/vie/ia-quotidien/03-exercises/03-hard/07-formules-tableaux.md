@@ -1,16 +1,25 @@
-# Formules, tableaux & modeles — niveau hard
+# Mission — Formules & tableaux — niveau hard
 
-## Objectif
-Mini-modele pret pour J9 : categories + total par categorie.
+> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **hard** · module J7.
 
-## Consigne
-1. Au moins 4 categories de depenses.
-2. Tableau de synthese par categorie (SOMME.SI ou tableau croise — a toi).
-3. ChatGPT t'aide mais tu valides chaque total a la main sur un echantillon.
+## But
+
+Mini-modèle prêt pour J9 : catégories + total par catégorie.
+
+## À faire
+
+1. Au moins 4 catégories de depenses.
+2. Tableau de synthese par catégorie (SOMME.SI ou tableau croise — a toi).
+3. ChatGPT t'aide mais tu valides chaque total à la main sur un echantillon.
 4. Readme 5 lignes dans le classeur (hypotheses fictives).
 
-## Criteres de reussite
-- [ ] Synthese par categorie
+## Réussite
+
+- [ ] Synthese par catégorie
 - [ ] Validation manuelle echantillon
 - [ ] Readme hypotheses
-- [ ] Pret a etendre en scenarios J9
+- [ ] Pret a étendre en scénarios J9
+
+## Indice
+
+Si tu bloques plus de 10 min : reviens à la mission **easy** du même jour, puis reviens ici.

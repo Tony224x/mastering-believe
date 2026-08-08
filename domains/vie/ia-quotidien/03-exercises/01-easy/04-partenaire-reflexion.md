@@ -1,26 +1,26 @@
-# Mission — Partenaire de reflexion — niveau easy
+# Mission — Partenaire de réflexion — niveau easy
 
 > **Temps :** ~15–20 min · **Style :** mission pratique
 
 ## Mission du jour
 
 ## Objectif
-Mener 5 questions socratiques (une a la fois) sur un choix simple.
+Mener 5 questions socratiques (une à la fois) sur un choix simple.
 
 ## Consigne
 1. Choisis une question perso **non urgente** (ex. organisation de la semaine, choix d'un cours optionnel). Ne partage rien de medical/sensible.
 2. Prompt :
- > "Pose-moi UNE question a la fois pour clarifier mon choix. Attends ma reponse. Ne conseille pas avant la 5e reponse."
+ > "Pose-moi UNE question à la fois pour clarifier mon choix. Attends ma réponse. Ne conseille pas avant la 5e réponse."
 3. Reponds a 5 questions.
-4. Demande un resume en 5 puces **uniquement a partir de tes reponses**, puis corrige le resume a la main.
+4. Demande un résumé en 5 puces **uniquement à partir de tes réponses**, puis corrige le résumé à la main.
 
-## Criteres de reussite
-- [ ] 5 tours question/reponse
-- [ ] Resume base sur tes mots
-- [ ] ≥1 correction manuelle du resume
+## Critères de réussite
+- [ ] 5 tours question/réponse
+- [ ] Résumé base sur tes mots
+- [ ] ≥1 correction manuelle du résumé
 
 ## Indice
-Relis le schema du module du jour dans `01-theory/` avant de commencer.
+Relis le schéma du module du jour dans `01-theory/` avant de commencer.
 
 ## Feedback
-Note ce qui a marche en 1 phrase — c est deja une victoire.
+Note ce qui a marche en 1 phrase — c est dejà une victoire.

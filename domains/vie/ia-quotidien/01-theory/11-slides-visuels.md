@@ -1,39 +1,39 @@
 # Module 11 — Slides & design sobre
 
-> **Temps estime** : 45 min | **Prerequis** : Module 10
+> **Temps estimé** : 45 min | **Prérequis** : Module 10
 >
-> **Objectif** : Transformer l'outline en contenu slide-ready (peu de texte, hierarchie claire) avec l'aide de ChatGPT.
+> **Objectif** : Transformer l'outline en contenu slide-ready (peu de texte, hiérarchie claire) avec l'aide de ChatGPT.
 
 ---
 
-![Schema du module : Une idee, trois puces, titre = conclusion.](../assets/11-slide-avant-apres.svg)
+![Schéma du module : Une idée, trois puces, titre = conclusion.](../assets/11-slide-avant-après.svg)
 
-> **En une phrase :** Une idee, trois puces, titre = conclusion.
+> **En une phrase :** Une idée, trois puces, titre = conclusion.
 
-### Ecran exemple — slide sobre
+### Écran exemple — slide sobre
 
 ![Capture pedagogique : PowerPoint slide Solution 3 puces](../assets/screens/screen-powerpoint-slide-sobre.png)
 
-> 1 idee, 3 puces, titre = conclusion. Reproduis ce niveau de sobriete sur 4 slides.
+> 1 idée, 3 puces, titre = conclusion. Reproduis ce niveau de sobriete sur 4 slides.
 
 
-## 1. Scene concrete : le mur de texte
+## 1. Scène concrete : le mur de texte
 
 Slide typique ratee : 12 puces, police 14, logo en coin, fond charge. 
-L'orateur lit. L'audience lit. Personne n'ecoute.
+L'orateur lit. L'audience lit. Personne n'écoute.
 
-Reynolds (*Presentation Zen*) : restraint, simplicite, naturalite — **une idee dominante par slide**. [Reynolds, Presentation Zen]
+Reynolds (*Présentation Zen*) : restraint, simplicite, naturalite — **une idée dominante par slide**. [Reynolds, Présentation Zen]
 
-> **A retenir :** Si tout est important, rien n'est important. Coupe.
+> **À retenir :** Si tout est important, rien n'est important. Coupe.
 
 ---
 
-## 2. Regles operatoires (non negotiables du cours)
+## 2. Règles operatoires (non negotiables du cours)
 
-1. **Max 1 idee** par slide 
+1. **Max 1 idée** par slide 
 2. **Max 3 bullets** (7–10 mots chacun) ou 1 phrase forte 
-3. Titre = conclusion, pas theme vague ("Marche" → "Les cafes de quartier perdent 4h/semaine en stock") 
-4. Visuel simple (icone, schema 3 blocs) > photo stock genante 
+3. Titre = conclusion, pas thème vague ("Marche" → "Les cafes de quartier perdent 4h/semaine en stock") 
+4. Visuel simple (icone, schéma 3 blocs) > photo stock genante 
 5. Notes orateur = hors slide (J12)
 
 ---
@@ -53,13 +53,13 @@ Duarte rappelle que le slide soutient le recit, il ne le remplace pas. [Duarte, 
 
 ## 4. Atelier du jour
 
-Prends 4 slides de ton outline J10 et produis la version slide-ready. Colle dans PowerPoint. Regarde en mode diaporama : lisibles a 2 metres ?
+Prends 4 slides de ton outline J10 et produis la version slide-ready. Colle dans PowerPoint. Regarde en mode diaporama : lisibles a 2 metrès ?
 
 ---
 
-## Spaced repetition
+## Spaced répétition
 
-**Q1.** Combien d'idees max par slide ?
+**Q1.** Combien d'idées max par slide ?
 **R1.** Une.
 
 **Q2.** Combien de bullets max recommandes ici ?
@@ -68,8 +68,8 @@ Prends 4 slides de ton outline J10 et produis la version slide-ready. Colle dans
 **Q3.** Comment transformer un titre faible "Solution" ?
 **R3.** En noncer le benefice concret / la promesse.
 
-**Q4.** Ou vont les details d'explication longue ?
+**Q4.** Ou vont les détails d'explication longue ?
 **R4.** Notes orateur ou annexe — pas sur le slide.
 
-**Q5.** Reference design de presentation ?
-**R5.** Reynolds, Presentation Zen. [Reynolds, Presentation Zen]
+**Q5.** Référence design de présentation ?
+**R5.** Reynolds, Présentation Zen. [Reynolds, Présentation Zen]

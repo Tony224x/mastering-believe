@@ -11,17 +11,17 @@ Transformer 1 slide "mur de texte" en version sobre.
 1. Prends ce mauvais contenu :
  Titre: Solution
  - Notre solution est innovante et collaborative et digitale et elle permet d'ameliorer plusieurs aspects de la productivite des PME tout en restant simple et abordable et scalable...
-2. Prompt style Presentation Zen : titre conclusion + max 3 bullets courts + idee de visuel.
+2. Prompt style Présentation Zen : titre conclusion + max 3 bullets courts + idée de visuel.
 3. Colle dans PowerPoint.
 4. Verifie lisibilite (mode diaporama).
 
-## Criteres de reussite
+## Critères de réussite
 - [ ] ≤3 bullets
 - [ ] Titre = conclusion
 - [ ] Slide creee dans PPT
 
 ## Indice
-Relis le schema du module du jour dans `01-theory/` avant de commencer.
+Relis le schéma du module du jour dans `01-theory/` avant de commencer.
 
 ## Feedback
-Note ce qui a marche en 1 phrase — c est deja une victoire.
+Note ce qui a marche en 1 phrase — c est dejà une victoire.

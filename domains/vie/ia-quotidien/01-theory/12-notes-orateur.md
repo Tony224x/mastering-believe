@@ -1,23 +1,23 @@
-# Module 12 — Notes orateur & repetition
+# Module 12 — Notes orateur & répétition
 
-> **Temps estime** : 45 min | **Prerequis** : Modules 10–11
+> **Temps estimé** : 45 min | **Prérequis** : Modules 10–11
 >
-> **Objectif** : Preparer notes orateur + questions pieges pour un oral 5–8 minutes, sans lire les slides.
+> **Objectif** : Préparer notes orateur + questions pièges pour un oral 5–8 minutes, sans lire les slides.
 
 ---
 
-![Schema du module : Les notes portent le discours ; la slide ne se lit pas.](../assets/12-chrono-oral.svg)
+![Schéma du module : Les notes portent le discours ; la slide ne se lit pas.](../assets/12-chrono-oral.svg)
 
 > **En une phrase :** Les notes portent le discours ; la slide ne se lit pas.
 
 
-## 1. Scene concrete : l'oral qui s'ecroule
+## 1. Scène concrete : l'oral qui s'ecroule
 
-Les slides sont propres. L'etudiante lit chaque puce. Chrono depasse. Une question simple ("d'ou vient ce chiffre ?") fait paniquer.
+Les slides sont propres. L'étudiante lit chaque puce. Chrono depasse. Une question simple ("d'où vient ce chiffre ?") fait paniquer.
 
-Cause : le deck portait **tout** le discours. Or le deck est un **support**. [Reynolds, Presentation Zen]
+Cause : le deck portait **tout** le discours. Or le deck est un **support**. [Reynolds, Présentation Zen]
 
-> **A retenir :** Si tu as besoin de lire le slide, le slide a trop de texte — ou tu manques de notes orateur.
+> **À retenir :** Si tu as besoin de lire le slide, le slide a trop de texte — où tu manques de notes orateur.
 
 ---
 
@@ -42,33 +42,33 @@ Tache : pour les slides 1, 4, 7, 10 — generee notes orateur au format ci-dessu
 Contraintes : ne pas inventer de chiffres absents de mon texte.
 ```
 
-L'IA comme partenaire de repetition rejoint l'idee de roles assignes (coach) chez Mollick. [Mollick, 2023]
+L'IA comme partenaire de répétition rejoint l'idée de rôles assignes (coach) chez Mollick. [Mollick, 2023]
 
 ---
 
-## 4. Protocole repetition 20 min
+## 4. Protocole répétition 20 min
 
 1. Timer 7 min — present à voix haute 
 2. Note les accrocs 
-3. Demande a l'IA : "voici mon transcript approximatif : raccourcis" 
+3. Demande à l'IA : "voici mon transcript approximatif : raccourcis" 
 4. Rejoue une fois 
-5. Reponds a 3 questions pieges a voix haute
+5. Reponds a 3 questions pièges à voix haute
 
 ---
 
-## Spaced repetition
+## Spaced répétition
 
 **Q1.** A quoi servent les notes orateur ?
-**R1.** Porter le discours hors du slide ; eviter la lecture.
+**R1.** Porter le discours hors du slide ; éviter la lecture.
 
 **Q2.** Que faire si un chiffre est attaque et non source ?
-**R2.** Reconnaitre la limite ; proposer comment le mesurer — ne pas inventer.
+**R2.** Reconnaître la limite ; proposer comment le mesurer — ne pas inventer.
 
 **Q3.** Duree orale cible ici ?
 **R3.** Environ 5–8 minutes.
 
-**Q4.** Combien de fois repeter au minimum ?
-**R4.** Au moins 2 passages chronometres + questions.
+**Q4.** Combien de fois répéter au minimum ?
+**R4.** Au moins 2 passages chronomètrès + questions.
 
-**Q5.** Role IA le plus utile ce jour ?
-**R5.** Coach d'oral / generateur de questions pieges. [Mollick, 2023]
+**Q5.** Rôle IA le plus utile ce jour ?
+**R5.** Coach d'oral / generateur de questions pièges. [Mollick, 2023]

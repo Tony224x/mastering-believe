@@ -1,17 +1,17 @@
 # Module 08 — Nettoyer, analyser, visualiser
 
-> **Temps estime** : 45 min | **Prerequis** : Modules 06–07
+> **Temps estimé** : 45 min | **Prérequis** : Modules 06–07
 >
-> **Objectif** : Passer d'une liste "sale" fictive a un tableau propre + un graphique sobre, avec l'aide de ChatGPT pour la methode (pas pour inventer des chiffres).
+> **Objectif** : Passer d'une liste "sale" fictive à un tableau propre + un graphique sobre, avec l'aide de ChatGPT pour la méthode (pas pour inventer des chiffres).
 
 ---
 
-![Schema du module : On nettoie avant d analyser et de dessiner.](../assets/08-nettoyage-donnees.svg)
+![Schéma du module : On nettoie avant d analyser et de dessiner.](../assets/08-nettoyage-données.svg)
 
 > **En une phrase :** On nettoie avant d analyser et de dessiner.
 
 
-## 1. Scene concrete : l'export "crade"
+## 1. Scène concrete : l'export "crade"
 
 Tu recois (fictif) une liste :
 
@@ -21,15 +21,15 @@ Tu recois (fictif) une liste :
 ...
 ```
 
-Problemes : dates melangees, espaces, majuscules inconsistantes, virgules/points.
+Problèmes : dates melangees, espaces, majuscules inconsistantes, virgules/points.
 
-**Role de l'IA :** te donner une **checklist de nettoyage** et des formules (`SUPPRESPACE`, `MAJUSCULE`, `DATEVALUE` selon locale) — pas inventer des lignes manquantes.
+**Rôle de l'IA :** te donner une **checklist de nettoyage** et des formules (`SUPPRESPACE`, `MAJUSCULE`, `DATEVALUE` selon locale) — pas inventer des lignes manquantes.
 
-> **A retenir :** Garbage in, garbage out. Nettoyer **avant** d'analyser.
+> **À retenir :** Garbage in, garbage out. Nettoyer **avant** d'analyser.
 
 ---
 
-## 2. Checklist de nettoyage (a coller dans ChatGPT)
+## 2. Checklist de nettoyage (à coller dans ChatGPT)
 
 ```
 Voici 15 lignes echantillon (fictives).
@@ -46,17 +46,17 @@ Ne complete pas les montants manquants : signale-les.
 Questions utiles (Few : commencer par la question metier) [Few, 2012] :
 
 1. Combien sort / entre ce mois ?
-2. Quelle categorie domine les sorties ?
-3. Y a-t-il des doublons de libelles ?
+2. Quelle catégorie domine les sorties ?
+3. Y a-t-il des doublons de libellés ?
 
 ---
 
 ## 4. Visualiser avec sobriete
 
-| A faire | A eviter |
+| À faire | A éviter |
 |---------|----------|
 | 1 graphique = 1 message | 3D, arcs-en-ciel |
-| Barres pour comparer categories | Camembert a 12 parts |
+| Barres pour comparer catégories | Camembert a 12 parts |
 | Titre qui dit la conclusion | Titre "Graphique 1" |
 
 Prompt :
@@ -71,23 +71,23 @@ J'ai categories en A et totaux en B. Quel type de graphique recommander et pourq
 
 - Tableau propre (fictif) 
 - 1 graphique 
-- 3 puces d'insight **ecrites par toi** (l'IA peut proposer, tu valides)
+- 3 puces d'insight **écrites par toi** (l'IA peut proposer, tu valides)
 
 ---
 
-## Spaced repetition
+## Spaced répétition
 
-**Q1.** Pourquoi ne pas laisser l'IA "completer" les trous de montants ?
+**Q1.** Pourquoi ne pas laisser l'IA "compléter" les trous de montants ?
 **R1.** Risque d'invention ; les trous doivent rester visibles.
 
-**Q2.** Donne 2 symptomes de donnees sales.
-**R2.** Dates multi-formats ; categories avec casses differentes.
+**Q2.** Donne 2 symptomes de données sales.
+**R2.** Dates multi-formats ; catégories avec casses différentes.
 
-**Q3.** Quel graphique pour comparer 5 categories de depenses ?
+**Q3.** Quel graphique pour comparer 5 catégories de depenses ?
 **R3.** Barres (plutot qu'un camembert surcharge).
 
 **Q4.** Que doit exprimer le titre du graphique ?
-**R4.** Le message / la conclusion, pas un numero.
+**R4.** Le message / la conclusion, pas un numéro.
 
-**Q5.** Reference design de donnees citee ?
+**Q5.** Référence design de données citee ?
 **R5.** Stephen Few, Show Me the Numbers. [Few, 2012]

@@ -5,7 +5,7 @@
 ## Mission du jour
 
 ## Objectif
-Identifier les defauts d'un export "sale" fourni.
+Identifier les défauts d'un export "sale" fourni.
 
 ## Consigne
 1. Copie ce jeu fictif dans Excel (tel quel) :
@@ -15,17 +15,17 @@ Identifier les defauts d'un export "sale" fourni.
 15-01-2026;Vente ;500;entree
 2026/01/20; loyer; 1200 ; Sortie
 ```
-2. Sans encore corriger : liste ≥5 problemes de qualite.
-3. Demande a ChatGPT une checklist de nettoyage ordonnee (max 6 etapes) et compare a ta liste.
+2. Sans encore corriger : liste ≥5 problèmes de qualité.
+3. Demande à ChatGPT une checklist de nettoyage ordonnée (max 6 étapes) et compare à ta liste.
 4. Note 2 points que l'IA a rates ou mal priorises.
 
-## Criteres de reussite
-- [ ] ≥5 problemes listes par toi d'abord
+## Critères de réussite
+- [ ] ≥5 problèmes listes par toi d'abord
 - [ ] Checklist IA
 - [ ] 2 ecarts notes
 
 ## Indice
-Relis le schema du module du jour dans `01-theory/` avant de commencer.
+Relis le schéma du module du jour dans `01-theory/` avant de commencer.
 
 ## Feedback
-Note ce qui a marche en 1 phrase — c est deja une victoire.
+Note ce qui a marche en 1 phrase — c est dejà une victoire.

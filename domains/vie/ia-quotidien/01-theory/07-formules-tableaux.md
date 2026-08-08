@@ -1,27 +1,27 @@
-# Module 07 — Formules, tableaux croises & modeles
+# Module 07 — Formules, tableaux croises & modèles
 
-> **Temps estime** : 45–60 min | **Prerequis** : Module 06
+> **Temps estimé** : 45–60 min | **Prérequis** : Module 06
 >
-> **Objectif** : Construire un mini-modele (recettes / depenses / solde) avec formules expliquees, pret pour le projet tresorerie de J9.
+> **Objectif** : Construire un mini-modèle (recettes / depenses / solde) avec formules expliquees, prêt pour le projet trésorerie de J9.
 
 ---
 
-![Schema du module : Chaque formule se decoupe en morceaux comprehensibles.](../assets/07-formule-expliquee.svg)
+![Schéma du module : Chaque formule se decoupe en morceaux comprehensibles.](../assets/07-formule-expliquee.svg)
 
 > **En une phrase :** Chaque formule se decoupe en morceaux comprehensibles.
 
 
-## 1. Scene concrete : le modele "serviette de table"
+## 1. Scène concrete : le modèle "serviette de table"
 
-Sur une serviette : Recettes − Depenses = Solde. En Excel, le meme modele devient :
+Sur une serviette : Recettes − Depenses = Solde. En Excel, le même modèle devient :
 
 - une feuille **Transactions** ;
-- une feuille **Resume** avec totaux et % ;
-- plus tard : 3 scenarios (base / optimiste / pessimiste).
+- une feuille **Résumé** avec totaux et % ;
+- plus tard : 3 scénarios (base / optimiste / pessimiste).
 
 Few (2012) insiste : un tableau clair bat un graphique joli mais trompeur. Commence par des **nombres lisibles**. [Few, 2012]
 
-> **A retenir :** Un bon modele Excel est d'abord **lisible par un humain** (toi dans 2 semaines), pas "impressionnant".
+> **À retenir :** Un bon modèle Excel est d'abord **lisible par un humain** (toi dans 2 semaines), pas "impressionnant".
 
 ---
 
@@ -32,7 +32,7 @@ Few (2012) insiste : un tableau clair bat un graphique joli mais trompeur. Comme
 | Total simple | `SOMME` | Somme de D2:D100 |
 | Total conditionnel | `SOMME.SI` / `SOMME.SI.ENS` | Total ou Type="sortie" |
 | Compter | `NB.SI` | Nombre de transactions "Loyer" |
-| Recherche | `RECHERCHEX` / `RECHERCHEV` | Trouver le budget d'une categorie |
+| Recherche | `RECHERCHEX` / `RECHERCHEV` | Trouver le budget d'une catégorie |
 | % | Division + format % | Depense cat / total depenses |
 
 Demande toujours : *formule + explication + cas de test*. [Microsoft formulas overview]
@@ -41,7 +41,7 @@ Demande toujours : *formule + explication + cas de test*. [Microsoft formulas ov
 
 ## 3. Tableaux structures
 
-Dans Excel, convertir la plage en **Tableau** (Insertion > Tableau) aide les references (`[@Montant]`). Prompt :
+Dans Excel, convertir la plage en **Tableau** (Insertion > Tableau) aide les références (`[@Montant]`). Prompt :
 
 ```
 Explique comment ecrire une colonne calculee "Sens" qui affiche +Montant si Type=entree et -Montant si sortie, dans un Tableau Excel nomme Transactions.
@@ -49,15 +49,15 @@ Explique comment ecrire une colonne calculee "Sens" qui affiche +Montant si Type
 
 ---
 
-## 4. Mini-modele du jour (a construire)
+## 4. Mini-modèle du jour (a construire)
 
 **Feuille Transactions** (10 lignes fictives minimum) 
-**Feuille Resume** :
+**Feuille Résumé** :
 
-- Total entrees 
+- Total entrées 
 - Total sorties 
 - Solde 
-- Top categorie de depense (tu peux la calculer a la main si la formule est trop avancee — l'IA t'aide a progresser)
+- Top catégorie de depense (tu peux la calculer à la main si la formule est trop avancée — l'IA t'aide à progresser)
 
 Prompt d'assemblage :
 
@@ -69,23 +69,23 @@ Voici mon schema : [..]. Propose la structure Resume (cellules B2:B5) et les for
 
 ## 5. Lien vers J9
 
-J9 = ce modele + scenarios + resume 5 lignes pour un **Budget PME Demo** 100 % fictif.
+J9 = ce modèle + scénarios + résumé 5 lignes pour un **Budget PME Demo** 100 % fictif.
 
 ---
 
-## Spaced repetition
+## Spaced répétition
 
 **Q1.** Quelle formule pour totaliser sous condition ?
 **R1.** `SOMME.SI` ou `SOMME.SI.ENS` (FR).
 
-**Q2.** Pourquoi separer Transactions et Resume ?
-**R2.** Donnees brutes vs indicateurs ; plus facile a auditer et etendre.
+**Q2.** Pourquoi séparér Transactions et Résumé ?
+**R2.** Données brutes vs indicateurs ; plus facile à auditer et étendre.
 
 **Q3.** Que demander en plus de la formule ?
-**R3.** Explication + test numerique attendu.
+**R3.** Explication + test numérique attendu.
 
-**Q4.** Quel principe Few pour la clarte ?
-**R4.** Prioriser la lisibilite des nombres / eviter la decoration inutile. [Few, 2012]
+**Q4.** Quel principe Few pour la clarté ?
+**R4.** Prioriser la lisibilite des nombres / éviter la decoration inutile. [Few, 2012]
 
 **Q5.** A quoi sert un Tableau Excel structure ?
-**R5.** References stables et colonnes calculees plus robustes.
+**R5.** Références stables et colonnes calculees plus robustes.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Answer key — 14-capstone-deck-hec (Capstone final : deck pitch).
+"""Answer key — 14-capstone-deck-pitch (Capstone final : deck pitch).
 
 Per-level keys for the day-specific exercises. Runnable smoke tests encode
 the critical constraints of each level (not a generic shell).
@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-MODULE = "14-capstone-deck-hec"
+MODULE = "14-capstone-deck-pitch"
 TITLE = 'Capstone final : deck pitch'
 SOL: dict[str, Any] = json.loads(r'''{
   "easy_key": {
@@ -35,7 +35,7 @@ SOL: dict[str, Any] = json.loads(r'''{
     "oral_max": 8,
     "score_min": 14,
     "primary_tool": "ChatGPT",
-    "validator": "02-code/14-capstone-deck-hec.py",
+    "validator": "02-code/14-capstone-deck-pitch.py",
     "outline_rules": {
       "min_slides": 8,
       "max_slides": 12,

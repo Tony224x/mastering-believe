@@ -9,11 +9,11 @@
 ### Prompt flou (mauvais)
 > « Ameliore mon Excel. »
 
-## Ecran de reference
+## Écran de référence
 
-![Ecran exemple](../../assets/screens/screen-chatgpt-prompt-3-blocs.png)
+![Écran exemple](../../assets/screens/screen-chatgpt-prompt-3-blocs.png)
 
-## A faire
+## À faire
 
 1. Reecris en 3 blocs :
 
@@ -23,16 +23,16 @@ Demande : ...
 Resultat attendu : ...
 ```
 
-2. Envoie ta version a ChatGPT.
+2. Envoie ta version à ChatGPT.
 3. Note en 1 phrase ce qui a change par rapport au flou.
 
 ## Indice
-Mentionne des colonnes inventees (Date, Montant, Type) meme fictives.
+Mentionne des colonnes inventées (Date, Montant, Type) même fictives.
 
-## Reussite
+## Réussite
 - [ ] 3 blocs visibles
-- [ ] Trace d une reponse IA
+- [ ] Trace d une réponse IA
 - [ ] 1 phrase de comparaison
 
 ## Feedback
-Si ChatGPT te renvoie une formule ou des etapes concretes : **badge Prompt clair.**
+Si ChatGPT te renvoie une formule ou des étapes concretes : **badge Prompt clair.**

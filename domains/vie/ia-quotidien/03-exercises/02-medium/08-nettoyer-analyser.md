@@ -1,15 +1,24 @@
-# Nettoyer, analyser, visualiser — niveau medium
+# Mission — Nettoyer, analyser, visualiser — niveau medium
 
-## Objectif
+> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **medium** · module J8.
+
+## But
+
 Produire un tableau propre + totaux.
 
-## Consigne
-1. Nettoie le jeu (etend-le a 12 lignes fictives coherentes).
-2. Standardise : dates ISO, categories Title Case, Type en minuscules, montants nombres.
-3. Calcule totaux entrees/sorties.
-4. Documente les regles de standardisation en 5 puces.
+## À faire
 
-## Criteres de reussite
+1. Nettoie le jeu (étends-le à 12 lignes fictives cohérentes).
+2. Standardise : dates ISO, catégories Title Case, Type en minuscules, montants nombres.
+3. Calcule totaux entrées/sorties.
+4. Documente les règles de standardisation en 5 puces.
+
+## Réussite
+
 - [ ] 12 lignes propres
-- [ ] Totaux coherents
-- [ ] Regles de standard documentees
+- [ ] Totaux cohérents
+- [ ] Règles de standard documentees
+
+## Indice
+
+Si tu bloques plus de 10 min : reviens à la mission **easy** du même jour, puis reviens ici.
