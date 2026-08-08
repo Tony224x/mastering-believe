@@ -114,3 +114,7 @@ references/
 .DS_Store
 Thumbs.db
 desktop.ini
+.gstack/
+
+# Previews SVG raster (QA locale, regenerables)
+domains/**/assets/preview/

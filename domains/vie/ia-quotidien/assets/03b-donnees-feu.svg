@@ -1,16 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
-  <title id="t">Donnees vert orange rouge</title>
-  <desc id="d">Feu tricolore : fictif OK, anonymiser, ne jamais coller sante RH salaires clients.</desc>
-  <rect width="960" height="300" fill="#F8FAFC"/>
-  
-  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Avant de coller dans ChatGPT</text>
-  <circle cx="180" cy="140" r="50" fill="#16A34A"/><text x="180" y="148" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">VERT</text>
-  <text x="180" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#14532D">Exemples fictifs</text>
-  <circle cx="480" cy="140" r="50" fill="#F59E0B"/><text x="480" y="148" text-anchor="middle" fill="#78350F" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">ORANGE</text>
-  <text x="480" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#78350F">Anonymiser d abord</text>
-  <circle cx="780" cy="140" r="50" fill="#DC2626"/><text x="780" y="148" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="700">ROUGE</text>
-  <text x="780" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#7F1D1D">Sante / RH / clients</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Feu tricolore des données</title>
+  <desc id="d">Vert exemples fictifs, orange anonymiser d'abord, rouge sante RH salaires clients ne jamais coller.</desc>
 
-  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Donnees vert orange rouge</text>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <filter id="s2" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <linearGradient id="gSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FDFA"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Avant de coller dans ChatGPT</text>
+
+  <text x="56" y="82" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">La couleur seule ne suffit pas — lis toujours le label</text>
+<rect x="80" y="140" width="320" height="420" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="240" cy="280" r="70" fill="#16A34A"/>
+  <text x="240" y="290" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">VERT</text>
+  <text x="240" y="400" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#0F172A">OK à coller</text>
+  <text x="240" y="440" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Exemples inventés</text>
+  <text x="240" y="465" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Données de démo</text>
+<rect x="440" y="140" width="320" height="420" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="600" cy="280" r="70" fill="#F59E0B"/>
+  <text x="600" y="290" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0F172A">ORANGE</text>
+  <text x="600" y="400" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#0F172A">Anonymiser d'abord</text>
+  <text x="600" y="440" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Noms → Employé A</text>
+  <text x="600" y="465" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Montants masqués</text>
+<rect x="800" y="140" width="320" height="420" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="960" cy="280" r="70" fill="#DC2626"/>
+  <text x="960" y="290" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">ROUGE</text>
+  <text x="960" y="400" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#0F172A">Ne jamais coller</text>
+  <text x="960" y="440" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Santé · RH · salaires</text>
+  <text x="960" y="465" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Clients · comptes</text>
+  <rect x="80" y="580" width="1040" height="60" rx="18" fill="#FEF3C7" filter="url(#s)"/>
+  <text x="600" y="618" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">Avant : Marie Dupont, salaire 2 450 €  →  Après : Employé A, montant supprimé</text>
+
+  <text x="600" y="660" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Feu tricolore des données · ia-quotidien</text>
 </svg>

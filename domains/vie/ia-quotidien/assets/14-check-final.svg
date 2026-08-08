@@ -1,13 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
-  <title id="t">Check final capstone</title>
-  <desc id="d">Verifier les faits, repeter a voix haute, livrer le deck et le journal IA.</desc>
-  <rect width="960" height="300" fill="#F8FAFC"/>
-  
-  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Verifier → repeter → livrer</text>
-  <rect x="80" y="90" width="240" height="110" rx="12" fill="#FEF3C7"/><text x="200" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">1. Verifier</text>
-  <rect x="360" y="90" width="240" height="110" rx="12" fill="#DBEAFE"/><text x="480" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">2. Oral 6-8 min</text>
-  <rect x="640" y="90" width="240" height="110" rx="12" fill="#D1FAE5"/><text x="760" y="155" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">3. Livrer</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Vérifier · répéter · livrer</title>
+  <desc id="d">Trois etapes finales du capstone : verifier les faits, oral 6 a 8 minutes, livrer deck et journal IA.</desc>
 
-  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Check final capstone</text>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <filter id="s2" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <linearGradient id="gSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FDFA"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Check final du capstone</text>
+
+  <text x="56" y="82" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Outil principal : ChatGPT · Livrable : Pitch-PME-Final.pptx</text>
+<rect x="80" y="140" width="320" height="400" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="240" cy="240" r="48" fill="#F59E0B"/>
+  <text x="240" y="252" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="700" fill="#0F172A">1</text>
+  <text x="240" y="340" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0F172A">Vérifier</text>
+  <text x="240" y="390" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Chaque chiffre</text>
+  <text x="240" y="420" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">a une source</text>
+  <text x="240" y="480" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#F59E0B">FAITS</text>
+<rect x="440" y="140" width="320" height="400" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="600" cy="240" r="48" fill="#0284C7"/>
+  <text x="600" y="252" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="700" fill="#fff">2</text>
+  <text x="600" y="340" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0F172A">Répéter</text>
+  <text x="600" y="390" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Oral 6–8 min</text>
+  <text x="600" y="420" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Notes sur 3 slides</text>
+  <text x="600" y="480" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#0284C7">ORAL</text>
+<rect x="800" y="140" width="320" height="400" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="960" cy="240" r="48" fill="#16A34A"/>
+  <text x="960" y="252" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="700" fill="#fff">3</text>
+  <text x="960" y="340" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0F172A">Livrer</text>
+  <text x="960" y="390" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Deck + journal IA</text>
+  <text x="960" y="420" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Badge Deck présentable</text>
+  <text x="960" y="480" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#16A34A">DONE</text>
+  <text x="600" y="660" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Vérifier · répéter · livrer · ia-quotidien</text>
 </svg>

@@ -221,7 +221,19 @@ Consolide dans `REVIEW-pass2.md`. Applique les fixes.
 [ ] Phase 7 — Capstone OK, CLAUDE.md/todo.md a jour, commit final
 ```
 
+## Visuels pedagogiques (SVG)
+
+Si le domaine est **visual-first** (track vie, ou demande utilisateur) :
+
+1. Lire **`references/svg-pedagogique.md`** (design system, a11y, anti-patterns, boucle QA).
+2. Un SVG d'ouverture **par module** de theorie + legende *En une phrase* dans le `.md`.
+3. **Ne jamais** generer les schemas pedagogiques via un modele image (skill imagine) : texte exact → SVG/HTML en code.
+4. Revue visuelle **fichier par fichier** (rasteriser → inspecter → corriger) avant de marquer le domaine stable.
+
+References croisees : skill `imagine` (code vs image), skill `pptx` (palette / QA visuelle), skill `diagram` (SVG net).
+
 ## References internes
 
 - `references/repo-structure.md` — convention exacte VERIFIEE des dossiers/fichiers du repo.
 - `references/subagent-prompts.md` — templates de prompts pour Phase 1, 2, 4, 6.
+- `references/svg-pedagogique.md` — standard SVG haute qualite (palette, a11y, checklist, anti-patterns).

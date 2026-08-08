@@ -1,14 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
-  <title id="t">Dialogue socratique</title>
-  <desc id="d">Cycle question, reponse de l apprenant, puis synthese sans conseil premature.</desc>
-  <rect width="960" height="300" fill="#F8FAFC"/>
-  
-  <text x="480" y="40" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="700" fill="#0F172A">Partenaire de reflexion</text>
-  <rect x="60" y="80" width="220" height="90" rx="12" fill="#0F766E"/><text x="170" y="135" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">1. Question</text>
-  <rect x="370" y="80" width="220" height="90" rx="12" fill="#0D9488"/><text x="480" y="135" text-anchor="middle" fill="#fff" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">2. Ta reponse</text>
-  <rect x="680" y="80" width="220" height="90" rx="12" fill="#14B8A6"/><text x="790" y="135" text-anchor="middle" fill="#134E4A" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700">3. Synthese</text>
-  <text x="480" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#334155">L IA pose des questions. Toi tu tranches.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Partenaire de réflexion</title>
+  <desc id="d">Cycle en trois etapes : l'IA pose une question, tu reponds, puis synthese de tes mots.</desc>
 
-  <text x="480" y="284" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Dialogue socratique</text>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <filter id="s2" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <linearGradient id="gSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FDFA"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">L'IA pose des questions — toi tu tranches</text>
+
+  <text x="56" y="82" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Ne te laisse pas « donner la réponse » trop tôt</text>
+<rect x="100" y="160" width="300" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="250" cy="240" r="36" fill="#0F766E"/>
+  <text x="250" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="22" font-weight="700" fill="#fff">1</text>
+  <text x="250" y="330" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#0F172A">Question</text>
+  <text x="250" y="370" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Une seule à la fois</text>
+<rect x="450" y="160" width="300" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="600" cy="240" r="36" fill="#0D9488"/>
+  <text x="600" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="22" font-weight="700" fill="#fff">2</text>
+  <text x="600" y="330" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#0F172A">Ta réponse</text>
+  <text x="600" y="370" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Tes mots, ton contexte</text>
+<rect x="800" y="160" width="300" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="950" cy="240" r="36" fill="#14B8A6"/>
+  <text x="950" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="22" font-weight="700" fill="#fff">3</text>
+  <text x="950" y="330" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#0F172A">Synthèse</text>
+  <text x="950" y="370" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Résumé de CE que tu as dit</text>
+  <path d="M400 300 H450" stroke="#94A3B8" stroke-width="3" marker-end="url(#arr)"/>
+  <path d="M750 300 H800" stroke="#94A3B8" stroke-width="3" marker-end="url(#arr)"/>
+  <rect x="100" y="480" width="1000" height="120" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" fill="#115E59">Prompt type : « Pose-moi UNE question à la fois. Ne conseille pas avant ma 5ᵉ réponse. »</text>
+  <text x="600" y="565" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#64748B">Puis : « Résume UNIQUEMENT mes réponses en 5 puces. N'ajoute rien. »</text>
+
+  <text x="600" y="660" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Partenaire de réflexion · ia-quotidien</text>
 </svg>
