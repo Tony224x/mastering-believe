@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360">
+  <rect width="960" height="360" fill="#F8FAFC"/>
+  <text x="480" y="36" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#0F172A">Parcours 14 jours — carte visuelle</text>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="13">
+    <rect x="40" y="70" width="200" height="100" rx="12" fill="#CCFBF1" stroke="#0F766E"/>
+    <text x="140" y="105" text-anchor="middle" font-weight="700" fill="#134E4A">J1–J3 Bases</text>
+    <text x="140" y="130" text-anchor="middle" fill="#0F172A">IA, prompts,</text>
+    <text x="140" y="148" text-anchor="middle" fill="#0F172A">verification</text>
+    <rect x="270" y="70" width="200" height="100" rx="12" fill="#E0E7FF" stroke="#4338CA"/>
+    <text x="370" y="105" text-anchor="middle" font-weight="700" fill="#312E81">J4–J5 Penser</text>
+    <text x="370" y="130" text-anchor="middle" fill="#0F172A">Reflexion,</text>
+    <text x="370" y="148" text-anchor="middle" fill="#0F172A">ecriture</text>
+    <rect x="500" y="70" width="200" height="100" rx="12" fill="#FEF3C7" stroke="#B45309"/>
+    <text x="600" y="105" text-anchor="middle" font-weight="700" fill="#78350F">J6–J9 Excel</text>
+    <text x="600" y="130" text-anchor="middle" fill="#0F172A">Formules +</text>
+    <text x="600" y="148" text-anchor="middle" fill="#0F172A">budget PME</text>
+    <rect x="730" y="70" width="200" height="100" rx="12" fill="#FCE7F3" stroke="#BE185D"/>
+    <text x="830" y="105" text-anchor="middle" font-weight="700" fill="#831843">J10–J14 Pitch</text>
+    <text x="830" y="130" text-anchor="middle" fill="#0F172A">Slides +</text>
+    <text x="830" y="148" text-anchor="middle" fill="#0F172A">capstone</text>
+  </g>
+  <!-- arrows -->
+  <path d="M240 120 H270" stroke="#94A3B8" stroke-width="3" marker-end="url(#a)"/>
+  <path d="M470 120 H500" stroke="#94A3B8" stroke-width="3"/>
+  <path d="M700 120 H730" stroke="#94A3B8" stroke-width="3"/>
+  <rect x="120" y="220" width="720" height="90" rx="14" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="480" y="255" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#0F172A">2 livrables portfolio</text>
+  <text x="480" y="285" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#334155">1) Budget-PME-Demo.xlsx (fictif)   ·   2) Pitch-PME-Final.pptx (8–12 slides)</text>
+  <text x="480" y="340" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#64748B">Outil principal : ChatGPT · Persona fictive du cours : Alex</text>
+</svg>

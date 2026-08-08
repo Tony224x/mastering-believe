@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320">
+  <rect width="960" height="320" fill="#F8FAFC"/>
+  <text x="480" y="40" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">Checklist V-A-I-R avant d&#39;utiliser une reponse</text>
+  <g font-family="Helvetica, Arial, sans-serif">
+    <rect x="40" y="80" width="200" height="180" rx="14" fill="#FFFFFF" stroke="#0F766E" stroke-width="3"/>
+    <circle cx="140" cy="120" r="28" fill="#0F766E"/>
+    <text x="140" y="128" text-anchor="middle" font-size="22" font-weight="700" fill="#FFF">V</text>
+    <text x="140" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0F172A">Verifiable ?</text>
+    <text x="140" y="210" text-anchor="middle" font-size="12" fill="#64748B">Source ouvrable</text>
+    <rect x="270" y="80" width="200" height="180" rx="14" fill="#FFFFFF" stroke="#0F766E" stroke-width="3"/>
+    <circle cx="370" cy="120" r="28" fill="#0F766E"/>
+    <text x="370" y="128" text-anchor="middle" font-size="22" font-weight="700" fill="#FFF">A</text>
+    <text x="370" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0F172A">Ancree ?</text>
+    <text x="370" y="210" text-anchor="middle" font-size="12" fill="#64748B">Dans TES faits</text>
+    <rect x="500" y="80" width="200" height="180" rx="14" fill="#FFFFFF" stroke="#C2410C" stroke-width="3"/>
+    <circle cx="600" cy="120" r="28" fill="#C2410C"/>
+    <text x="600" y="128" text-anchor="middle" font-size="22" font-weight="700" fill="#FFF">I</text>
+    <text x="600" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0F172A">Invention ?</text>
+    <text x="600" y="210" text-anchor="middle" font-size="12" fill="#64748B">Trop precis = doute</text>
+    <rect x="730" y="80" width="200" height="180" rx="14" fill="#FFFFFF" stroke="#C2410C" stroke-width="3"/>
+    <circle cx="830" cy="120" r="28" fill="#C2410C"/>
+    <text x="830" y="128" text-anchor="middle" font-size="22" font-weight="700" fill="#FFF">R</text>
+    <text x="830" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0F172A">Risque si faux ?</text>
+    <text x="830" y="210" text-anchor="middle" font-size="12" fill="#64748B">Ecole / travail</text>
+  </g>
+  <text x="480" y="300" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748B">Module 03 — si un critere echoue : verifier ou jeter</text>
+</svg>

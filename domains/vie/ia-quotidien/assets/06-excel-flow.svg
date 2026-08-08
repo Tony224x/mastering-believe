@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220">
+  <rect width="960" height="220" fill="#F8FAFC"/>
+  <text x="480" y="36" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#0F172A">Boucle Excel + ChatGPT</text>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="600">
+    <rect x="40" y="70" width="150" height="80" rx="12" fill="#0F766E"/><text x="115" y="118" text-anchor="middle" fill="#FFF">1. Decrire</text>
+    <rect x="230" y="70" width="150" height="80" rx="12" fill="#0D9488"/><text x="305" y="118" text-anchor="middle" fill="#FFF">2. Formule</text>
+    <rect x="420" y="70" width="150" height="80" rx="12" fill="#14B8A6"/><text x="495" y="118" text-anchor="middle" fill="#134E4A">3. Coller</text>
+    <rect x="610" y="70" width="150" height="80" rx="12" fill="#F59E0B"/><text x="685" y="118" text-anchor="middle" fill="#78350F">4. Tester</text>
+    <rect x="800" y="70" width="130" height="80" rx="12" fill="#C2410C"/><text x="865" y="118" text-anchor="middle" fill="#FFF">5. Corriger</text>
+  </g>
+  <text x="480" y="195" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748B">Si erreur Excel → renvoyer le message (#NOM?, #DIV/0!) a ChatGPT</text>
+</svg>

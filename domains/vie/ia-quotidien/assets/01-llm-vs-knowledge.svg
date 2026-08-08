@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420">
+  <rect width="960" height="420" fill="#F8FAFC"/>
+  <text x="480" y="42" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">LLM : plausible ≠ vrai</text>
+  <rect x="60" y="80" width="380" height="280" rx="16" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+  <rect x="520" y="80" width="380" height="280" rx="16" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+  <text x="250" y="120" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#0F766E">Ce que l&#39;IA fait bien</text>
+  <text x="710" y="120" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#C2410C">Ce qu&#39;elle ne garantit pas</text>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#0F172A">
+    <text x="90" y="170">• Reformuler et structurer</text>
+    <text x="90" y="205">• Proposer des formules Excel</text>
+    <text x="90" y="240">• Esquisser un plan de slides</text>
+    <text x="90" y="275">• Challenger une idee</text>
+    <text x="90" y="310">• Brainstormer des options</text>
+    <text x="550" y="170">• Exactitude des faits / chiffres</text>
+    <text x="550" y="205">• Connaitre ton dossier reel</text>
+    <text x="550" y="240">• Remplacer ta relecture</text>
+    <text x="550" y="275">• Confidentialite absolue</text>
+    <text x="550" y="310">• Sources inventees possibles</text>
+  </g>
+  <text x="480" y="400" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748B">Module 01 — IA au quotidien (non-tech)</text>
+</svg>
