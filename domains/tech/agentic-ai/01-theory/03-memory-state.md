@@ -1,9 +1,16 @@
 # J3 — Memory & State : Short-term, Long-term, Working Memory, Checkpointing
 
-> **Temps estime** : 3h | **Prerequis** : J1 (Anatomie d'un agent), J2 (Tool Use)
-> **Objectif** : comprendre et implementer les differents types de memoire d'un agent IA, maitriser le state management, et savoir quand/comment persister l'etat.
+> **Temps estimé** : 3h | **Prérequis** : J1 (Anatomie d'un agent), J2 (Tool Use)
+>
+> **Objectif** : comprendre et implémenter les differents types de mémoire d'un agent IA, maîtriser le state management, et savoir quand/comment persister l'etat.
 
 ---
+
+![Trois couches de mémoire + checkpoint](../assets/03-memory-state.svg)
+
+> **En une phrase :** Sans mémoire structurée, l'agent redécouvre tout à chaque tour.
+>
+> **Visuel :** Short-term (fenêtre de contexte), working memory (scratchpad/state), long-term (vector store). À côté : checkpoint pour sauvegarder et reprendre l'état.
 
 ## 1. Pourquoi la memoire est ce qui separe un agent utile d'un jouet
 
@@ -49,19 +56,7 @@ Le cerveau humain a plusieurs systemes de memoire. Les agents IA aussi. Comprend
 
 Pour un agent, la short-term memory, c'est le **context window** du LLM. C'est la liste des messages envoyes dans le prompt : system prompt, historique de conversation, observations des outils.
 
-```
-Context window (ex: 128k tokens)
-┌──────────────────────────────────────┐
-│ System prompt          (~500 tokens) │
-│ User message 1         (~100 tokens) │
-│ Assistant response 1   (~200 tokens) │
-│ Tool result 1          (~300 tokens) │
-│ ...                                  │
-│ User message N         (~100 tokens) │
-│ Assistant response N   (~200 tokens) │
-│ ← espace restant pour la reponse →  │
-└──────────────────────────────────────┘
-```
+> **Visuel (rappel) :** la fenêtre de contexte est la couche *short-term* du schéma en tête et du schéma production plus bas dans ce module.
 
 **Limites** :
 - **Taille fixe** : la fenetre de contexte est bornee (de l'ordre de 200k a 1M tokens selon le modele frontiere). Ca parait enorme, mais un agent qui fait 30 etapes avec des tool results verbeux peut remplir le context en quelques minutes
@@ -348,18 +343,11 @@ def trim_to_token_budget(messages: list[dict], budget: int) -> list[dict]:
 
 Combine summary + buffer : les anciens messages sont resumes, les recents sont gardes en entier.
 
-```
-┌────────────────────────────────────────────┐
-│  Summary of messages 1-30                   │  ← resume compact
-│  "L'utilisateur cherche un laptop < 500€,   │
-│   a regarde 3 modeles, prefere ASUS"        │
-├────────────────────────────────────────────┤
-│  Message 31: User asks about warranty       │  ← buffer recent (complet)
-│  Message 32: Agent checks warranty tool     │
-│  Message 33: Tool result: 2 year warranty   │
-│  Message 34: Agent responds with details    │
-└────────────────────────────────────────────┘
-```
+![Hybrid memory summary plus fenêtre](../assets/03-hybrid-memory.svg)
+
+> **En une phrase :** Summary + fenêtre récente = compromis coût/fidélité.
+>
+> **Visuel :** Résumé des anciens messages à gauche, fenêtre récente à droite, assemblés pour le LLM.
 
 **Pourquoi c'est le meilleur compromis** :
 - Le resume preserve les **decisions et faits cles** du passe
@@ -434,17 +422,7 @@ checkpoint = {
 
 Le pouvoir du checkpointing : tu peux **revenir a n'importe quel point** et inspecter ou rejouer.
 
-```
-Step 1 ──→ Step 2 ──→ Step 3 ──→ Step 4 ──→ Step 5 (bug!)
-  ↓           ↓           ↓           ↓
- CP-1       CP-2       CP-3       CP-4
-
-"Pourquoi l'etape 5 a echoue ?"
-→ Charger CP-4
-→ Inspecter le state : ah, la working_memory n'avait pas le bon format
-→ Charger CP-3 : ok, c'est l'etape 3 qui a mal ecrit en working memory
-→ Bug trouve.
-```
+> **Idée :** chaque step a un checkpoint (CP-1…CP-n). Un bug au step 5 se rejoue depuis CP-4 sans tout relancer — le checkpointer de LangGraph expose cet historique.
 
 C'est exactement ce que fait LangGraph avec son systeme de checkpointing. Et c'est pour ca que le pattern immutable state + reducers est puissant : chaque etape produit un nouvel etat, et tu peux reconstruire n'importe quel point de l'execution.
 
@@ -525,42 +503,11 @@ Metadata utiles :
 
 ## 7. Comment tout s'assemble — architecture memoire d'un agent production
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                      AGENT LOOP                          │
-│                                                          │
-│   ┌────────────────┐    ┌──────────────────────┐        │
-│   │  Context Window │    │   Working Memory      │        │
-│   │  (short-term)   │    │   (scratchpad)         │        │
-│   │                 │    │                        │        │
-│   │  - System prompt│    │  - task: "..."          │        │
-│   │  - Summary old  │    │  - step: 5              │        │
-│   │  - Recent msgs  │    │  - findings: [...]      │        │
-│   │  - Tool results │    │  - hypothesis: "..."    │        │
-│   └────────┬───────┘    └──────────┬─────────────┘        │
-│            │                       │                      │
-│            └───────┐   ┌──────────┘                      │
-│                    ▼   ▼                                  │
-│              ┌──────────────┐                            │
-│              │     LLM      │                            │
-│              └──────┬───────┘                            │
-│                     │                                    │
-│            ┌────────┴────────┐                           │
-│            ▼                 ▼                           │
-│   ┌──────────────┐  ┌──────────────┐                    │
-│   │ Tool Execution│  │ Checkpoint   │                    │
-│   └──────────────┘  │ (save state) │                    │
-│                     └──────────────┘                    │
-└──────────────────────────┬──────────────────────────────┘
-                           │
-                    ┌──────┴──────┐
-                    ▼             ▼
-            ┌────────────┐  ┌────────────┐
-            │ Vector Store│  │ Key-Value  │
-            │ (long-term) │  │ (prefs,    │
-            │             │  │  facts)    │
-            └────────────┘  └────────────┘
-```
+![Architecture mémoire d'un agent en production](../assets/03-memory-production.svg)
+
+> **En une phrase :** Trois mémoires dans la boucle, plus stores externes pour le long terme.
+>
+> **Visuel :** Context window + working memory alimentent le LLM ; tools et checkpoint à côté ; vector store et key-value en bas.
 
 **Flux typique** :
 1. L'agent recoit une tache
@@ -604,12 +551,11 @@ Metadata utiles :
 - Vector stores + metadata filtering = memoire long-terme performante et pertinente
 - La working memory (scratchpad) est le secret des agents performants — extraire et structurer les infos cles plutot que de tout noyer dans le context window
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-280 (Sp25) — Lec. 10 (Reasoning, Memory & Planning of Language Agents, Yu Su)** — taxonomie complete de la memoire dans les agents.
 - **CMU 11-711 (Welleck, Sp25) — Lec. 13 (Agents)** — patterns de state management appliques aux agents NLP.

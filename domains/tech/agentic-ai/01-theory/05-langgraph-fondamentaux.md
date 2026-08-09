@@ -1,9 +1,16 @@
 # J5 — LangGraph fondamentaux : StateGraph, nodes, edges, conditional routing
 
-> **Temps estime** : 3h | **Prerequis** : J1 (Agent anatomy), J2 (Tool use), J3 (Memory), J4 (Planning)
-> **Objectif** : comprendre le modele mental de LangGraph (StateGraph + nodes + edges + state), savoir construire un graph minimal from scratch, et maitriser invoke/stream + human-in-the-loop.
+> **Temps estimé** : 3h | **Prérequis** : J1 (Agent anatomy), J2 (Tool use), J3 (Memory), J4 (Planning)
+>
+> **Objectif** : comprendre le modèle mental de LangGraph (StateGraph + nodes + edges + state), savoir construire un graph minimal from scratch, et maîtriser invoke/stream + human-in-the-loop.
 
 ---
+
+![StateGraph LangGraph : START agent tools END](../assets/05-langgraph-fondamentaux.svg)
+
+> **En une phrase :** LangGraph = Redux pour agents : nodes purs + state + edges.
+>
+> **Visuel :** START → nœud agent → edge conditionnel needs_tool : oui vers tools puis retour agent, non vers END. Le state (dict) circule ; HITL = interrupt.
 
 ## 1. Pourquoi LangGraph existe
 
@@ -45,24 +52,7 @@ LangGraph modelise un agent comme un **graph dirige** ou :
 - Le **state** est un dict (typiquement un `TypedDict` ou Pydantic) qui circule entre les nodes
 - **START** et **END** sont des nodes speciaux qui marquent le debut et la fin
 
-```
-                  ┌─────────┐
-                  │  START  │
-                  └────┬────┘
-                       │
-                       v
-                  ┌─────────┐
-              ┌──>│  agent  │  (node)
-              │   └────┬────┘
-              │        │ (conditional edge)
-              │  needs_tool ?
-              │        │
-              │    yes │ │ no
-              │        v v
-              │   ┌─────────┐   ┌────────┐
-              └───│  tools  │   │  END   │
-                  └─────────┘   └────────┘
-```
+> **Visuel (rappel) :** le schéma en tête de module montre le même modèle — START → agent → (tools | END) avec edge conditionnel `needs_tool` et state qui circule.
 
 A chaque step, LangGraph :
 1. Regarde ou on est dans le graph

@@ -1,9 +1,16 @@
 # J7 — Build : un agent de recherche+analyse complet (capstone semaine 1)
 
-> **Temps estime** : 4h | **Prerequis** : J1 a J6 (tout ce qu'on a vu)
-> **Objectif** : assembler tout ce qu'on a appris en un agent production-credible. On construit pas a pas un agent de recherche qui prend une question complexe, planifie, execute des outils, maintient une memoire, gere les erreurs, et synthetise une reponse finale.
+> **Temps estimé** : 4h | **Prérequis** : J1 a J6 (tout ce qu'on a vu)
+>
+> **Objectif** : assembler tout ce qu'on a appris en un agent production-credible. On construit pas a pas un agent de recherche qui prend une question complexe, planifie, execute des outils, maintient une mémoire, gere les erreurs, et synthetise une reponse finale.
 
 ---
+
+![Pipeline agent complet cinq étapes](../assets/07-agent-complet.svg)
+
+> **En une phrase :** Assembler les briques vaut mieux que perfectionner une seule.
+>
+> **Visuel :** Question → Plan → Tools → Mémoire → Synthèse. Capstone semaine 1 : recherche + analyse avec erreurs gérées et state checkpointé.
 
 ## 1. Le cahier des charges
 
@@ -26,30 +33,11 @@ C'est un **agent de recherche multi-etapes**. C'est 70% des agents qu'on constru
 
 ## 2. Architecture de haut niveau
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                       RESEARCH AGENT                          │
-│                                                                │
-│   START → planner → executor → analyzer → synthesizer → END  │
-│              ^          │                                      │
-│              │          │                                      │
-│              └──────────┘                                      │
-│          (replan if stuck)                                     │
-│                                                                │
-│   State:                                                       │
-│   - question: str                                              │
-│   - plan: list[str]          (the planner's steps)             │
-│   - short_term_memory: dict  (scratchpad for current task)     │
-│   - long_term_knowledge: list (persistent facts)               │
-│   - findings: list           (raw tool outputs)                │
-│   - final_answer: str                                          │
-│                                                                │
-│   Tools:                                                       │
-│   - mock_web_search(query)                                     │
-│   - read_doc(doc_name)                                         │
-│   - summarize(text)                                            │
-└──────────────────────────────────────────────────────────────┘
-```
+![Architecture du research agent](../assets/07-research-agent-archi.svg)
+
+> **En une phrase :** Planifier, exécuter avec replan, analyser, synthétiser — state et tools partagés.
+>
+> **Visuel :** START → planner → executor (boucle replan) → analyzer → END ; state question/plan/mémoires/findings.
 
 Les nodes correspondent directement aux patterns de J4 (plan-and-execute) et J5 (LangGraph).
 
@@ -286,51 +274,14 @@ En prod avec LangGraph, on combine ca avec les **interrupts** vus a J6 : l'agent
 
 ## 10. Le flow complet
 
-```
-User question: "Quelle est la densite de population de l'Afrique ?"
+Exemple : *« Quelle est la densité de population de l'Afrique ? »*
 
-[START]
-  ↓
-[PLANNER]
-  → plan = [
-      "1. Find Africa's total area in km2",
-      "2. Find Africa's population",
-      "3. Compute density = population / area",
-      "4. Format the answer",
-    ]
-  ↓
-[EXECUTOR] step 1
-  → check long_term memory: empty
-  → tool = mock_web_search("africa area km2")
-  → result = "Africa: 30.37M km2"
-  → short_term.area_km2 = 30370000
-  → long_term.append({"fact": "Africa area ~30.37M km2", ...})
-  ↓
-[EXECUTOR] step 2
-  → check long_term: empty for population
-  → tool = mock_web_search("africa population")
-  → result = "Africa: 1.46B inhabitants"
-  → short_term.population = 1460000000
-  → long_term.append({...})
-  ↓
-[EXECUTOR] step 3 (computation)
-  → density = 1460000000 / 30370000 = 48.07
-  → short_term.density = 48.07
-  ↓
-[ANALYZER]
-  → extracts facts, verifies plausibility
-  ↓
-[SYNTHESIZER]
-  → "The population density of Africa is approximately 48 inhabitants/km2
-     (1.46B habitants / 30.37M km2)."
-  ↓
-[END]
+1. **PLANNER** — découpe : aire km² → population → densité → format.
+2. **EXECUTOR** — search aire → `30.37M km²` ; search pop → `1.46B` ; calcule ≈ **48 hab/km²** ; écrit short-term + long-term.
+3. **ANALYZER** — extrait les faits, contrôle la plausibilité.
+4. **SYNTHESIZER** — réponse sourcée (~48 hab/km² à partir des deux chiffres).
 
-Final output:
-"The population density of Africa is approximately 48 inhabitants/km2,
- calculated from a total area of 30.37 million km2 and a population of
- approximately 1.46 billion inhabitants."
-```
+Chaque étape lit/écrit le **state** partagé (plan, scratchpad, findings) — c'est le flow du schéma d'architecture plus haut.
 
 ---
 
@@ -399,12 +350,11 @@ Si tu comprends cet agent de bout en bout, tu comprends 80% des agents en produc
 - Commencer minimaliste, ajouter les features une par une (surtout pas "big bang")
 - Cet agent combine tout le contenu de la semaine 1 — si tu le comprends, tu es pret pour la semaine 2
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours terrain sur la mise en prod d'agents complets.
 - **Berkeley CS294-196 (Fa24) — Lec. 6 (AI Agents for Enterprise Workflows, Chapados)** — patterns pour agents qui orchestrent des workflows reels.

@@ -1,9 +1,16 @@
 # J18 — Orchestration comparee : LangGraph vs CrewAI vs AutoGen vs OpenAI Agents SDK & multi-agent failure modes
 
-> **Temps estime** : 3h | **Prerequis** : J1-J17 (surtout J5/J6 pour LangGraph, J9 pour les patterns multi-agents)
-> **Objectif** : comparer les 5 grands frameworks d'orchestration sur leurs modeles d'execution, savoir choisir lequel deployer selon le contexte, et identifier les failure modes classiques du multi-agent pour ne pas reproduire les erreurs couteuses.
+> **Temps estimé** : 3h | **Prérequis** : J1-J17 (surtout J5/J6 pour LangGraph, J9 pour les patterns multi-agents)
+>
+> **Objectif** : comparer les 5 grands frameworks d'orchestration sur leurs modèles d'execution, savoir choisir lequel deployer selon le contexte, et identifier les failure modes classiques du multi-agent pour ne pas reproduire les erreurs couteuses.
 
 ---
+
+![Comparaison frameworks d'orchestration agents](../assets/18-orchestration-comparee-failure-modes.svg)
+
+> **En une phrase :** Choisir selon le contrôle requis, pas la hype du framework.
+>
+> **Visuel :** LangGraph, CrewAI, AutoGen, OpenAI SDK, Swarm/ADK — trade-offs contrôle vs vitesse. Failure modes : loops, ping-pong, contexte pollué, coût.
 
 ## 1. Pourquoi comparer les frameworks ?
 

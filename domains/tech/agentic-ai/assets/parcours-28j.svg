@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Parcours 28 jours agentic-ai</title>
+  <desc id="d">Quatre blocs : S1 J1-J7 fondations agent, S2 J8-J14 multi-agent et prod, S3 J15-J21 frontier, S4 J22-J28 scale et capstone.</desc>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Parcours agentic-ai — 28 jours</text>
+  <text x="56" y="80" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">S1-S2 fondations · S3-S4 frontier</text>
+  <text x="56" y="660" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">README · agentic-ai</text>  <rect x="80" y="180" width="240" height="300" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <rect x="80" y="180" width="240" height="56" rx="18" fill="#0F766E"/>
+  <rect x="80" y="210" width="240" height="26" fill="#0F766E"/>
+  <text x="200" y="218" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">S1</text>
+  <text x="200" y="280" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="600" fill="#0F172A">J1–J7</text>  <text x="200" y="340" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Agent single</text>  <text x="200" y="370" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">+ LangGraph</text>  <rect x="340" y="180" width="240" height="300" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <rect x="340" y="180" width="240" height="56" rx="18" fill="#115E59"/>
+  <rect x="340" y="210" width="240" height="26" fill="#115E59"/>
+  <text x="460" y="218" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">S2</text>
+  <text x="460" y="280" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="600" fill="#0F172A">J8–J14</text>  <text x="460" y="340" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Multi-agent</text>  <text x="460" y="370" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">+ prod</text>  <rect x="600" y="180" width="240" height="300" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <rect x="600" y="180" width="240" height="56" rx="18" fill="#F59E0B"/>
+  <rect x="600" y="210" width="240" height="26" fill="#F59E0B"/>
+  <text x="720" y="218" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">S3</text>
+  <text x="720" y="280" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="600" fill="#0F172A">J15–J21</text>  <text x="720" y="340" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Frontier</text>  <text x="720" y="370" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">patterns</text>  <rect x="860" y="180" width="240" height="300" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <rect x="860" y="180" width="240" height="56" rx="18" fill="#DC2626"/>
+  <rect x="860" y="210" width="240" height="26" fill="#DC2626"/>
+  <text x="980" y="218" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">S4</text>
+  <text x="980" y="280" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="600" fill="#0F172A">J22–J28</text>  <text x="980" y="340" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Scale +</text>  <text x="980" y="370" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">capstone</text>  <text x="600" y="560" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#0F172A">Même méthode : théorie → code → exercices → capstone</text>
+</svg>

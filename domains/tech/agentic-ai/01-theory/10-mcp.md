@@ -1,9 +1,16 @@
 # J10 — MCP (Model Context Protocol) : le USB des LLMs
 
-> **Temps estime** : 3h | **Prerequis** : J1-J9
+> **Temps estimé** : 3h | **Prérequis** : J1-J9
+>
 > **Objectif** : comprendre ce qu'est MCP, pourquoi c'est important, comment construire un serveur MCP, et comment s'en servir dans un agent.
 
 ---
+
+![Architecture MCP host client server](../assets/10-mcp.svg)
+
+> **En une phrase :** MCP = le USB des LLMs pour brancher des capacités.
+>
+> **Visuel :** Host/Agent → MCP Client → MCP Server exposant tools, resources, prompts (FS, DB, APIs). Un protocole, plusieurs hosts.
 
 ## 1. Le probleme que MCP resout
 
@@ -32,15 +39,7 @@ C'est comme si chaque appareil electrique avait sa propre prise avant l'USB. Tu 
 
 MCP definit trois roles :
 
-```
-┌────────────────────┐             ┌────────────────────┐
-│     HOST (app)     │             │   SERVER (outil)    │
-│  - Claude Desktop  │  ←────────→ │  - GitHub          │
-│  - Cursor          │   protocol  │  - Slack           │
-│  - Custom agent    │             │  - Filesystem      │
-└────────────────────┘             │  - Internal DB     │
-                                   └────────────────────┘
-```
+> **Visuel (rappel) :** le schéma en tête de module montre Host / MCP Client / MCP Server (tools · resources · prompts).
 
 - **Host** : l'application utilisateur (Claude Desktop, IDE, agent custom). Le host embarque un ou plusieurs **clients** MCP.
 - **Client** : le composant dans le host qui parle a UN serveur via le protocole. Un host peut avoir N clients pour N serveurs.
@@ -166,30 +165,11 @@ Le serveur repond :
 
 ## 5. Cycle de vie d'une connexion MCP
 
-```
-1. Host lance le serveur (subprocess)
-       │
-       ▼
-2. Client envoie "initialize" avec sa version et ses capacites
-       │
-       ▼
-3. Serveur repond avec ses capacites (tools? resources? prompts?)
-       │
-       ▼
-4. Client envoie "initialized" (ack)
-       │
-       ▼
-5. Echange libre :
-     - tools/list -> serveur repond
-     - tools/call (search_docs, {"query": "foo"}) -> serveur execute, repond
-     - resources/read -> serveur lit, repond
-     - ...
-       │
-       ▼
-6. Shutdown : au niveau du TRANSPORT (pas de message JSON-RPC "shutdown"
-   dans la spec). En stdio : le client ferme stdin, attend que le process
-   serveur se termine, puis le tue si besoin (SIGTERM/SIGKILL)
-```
+![Lifecycle connexion MCP](../assets/10-mcp-lifecycle.svg)
+
+> **En une phrase :** Découvrir les capacités avant d'invoquer.
+>
+> **Visuel :** Quatre étapes : launch, initialize, list des capacités, call d'outil avec résultat.
 
 **Point important** : le client **decouvre** dynamiquement les capacites du serveur au demarrage. Le host ne sait pas a l'avance quels tools existent — il les liste a chaque session.
 

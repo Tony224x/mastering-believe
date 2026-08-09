@@ -1,9 +1,16 @@
 # J24 — Inference engineering : fiabilite, routage et caching pour agents
 
-> **Temps estime** : 3h | **Prerequis** : J1-J23
-> **Objectif** : maitriser les trois leviers d'optimisation de l'inference LLM en production — structured outputs pour des tool calls robustes, model routing pour reduire les couts de 50-70 %, prompt caching pour compresser la latence et le budget token.
+> **Temps estimé** : 3h | **Prérequis** : J1-J23
+>
+> **Objectif** : maîtriser les trois leviers d'optimisation de l'inference LLM en production — structured outputs pour des tool calls robustes, model routing pour reduire les couts de 50-70 %, prompt caching pour compresser la latence et le budget token.
 
 ---
+
+![Structured outputs, routing et caching](../assets/24-inference-engineering.svg)
+
+> **En une phrase :** Fiabilité des appels + coût + latence se pilotent ensemble.
+>
+> **Visuel :** Structured outputs (tool calls fiables), model routing (petit modèle si simple → −coût), prompt caching (préfixe réutilisé → −latence).
 
 ## 1. Structured outputs / constrained decoding
 
@@ -241,19 +248,11 @@ Implementation : embedding de la requete → recherche dans un cache de vecteurs
 
 En production, on combine :
 
-```
-Requete utilisateur
-       |
-  [ModelRouter] -> weak ou strong ?
-       |
-  [PromptCache] -> prefixe deja calcule ? -> KV cache hit
-       |
-  [LLM call] -> sortie brute
-       |
-  [ConstrainedDecoder / Validator] -> JSON valide ?
-       |
-  [Reponse] ou [re-prompt si invalide]
-```
+![Trois leviers inference engineering](../assets/24-three-levers.svg)
+
+> **En une phrase :** Router, contraindre, cacher : fiabilité et coût.
+>
+> **Visuel :** Requête, model router, puis structured outputs et prompt caching vers la réponse.
 
 **Exemple de gains cumules sur 1000 requetes/heure** :
 - Routing 60 % weak : -50 % cout modele

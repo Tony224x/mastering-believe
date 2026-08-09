@@ -1,9 +1,16 @@
 # J13 — Securite & Robustesse : les agents sont attaquables
 
-> **Temps estime** : 3h | **Prerequis** : J1-J12
-> **Objectif** : comprendre les surfaces d'attaque d'un agent, maitriser les techniques d'injection et leurs defenses, savoir ou placer les humains dans la boucle.
+> **Temps estimé** : 3h | **Prérequis** : J1-J12
+>
+> **Objectif** : comprendre les surfaces d'attaque d'un agent, maîtriser les techniques d'injection et leurs defenses, savoir ou placer les humains dans la boucle.
 
 ---
+
+![Surfaces d'attaque et défense en profondeur](../assets/13-securite-robustesse.svg)
+
+> **En une phrase :** Ne jamais traiter le contenu récupéré comme une instruction de confiance.
+>
+> **Visuel :** Menaces : prompt injection, tool abuse, exfiltration, boucles infinies. Défense : whitelist tools, sandbox, validation args, rate limits, HITL.
 
 ## 1. Un agent, c'est une nouvelle surface d'attaque
 
@@ -135,39 +142,11 @@ C'est une variante de l'injection indirecte mais specifiquement sur l'**autorite
 
 Une seule couche ne suffit pas. Empile-les.
 
-```
-┌─────────────────────────────────────────────────┐
-│           Layer 1: Input guardrails             │
-│  - length limit, rate limit, content filter    │
-│  - PII detection, prompt injection patterns    │
-└──────────────────────┬──────────────────────────┘
-                       ▼
-┌─────────────────────────────────────────────────┐
-│          Layer 2: Trust boundaries              │
-│  - mark untrusted content (email, web)          │
-│  - separate system prompt / user prompt /       │
-│    untrusted content in the context             │
-└──────────────────────┬──────────────────────────┘
-                       ▼
-┌─────────────────────────────────────────────────┐
-│          Layer 3: Tool guardrails               │
-│  - whitelist, argument validation               │
-│  - sandbox, least privilege                     │
-│  - HITL for dangerous actions                   │
-└──────────────────────┬──────────────────────────┘
-                       ▼
-┌─────────────────────────────────────────────────┐
-│         Layer 4: Output guardrails              │
-│  - schema validation, content filter            │
-│  - LLM-as-judge for risky responses            │
-└──────────────────────┬──────────────────────────┘
-                       ▼
-┌─────────────────────────────────────────────────┐
-│         Layer 5: Monitoring + audit             │
-│  - log everything, anomaly detection            │
-│  - kill switches for compromised agents         │
-└─────────────────────────────────────────────────┘
-```
+![Défense en profondeur — cinq couches](../assets/13-defense-profondeur.svg)
+
+> **En une phrase :** Empile input, trust, tools, output et monitoring : une seule couche ne suffit pas.
+>
+> **Visuel :** L1 input guardrails → L2 trust boundaries → L3 tool guardrails → L4 output → L5 monitoring / kill switch.
 
 **Principe** : chaque couche intercepte une classe d'attaques differente. L'attaquant doit contourner **toutes les couches** pour reussir.
 
@@ -450,12 +429,11 @@ Si une case n'est pas cochee, tu as un risque identifie a traiter avant producti
 - **Auditing** : logger tout pour pouvoir reconstituer une attaque reussie
 - **Safe by default** : commence par bloquer, automatise au fur et a mesure que tu prouves que c'est safe
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Harvard CS 2881R — Lec. 3 (Robustness), Lec. 8 (Scheming)** — vue academique sur la robustesse adversariale et le scheming des modeles.
 - **Berkeley CS294-196 (Fa25) — Lec. 1 (Agentic AI Safety & Security, Dawn Song)** — tour d'horizon recent des menaces et defenses pour agents.

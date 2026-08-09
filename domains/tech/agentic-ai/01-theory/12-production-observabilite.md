@@ -1,9 +1,16 @@
 # J12 — Production & Observabilite : agents qui tournent, survivent, et se debuggent
 
-> **Temps estime** : 3h | **Prerequis** : J1-J11
+> **Temps estimé** : 3h | **Prérequis** : J1-J11
+>
 > **Objectif** : savoir comment tracer, monitorer, recuperer et budgeter un agent en production.
 
 ---
+
+![Quatre piliers d'observabilité prod](../assets/12-production-observabilite.svg)
+
+> **En une phrase :** Ce qui n'est pas tracé n'est pas débuggable en prod.
+>
+> **Visuel :** Traces (nœuds & tools), coûts (tokens), latence (p50/p95), recovery (retry, fallback, HITL). Voir la trajectoire, pas seulement le log final.
 
 ## 1. Un agent en dev vs un agent en prod
 
@@ -478,12 +485,11 @@ Deux metriques agent-specifiques a retenir absolument :
 - Sans tracing, tu ne peux rien debugger en prod — c'est le premier investissement
 - **AgentOps** = DevOps + MLOps + primitives agents (orchestration / memoire / trajectoires) ; mesurer les KPI en 3 familles (fiabilite, adoption, valeur business), pas juste la latence — "the trajectory is the truth"
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours terrain sur la mise en prod et l'observabilite d'agents.
 - **Berkeley CS294-196 (Fa25) — Lec. 10 (Evolution of System Designs, Yangqing Jia)** — patterns d'infra LLM en production.

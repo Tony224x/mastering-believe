@@ -1,9 +1,16 @@
 # J9 — Multi-Agent Patterns : supervisor, swarm, debat, hierarchie
 
-> **Temps estime** : 3h | **Prerequis** : J1-J8
+> **Temps estimé** : 3h | **Prérequis** : J1-J8
+>
 > **Objectif** : savoir quand et comment faire collaborer plusieurs agents specialises, connaitre les 4 patterns de reference, et arbitrer entre complexite et qualite.
 
 ---
+
+![Quatre patterns multi-agent](../assets/09-multi-agent-patterns.svg)
+
+> **En une phrase :** Multi-agent seulement si les rôles sont vraiment distincts.
+>
+> **Visuel :** Supervisor (chef + workers), Swarm (handoffs peer-to-peer), Hiérarchie, Débat (critique croisée). Commencer single-agent.
 
 ## 1. Un seul agent ne suffit pas toujours
 
@@ -42,24 +49,7 @@ Il y a une dizaine de variantes dans la literature, mais elles se ramenent toute
 
 **Principe** : un agent "chef" (supervisor) recoit la tache, la decoupe, delegue a des workers specialises, collecte les resultats, synthetise la reponse finale.
 
-```
-                    ┌─────────────┐
-                    │  SUPERVISOR │   ← recoit la tache, decide qui fait quoi
-                    └──────┬──────┘
-          ┌────────────────┼────────────────┐
-          ▼                ▼                ▼
-   ┌──────────┐    ┌──────────┐    ┌──────────┐
-   │ Researcher│    │   Coder   │    │  Writer  │
-   └──────────┘    └──────────┘    └──────────┘
-          │                │                │
-          └────────────────┼────────────────┘
-                           ▼
-                    ┌─────────────┐
-                    │  SUPERVISOR │   ← synthese finale
-                    └──────┬──────┘
-                           ▼
-                        ANSWER
-```
+> **Visuel (rappel) :** le pattern Supervisor est le premier des quatre archétypes du schéma en tête de module — chef qui délègue aux workers puis synthétise.
 
 **Avantages** :
 - Controle centralise — facile a debugger
@@ -89,19 +79,11 @@ def supervisor_loop(task):
 
 **Principe** : comme le supervisor mais sur plusieurs niveaux. Un supervisor de haut niveau delegue a des sub-supervisors, qui eux-memes delegent a des workers.
 
-```
-                     ┌──────────────┐
-                     │  CEO agent   │
-                     └──────┬───────┘
-              ┌─────────────┼─────────────┐
-              ▼             ▼             ▼
-        ┌─────────┐   ┌─────────┐   ┌─────────┐
-        │ Research│   │   Dev    │   │   Ops   │
-        │  Manager│   │  Manager │   │  Manager│
-        └────┬────┘   └────┬────┘   └────┬────┘
-             │             │             │
-         workers       workers       workers
-```
+![Pattern multi-agent hiérarchique](../assets/09-hierarchical.svg)
+
+> **En une phrase :** Hiérarchie = org métier en couches ; borner la profondeur.
+>
+> **Visuel :** CEO agent délègue à des sub-supervisors qui pilotent des workers spécialisés.
 
 **Avantages** :
 - Scale a des taches tres complexes (dizaines d'agents)
@@ -120,25 +102,11 @@ def supervisor_loop(task):
 
 **Principe** : plusieurs agents donnent leur avis sur le meme probleme, debattent, et convergent vers une reponse consensus (ou un arbitre tranche).
 
-```
-  ┌──────────┐   ┌──────────┐   ┌──────────┐
-  │ Agent A  │   │ Agent B  │   │ Agent C  │   ← meme tache, 3 avis
-  └────┬─────┘   └────┬─────┘   └────┬─────┘
-       │              │              │
-       └──────────────┼──────────────┘
-                      ▼
-              [round de debat]
-                      │
-                      ▼
-              [nouveau round]
-                      │
-                      ▼
-              ┌──────────────┐
-              │   MODERATOR  │   ← tranche ou certifie le consensus
-              └──────┬───────┘
-                     ▼
-                   ANSWER
-```
+![Pattern débat multi-agent](../assets/09-debate.svg)
+
+> **En une phrase :** Le débat améliore la qualité si les rounds sont bornés.
+>
+> **Visuel :** Agents A B C s'échangent critiques sur plusieurs rounds, puis un merge/judge produit la réponse.
 
 **Comment ca marche concretement** :
 1. Chaque agent produit une reponse initiale
@@ -164,24 +132,11 @@ def supervisor_loop(task):
 
 **Principe** : pas de chef. Chaque agent peut **passer la main** (handoff) a un autre agent quand il estime qu'il n'est plus le bon a traiter la tache. C'est une circulation laterale, pas une delegation hierarchique.
 
-```
-    User → Agent A (triage)
-                │
-                │ handoff: "this is a coding task"
-                ▼
-          Agent B (coder)
-                │
-                │ handoff: "tests are failing, need QA"
-                ▼
-          Agent C (tester)
-                │
-                │ handoff: "fixed, back to coder"
-                ▼
-          Agent B (coder)
-                │
-                ▼
-             ANSWER
-```
+![Pattern Swarm handoff](../assets/09-swarm-handoff.svg)
+
+> **En une phrase :** Swarm = handoffs ; attention aux boucles A↔B.
+>
+> **Visuel :** User vers agent triage, handoff vers agent spécialisé, puis éventuellement review — contrôle peer-to-peer.
 
 **Difference cle avec le supervisor** :
 - Supervisor : un chef decide a chaque etape qui doit parler
@@ -214,18 +169,11 @@ def supervisor_loop(task):
 
 ### Arbre de decision pragmatique
 
-```
-Ta tache est simple ? (< 10 etapes, 1 competence)
-├─ Oui → single agent
-└─ Non → besoin de plusieurs roles ?
-         ├─ Oui → y a-t-il un flux clair (input → analyse → output) ?
-         │        ├─ Oui → supervisor
-         │        └─ Non → swarm (handoff lateral)
-         └─ Non, besoin de verification croisee
-                  ├─ Oui → debate
-                  └─ Non, mais c'est un enorme projet
-                           └─ hierarchical
-```
+![Arbre décision single vs multi-agent](../assets/09-decision-tree.svg)
+
+> **En une phrase :** Commence single. Multi seulement si rôles vraiment distincts.
+>
+> **Visuel :** Si tâche simple : single agent. Sinon, multi seulement si plusieurs rôles ou besoin de critique parallèle.
 
 ---
 
@@ -561,12 +509,11 @@ Tu construis un nouvel agent :
 - Budget strict sur les appels LLM et les iterations — le multi-agent amplifie les couts
 - LangGraph pour apprendre en profondeur, CrewAI/Agents SDK pour aller vite en prod
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa25) — Lec. 3 (Multi-Agent Systems in Era of LLMs, Vinyals)** — vue DeepMind sur les systemes multi-agents.
 - **Berkeley CS294-196 (Fa25) — Lec. 7 (Multi-Agent AI, Noam Brown)** — perspective game theory et coordination par l'auteur de Cicero/Pluribus.

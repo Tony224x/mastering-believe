@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Isolation contexte sous-agent</title>
+  <desc id="d">Superviseur à gros historique qui délègue un prompt minimal à un sous-agent.</desc>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Isolation de contexte par sous-agent</text>
+  <text x="56" y="80" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Le worker ne voit pas les 80k du superviseur</text>
+  <text x="56" y="660" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Module 15 · schéma détaillé</text>  <rect x="100" y="180" width="400" height="260" rx="18" fill="#FEF3C7" filter="url(#s)"/>
+  <text x="300" y="306" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#92400E">Superviseur</text>
+  <text x="300" y="328" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">80k historique · budget global</text>  <line x1="500" y1="310" x2="560" y2="310" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="560" y="200" width="480" height="220" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="800" y="306" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#115E59">Sous-agent</text>
+  <text x="800" y="328" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">prompt 500 tokens · tâche X</text>  <text x="600" y="500" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">Déléguer = minimum utile, pas tout le contexte</text>  <text x="600" y="540" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">Réduit coût, noise et fuites entre tâches</text>
+</svg>

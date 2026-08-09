@@ -1,9 +1,16 @@
 # J19 — Protocoles inter-agents : A2A, ACP et la grammaire des systemes multi-agents
 
-> **Temps estime** : 3h | **Prerequis** : J1-J18
-> **Objectif** : comprendre comment deux agents issus de frameworks ou de vendeurs differents peuvent se decouvrir, se faire confiance et cooperer ; maitriser A2A (Agent2Agent), ACP (Agent Communication Protocol) et leur complementarite avec MCP.
+> **Temps estimé** : 3h | **Prérequis** : J1-J18
+>
+> **Objectif** : comprendre comment deux agents issus de frameworks ou de vendeurs differents peuvent se decouvrir, se faire confiance et cooperer ; maîtriser A2A (Agent2Agent), ACP (Agent Communication Protocol) et leur complementarite avec MCP.
 
 ---
+
+![A2A entre agents et complémentarité MCP](../assets/19-protocoles-inter-agents.svg)
+
+> **En une phrase :** MCP = capacités · A2A = collaboration entre agents hétérogènes.
+>
+> **Visuel :** Agent A et Agent B (vendeurs différents) via A2A/ACP (découverte, cards, confiance). MCP reste pour brancher des tools.
 
 ## 1. Le probleme que les protocoles inter-agents resolvent
 
@@ -127,16 +134,11 @@ Chaque agent A2A expose une **Agent Card** a l'URL `/.well-known/agent.json`. C'
 
 A2A modelise toute interaction comme une **Task** avec un cycle de vie explicite :
 
-```
-submitted ──→ working ──→ completed
-                │
-                ├──→ input-required  (l'agent a besoin d'une info)
-                │         │
-                │         └──→ working (apres reponse)
-                │
-                └──→ failed
-                └──→ canceled
-```
+![Lifecycle tâche A2A](../assets/19-a2a-task-lifecycle.svg)
+
+> **En une phrase :** A2A orchestre des tâches entre agents avec états explicites.
+>
+> **Visuel :** États submitted, working, completed, avec branches input-required, failed et canceled.
 
 Les etats sont communiques via SSE pour les taches longues :
 

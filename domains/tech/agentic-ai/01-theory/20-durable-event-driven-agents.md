@@ -1,9 +1,16 @@
 # J20 — Durable & event-driven agents : survivre au crash et piloter par evenements
 
-> **Temps estime** : 3h | **Prerequis** : J1-J19
-> **Objectif** : comprendre la durable execution (paradigme Temporal), distinguer ce mecanisme du checkpointing J6 et du retry J12, implementer un mini-moteur durable en stdlib, maitriser les agents event-driven (pub/sub) et le HITL avance (interrupt/resume/edit-state).
+> **Temps estimé** : 3h | **Prérequis** : J1-J19
+>
+> **Objectif** : comprendre la durable execution (paradigme Temporal), distinguer ce mecanisme du checkpointing J6 et du retry J12, implémenter un mini-moteur durable en stdlib, maîtriser les agents event-driven (pub/sub) et le HITL avancé (interrupt/resume/edit-state).
 
 ---
+
+![Checkpoint versus durable execution](../assets/20-durable-event-driven-agents.svg)
+
+> **En une phrase :** Longs runs et reprises fiables → durable execution, pas seulement un checkpointer.
+>
+> **Visuel :** Checkpoint : snapshot d'état pour debug/HITL. Durable (Temporal…) : workflow rejouable, crash machine ≠ perte, timers et events.
 
 ## 1. Trois mecanismes a ne pas confondre
 
@@ -162,19 +169,11 @@ Agent niveau 1 : "Je ne sais pas comment traiter X"
 
 ## 5. Architecture combinee : durable + event-driven + HITL
 
-```
-[Workflow durable (Temporal)]
-  |
-  +-- Activity: LLM plan         --> log --> result cached
-  |
-  +-- Wait signal: HITL review   --> suspend (peut crasher ici)
-  |       |
-  |       +-- [Humain via UI] --> signal "approved" avec edit optionnel
-  |
-  +-- Activity: execute plan     --> idempotent, log, result cached
-  |
-  +-- Publish event: "done"      --> [Event Bus] --> autres agents/systemes
-```
+![Architecture durable event-driven HITL](../assets/20-durable-combined.svg)
+
+> **En une phrase :** Long run fiable = durable workflow + events + HITL.
+>
+> **Visuel :** Workflow durable avec activities LLM et tools, attente signal HITL, alimenté par un bus d'événements.
 
 Ce pattern est la fondation des **agentic workflows de production** : fiables, auditables, recuperables, et pilotables par des humains a tout moment.
 

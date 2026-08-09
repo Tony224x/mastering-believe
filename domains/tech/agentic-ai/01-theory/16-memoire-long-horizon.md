@@ -1,9 +1,16 @@
 # J16 — Memoire long-horizon : episodique, semantique, procedurale et consolidation
 
-> **Temps estime** : 3h | **Prerequis** : J1-J15
-> **Objectif** : comprendre les trois types de memoire d'un agent autonome, maitriser l'architecture hierarchique MemGPT/Letta, implémenter le scoring de pertinence (recence + importance + similarite) et la consolidation par reflection de style Generative Agents.
+> **Temps estimé** : 3h | **Prérequis** : J1-J15
+>
+> **Objectif** : comprendre les trois types de mémoire d'un agent autonome, maîtriser l'architecture hierarchique MemGPT/Letta, implémenter le scoring de pertinence (recence + importance + similarite) et la consolidation par reflection de style Generative Agents.
 
 ---
+
+![Mémoire épisodique sémantique procédurale](../assets/16-memoire-long-horizon.svg)
+
+> **En une phrase :** Long-horizon = se souvenir entre les sessions, pas seulement dans le chat.
+>
+> **Visuel :** Épisodique (événements), sémantique (faits), procédurale (skills). Scoring récence + importance + similarité ; consolidation par réflexion.
 
 ## 1. Pourquoi la memoire "courte" ne suffit pas
 
@@ -108,24 +115,11 @@ Le papier **MemGPT (2023)** de Packer et al. propose une analogie avec les syste
 
 ### 3.1 Main context vs External context
 
-```
-┌─────────────────────────────────────────────┐
-│  MAIN CONTEXT (fenetre LLM ~8k tokens)      │
-│  ┌───────────────┐  ┌──────────────────┐    │
-│  │ System prompt │  │ Conversation     │    │
-│  │ + memory      │  │ history (recent) │    │
-│  │ summary       │  │                  │    │
-│  └───────────────┘  └──────────────────┘    │
-└─────────────────────────────────────────────┘
-              ↕  paging in/out
-┌─────────────────────────────────────────────┐
-│  EXTERNAL CONTEXT (illimite)                 │
-│  ┌─────────────┐  ┌──────────┐  ┌────────┐ │
-│  │ Episodic DB │  │ Semantic │  │Skills  │ │
-│  │ (episodes)  │  │   DB     │  │  DB    │ │
-│  └─────────────┘  └──────────┘  └────────┘ │
-└─────────────────────────────────────────────┘
-```
+![Main context versus external context](../assets/16-main-vs-external.svg)
+
+> **En une phrase :** MemGPT : pager le contexte comme un OS.
+>
+> **Visuel :** À gauche la fenêtre LLM (system, working, tools). À droite archival, recall et fichiers externes.
 
 ### 3.2 Paging : chargement a la demande
 
@@ -274,27 +268,11 @@ Tout ce qu'on vient de construire a la main (extraction de faits, consolidation,
 
 ## 6. Vue d'ensemble : flux de memoire d'un agent
 
-```
-Evenement (tool result / user message)
-    │
-    ▼
-EpisodicMemory.add(event)          ← stocke le "vecu"
-    │
-    │  (si stream > seuil)
-    ▼
-consolidate()                       ← LLM/mock extrait les faits
-    │
-    ▼
-SemanticMemory.add(facts)           ← met a jour les connaissances
-    │
-ProceduralMemory.update_skill()     ← met a jour les heuristiques si action reussie/echouee
-    │
-    ▼
-HierarchicalMemory.retrieve(query)  ← scoring recence+importance+similarite
-    │
-    ▼
-Page in les top-K dans le contexte LLM
-```
+![Flux mémoire agent long-horizon](../assets/16-memory-flow.svg)
+
+> **En une phrase :** Score → store → retrieve → inject, en boucle.
+>
+> **Visuel :** Pipeline événement, scoring, stockage, retrieval et injection dans le contexte.
 
 ---
 

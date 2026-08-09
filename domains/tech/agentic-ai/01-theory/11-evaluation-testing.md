@@ -1,9 +1,16 @@
 # J11 — Evaluation & Testing : comment mesurer si ton agent marche
 
-> **Temps estime** : 3h | **Prerequis** : J1-J10
-> **Objectif** : comprendre les differents niveaux d'evaluation d'un agent, maitriser le LLM-as-judge, ecrire des regression tests, et savoir quels benchmarks utiliser.
+> **Temps estimé** : 3h | **Prérequis** : J1-J10
+>
+> **Objectif** : comprendre les differents niveaux d'évaluation d'un agent, maîtriser le LLM-as-judge, ecrire des regression tests, et savoir quels benchmarks utiliser.
 
 ---
+
+![Pyramide d'évaluation d'un agent](../assets/11-evaluation-testing.svg)
+
+> **En une phrase :** Sans tests de trajectoire, tu ne sais pas comment l'agent a « réussi ».
+>
+> **Visuel :** Base large : unit tools/prompts. Puis trajectory tests. Puis E2E + LLM-as-judge. Sommet : prod/online (drift, feedback).
 
 ## 1. Pourquoi evaluer un agent est plus dur qu'evaluer un LLM
 
@@ -342,30 +349,11 @@ if regressions:
 
 ## 6. Pipeline d'eval complet
 
-```
-┌───────────────────────────────────────────────────┐
-│  1. DEV : developpeur ecrit des tests unitaires   │
-│      (agent.test.py -- rapide, deterministe)      │
-└─────────────────┬─────────────────────────────────┘
-                  │
-                  ▼
-┌───────────────────────────────────────────────────┐
-│  2. CI : dataset de regression roulé a chaque PR  │
-│      (20-50 cas, ~5 min, bloque la merge si fail) │
-└─────────────────┬─────────────────────────────────┘
-                  │
-                  ▼
-┌───────────────────────────────────────────────────┐
-│  3. NIGHTLY : eval etendue (200-500 cas)          │
-│      (rapport de qualite, alerte si regression)   │
-└─────────────────┬─────────────────────────────────┘
-                  │
-                  ▼
-┌───────────────────────────────────────────────────┐
-│  4. PROD : monitoring continu (tracing + scoring) │
-│      (evaluation online sur les vraies queries)   │
-└───────────────────────────────────────────────────┘
-```
+![Pipeline d'évaluation Dev → Prod](../assets/11-eval-pipeline.svg)
+
+> **En une phrase :** Unit tests, CI, nightly large, puis monitoring live sur le traffic réel.
+>
+> **Visuel :** Quatre étages en cascade : DEV → CI (bloque PR) → NIGHTLY → PROD online.
 
 **Point cle** : les niveaux 1-2 sont **deterministes ou pseudo-deterministes**. Le niveau 4 est **en live** sur le traffic reel — on utilise LLM-as-judge pour scorer les vraies queries.
 
@@ -441,12 +429,11 @@ Plusieurs frameworks dedies a l'evaluation LLM/agent ont emerge en 2024-2025 et 
 - Outils : pytest + LLM-as-judge pour commencer, Langfuse/LangSmith/Braintrust pour la prod
 - Commence petit : 20-50 cas de test suffisent pour attraper 80% des regressions
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CME295 — Lec. 8 (LLM Evaluation)** — vue d'ensemble compacte des methodes d'eval.
 - **Berkeley CS294-196 (Fa25) — Lec. 6 (Predictable Noise in LLM Benchmarks, Sida Wang)** — comprendre la variance des benchmarks pour eviter les conclusions hatives.

@@ -66,28 +66,12 @@ Ta jauge XP te place sur l'arc du curriculum (du premier agent ReAct a l'archite
 > volontairement progressif (chaque jour suppose le precedent). La carte sert de
 > reperage visuel de ta position, pas de choix de chemin.
 
-```mermaid
-flowchart LR
-  subgraph S1["Semaine 1 - Fondations"]
-    direction LR
-    J1[J1 Anatomie] --> J2[J2 Tool Use] --> J3[J3 Memory] --> J4[J4 Planning] --> J5[J5 LangGraph] --> J6[J6 LangGraph+] --> J7[J7 Build agent]
-  end
-  subgraph S2["Semaine 2 - Multi-agent & Prod"]
-    direction LR
-    J8[J8 RAG] --> J9[J9 Multi-agent] --> J10[J10 MCP] --> J11[J11 Eval] --> J12[J12 Prod] --> J13[J13 Securite] --> J14[J14 CAPSTONE]
-  end
-  subgraph S3["Semaine 3 - Frontier"]
-    direction LR
-    J15[J15 Context eng] --> J16[J16 Memoire LH] --> J17[J17 Verifiers] --> J18[J18 Orchestration] --> J19[J19 Protocoles] --> J20[J20 Durable] --> J21[J21 Coding agents]
-  end
-  subgraph S4["Semaine 4 - Echelle & Capstone+"]
-    direction LR
-    J22[J22 Computer use] --> J23[J23 Sandboxing] --> J24[J24 Inference] --> J25[J25 Serving] --> J26[J26 Benchmarking] --> J27[J27 Archi+] --> J28[J28 CAPSTONE+]
-  end
-  J7 --> J8
-  J14 --> J15
-  J21 --> J22
-```
+![Parcours agentic-ai — 28 jours en 4 semaines](assets/parcours-28j.svg)
+
+> **En une phrase :** Parcours linéaire J1→J28 : fondations, multi-agent/prod, frontier, échelle.
+>
+> **Visuel :** Quatre bandes S1–S4 ; chaque jour enchaîne le précédent — repère ta position, pas un arbre de choix.
+
 
 ---
 
@@ -177,7 +161,7 @@ ancrees sur les [criteres de reussite](./README.md#criteres-de-reussite) du doma
 L'arme secrete : ne pas seulement avancer, mais **re-tester** les flash-cards des
 modules passes a intervalles croissants (rythme type Leitner, inspire de SM-2 :
 J+1, J+3, J+7, J+14). Cf. le domaine
-[`apprendre-a-apprendre`](../apprendre-a-apprendre/) (repetition espacee,
+[`apprendre-a-apprendre`](../../../vie/apprendre-a-apprendre/) (repetition espacee,
 difficultes desirables) — note que le *vrai* SM-2 adapte l'intervalle au facteur
 de facilite ; ici on fige une echelle simple. Chaque revision d'un module deja vu
 = **+5 XP**, **plafonne aux 4 intervalles ci-dessus** (J+1, J+3, J+7, J+14) =

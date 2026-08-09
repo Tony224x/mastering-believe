@@ -1,9 +1,16 @@
 # J23 — Sandboxing & execution sure : mise en oeuvre infra
 
-> **Temps estime** : 3h | **Prerequis** : J1-J22
-> **Objectif** : comprendre les technologies d'isolation systeme utilisees pour executer du code d'agent en securite — gVisor, microVMs, sandbox-runtime, capability-based access, et egress filtering — et savoir choisir le bon niveau d'isolation selon le contexte.
+> **Temps estimé** : 3h | **Prérequis** : J1-J22
+>
+> **Objectif** : comprendre les technologies d'isolation systeme utilisees pour executer du code d'agent en sécurité — gVisor, microVMs, sandbox-runtime, capability-based access, et egress filtering — et savoir choisir le bon niveau d'isolation selon le contexte.
 
 ---
+
+![Quatre couches de sandboxing infra](../assets/23-sandboxing-execution-sure.svg)
+
+> **En une phrase :** J13 = principes · J23 = comment l'infra isole vraiment.
+>
+> **Visuel :** Process limité → container/cgroups → gVisor/microVM → egress réseau filtré. Plus bas dans la pile = plus sûr et plus cher.
 
 > **Delimitation** : J13 (securite & robustesse) couvre les **principes** de sandboxing — tools dangereux en subprocess/container, whitelists OWASP, human-in-the-loop. Ce module J23 descend au niveau **infra** : comment sont implementees les isolations OS, quels mecanismes noyau entrent en jeu, et comment combiner les couches pour une defense en profondeur. Si tu n'as pas lu J13, commence par la.
 
@@ -244,15 +251,11 @@ La defense en profondeur recommande de combiner egress filtering + monitoring du
 
 Une architecture d'execution sure pour agents combine plusieurs couches independantes. La compromission d'une couche ne suffit pas a compromettre le systeme.
 
-```
-Couche 7 : Audit log immuable (J13)
-Couche 6 : Egress filtering (domaines, volume)
-Couche 5 : Capability tokens (droits minimaux)
-Couche 4 : Sandbox runtime / gVisor / microVM (isolation OS)
-Couche 3 : Resource limits (CPU, mem, temps)
-Couche 2 : Input/output guardrails (J13)
-Couche 1 : Prompt engineering defensif (J13)
-```
+![Couches d'isolation sandbox](../assets/23-isolation-layers.svg)
+
+> **En une phrase :** Plus bas dans la pile = plus isolé (et plus cher).
+>
+> **Visuel :** Sept couches empilées de l'audit log jusqu'aux limites process.
 
 Chaque couche a un adversaire different qu'elle arrete :
 - Couche 1-2 : prompt injection

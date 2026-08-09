@@ -1,9 +1,16 @@
 # J15 — Context engineering : compaction, offloading & token budgeting
 
-> **Temps estime** : 3h | **Prerequis** : J1-J14
-> **Objectif** : maitriser la curation du context window a grande echelle — detecter le "context rot", compacter l'historique, deporter les donnees sur un systeme externe, isoler les sous-agents, et allouer un budget de tokens fin par sous-agent et par profondeur d'arbre ReAct.
+> **Temps estimé** : 3h | **Prérequis** : J1-J14
+>
+> **Objectif** : maîtriser la curation du context window a grande echelle — detecter le "context rot", compacter l'historique, deporter les donnees sur un systeme externe, isoler les sous-agents, et allouer un budget de tokens fin par sous-agent et par profondeur d'arbre ReAct.
 
 ---
+
+![Context rot, compaction et offloading](../assets/15-context-engineering-compaction.svg)
+
+> **En une phrase :** La fenêtre de contexte est une ressource rare à budgéter.
+>
+> **Visuel :** Sans curation : historique monstrueux, coût ↗ qualité ↘. Compaction = résumer. Offloading = scratchpad hors fenêtre + budget par sous-agent.
 
 ## 1. Le probleme fondamental : la fenetre de contexte n'est pas infinie
 
@@ -135,16 +142,11 @@ Quand un superviseur delegue a un sous-agent, **chaque sous-agent a son propre c
 - Son contexte reste propre tout au long de sa sous-tache
 
 **Patron "context isolation via subagent"** :
-```
-Superviseur (80k tokens d'historique)
-    |
-    |-- delegue la tache X avec un prompt de 500 tokens
-    |
-Sous-agent X (context frais, 500 tokens de depart)
-    |-- execute X, renvoie le resultat compacte (200 tokens)
-    |
-Superviseur integre 200 tokens (pas 10k de logs intermediaires)
-```
+![Isolation contexte sous-agent](../assets/15-context-isolation.svg)
+
+> **En une phrase :** Déléguer le minimum utile, pas tout le contexte.
+>
+> **Visuel :** Superviseur à gros historique qui délègue un prompt minimal à un sous-agent.
 
 Le superviseur ne recoit que le **resultat final**, pas l'historique interne du sous-agent. Gain net : 10 x a 100 x de reduction selon la complexite de la sous-tache.
 
