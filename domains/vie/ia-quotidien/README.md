@@ -58,7 +58,7 @@ Un jour = **1 théorie** + **1 mission easy**. Clique le jour pour ouvrir le cou
 
 | Jour | Cours (théorie) | Mission easy | Temps |
 |------|-----------------|--------------|-------|
-| J1 | [IA sans panique](./01-theory/01-ia-sans-panique.md) | [mission](./03-exercises/01-easy/01-ia-sans-panique.md) | 45 min |
+| J1 | [IA : premiers pas](./01-theory/01-ia-sans-panique.md) | [mission](./03-exercises/01-easy/01-ia-sans-panique.md) | 45 min |
 | J2 | [Prompts qui marchent](./01-theory/02-prompts-qui-marchent.md) | [mission](./03-exercises/01-easy/02-prompts-qui-marchent.md) | 45 min |
 | J3 | [Hallucinations & vérification](./01-theory/03-hallucinations-verification.md) | [mission](./03-exercises/01-easy/03-hallucinations-verification.md) | 45 min |
 | J4 | [Partenaire de réflexion](./01-theory/04-partenaire-reflexion.md) | [mission](./03-exercises/01-easy/04-partenaire-reflexion.md) | 45 min |

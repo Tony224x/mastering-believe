@@ -4,7 +4,7 @@ Brief Phase 0 : formation entrepreneuriat / PME, débutant·e IA, ~45 min/jour, 
 
 ---
 
-## J1 — IA sans panique
+## J1 — IA : premiers pas
 - **Concepts clés** : LLM = prédiction de texte ; ce que l'IA fait / ne fait pas ; perroquet stochastique ; usage basique vs usage pro
 - **Acquis** : expliquer en 3 phrases ce qu'est ChatGPT et pourquoi « elle a l'air sûre d'elle » n'implique pas la vérité
 - **Sources autorisées** : Stochastic Parrots 2021 ; GPT-4 System Card ; OpenAI Prompting Guide

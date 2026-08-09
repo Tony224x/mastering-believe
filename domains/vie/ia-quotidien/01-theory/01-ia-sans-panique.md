@@ -1,4 +1,4 @@
-# Module 01 — IA sans panique
+# Module 01 — IA : premiers pas
 
 > **Temps estimé** : 45 min | **Prérequis** : aucun
 >

@@ -1,4 +1,4 @@
-# Mission — IA sans panique — niveau medium
+# Mission — IA : premiers pas — niveau medium
 
 > **Bonus** — optionnel tant que la mission easy du jour est faite. Niveau **medium** · module J1.
 
