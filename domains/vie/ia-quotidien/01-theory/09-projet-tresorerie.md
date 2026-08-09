@@ -1,8 +1,8 @@
-# Module 09 — Projet secondaire : trésorerie / budget PME (fictif)
+# Module 09 — Projet fil rouge : trésorerie / budget PME (fictif)
 
 > **Temps estimé** : 60 min | **Prérequis** : Modules 06–08
 >
-> **Objectif** : Livrer un classeur **Budget PME Demo** réutilisable (transactions, résumé, 3 scénarios), 100 % fictif, documenté.
+> **Objectif** : Livrer un classeur **Budget PME Demo** réutilisable (transactions, résumé, 3 scénarios), 100 % fictif, documenté. Ces chiffres fictifs pourront alimenter le pitch (J10–J14).
 
 ---
 
@@ -23,6 +23,8 @@ flowchart TB
   R --> S
   T -.-> M
 ```
+
+**Version texte :** Transactions alimentent Résumé ; Résumé alimente Scénarios ; Transactions sont documentées dans Readme.
 
 > **Visuel mental** : 4 onglets, zéro donnée réelle d'employeur.
 

@@ -75,12 +75,19 @@ Utilise uniquement les chiffres que je fournis : [coller chiffres fictifs].
 
 ---
 
-## 5. Mini-protocole 60 secondes
+## 5. Mini-protocole 60 secondes (entraînement)
 
-1. Surligne dans la réponse tout chiffre / nom propre / loi.
-2. Pour chaque : V-A-I-R.
-3. Vérifie 1 item critique sur le web officiel.
-4. Réécris la phrase finale **avec tes mots**.
+1. Surligne dans la réponse tout chiffre, nom propre, citation, loi ou conseil.
+2. Pour chaque élément que tu **conserves** :
+   - retrouve une source que tu peux ouvrir ;
+   - vérifie qu'elle soutient **exactement** la phrase ;
+   - note son titre et son lien ;
+   - retire l'élément si tu ne peux pas le confirmer.
+3. **Pour cet exercice de 60 secondes** : vérifier **1 item critique** suffit.
+4. **Pour un livrable scolaire ou professionnel** : vérifie **tous** les faits conservés.
+5. Réécris la phrase finale **avec tes mots**.
+
+> Un pourcentage « trop rond » ou un titre parfait peut **donner envie** de vérifier — ce n'est pas une preuve. Seule la source ouvrable tranche.
 
 ---
 

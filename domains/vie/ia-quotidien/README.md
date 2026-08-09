@@ -1,8 +1,8 @@
 # IA au quotidien (non-tech)
 
-![Apprendre l'IA au quotidien — illustration](assets/hero-apprendre-ia.jpg)
+![Illustration d'une personne utilisant un assistant IA et un tableau Excel sur un ordinateur portable](assets/hero-apprendre-ia.jpg)
 
-![Parcours 14 jours — carte visuelle](assets/parcours-14j.png)
+![Parcours en 14 jours : bases, réflexion, Excel puis pitch, avec un budget fictif et une présentation finale](assets/parcours-14j.png)
 
 ## Ce soir, fais seulement ça
 
@@ -12,7 +12,7 @@ Ne lis pas tout le catalogue. **Ce soir, 3 gestes :**
 2. Fais la **mission easy** : [`03-exercises/01-easy/01-ia-sans-panique.md`](./03-exercises/01-easy/01-ia-sans-panique.md) (~12 min).
 3. Coche le badge **Détecteur de confiance** dans [`PROGRESS.md`](./PROGRESS.md).
 
-Les niveaux medium/hard sont **bonus** tant que l'easy n'est pas fait.
+Les niveaux medium/hard sont **optionnels**. Tu peux avancer à ton rythme : une mission easy bien faite vaut mieux qu'un rush sur trois niveaux.
 
 ## Scope
 
@@ -32,6 +32,18 @@ Maîtriser l'**usage pratique de l'IA** (surtout **ChatGPT**) pour :
 - **données réelles** d'un employeur / association, clients, employés ou finances personnelles identifiables.
 
 Public type : débutant·e en IA, profil Office (Excel / PowerPoint), ~45 min/jour.
+
+### Petit glossaire
+
+| Mot | Sens ici |
+|-----|----------|
+| **Prompt** | Consigne écrite que tu donnes à l'IA |
+| **LLM** | Modèle de langage qui produit du texte à partir d'une demande |
+| **Plan** (*outline*) | Liste des diapositives et de leur intention |
+| **Présentation** (*deck*) | Fichier PowerPoint complet |
+| **Mise au propre** (*polish*) | Dernière correction du texte et de la présentation |
+| **Projet final** (*capstone*) | Livrable qui clôt le parcours |
+| **RCCFC** | Grille de prompt : Rôle, Contexte, Tâche, Format, Contraintes |
 
 ## Prérequis
 
@@ -54,7 +66,7 @@ Un jour = **1 théorie** + **1 mission easy**. Clique le jour pour ouvrir le cou
 | J6 | [Excel + IA : les bases](./01-theory/06-excel-bases-ia.md) | [mission](./03-exercises/01-easy/06-excel-bases-ia.md) | 45 min |
 | J7 | [Formules & tableaux](./01-theory/07-formules-tableaux.md) | [mission](./03-exercises/01-easy/07-formules-tableaux.md) | 45–60 min |
 | J8 | [Nettoyer, analyser, visualiser](./01-theory/08-nettoyer-analyser.md) | [mission](./03-exercises/01-easy/08-nettoyer-analyser.md) | 45 min |
-| J9 | [**Projet Excel** trésorerie PME fictif](./01-theory/09-projet-tresorerie.md) | [mission](./03-exercises/01-easy/09-projet-tresorerie.md) | 60 min |
+| J9 | [**Projet fil rouge** trésorerie PME fictif](./01-theory/09-projet-tresorerie.md) | [mission](./03-exercises/01-easy/09-projet-tresorerie.md) | 60 min |
 | J10 | [Structure d'un pitch](./01-theory/10-structure-pitch.md) | [mission](./03-exercises/01-easy/10-structure-pitch.md) | 45 min |
 | J11 | [Slides & design sobre](./01-theory/11-slides-visuels.md) | [mission](./03-exercises/01-easy/11-slides-visuels.md) | 45 min |
 | J12 | [Notes orateur & répétition](./01-theory/12-notes-orateur.md) | [mission](./03-exercises/01-easy/12-notes-orateur.md) | 45 min |
@@ -93,10 +105,12 @@ ia-quotidien/
 
 ## Garde-fous (non négociables)
 
-1. **Pas de données réelles** (ONG, clients, salaires, données de santé) dans ChatGPT.
-2. **Vérifier** chiffres, citations et lois avant remise scolaire / pro ou usage pro.
+1. **Dans ce parcours, données fictives uniquement.** N'envoie jamais de fichier réel (employeur, association, clients, finances personnelles), même pour gagner du temps.
+2. **Vérifier** chiffres, citations et lois avant remise scolaire / pro. Un exercice d'entraînement peut te faire vérifier un seul point critique ; un livrable réel demande de vérifier **tous** les faits conservés.
 3. L'IA **propose** ; **toi** tu assumes le livrable (éthique scolaire + professionnelle).
-4. Codex / outils développeur : hors chemin critique de ce cours.
+4. Outils développeur (ex. Codex) : hors chemin critique de ce cours.
+
+Dans un autre contexte pro, suis d'abord la politique de ton organisation, anonymise, et vérifie que l'outil est autorisé.
 
 ## Ressources externes
 

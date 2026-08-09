@@ -15,7 +15,7 @@ Coche au fur et à mesure. **Aucun classement, aucune streak obligatoire, aucune
 | Modèle lisible | [J7](./01-theory/07-formules-tableaux.md) | Résumé séparé des transactions |
 | Données propres | [J8](./01-theory/08-nettoyer-analyser.md) | Tableau nettoyé + 1 graphique |
 | Trésorier démo | [J9](./01-theory/09-projet-tresorerie.md) | Classeur Budget-PME-Demo fictif |
-| Histoire claire | [J10](./01-theory/10-structure-pitch.md) | Outline 8–10 titres |
+| Histoire claire | [J10](./01-theory/10-structure-pitch.md) | Plan 8–10 titres |
 | Slide zen | [J11](./01-theory/11-slides-visuels.md) | 4 slides sobres |
 | Orateur | [J12](./01-theory/12-notes-orateur.md) | Notes + 1 oral chrono |
 | Brouillon complet | [J13](./01-theory/13-capstone-brouillon.md) | Deck 8+ slides remplis |

@@ -1,6 +1,6 @@
 # Plan figé domaine ia-quotidien
 
-Brief Phase 0 : formation entrepreneuriat / PME, débutant·e IA, ~45 min/jour, outils ChatGPT + Excel + PowerPoint. Capstone = deck pitch 8–12 slides. Projet secondaire = trésorerie/budget PME fictif. Codex = bonus hors chemin critique. Données réelles employeur / association interdites.
+Brief Phase 0 : formation entrepreneuriat / PME, débutant·e IA, ~45 min/jour, outils ChatGPT + Excel + PowerPoint. Capstone = deck pitch 8–12 slides. Projet fil rouge = trésorerie/budget PME fictif. Codex = bonus hors chemin critique. Données réelles employeur / association interdites.
 
 ---
 
@@ -60,7 +60,7 @@ Brief Phase 0 : formation entrepreneuriat / PME, débutant·e IA, ~45 min/jour, 
 - **Stack du jour** : ChatGPT + Excel
 - **Slug** : `08-nettoyer-analyser`
 
-## J9 — Projet secondaire : trésorerie / budget PME
+## J9 — Projet fil rouge : trésorerie / budget PME
 - **Concepts clés** : flux de trésorerie simple ; budget mensuel ; scénario base/optimiste/pessimiste ; confidentialité
 - **Acquis** : livrer un classeur **fictif** « Budget PME Demo » réutilisable (onglets, formules, résumé 5 lignes)
 - **Sources autorisées** : NIST AI RMF (risque données) ; CNIL ; Microsoft Excel

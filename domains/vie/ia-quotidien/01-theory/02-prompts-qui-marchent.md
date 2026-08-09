@@ -10,7 +10,7 @@
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
-### Écran exemple — prompt en 3 blocs
+### Capture de référence — prompt en 3 blocs
 
 ![Capture pédagogique : chat ChatGPT avec prompt Contexte Demande Résultat et formule Excel](../assets/screens/screen-chatgpt-prompt-3-blocs.png)
 
@@ -29,7 +29,7 @@ flowchart LR
   D --> E[Livrable utile]
 ```
 
-
+**Version texte :** idée floue → structure RCCFC → premier jet → itération → livrable utile.
 
 ## Version simple (à utiliser d'abord)
 
@@ -43,7 +43,7 @@ La grille **RCCFC** plus bas est la version complète (optionnelle le jour 1 des
 
 ## 1. Scène concrète : deux prompts, deux mondes
 
-**Prompt A (flou) :**
+**Prompt A (premier essai à préciser) :**
 > « Aide-moi pour mon PowerPoint. »
 
 **Prompt B (structuré) :**
@@ -137,8 +137,8 @@ Contraintes : une idée par slide ; pas de mur de texte.
 **Q2.** Pourquoi un prompt flou donne une réponse médiocre ?
 **R2.** Le modèle comble les trous par du générique « moyen ».
 
-**Q3.** Qu'est-ce qu'un few-shot ?
-**R3.** Fournir 1+ exemples du format/ton attendu dans le prompt.
+**Q3.** Qu'est-ce qu'un exemple dans le prompt (*few-shot*) ?
+**R3.** Montrer 1+ exemples du format ou du ton attendu dans ta consigne.
 
 **Q4.** Quelle est la meilleure suite après un 1er jet correct mais long ?
 **R4.** Itérer : raccourcir, préciser, challenger — pas recommencer de zéro.

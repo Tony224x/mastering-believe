@@ -11,7 +11,7 @@
 > **En une phrase :** On nettoie avant d'analyser et de dessiner.
 
 
-## 1. Scène concrète : l'export « crade »
+## 1. Scène concrète : l'export à nettoyer
 
 Tu reçois (fictif) une liste collée depuis un export bancaire « maison » :
 
@@ -95,6 +95,6 @@ J'ai catégories en A et totaux en B. Quel type de graphique recommander et pour
 <!-- NAV:START -->
 ---
 
-← [Module 07 — Formules, tableaux croisés & modèles](./07-formules-tableaux.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/08-nettoyer-analyser.md) · [Progression](../PROGRESS.md) · [Module 09 — Projet secondaire : trésorerie / budget PME (fictif)](./09-projet-tresorerie.md) →
+← [Module 07 — Formules, tableaux croisés & modèles](./07-formules-tableaux.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/08-nettoyer-analyser.md) · [Progression](../PROGRESS.md) · [Module 09 — Projet fil rouge : trésorerie / budget PME (fictif)](./09-projet-tresorerie.md) →
 
 <!-- NAV:END -->

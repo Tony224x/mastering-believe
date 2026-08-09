@@ -10,7 +10,7 @@
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
-### Écran exemple — mission J6 dans Excel
+### Capture de référence — mission J6 dans Excel
 
 ![Capture pédagogique : Excel avec SOMME.SI et total 600](../assets/screens/screen-excel-somme-si.png)
 
@@ -31,6 +31,7 @@ flowchart TD
   E --> F
 ```
 
+**Version texte :** décrire les colonnes → demander la formule (selon ta langue Excel) → coller → tester → si erreur, copier le message et redemander.
 
 ## 1. Scène concrète : « fais-moi le total »
 
