@@ -115,6 +115,7 @@ references/
 Thumbs.db
 desktop.ini
 .gstack/
+.grok/
 
 # Previews SVG raster (QA locale, regenerables)
 domains/**/assets/preview/

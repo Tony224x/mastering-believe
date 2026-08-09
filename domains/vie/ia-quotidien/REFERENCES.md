@@ -102,7 +102,7 @@ Sources tier-1 utilisees pour construire le curriculum. Citer dans la théorie s
 | **Excel** | Tableaux, formules, projet trésorerie | Oui |
 | **PowerPoint** | Capstone deck pitch 8–12 slides | Oui |
 | Word (optionnel) | Rapports école | Non |
-| **Codex / outils dev** | Bonus Anthony / power-user | Non — hors chemin critique |
+| **Codex / outils dev** | Bonus optionnel power-user | Non — hors chemin critique |
 
 ---
 
