@@ -113,7 +113,7 @@ Codex / outils dev : uniquement si un jour tu en as besoin — **hors scope de m
 ## Spaced repetition
 
 **Q1.** Quels livrables minimum du capstone ?
-**R1.** PPTX 8–12 slides + notes clés + journal IA.
+**R1.** PPTX **8 slides** (10–12 = bonus) + notes sur **3 slides clés** + journal IA (**5 puces**).
 
 **Q2.** Quel outil est primaire ?
 **R2.** ChatGPT (avec PowerPoint pour l'assemblage).
