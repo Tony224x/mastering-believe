@@ -1,9 +1,16 @@
 # J1 — Anatomie d'un Agent IA
 
-> **Temps estime** : 3h | **Prerequis** : appels API LLM, Python async basique
-> **Objectif** : comprendre ce qu'est reellement un agent IA, quand l'utiliser, et maitriser la boucle ReAct from scratch.
+> **Temps estimé** : 3h | **Prérequis** : appels API LLM, Python async basique
+>
+> **Objectif** : comprendre ce qu'est réellement un agent IA, quand l'utiliser, et maîtriser la boucle ReAct from scratch.
 
 ---
+
+![Boucle Perceive → Think → Act d'un agent IA](../assets/01-anatomie-agent.svg)
+
+> **En une phrase :** Un agent = LLM qui choisit ses actions jusqu'à l'objectif.
+>
+> **Visuel :** Trois boîtes en boucle : PERCEIVE (observations), THINK (raisonnement), ACT (outil ou réponse). Le LLM est dans la boucle de contrôle — pas un pipeline fixe.
 
 ## 1. Qu'est-ce qu'un agent IA ? Definition precise
 
@@ -52,25 +59,7 @@ La plupart des cas d'usage en entreprise **ne necessitent pas** un agent. Un bon
 
 Tout agent, qu'il soit un robot physique ou un systeme LLM, suit la meme boucle :
 
-```
-┌─────────────────────────────────────┐
-│                                     │
-│   ┌──────────┐                      │
-│   │ PERCEIVE │ ← Observations,      │
-│   └────┬─────┘   resultats outils,  │
-│        │         contexte            │
-│        ▼                             │
-│   ┌──────────┐                      │
-│   │  THINK   │ ← Raisonnement,      │
-│   └────┬─────┘   planification       │
-│        │                             │
-│        ▼                             │
-│   ┌──────────┐                      │
-│   │   ACT    │ → Appel d'outil,      │
-│   └────┬─────┘   reponse finale      │
-│        │                             │
-│        └──────── boucle ─────────────┘
-```
+> **Visuel (rappel) :** le schéma en tête de module détaille la même boucle Perceive → Think → Act — le LLM pilote le flux jusqu'à l'objectif.
 
 **Pourquoi c'est la cle de tout** : chaque framework d'agents (LangGraph, CrewAI, AutoGen, Claude Agent SDK) est une implementation de cette boucle. Si tu comprends cette boucle, tu peux :
 - Debugger n'importe quel agent en identifiant **ou** dans la boucle ca deraille
@@ -346,12 +335,11 @@ Apres beaucoup d'etapes, le contexte deborde.
 - La majorite des cas d'usage ne necessitent PAS un agent — utiliser le decision framework
 - Toujours mettre des guardrails : max iterations, budget, timeout, sandbox
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa24) — Lec. 11 (LLM Agents: History & Overview, Shunyu Yao)** — vue d'ensemble fondatrice par l'auteur de ReAct.
 - **CMU 11-711 (Welleck, Sp25) — Lec. 13 (Agents)** — perspective NLP 2025 sur l'anatomie d'un agent.

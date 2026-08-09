@@ -1,9 +1,16 @@
 # J26 — Benchmarking pratique : evaluer son propre agent
 
-> **Temps estime** : 3h | **Prerequis** : J1-J25
-> **Objectif** : construire et faire tourner un harness d'evaluation complet sur son propre agent — structurer un dataset de cas, scorer la trajectoire et la reponse finale, calculer la metrique pass^k (fiabilite sur k essais facon tau-bench), et produire un rapport de regression vs baseline.
+> **Temps estimé** : 3h | **Prérequis** : J1-J25
+>
+> **Objectif** : construire et faire tourner un harness d'évaluation complet sur son propre agent — structurer un dataset de cas, scorer la trajectoire et la reponse finale, calculer la metrique pass^k (fiabilite sur k essais facon tau-bench), et produire un rapport de regression vs baseline.
 
 ---
+
+![Pipeline harness pass^k](../assets/26-benchmarking-pratique.svg)
+
+> **En une phrase :** Évalue TON agent avec un harness, pas seulement les leaderboards publics.
+>
+> **Visuel :** Cas de test → run × k → score → pass^k → rapport vs baseline. pass^k = proba d'au moins un succès sur k essais.
 
 En J11 nous avons catalogue les benchmarks publics : tau-bench, GAIA, WebArena, SWE-bench, AgentBench, LLM-as-judge. Si tu ne les connais pas encore, lis J11 en premier.
 

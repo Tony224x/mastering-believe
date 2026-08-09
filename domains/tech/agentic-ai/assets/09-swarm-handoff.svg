@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Pattern Swarm handoff</title>
+  <desc id="d">User vers agent triage, handoff vers agent spécialisé, puis éventuellement review — contrôle peer-to-peer.</desc>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Pattern Swarm / Handoff</text>
+  <text x="56" y="80" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Transfert peer-to-peer du contrôle (pas de chef central)</text>
+  <text x="56" y="660" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Module 09 · schéma détaillé</text>  <rect x="100" y="240" width="160" height="90" rx="18" fill="#FEF3C7" filter="url(#s)"/>
+  <text x="180" y="281" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#92400E">User</text>
+  <text x="180" y="303" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">requête</text>  <line x1="260" y1="285" x2="310" y2="285" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <text x="285" y="270" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#64748B">handoff</text>  <rect x="310" y="225" width="200" height="120" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="410" y="281" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#115E59">Agent A</text>
+  <text x="410" y="303" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">triage</text>  <line x1="510" y1="285" x2="560" y2="285" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <text x="535" y="270" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#64748B">handoff</text>  <rect x="560" y="225" width="200" height="120" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <text x="660" y="281" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">Agent B</text>
+  <text x="660" y="303" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">coding</text>  <line x1="760" y1="285" x2="810" y2="285" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <text x="785" y="270" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#64748B">handoff</text>  <rect x="810" y="240" width="200" height="90" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="910" y="281" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#115E59">Agent C</text>
+  <text x="910" y="303" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">review / done</text>  <text x="600" y="400" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#F59E0B">chemin : User → A → B → C (peer-to-peer)</text>  <text x="600" y="440" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">handoff = message + contexte minimal</text>  <text x="600" y="520" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">Risque boucles A↔B : max handoffs + stop</text>
+</svg>

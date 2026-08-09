@@ -1,9 +1,16 @@
 # J25 — Serving stateful & sessions : agents a l'echelle en production
 
-> **Temps estime** : 3h | **Prerequis** : J1-J24
-> **Objectif** : maitriser les strategies de gestion d'etat de sessions en production — choix du backend de checkpointing, scaling horizontal stateless, gestion de sessions multi-utilisateurs et monitoring de derive en ligne.
+> **Temps estimé** : 3h | **Prérequis** : J1-J24
+>
+> **Objectif** : maîtriser les strategies de gestion d'etat de sessions en production — choix du backend de checkpointing, scaling horizontal stateless, gestion de sessions multi-utilisateurs et monitoring de derive en ligne.
 
 ---
+
+![Serving : clients, workers stateless, checkpointer](../assets/25-serving-stateful-sessions.svg)
+
+> **En une phrase :** Scaler = externaliser l'état, garder les workers interchangeables.
+>
+> **Visuel :** Clients → workers stateless × K → checkpointer partagé (Postgres/Redis). Online eval, drift, limites de session.
 
 ## 1. Le probleme du stateful en production
 
@@ -15,18 +22,11 @@ Un agent conversationnel doit se souvenir des tours precedents : c'est le **thre
 
 **La solution universelle** : externaliser l'etat. Les workers deviennent **stateless** — ils ne gardent rien en memoire entre les requetes. L'etat de chaque session vit dans un **store externe** (base de donnees, cache distribue) accessible par tous les workers.
 
-```
-              ┌──────────┐   ┌──────────┐   ┌──────────┐
- Messages  -> │ Worker 1 │   │ Worker 2 │   │ Worker 3 │  <- Workers stateless
-              └────┬─────┘   └────┬─────┘   └────┬─────┘
-                   │              │               │
-                   └──────────────┼───────────────┘
-                                  │
-                    ┌─────────────▼──────────────┐
-                    │      Checkpoint Store       │
-                    │  (SQLite / Postgres / Redis) │
-                    └─────────────────────────────┘
-```
+![Stateful vs workers stateless](../assets/25-stateful-problem.svg)
+
+> **En une phrase :** Scaler = externaliser l'état hors du worker.
+>
+> **Visuel :** Anti-pattern workers avec état local ; cible workers interchangeables et checkpointer partagé.
 
 Chaque requete : (1) le worker charge l'etat du thread depuis le store, (2) traite le message, (3) sauvegarde le nouvel etat. Le worker lui-meme n'a aucune memoire entre deux requetes.
 

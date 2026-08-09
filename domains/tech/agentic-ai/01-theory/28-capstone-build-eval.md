@@ -1,9 +1,16 @@
 # J28 — Capstone (build & eval) : assembler et evaluer le deep ops agent
 
-> **Temps estime** : 5h | **Prerequis** : J1-J27
+> **Temps estimé** : 5h | **Prérequis** : J1-J27
+>
 > **Objectif** : assembler les briques du J27 en un agent complet runnable, lui faire reparer un bug de bout en bout, prouver la reprise apres crash, et l'evaluer avec un harness pass^k + rapport de regression.
 
 ---
+
+![Quatre étapes du capstone build et eval](../assets/28-capstone-build-eval.svg)
+
+> **En une phrase :** Si tu ne peux pas rejouer et expliquer un échec, ce n'est pas prêt.
+>
+> **Visuel :** 1 Build runnable → 2 scénario bug→fix → 3 crash test reprise → 4 eval pass^k + rapport. Done = démo live + métriques.
 
 ## 1. Vue d'ensemble du build
 

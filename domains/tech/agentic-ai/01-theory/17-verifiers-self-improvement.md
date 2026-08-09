@@ -1,9 +1,16 @@
 # J17 — Verifiers & self-improvement : PRM, best-of-N et boucles persistantes
 
-> **Temps estime** : 3h | **Prerequis** : J1-J16
-> **Objectif** : comprendre comment des modeles de recompense supervisent le *processus* de raisonnement (et pas seulement le resultat final) ; implementer des strategies de recherche guidees par verifier (best-of-N, beam, weighted majority) ; concevoir des boucles d'auto-amelioration dont les lecons *persistent entre les runs* plutot que d'etre perdues a chaque session.
+> **Temps estimé** : 3h | **Prérequis** : J1-J16
+>
+> **Objectif** : comprendre comment des modèles de recompense supervisent le *processus* de raisonnement (et pas seulement le resultat final) ; implémenter des strategies de recherche guidees par verifier (best-of-N, beam, weighted majority) ; concevoir des boucles d'auto-amelioration dont les lecons *persistent entre les runs* plutot que d'etre perdues a chaque session.
 
 ---
+
+![Boucle generate verifier select persist](../assets/17-verifiers-self-improvement.svg)
+
+> **En une phrase :** S'améliorer entre les runs exige de persister les leçons.
+>
+> **Visuel :** Generate N → Verifier (PRM/règles) → Select best-of-N → Persist les leçons. Outcome vs process reward.
 
 ## 1. Pourquoi "verifier" plutot que juste "relancer"
 
@@ -161,18 +168,11 @@ LECONS PASSEES (3 plus recentes) :
 
 ### 5.4 Boucle complete
 
-```
-Run N :
-  1. Charger lecons precedentes depuis le store
-  2. Injecter dans le prompt du generator
-  3. Generer + verifier (best-of-N ou beam)
-  4. Mesurer le score final
-  5. Ecrire les nouvelles lecons dans le store
-  6. Sauvegarder le store
+![Boucle Self-Refine verifier](../assets/17-self-refine-loop.svg)
 
-Run N+1 :
-  Les lecons de Run N sont disponibles → comportement ameliore
-```
+> **En une phrase :** Générer puis vérifier bat le simple retry aveugle.
+>
+> **Visuel :** Generator, verifier, refiner, select, avec boucle de retry bornée et leçons optionnelles.
 
 **Critere d'amelioration mesurable** : compare le score median au run N vs run N-1 sur le meme jeu de problemes.
 

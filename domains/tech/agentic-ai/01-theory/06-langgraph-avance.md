@@ -1,9 +1,16 @@
 # J6 — LangGraph avance : subgraphs, parallel, streaming, persistence, time-travel
 
-> **Temps estime** : 3h | **Prerequis** : J5 (LangGraph fondamentaux)
-> **Objectif** : maitriser les patterns avances de LangGraph (subgraphs, parallel execution, streaming, persistence, time-travel debugging) pour construire des agents production-grade.
+> **Temps estimé** : 3h | **Prérequis** : J5 (LangGraph fondamentaux)
+>
+> **Objectif** : maîtriser les patterns avancés de LangGraph (subgraphs, parallel execution, streaming, persistence, time-travel debugging) pour construire des agents production-grade.
 
 ---
+
+![Quatre leviers LangGraph avancés](../assets/06-langgraph-avance.svg)
+
+> **En une phrase :** La persistence transforme un démo en système opérable.
+>
+> **Visuel :** Subgraphs (sous-agents), parallèle, persistence (checkpointer), time-travel (rejouer un checkpoint). Sans persistence, crash = tout perdre.
 
 ## 1. Pourquoi on a besoin d'aller plus loin
 
@@ -76,19 +83,11 @@ def research_wrapper(parent_state: ParentState) -> dict:
 
 Imagine un agent qui doit chercher dans 5 sources differentes en parallele. Avec des edges sequentiels, il les traiterait une par une — 5x plus lent.
 
-```
-Sequentiel (naif) :
-  agent -> source1 -> source2 -> source3 -> source4 -> source5 -> synth
-  Total = 5 * temps_par_source
+![Exécution séquentielle vs parallèle](../assets/06-parallel-vs-seq.svg)
 
-Parallele :
-  agent ┬-> source1 -┐
-        ├-> source2 -┤
-        ├-> source3 -┼-> synth
-        ├-> source4 -┤
-        └-> source5 -┘
-  Total = max(temps_par_source)
-```
+> **En une phrase :** Paralléliser seulement des sous-tâches indépendantes.
+>
+> **Visuel :** À gauche chaîne séquentielle coûteuse ; à droite fan-out Send API puis merge.
 
 ### 3.2 Le pattern Send
 
@@ -314,34 +313,11 @@ Ca cree une **nouvelle branche** dans l'historique, comme un git branch. Le thre
 
 Voici ce qu'un agent LangGraph production ressemble typiquement :
 
-```
-┌────────────────────────────────────────────────────────┐
-│                    MAIN GRAPH                           │
-│                                                         │
-│   START → preprocess ─┐                                 │
-│                       │                                 │
-│                       v                                 │
-│                  [RESEARCH SUBGRAPH] (fan-out 5 sources)│
-│                       │                                 │
-│                       v                                 │
-│                   analyze                                │
-│                       │                                 │
-│                       v                                 │
-│              should_iterate ? ──yes─┐                   │
-│                       │              │                   │
-│                       no             │                   │
-│                       │              v                   │
-│                       v          [RETRY SUBGRAPH]         │
-│                    synthesize                            │
-│                       │                                  │
-│                       v                                  │
-│                     END                                  │
-│                                                          │
-│  Checkpointer: PostgresSaver                            │
-│  Streaming: updates (pour UI)                           │
-│  Interrupts: before synthesize (human validation)       │
-└────────────────────────────────────────────────────────┘
-```
+![Patterns LangGraph combinés production](../assets/06-agent-prod-complet.svg)
+
+> **En une phrase :** Subgraphs + parallèle + persistence + HITL = agent opérable.
+>
+> **Visuel :** Main graph avec router, subgraph workers en parallèle, merge, HITL, le tout sur checkpointer.
 
 **Composants** :
 - **Subgraph Research** : reutilisable, fait 5 recherches paralleles via Send API

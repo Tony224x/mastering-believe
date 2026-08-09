@@ -1,9 +1,16 @@
 # J14 — Capstone : assistant de recherche autonome production-ready
 
-> **Temps estime** : 4h | **Prerequis** : J1-J13
-> **Objectif** : reunir tout ce qu'on a appris pour designer et implementer un systeme multi-agent production-ready. Pas un jouet — quelque chose qui pourrait vraiment tourner en prod.
+> **Temps estimé** : 4h | **Prérequis** : J1-J13
+>
+> **Objectif** : reunir tout ce qu'on a appris pour designer et implémenter un systeme multi-agent production-ready. Pas un jouet — quelque chose qui pourrait vraiment tourner en prod.
 
 ---
+
+![Capstone multi-agent supervisor et workers](../assets/14-capstone.svg)
+
+> **En une phrase :** Production-ready = happy path + erreurs + timeouts + cas ambigus.
+>
+> **Visuel :** Supervisor qui délègue à Researcher, Analyst, Critic, Writer. Livrable : runnable + traces + tests de trajectoire + garde-fous.
 
 ## 1. Le produit
 
@@ -26,49 +33,11 @@ On va construire le systeme complet. Tout est en Python, offline, avec MockLLM. 
 
 ### 2.1 Diagramme
 
-```
-                    ┌─────────────┐
-  user query  ───►  │  GUARDRAIL  │  (input check)
-                    └──────┬──────┘
-                           ▼
-                    ┌─────────────┐
-                    │ RATE LIMITER│
-                    └──────┬──────┘
-                           ▼
-                    ┌─────────────┐
-                    │ BUDGET INIT │
-                    └──────┬──────┘
-                           ▼
-                    ┌─────────────┐
-                    │  SUPERVISOR │
-                    └──────┬──────┘
-                ┌──────────┼──────────┐
-                ▼          ▼          ▼
-         ┌──────────┐ ┌──────────┐ ┌──────────┐
-         │RESEARCHER│ │ ANALYZER │ │  WRITER  │
-         │  (RAG)   │ │          │ │          │
-         └────┬─────┘ └────┬─────┘ └────┬─────┘
-              │            │            │
-              └────────────┼────────────┘
-                           ▼
-                    ┌─────────────┐
-                    │  SUPERVISOR │  (synthesis)
-                    └──────┬──────┘
-                           ▼
-                    ┌─────────────┐
-                    │   OUTPUT    │
-                    │  GUARDRAIL  │
-                    └──────┬──────┘
-                           ▼
-                    ┌─────────────┐
-                    │ HITL PUBLISH│  (optional approval step)
-                    │    GATE     │
-                    └──────┬──────┘
-                           ▼
-                      FINAL REPORT
+![Pipeline capstone de production](../assets/14-capstone-pipeline.svg)
 
-   everything wraps around: TRACING, COST/TOKEN BUDGET, EVAL HOOKS
-```
+> **En une phrase :** Guardrails et budget avant le supervisor ; workers puis HITL optionnel.
+>
+> **Visuel :** Input guardrail → rate limit → budget → supervisor fan-out (researcher, analyzer, writer) → output guardrail → HITL → rapport.
 
 ### 2.2 Les composants et leur role
 
@@ -235,19 +204,11 @@ A chaque release, on compare les resultats a une baseline (les traces precedente
 
 En prod, le systeme tournerait :
 
-```
-┌────────────────────────────────────────────────┐
-│ FastAPI  (HTTP + SSE streaming)                │
-├────────────────────────────────────────────────┤
-│ AcmeResearcher (ce qu'on implemente)         │
-├────────────────────────────────────────────────┤
-│ ARQ worker pour les taches > 5s                │
-│ Redis pour le rate limiting                    │
-│ Postgres pour le corpus + audit log            │
-│ Chroma/Qdrant pour les embeddings              │
-│ Langfuse pour le tracing                       │
-└────────────────────────────────────────────────┘
-```
+![Stack déploiement capstone](../assets/14-deployment.svg)
+
+> **En une phrase :** API + runtime + stores + obs : le squelette deploy.
+>
+> **Visuel :** Couches clients, FastAPI SSE, runtime agent, stores et observabilité.
 
 Observabilite : Grafana avec dashboards sur les metriques Langfuse.
 CI : pytest + eval harness, bloque le merge si regression.
@@ -332,12 +293,11 @@ Ces exercices te forcent a **penser comme un builder** : refactorer un systeme r
 - Le systeme doit etre modulaire : on peut remplacer un agent sans casser les autres
 - Tu es capable de shipper un agent en prod — ce n'est plus un exercice, c'est le niveau senior
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa25) — Lec. 4 (Practical Lessons from Deploying Sierra, Bavor)** — retours production qui informent un capstone realiste.
 - **Berkeley CS294-196 (Fa25) — Lec. 8 (Training Agentic Models, Weizhu Chen)** — vue Microsoft sur l'entrainement et l'evaluation d'agents complets.

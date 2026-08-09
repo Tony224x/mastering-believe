@@ -1,9 +1,16 @@
 # J2 — Tool Use & Function Calling
 
-> **Temps estime** : 3h | **Prerequis** : J1 (Anatomie d'un agent), appels API LLM
-> **Objectif** : maitriser le tool use de A a Z — du design de tools a l'execution parallele, en passant par la securite et le structured output.
+> **Temps estimé** : 3h | **Prérequis** : J1 (Anatomie d'un agent), appels API LLM
+>
+> **Objectif** : maîtriser le tool use de A a Z — du design de tools a l'execution parallele, en passant par la sécurité et le structured output.
 
 ---
+
+![Flux tool use en quatre étapes](../assets/02-tool-use-function-calling.svg)
+
+> **En une phrase :** Le tool use transforme un LLM en acteur dans le monde réel.
+>
+> **Visuel :** 1) Schéma JSON du tool → 2) le LLM choisit nom + args → 3) exécution → 4) observation réinjectée. Description claire + validation + structured output.
 
 ## 1. Pourquoi le tool use est le superpower des agents
 
@@ -842,12 +849,11 @@ asyncio.run(main())
 - Securite : least privilege, input validation, output sanitization, human-in-the-loop pour les actions destructives
 - Parallel tool calls = gain de latence, mais attention au rate limiting des APIs externes
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CMU 11-711 (Neubig, Fa24) — Lec. 15 (Tool Use and LLM Agent Basics)** — fondations academiques du function calling.
 - **Berkeley CS294-196 (Fa24) — Lec. 7 (Agents for Software Development, Neubig)** — tool use applique au code.

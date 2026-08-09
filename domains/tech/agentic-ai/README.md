@@ -1,5 +1,11 @@
 # Systemes IA Agentiques — Concevoir des Agents Autonomes
 
+![Carte du parcours agentic-ai 28 jours en 4 semaines](assets/parcours-28j.svg)
+
+> **En une phrase :** 28 jours : du single-agent au deep ops évalué.
+>
+> **Visuel :** S1 J1–J7 fondations agent + LangGraph · S2 J8–J14 multi-agent + prod · S3 J15–J21 frontier · S4 J22–J28 scale + capstone.
+
 ## Scope
 
 Maitriser la conception, l'implementation et le deploiement de systemes IA agentiques : du single-agent au multi-agent, avec tool use, memory, planning, et orchestration. Stack : Python, LangGraph, Claude/OpenAI APIs, MCP.
@@ -90,7 +96,7 @@ Le parcours se fait en deux temps : **S1-S2 = fondations** (J1-J14, du single-ag
 
 ## Au-dela des 14 jours
 
-- **`05-projets-guides/`** — 3 projets appliques au contexte d'editeur de simulation logistique LogiSim/FleetSim (voir [`shared/logistics-context.md`](../../shared/logistics-context.md)). Projet phare : `02-supervisor-swarm-multi-tier/`, qui combine les patterns supervisor et swarm de LangGraph sur une operation multi-flotte.
+- **`05-projets-guides/`** — 3 projets appliques au contexte d'editeur de simulation logistique LogiSim/FleetSim (voir [`shared/logistics-context.md`](../../../shared/logistics-context.md)). Projet phare : `02-supervisor-swarm-multi-tier/`, qui combine les patterns supervisor et swarm de LangGraph sur une operation multi-flotte.
 - **`04-projects/`** — espace libre pour mini-projets et capstones supplementaires lies au domaine.
 
 **Note sur les exercices hard (modules 01-03)** : ce sont des mini-projets a part entiere. Des corriges complets et executables existent desormais dans `03-exercises/solutions/` (fichiers `NN-<slug>-hard.py`), en plus des solutions easy/medium.

@@ -1,9 +1,16 @@
 # J27 — Capstone (architecture & setup) : concevoir un deep ops agent durable
 
-> **Temps estime** : 4h | **Prerequis** : J1-J26
-> **Objectif** : concevoir l'architecture d'un agent autonome avance qui assemble les patterns frontier du parcours (deep agent, durabilite, routing, isolation de contexte, eval), et poser les briques de base runnable avant le build complet du J28.
+> **Temps estimé** : 4h | **Prérequis** : J1-J26
+>
+> **Objectif** : concevoir l'architecture d'un agent autonome avancé qui assemble les patterns frontier du parcours (deep agent, durabilite, routing, isolation de contexte, eval), et poser les briques de base runnable avant le build complet du J28.
 
 ---
+
+![Architecture deep ops agent en huit briques](../assets/27-capstone-architecture.svg)
+
+> **En une phrase :** L'architecture avant le code : contrats clairs entre briques.
+>
+> **Visuel :** Ingest, Planner, Workers sandboxed, Verifier, Memory long-horizon, Durable, Observability, Eval harness.
 
 ## 1. Le projet : "Deep ops agent durable, observable et auto-evalue"
 

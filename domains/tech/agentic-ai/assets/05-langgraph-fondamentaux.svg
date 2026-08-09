@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">StateGraph LangGraph</title>
+  <desc id="d">START vers agent ; edge conditionnel needs_tool : oui vers tools puis retour agent, non vers END. Le state circule entre les nœuds.</desc>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">LangGraph : StateGraph mental model</text>
+  <text x="56" y="80" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Nodes purs + edges (conditionnels) + state qui circule</text>
+  <text x="56" y="660" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Module 05 · agentic-ai</text>  <rect x="480" y="120" width="240" height="70" rx="18" fill="#0F766E" filter="url(#s)"/>
+  <text x="600" y="161" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#fff">START</text>  <line x1="600" y1="190" x2="600" y2="220" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="460" y="220" width="280" height="90" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="600" y="261" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#115E59">agent</text>
+  <text x="600" y="283" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">lit state → update</text>  <text x="600" y="350" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#64748B">needs_tool ?</text>  <line x1="600" y1="310" x2="600" y2="340" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="160" y="400" width="220" height="90" rx="18" fill="#FEF3C7" filter="url(#s)"/>
+  <text x="270" y="441" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#92400E">tools</text>
+  <text x="270" y="463" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">exécute</text>  <rect x="820" y="400" width="220" height="90" rx="18" fill="#0F766E" filter="url(#s)"/>
+  <text x="930" y="441" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#fff">END</text>
+  <text x="930" y="463" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">réponse finale</text>  <path d="M520 310 L270 310 L270 400" fill="none" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>
+  <path d="M680 310 L930 310 L930 400" fill="none" stroke="#94A3B8" stroke-width="2.5" marker-end="url(#arr)"/>
+  <text x="360" y="300" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#0F766E">oui</text>
+  <text x="780" y="300" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#64748B">non</text>  <path d="M270 490 L270 520 L600 520 L600 310" fill="none" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>
+  <text x="420" y="545" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#0F766E">retour → agent</text>  <rect x="160" y="570" width="880" height="60" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <text x="600" y="608" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#0F172A">State partagé · HITL = interrupt · stream des events</text>
+</svg>

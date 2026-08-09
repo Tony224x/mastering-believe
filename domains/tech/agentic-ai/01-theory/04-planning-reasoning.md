@@ -1,9 +1,16 @@
 # J4 — Planning & Reasoning : CoT, ToT, ReAct, Plan-and-Execute, Reflexion
 
-> **Temps estime** : 3h | **Prerequis** : J1 (Anatomie d'un agent), J2 (Tool Use), J3 (Memory & State)
-> **Objectif** : comprendre comment forcer un LLM a raisonner explicitement, maitriser les patterns de planification (CoT, ToT, ReAct, plan-and-execute, Reflexion), et savoir quand chacun aide vs quand chacun fait perdre du temps.
+> **Temps estimé** : 3h | **Prérequis** : J1 (Anatomie d'un agent), J2 (Tool Use), J3 (Memory & State)
+>
+> **Objectif** : comprendre comment forcer un LLM a raisonner explicitement, maîtriser les patterns de planification (CoT, ToT, ReAct, plan-and-execute, Reflexion), et savoir quand chacun aide vs quand chacun fait perdre du temps.
 
 ---
+
+![Quatre patterns de planning du simple au cher](../assets/04-planning-reasoning.svg)
+
+> **En une phrase :** Plus de raisonnement n'est pas toujours mieux — mesure le ROI tokens/qualité.
+>
+> **Visuel :** CoT (1 passe) → ReAct (boucle outils) → Plan-and-Execute (2 phases) → ToT/Reflexion (plus cher). Commencer simple, monter seulement si besoin.
 
 ## 1. Pourquoi le raisonnement explicite change tout
 
@@ -150,16 +157,11 @@ CoT lineaire :
 
 A chaque etape, on genere **plusieurs continuations possibles**, on les evalue, et on ne garde que les meilleures. C'est un arbre de raisonnements.
 
-```
-ToT :
-  Racine
-    ├── Branche A1 (score: 0.8)
-    │     ├── A1.1 (score: 0.9)    ← meilleure
-    │     └── A1.2 (score: 0.3)    ← elaguee
-    ├── Branche A2 (score: 0.4)    ← elaguee
-    └── Branche A3 (score: 0.7)
-          └── A3.1 (score: 0.6)
-```
+![Tree-of-Thought](../assets/04-tree-of-thought.svg)
+
+> **En une phrase :** ToT = explorer et élaguer — cher, réservé au dur.
+>
+> **Visuel :** Arbre de pensées avec scores : branches gardées ou élaguées jusqu'à la meilleure feuille.
 
 ### 4.3 Les 4 etapes du ToT
 
@@ -229,21 +231,11 @@ Separer **planification** et **execution** :
 2. **Executor** : un autre LLM (ou le meme) execute les etapes une par une, en appelant les outils
 3. **Synthesizer** : un LLM final prend les resultats et produit la reponse
 
-```
-┌──────────┐     ┌───────────┐     ┌──────────────┐
-│ Question │ --> │  Planner  │ --> │ Liste etapes │
-└──────────┘     └───────────┘     └──────┬───────┘
-                                          │
-                                          v
-                                   ┌─────────────┐
-                                   │  Executor   │ <--> tools
-                                   └──────┬──────┘
-                                          │
-                                          v
-                                   ┌─────────────┐
-                                   │ Synthesizer │
-                                   └─────────────┘
-```
+![Pattern Plan-and-Execute](../assets/04-plan-execute.svg)
+
+> **En une phrase :** Planifier puis exécuter : le pattern production.
+>
+> **Visuel :** Question, planner qui produit des étapes, executor outillé, réponse ; boucle de replan si besoin.
 
 ### 6.2 Pourquoi c'est plus efficace
 
@@ -530,12 +522,11 @@ Le planning n'est pas toujours beneficiaire. Il peut :
 - Task decomposition : chaque sous-tache doit etre verifiable, concrete, et composable
 - Pas de planning pour les taches courtes — overhead inutile
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-196 (Fa24) — Lec. 12 (LLM Reasoning, Denny Zhou)** — vue Google DeepMind sur le reasoning, CoT et self-consistency.
 - **Berkeley CS294-280 (Sp25) — Lec. 11 (Learning to Reason, Weston)** — comment on apprend le reasoning aux modeles.

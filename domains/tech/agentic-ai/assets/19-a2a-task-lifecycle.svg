@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Lifecycle tâche A2A</title>
+  <desc id="d">États submitted, working, completed, avec branches input-required, failed et canceled.</desc>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Cycle de vie d'une tâche A2A</text>
+  <text x="56" y="80" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">États d'une tâche inter-agents</text>
+  <text x="56" y="660" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Module 19 · schéma détaillé</text>  <rect x="100" y="260" width="170" height="80" rx="18" fill="#E2E8F0" filter="url(#s)"/>
+  <text x="185" y="306" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">submitted</text>  <line x1="270" y1="300" x2="320" y2="300" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="320" y="240" width="200" height="120" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="420" y="296" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#115E59">working</text>
+  <text x="420" y="318" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">exécution</text>  <line x1="520" y1="300" x2="580" y2="300" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="580" y="260" width="180" height="80" rx="18" fill="#FEF3C7" filter="url(#s)"/>
+  <text x="670" y="306" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#92400E">completed</text>  <path d="M420 240 Q420 175 900 175" fill="none" stroke="#DC2626" stroke-width="2" marker-end="url(#arrA)"/>  <rect x="900" y="145" width="180" height="60" rx="18" fill="#FEE2E2" filter="url(#s)"/>
+  <text x="990" y="181" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#991B1B">failed</text>  <path d="M520 300 Q720 300 900 360" fill="none" stroke="#94A3B8" stroke-width="2" marker-end="url(#arr)"/>  <rect x="900" y="340" width="180" height="60" rx="18" fill="#E2E8F0" filter="url(#s)"/>
+  <text x="990" y="376" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">canceled</text>  <path d="M420 360 Q420 470 200 470" fill="none" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrA)"/>  <rect x="100" y="440" width="200" height="60" rx="18" fill="#FEF3C7" filter="url(#s)"/>
+  <text x="200" y="466" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#92400E">input-required</text>
+  <text x="200" y="488" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">HITL info</text>  <path d="M200 440 Q200 400 320 360" fill="none" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrA)"/>  <text x="280" y="520" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#F59E0B">HITL → working</text>  <text x="600" y="580" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">A2A orchestre agents · MCP = outils</text>
+</svg>

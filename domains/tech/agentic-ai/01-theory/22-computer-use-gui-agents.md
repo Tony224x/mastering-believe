@@ -1,9 +1,16 @@
 # J22 — Computer use & GUI agents : piloter un ecran comme un humain
 
-> **Temps estime** : 3h | **Prerequis** : J1-J21
-> **Objectif** : comprendre la boucle perception→action des agents GUI, maitriser le set-of-marks prompting, evaluer la fragilite du grounding visuel et connaitre les architectures existantes (Claude computer use, OpenAI CUA, browser-use).
+> **Temps estimé** : 3h | **Prérequis** : J1-J21
+>
+> **Objectif** : comprendre la boucle perception→action des agents GUI, maîtriser le set-of-marks prompting, evaluer la fragilite du grounding visuel et connaitre les architectures existantes (Claude computer use, OpenAI CUA, browser-use).
 
 ---
+
+![Boucle GUI screenshot grounding action](../assets/22-computer-use-gui-agents.svg)
+
+> **En une phrase :** Piloter un écran = perception + grounding fiable + isolation.
+>
+> **Visuel :** Screenshot → grounding (set-of-marks, coords) → action (click/type/scroll). Grounding fragile : sandbox obligatoire.
 
 ## 1. Pourquoi les GUI agents ?
 
@@ -19,27 +26,11 @@ Un **GUI agent** (ou computer-use agent) resout ce probleme en traitant l'interf
 
 ## 2. La boucle perceive→mark→act
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  ENVIRONNEMENT (ecran / navigateur)                          │
-│                                                              │
-│   ┌──────────┐     screenshot/DOM     ┌────────────────┐    │
-│   │ UI state │ ─────────────────────► │  Perception    │    │
-│   └────┬─────┘                        │  (vision LLM)  │    │
-│        │                              └───────┬────────┘    │
-│        │                                      │ observation │
-│        │                              ┌───────▼────────┐    │
-│        │                              │  Grounding     │    │
-│        │                              │  (SoM / DOM)   │    │
-│        │                              └───────┬────────┘    │
-│        │                                      │ action plan │
-│        │                              ┌───────▼────────┐    │
-│        │ action atomique              │  Acteur        │    │
-│        │ ◄────────────────────────────│  (pyautogui /  │    │
-│        │                              │   playwright)  │    │
-│        └──────────────────────────────┘                    │
-└──────────────────────────────────────────────────────────────┘
-```
+![Boucle perceive mark act GUI](../assets/22-perceive-mark-act.svg)
+
+> **En une phrase :** GUI agent = percevoir, ancrer, agir.
+>
+> **Visuel :** Screenshot ou DOM, grounding Set-of-Marks, action souris clavier, en boucle.
 
 Chaque tour de boucle :
 1. **Percevoir** : capturer l'etat courant de l'UI (screenshot pixels ou DOM)
@@ -138,17 +129,11 @@ Architecture browser-use (simplifie) :
 3. **Requete LLM** : demander au LLM "cliquer sur le mark [3]" plutot que "cliquer sur le bouton bleu en haut a droite"
 4. **Execution** : resoudre le mark id en coordonnees et executer le clic
 
-```
-Screenshot brut :              Screenshot SoM :
-┌──────────────────┐           ┌──────────────────┐
-│  [Username]      │           │  [Username] [1]  │
-│  [Password]      │    →      │  [Password] [2]  │
-│  [Submit] [Reset]│           │  [Submit][3][Reset][4]│
-└──────────────────┘           └──────────────────┘
+![Set-of-Marks prompting](../assets/22-set-of-marks.svg)
 
-LLM prompt : "Pour vous connecter, cliquez [1], tapez 'alice',
-              cliquez [2], tapez 'secret', cliquez [3]."
-```
+> **En une phrase :** Numéroter les cibles rend le grounding actionnable.
+>
+> **Visuel :** Comparaison screenshot brut versus éléments numérotés pour guider les actions du LLM.
 
 SoM reduit drastiquement les erreurs de grounding car le LLM n'a plus a estimer des coordonnees — il choisit un identifiant discret.
 

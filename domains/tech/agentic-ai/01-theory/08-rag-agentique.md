@@ -1,9 +1,16 @@
 # J8 — RAG Agentique : quand la recherche devient un raisonnement
 
-> **Temps estime** : 3h | **Prerequis** : J1-J7 (agent, tools, memory, planning, reflexion, react)
-> **Objectif** : comprendre ce qui separe un RAG "bete" d'un RAG agentique, implementer query decomposition, routing, retrieval grading et multi-hop reasoning.
+> **Temps estimé** : 3h | **Prérequis** : J1-J7 (agent, tools, memory, planning, reflexion, react)
+>
+> **Objectif** : comprendre ce qui separe un RAG "bete" d'un RAG agentique, implémenter query decomposition, routing, retrieval grading et multi-hop reasoning.
 
 ---
+
+![RAG vanilla versus RAG agentique](../assets/08-rag-agentique.svg)
+
+> **En une phrase :** RAG agentique = la recherche est un raisonnement, pas un lookup.
+>
+> **Visuel :** Vanilla : query → embed → top-k → LLM (une passe). Agentique : décompose, route, grade, multi-hop, re-query si insuffisant.
 
 ## 1. Le probleme du RAG vanilla
 
@@ -175,51 +182,11 @@ Reponse finale : "Mark Zuckerberg"
 
 ## 4. Architecture complete d'un RAG agentique
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                          USER QUERY                              │
-└────────────────────────────┬─────────────────────────────────────┘
-                             ▼
-                    ┌────────────────┐
-                    │  DECOMPOSER    │   → [sub_q1, sub_q2, ...]
-                    └────────┬───────┘
-                             ▼
-                    ┌────────────────┐
-                    │    ROUTER      │   → source per sub-query
-                    └────────┬───────┘
-                             ▼
-              ┌──────────────┴───────────────┐
-              ▼              ▼                ▼
-         ┌────────┐    ┌────────┐       ┌────────┐
-         │ source1 │    │ source2 │       │ source3 │
-         └────┬───┘    └────┬───┘       └────┬───┘
-              └──────────────┼────────────────┘
-                             ▼
-                    ┌────────────────┐
-                    │    GRADER      │   → keep only relevant
-                    └────────┬───────┘
-                             ▼
-                        [relevant?]
-                           /    \
-                         Yes     No
-                         │        │
-                         │        ▼
-                         │   ┌────────────┐
-                         │   │ REFORMULATE│ (retry, max 3)
-                         │   └────┬───────┘
-                         │        │ (back to router)
-                         ▼
-                    ┌────────────────┐
-                    │  NEXT HOP?     │   (multi-hop loop)
-                    └────────┬───────┘
-                             │ (no)
-                             ▼
-                    ┌────────────────┐
-                    │   SYNTHESIZER  │   → final answer
-                    └────────┬───────┘
-                             ▼
-                        FINAL ANSWER
-```
+![Pipeline RAG agentique complet](../assets/08-rag-pipeline-complet.svg)
+
+> **En une phrase :** Le LLM pilote décomposition, routing, grading et multi-hop avant la synthèse.
+>
+> **Visuel :** Query → decomposer → router → sources → grader (reformulate si besoin) → next hop ? → synthesizer → answer.
 
 **Points cles** :
 - Le **decomposer** et le **router** s'executent **une seule fois** au debut
@@ -378,22 +345,11 @@ C'est une "late interaction" : on retient l'info token-level au lieu de la poole
 
 C'est la pipeline standard de **toutes les apps RAG serieuses** en 2026 :
 
-```
-Query
-  │
-  ├─> Dense retriever (bge-m3, text-embedding-3-large)  → top 50
-  │
-  ├─> Sparse retriever (BM25)                            → top 50
-  │
-  ▼
-Reciprocal Rank Fusion (RRF) : fusion des 2 listes → top 50 merge
-  │
-  ▼
-Cross-encoder rerank (bge-reranker-v2-m3, Cohere rerank v3) : scoring precis → top 5
-  │
-  ▼
-LLM answer generation
-```
+![Hybrid retrieval RRF rerank](../assets/08-hybrid-rrf.svg)
+
+> **En une phrase :** Dense + sparse + rerank : le retrieval prod.
+>
+> **Visuel :** Query vers dense et sparse, fusion RRF, puis cross-encoder rerank avant le LLM.
 
 **Pourquoi cette combinaison** :
 - **Dense** capture la semantique (gere les synonymes)
@@ -527,12 +483,11 @@ Cote consommateur, un **visualiseur HTML statique** transforme n'importe quel bu
 - Budget strict sur les appels LLM pour eviter l'explosion du cout
 - **OKF** (Google Cloud, 2026) : un corpus de concepts markdown cures + liens (un graphe vendor-neutral) que l'agent consomme ET maintient — alternative portable au sac de chunks pour la connaissance interne
 
-
 ---
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CMU 11-711 (Neubig, Fa24) — Lec. 10 (Retrieval and RAG)** — fondations academiques du RAG, dense vs sparse, evaluation.
 - **Berkeley CS294-196 (Fa24) — Lec. 8 (Compound AI & DSPy, Khattab)** — pipelines de retrieval optimisables et auto-tunes.

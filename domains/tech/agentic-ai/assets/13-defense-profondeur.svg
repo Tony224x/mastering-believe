@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Défense en profondeur 5 couches</title>
+  <desc id="d">Couches empilées : input guardrails, trust boundaries, tool guardrails, output guardrails, monitoring et audit.</desc>
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Défense en profondeur</text>
+  <text x="56" y="80" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Cinq couches — l'attaquant doit toutes les contourner</text>
+  <text x="56" y="660" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Module 13 · schéma détaillé</text>  <rect x="180" y="120" width="840" height="78" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="600" y="155" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#115E59">L1 · Input guardrails</text>
+  <text x="600" y="177" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">length · rate · PII · injection patterns</text>  <line x1="600" y1="198" x2="600" y2="215" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="180" y="215" width="840" height="78" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <text x="600" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">L2 · Trust boundaries</text>
+  <text x="600" y="272" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">marquer untrusted · séparer system/user/web</text>  <line x1="600" y1="293" x2="600" y2="310" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="180" y="310" width="840" height="78" rx="18" fill="#FEF3C7" filter="url(#s)"/>
+  <text x="600" y="345" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#92400E">L3 · Tool guardrails</text>
+  <text x="600" y="367" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">whitelist · sandbox · least privilege · HITL</text>  <line x1="600" y1="388" x2="600" y2="405" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="180" y="405" width="840" height="78" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <text x="600" y="440" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">L4 · Output guardrails</text>
+  <text x="600" y="462" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">schema · filtre contenu · judge risque</text>  <line x1="600" y1="483" x2="600" y2="500" stroke="#0F766E" stroke-width="2.5" marker-end="url(#arrT)"/>  <rect x="180" y="500" width="840" height="78" rx="18" fill="#FEE2E2" filter="url(#s)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#991B1B">L5 · Monitoring + audit</text>
+  <text x="600" y="557" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">logs · anomalies · kill switch</text>
+</svg>

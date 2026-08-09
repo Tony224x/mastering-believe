@@ -1,9 +1,16 @@
 # J21 — Architecture des coding agents : ACI, boucle edit/search/run et SWE-bench
 
-> **Temps estime** : 3h | **Prerequis** : J1-J20
+> **Temps estimé** : 3h | **Prérequis** : J1-J20
+>
 > **Objectif** : comprendre comment un coding agent perçoit et modifie un depot de code — l'Agent-Computer Interface (ACI), la boucle edit/search/run, et comment SWE-bench evalue ces systemes en conditions reelles.
 
 ---
+
+![Boucle SEARCH EDIT RUN OBSERVE d'un coding agent](../assets/21-coding-agents-architecture.svg)
+
+> **En une phrase :** Un coding agent est un utilisateur automatisé du dépôt (ACI).
+>
+> **Visuel :** SEARCH le code → EDIT un patch → RUN tests/CLI → OBSERVE logs, en boucle jusqu'aux tests verts. SWE-bench évalue cette boucle.
 
 ## 1. Un LLM est un nouvel "utilisateur" du systeme de fichiers
 
@@ -71,14 +78,7 @@ La boucle fondamentale d'un coding agent est :
 
 En pratique pour corriger un bug :
 
-```
-1. search("ImportError")         -> localise le fichier et la ligne
-2. open_file("src/utils.py", 40) -> lit le contexte autour du bug
-3. edit(old="from foo import X", new="from bar import X")
-4. run_tests()                   -> voit si les tests passent
-5. Si echec -> retour a l'etape 1 avec nouvelle info
-6. Si succes -> commit / fin
-```
+> **Visuel (rappel) :** le schéma en tête montre la boucle SEARCH → EDIT → RUN → OBSERVE jusqu'aux tests verts.
 
 ### 3.1 Localisation (Search)
 
