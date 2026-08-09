@@ -9,7 +9,6 @@ Run from repo root:
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 DOMAIN = Path(__file__).resolve().parents[1]
