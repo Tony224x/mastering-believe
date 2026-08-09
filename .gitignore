@@ -45,6 +45,16 @@ ENV/
 *_traces.jsonl
 *_eval_results.csv
 
+# Assets pedagogiques des domaines (schemas, illustrations de cours)
+!domains/**/assets/
+!domains/**/assets/**/*.png
+!domains/**/assets/**/*.jpg
+!domains/**/assets/**/*.jpeg
+!domains/**/assets/**/*.svg
+!domains/**/assets/**/*.gif
+!domains/**/assets/**/*.pdf
+!domains/**/assets/**/*.md
+
 # --- Donnees / dossiers de demo runtime ---
 .demo_checkpoints/
 .demo_checkpoints_unit/
@@ -104,3 +114,8 @@ references/
 .DS_Store
 Thumbs.db
 desktop.ini
+.gstack/
+.grok/
+
+# Previews SVG raster (QA locale, regenerables)
+domains/**/assets/preview/

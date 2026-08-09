@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<title>Exemple ChatGPT — prompt en 3 blocs</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #212121; color: #ececec; width: 1100px; min-height: 720px; }
+  .app { display: flex; min-height: 720px; }
+  .side { width: 240px; background: #171717; padding: 16px; border-right: 1px solid #2f2f2f; }
+  .side .logo { font-weight: 600; margin-bottom: 20px; font-size: 14px; color: #fff; }
+  .side .new { background: #212121; border: 1px solid #4d4d4d; border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-bottom: 16px; }
+  .side .hist { font-size: 12px; color: #b4b4b4; margin: 8px 0; padding: 8px; border-radius: 8px; }
+  .side .hist.active { background: #2f2f2f; color: #fff; }
+  .main { flex: 1; display: flex; flex-direction: column; }
+  .banner { background: #0d9488; color: #fff; font-size: 12px; padding: 8px 20px; text-align: center; }
+  .chat { flex: 1; padding: 28px 80px; overflow: auto; }
+  .msg { max-width: 720px; margin: 0 auto 28px; }
+  .role { font-size: 12px; color: #8e8e8e; margin-bottom: 8px; font-weight: 600; }
+  .bubble { background: #2f2f2f; border-radius: 18px; padding: 16px 18px; line-height: 1.55; font-size: 15px; white-space: pre-wrap; }
+  .bubble.user { background: #303030; }
+  .bubble.assistant { background: transparent; border: 1px solid #3f3f3f; }
+  .composer { padding: 16px 80px 28px; }
+  .box { max-width: 720px; margin: 0 auto; background: #2f2f2f; border-radius: 24px; padding: 14px 18px; color: #8e8e8e; font-size: 14px; border: 1px solid #3f3f3f; }
+  code { background: #1a1a1a; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+  .label { display: inline-block; background: #134e4a; color: #99f6e4; font-size: 11px; padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo">ChatGPT · démo cours</div>
+    <div class="new">＋ Nouvelle discussion</div>
+    <div class="hist active">Prompt 3 blocs — Excel</div>
+    <div class="hist">Vérifier une stat</div>
+    <div class="hist">Plan de slides</div>
+  </aside>
+  <main class="main">
+    <div class="banner">Exemple pédagogique fictif — aucune donnée réelle d’employeur</div>
+    <div class="chat">
+      <div class="msg">
+        <div class="role">Vous</div>
+        <div class="bubble user"><span class="label">Contexte + Demande + Résultat</span>
+Contexte : mon tableau Excel a les colonnes Date | Libellé | Montant | Type (entrée/sortie), lignes 2 à 7.
+Demande : donne la formule en français pour totaliser les montants dont Type = "entrée".
+Résultat attendu : la formule exacte + un test numérique sur mon exemple.</div>
+      </div>
+      <div class="msg">
+        <div class="role">ChatGPT</div>
+        <div class="bubble assistant">Formule (Excel FR) :
+
+<code>=SOMME.SI(D2:D7;"entrée";C2:C7)</code>
+
+Test : si les entrées valent 200 + 250 + 150, le total affiché doit être <strong>600</strong>.
+
+Si tu as #NOM?, vérifie que ta version Excel est en français (SOMME.SI et pas SUMIF).</div>
+      </div>
+    </div>
+    <div class="composer"><div class="box">Écrivez un message…</div></div>
+  </main>
+</div>
+</body>
+</html>

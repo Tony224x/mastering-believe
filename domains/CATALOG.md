@@ -2,7 +2,7 @@
 
 > Fichier **genere** par `shared/tools/build_catalog.py` — ne pas editer a la main. Les metadonnees vivent dans `domains/<track>/<domaine>/meta.toml`.
 
-**11 domaines** — tech : 6 · vie : 5 · exploratoire : 0.
+**12 domaines** — tech : 6 · vie : 6 · exploratoire : 0.
 
 ## Track Tech — maitrise d'ingenierie
 
@@ -25,10 +25,12 @@
 | [Apprendre a apprendre](./domains/vie/apprendre-a-apprendre/) | Esprit | debutant | 14 modules x ~45 min (~10 h 30) | 14 | oui | Python · Meta-competence fondatrice : retrieval practice, spaced repetition, deep work, metacognition, apprendre avec l'IA. | stable |
 | [Communication, persuasion & influence](./domains/vie/communication-persuasion/) | Relations | debutant | 14 modules (~45 min chacun), sur 2 semaines | 14 | non | Communiquer clairement et persuader honnetement : ecoute, clarte, recit, negociation, feedback, prise de parole, influence ethique. | stable |
 | [Finance personnelle & investissement](./domains/vie/finance-personnelle/) | Argent | debutant | 14 modules (~45 min chacun), ~11 h | 14 | oui | Python · Fondamentaux Pareto-first de la finance perso : interets composes, budget, dette, fonds indiciels, psychologie, independance financiere. | stable |
+| [IA au quotidien (non-tech)](./domains/vie/ia-quotidien/) | Esprit | debutant | 14 modules x ~45 min (~10 h 30) | 14 | oui | ChatGPT, Excel, PowerPoint · Utiliser l'IA pour reflechir, ecrire, automatiser Excel et produire un deck pitch — sans code ni data science. | stable |
 | [Pensee critique, rationalite & decision](./domains/vie/rationalite-decision/) | Jugement | debutant | 14 modules (~45 min chacun) | 14 | oui | Python · Methode de raisonnement neutre : probas/Bayes, biais, decision sous incertitude, calibration (Brier), verification (SIFT). | stable |
 | [Sante, nutrition & longevite](./domains/vie/sante-longevite/) | Corps | debutant | 7 modules (~45 min chacun), ~8-10h sur 2-3 semaines | 7 | non | Fondations evidence-based: sommeil, activite physique, nutrition, sante metabolique, stress & lien social, plan sante personnel. | stable |
 
 - **Communication, persuasion & influence** — garde-fou : Persuasion ethique (charte CTR : Consentement, Transparence, Reciprocite) ; pas de manipulation ni dark patterns.
 - **Finance personnelle & investissement** — garde-fou : Contenu purement educatif, pas un conseil financier personnalise ; actif vs passif par la donnee (SPIVA) ; risque de perte en capital.
+- **IA au quotidien (non-tech)** — garde-fou : Jamais de donnees reelles employeur/association/clients/personnelles dans les prompts ; verifier les faits avant usage scolaire/pro ; pas de copier-coller aveugle pour formation ; Codex optionnel (hors chemin critique).
 - **Pensee critique, rationalite & decision** — garde-fou : Methode > conclusions ; exemples 100% neutres, aucun sujet politique/religieux/clivant.
 - **Sante, nutrition & longevite** — garde-fou : Strictement educatif, pas un avis medical: toute decision sante a valider avec un professionnel de sante qualifie.

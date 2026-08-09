@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Mur de texte vs slide lisible</title>
+  <desc id="d">Comparaison avant apres : slide surchargee contre slide une idee trois puces titre conclusion.</desc>
+
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <filter id="s2" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <linearGradient id="gSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FDFA"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Une idée · trois puces · titre = conclusion</text>
+
+  <text x="56" y="82" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Si tout est important, rien n'est important</text>
+  <rect x="56" y="120" width="520" height="480" rx="18" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5" filter="url(#s2)"/>
+  <text x="316" y="170" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#DC2626">AVANT</text>
+  <text x="100" y="230" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Titre faible : « Solution »</text>
+  <text x="100" y="280" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">• Notre solution est innovante et</text>
+  <text x="100" y="310" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">  collaborative et digitale et scalable…</text>
+  <text x="100" y="360" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">• 12 puces · police 14 · mur de texte</text>
+  <text x="100" y="410" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#0F172A">• L'orateur lit · l'audience lit · silence</text>
+  <text x="316" y="520" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#DC2626">Personne n'écoute</text>
+  <rect x="624" y="120" width="520" height="480" rx="18" fill="#FFFFFF" stroke="#16A34A" stroke-width="2.5" filter="url(#s2)"/>
+  <text x="884" y="170" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#16A34A">APRÈS</text>
+  <text x="680" y="250" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0F172A">Un solde clair chaque lundi</text>
+  <text x="680" y="260" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0F172A">en 10 minutes</text>
+  <circle cx="700" cy="340" r="6" fill="#0F766E"/>
+  <text x="720" y="346" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" fill="#0F172A">Un seul tableau entrées / sorties</text>
+  <circle cx="700" cy="390" r="6" fill="#0F766E"/>
+  <text x="720" y="396" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" fill="#0F172A">Trois formules seulement</text>
+  <circle cx="700" cy="440" r="6" fill="#0F766E"/>
+  <text x="720" y="446" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" fill="#0F172A">Routine IA pour les écarts</text>
+  <text x="884" y="540" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" fill="#16A34A">Présentable en diaporama</text>
+
+  <text x="600" y="660" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Mur de texte vs slide lisible · ia-quotidien</text>
+</svg>

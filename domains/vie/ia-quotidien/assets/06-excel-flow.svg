@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680"
+     role="img" aria-labelledby="t d">
+  <title id="t">Boucle Excel + ChatGPT</title>
+  <desc id="d">Cinq etapes : decrire le tableau, demander la formule, coller, tester, corriger avec le message d'erreur.</desc>
+
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <filter id="s2" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+    <linearGradient id="gHead" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <linearGradient id="gSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FDFA"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrT" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0F766E"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="8" height="680" fill="url(#gHead)"/>
+  
+  <text x="56" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" fill="#0F172A">Boucle Excel + ChatGPT</text>
+
+  <text x="56" y="82" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#64748B">Si erreur → renvoyer le message (#NOM?, #DIV/0!) au chat</text>
+<rect x="48" y="160" width="210" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="153" cy="240" r="32" fill="#0F766E"/>
+  <text x="153" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">1</text>
+  <text x="153" y="320" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">Décrire</text>
+  <text x="153" y="360" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">Colonnes & plages</text>
+<rect x="276" y="160" width="210" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="381" cy="240" r="32" fill="#0D9488"/>
+  <text x="381" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">2</text>
+  <text x="381" y="320" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">Formule</text>
+  <text x="381" y="360" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">Demander en FR</text>
+<rect x="504" y="160" width="210" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="609" cy="240" r="32" fill="#14B8A6"/>
+  <text x="609" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#115E59">3</text>
+  <text x="609" y="320" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">Coller</text>
+  <text x="609" y="360" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">Sur une copie</text>
+<rect x="732" y="160" width="210" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="837" cy="240" r="32" fill="#F59E0B"/>
+  <text x="837" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0F172A">4</text>
+  <text x="837" y="320" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">Tester</text>
+  <text x="837" y="360" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">Total = manuel ?</text>
+<rect x="960" y="160" width="210" height="280" rx="18" fill="#FFFFFF" filter="url(#s)"/>
+  <circle cx="1065" cy="240" r="32" fill="#DC2626"/>
+  <text x="1065" y="250" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#fff">5</text>
+  <text x="1065" y="320" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#0F172A">Corriger</text>
+  <text x="1065" y="360" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="13" fill="#64748B">Message d'erreur</text>
+  <rect x="48" y="480" width="1104" height="120" rx="18" fill="#CCFBF1" filter="url(#s)"/>
+  <text x="600" y="530" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#115E59">Mission J6 — résultat attendu</text>
+  <text x="600" y="565" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" fill="#0F172A">Entrées 600 · Sorties 150 · Solde 450 · Formule type =SOMME.SI(D2:D7;"entrée";C2:C7)</text>
+
+  <text x="600" y="660" text-anchor="middle" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" fill="#64748B">Boucle Excel + ChatGPT · ia-quotidien</text>
+</svg>
