@@ -70,3 +70,84 @@ Best-in-class déjà : trust/safety · backward design · SVG Teal Trust · miss
 Risque réputation : FR non relu + artefacts internes + solutions Python + HEC dans les noms
 
 Comparaison expert : *supérieur en fond à un cours LinkedIn de prompts ; sous le seuil de polish Coursera public.*
+
+---
+
+## Re-score post-P0 (2026-08-09, commit `5722de9`)
+
+> Même grilles prédéfinies (Alex N1–N10 · Expert E1–E12). Revue sur l’arbre public **après** P0 + correctifs de régression polish (`details` HTML, Spaced repetition, `je refuse`). Gate structurelle : `python domains/vie/ia-quotidien/scripts/verify_p0.py` → OK.
+
+### Synthèse
+
+| Vue | Avant | Après | Δ | Verdict |
+|-----|-------|-------|---|---------|
+| **Alex (naïf)** | 43 / 50 (86 %) | **47 / 50 (94 %)** | +4 | Je démarre ce soir sans hésiter ; frein résiduel = typos corps de texte + mermaid |
+| **Expert externe** | 44 / 60 (73 %) | **49 / 60 (82 %)** | +5 | **SHIP** — packaging public OK ; polish FR encore sous le plafond Coursera |
+
+P0 croisés : **7/7 traités** (structure + packaging). Dette restante = **P1 polish orthographique en profondeur** (~40 formes non accentuées repérées en théorie/exercices), pas un bloqueur de ship.
+
+### Alex — détail N1–N10 (/5)
+
+| Id | Critère | Avant | Après | Preuve / frein |
+|----|---------|------:|------:|----------------|
+| N1 | Entrée | 4 | **5** | README « Ce soir, fais seulement ça » + 3 gestes concrets (schéma → mission easy → badge) |
+| N2 | Anxiété | 4 | **4** | PROGRESS rassurant ; jargon LLM en `<details>` ; mermaid + few-shot encore visibles en J2/J14 |
+| N3 | Visuel | 5 | **5** | SVG 16/16 + screens Excel/ChatGPT/PPT ; « en une phrase » systématique |
+| N4 | 45 min réaliste | 3 | **4** | Capstone multi-soir + minimum ; J9/J7 encore 45–60 min affichés |
+| N5 | Missions | 5 | **5** | Easy gold data (ex. J6 600/150/450) ; medium/hard **bonus** labelisés |
+| N6 | Excel | 5 | **5** | Tableau fixe + écran SOMME.SI + badge Formule qui matche |
+| N7 | Capstone charge | 3 | **4** | Contrat min/bonus + planning Soir A/B/C ; charge réelle reste multi-soir |
+| N8 | Éthique | 5 | **5** | Garde-fous README + V-A-I-R + interdits données réelles |
+| N9 | Ludique | 5 | **5** | 14 badges, cases à cocher, pas de streak punitive |
+| N10 | Enviede J2 | 4 | **5** | Entrée allégée + badge J1 en 12 min |
+
+**Wow :** schéma Plausible≠vrai · entrée 3 gestes · Excel 600 gold.  
+**Bloque encore (léger) :** accents manquants (« Scène concrete », « n as », « reecris ») ; blocs mermaid si rendu Markdown pauvre.
+
+### Expert — détail E1–E12 (/5)
+
+| Id | Critère | Avant | Après | Preuve / frein |
+|----|---------|------:|------:|----------------|
+| E1 | Value prop | 4 | **4** | Non-tech ChatGPT+Excel+PPT clair ; positionnement inchangé (déjà bon) |
+| E2 | Progressive disclosure | 3 | **4** | « Ce soir » + jargon en details ; few-shot/mermaid encore tôt pour un non-tech |
+| E3 | Design system | 4 | **4** | SVG Teal Trust cohérents ; hero + parcours-14j |
+| E4 | A11y | 3 | **4** | `<title>` sur les 16 SVG ; mermaid et PNG screens restent secondaires |
+| E5 | Practice | 3 | **4** | 14× easy/medium/hard + 14 solutions MD easy/medium/hard ; medium encore un peu minces |
+| E6 | Alignment | 4 | **4** | PLAN ↔ theory ↔ missions ↔ badges alignés ; meta.toml stable |
+| E7 | Trust | 5 | **5** | Données fictives, journal IA, anti-copier-coller — inchangé best-in-class |
+| E8 | Motivation | 4 | **5** | Badges + entrée easy-first + multi-soir capstone |
+| E9 | Production quality | 2 | **3** | Accents critiques + labels FR + purge artefacts ; ~40 formes encore non accentuées ; PROGRESS encore rugueux |
+| E10 | Différenciation | 4 | **4** | Combo Excel portfolio + pitch formation + non-code — rare |
+| E11 | Transfer | 5 | **5** | Usages collés à formation/PME ; journal de transfert |
+| E12 | Scalabilité | 3 | **3** | `verify_p0.py` aide ; `04-projects/` vide ; pas de kit formateur |
+
+**Best-in-class :** trust/safety · easy gold data · SVG · packaging easy-first.  
+**Sous-seuil Coursera :** relecture FR mécanique incomplète (E9=3, pas 5).
+
+### Points d’accord post-P0
+
+| Thème | Alex | Expert | Statut P0 |
+|-------|------|--------|-----------|
+| Visuels / missions easy | 5 | 4–5 | OK |
+| Trust & safety | 5 | 5 | OK |
+| Capstone charge | 4 (multi-soir) | 4 | **traité** (min/bonus) |
+| Packaging / polish FR | Entrée OK ; typos corps | E9=3 | **partiel** (structure OK, orthographe profondeur = P1) |
+| Nom HEC | n/a learner | 0 hit learner | **traité** (pitch) |
+
+### Verdict final
+
+- **Publication / merge vers `dev` :** **oui (SHIP)** pour un public non-tech, sous réserve de ne pas vendre le polish FR comme « Coursera-ready ».
+- **Avant large com / landing marketing :** une **passe P1 accents** (théorie + PROGRESS + easy) pour pousser E9 ≥ 4.
+- **Non-bloquant :** mermaid fallback texte, enrichir solutions medium, remplir `04-projects/` si besoin portfolio libre.
+
+### Mapping P0 → preuve fichier
+
+| P0 | Preuve |
+|----|--------|
+| 1 Orthographe FR | `À retenir`, accents README/théorie ; residual `concrete`/`ete`… = P1 |
+| 2 Purge artefacts | absence `CODEX-REVIEW` / `REVIEW-pass*` / `__pycache__` |
+| 3 hec → pitch | `*capstone-deck-pitch*` ; 0 hit learner (EVAL historique ok) |
+| 4 Capstone multi-soir + min | J13–J14 theory + hard exercise |
+| 5 Ce soir 3 puces | `README.md` L7–13 |
+| 6 Medium/hard mission/bonus | 28/28 via `verify_p0.py` |
+| 7 Solutions MD non-tech | 14× `03-exercises/solutions/*.md` |
