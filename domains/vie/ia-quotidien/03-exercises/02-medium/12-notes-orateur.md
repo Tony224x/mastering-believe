@@ -1,6 +1,6 @@
 # Mission — Notes orateur & répétition — niveau medium
 
-> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **medium** · module J12.
+> **Bonus** — optionnel tant que la mission easy du jour est faite. Niveau **medium** · module J12.
 
 ## But
 
@@ -11,14 +11,14 @@ Notes pour 3 slides clés + 5 questions pièges.
 1. Slides cibles : accroche, solution, chiffres/demande.
 2. Prompt coach oral pour notes + 5 questions prof sceptique.
 3. Filtre les réponses : supprime toute réponse qui invente un chiffre absent de ton deck.
-4. Reponds à voix haute a 3 questions (auto-eval /5).
+4. Réponds à voix haute à 3 questions (auto-éval /5).
 
 ## Réussite
 
 - [ ] Notes sur 3 slides
 - [ ] 5 questions pièges
-- [ ] Filtre anti-invention applique
-- [ ] Auto-eval orale
+- [ ] Filtre anti-invention appliqué
+- [ ] Auto-éval orale
 
 ## Indice
 

@@ -1,6 +1,6 @@
 # Mission — Capstone final : deck pitch — niveau medium
 
-> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **medium** · module J14.
+> **Bonus** — optionnel tant que la mission easy du jour est faite. Niveau **medium** · module J14.
 
 ## Rythme
 
@@ -8,14 +8,14 @@ Prévois **plusieurs soirs** si besoin. Seul le **contrat minimum** est exigé p
 
 ## But
 
-Vérification faits + notes orateur sur 4 slides + journal IA.
+Vérification des faits + notes orateur sur 4 slides + journal IA.
 
 ## À faire
 
 1. Liste chaque chiffre/nom propre du deck → source ou suppression.
 2. Notes orateur sur 4 slides clés.
-3. Journal IA 1/2–1 page (genere / réécrit / refuse / verifie).
-4. Auto-eval rubrique module (/20) avec justificatifs courts.
+3. Journal IA ½–1 page (génère / réécrit / refuse / vérifie).
+4. Auto-éval rubrique module (/20) avec justificatifs courts.
 
 ## Réussite
 

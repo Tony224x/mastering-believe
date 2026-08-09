@@ -1,6 +1,6 @@
 # Mission — Slides & design sobre — niveau hard
 
-> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **hard** · module J11.
+> **Bonus** — optionnel tant que la mission easy du jour est faite. Niveau **hard** · module J11.
 
 ## But
 
@@ -8,10 +8,10 @@ Template personnel de style (couleurs, polices, règles) + 6 slides conformes.
 
 ## À faire
 
-1. Définir 5 règles de style (ex. fond clair, 1 accent, titrès 28pt+...).
-2. Appliquer a 6 slides du deck.
-3. Demander à ChatGPT un audit "Présentation Zen" et corriger 3 points.
-4. Exporter PDF ou PPTX de travail.
+1. Définis 5 règles de style (ex. fond clair, 1 accent, titres 28 pt+…).
+2. Applique-les à 6 slides du deck.
+3. Demande à ChatGPT un audit « Présentation Zen » et corrige 3 points.
+4. Exporte PDF ou PPTX de travail.
 
 ## Réussite
 

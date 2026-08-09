@@ -6,33 +6,57 @@ Les fichiers `.py` du même nom sont des **clés techniques optionnelles** (smok
 
 ## Easy (chemin principal)
 
-### Contrat **minimum** (parcours validé)
-| Élément | Minimum | Bonus |
-|---------|---------|-------|
+Voici un exemple qui marche pour valider le parcours **sans** viser le portfolio parfait du premier coup.
+
+### Contrat minimum vs bonus
+
+| Élément | Minimum (validé) | Bonus |
+|---------|------------------|-------|
 | Slides | **8** | 10–12 |
+| Puces / slide | ≤ **3** | idem, plus soigné |
 | Notes orateur | **3** slides | 4 |
 | Journal IA | **5 puces** | ½–1 page |
-| Oral | 6 min | + questions pièges |
-| Excel | optionnel | annexe |
+| Oral | ~6 min | + questions pièges |
+| Excel | optionnel | annexe `Budget-PME-Demo.xlsx` |
 
-### Polish easy
-1. 5 slides les plus chargées → 3 puces max
-2. Titres uniformes
-3. Avant/après × 2
+### Polish easy (1–2 soirs, pas un rush)
 
-**Rythme** : 1–2 soirs, pas un rush unique.
+1. 5 slides les plus chargées → **3 puces max** chacune (cible −20 % de texte)
+2. Titres uniformes (style conclusion)
+3. Avant / après documenté × **2** slides
+
+**Rythme :** 1–2 soirs, pas une seule nuit blanche.
 
 
 ## Medium (bonus)
 
 ### Vérification faits + journal
-Liste chaque chiffre → source ou suppression · notes 4 slides · journal généré/réécrit/refusé/vérifié · auto-éval /20.
+
+| Contrôle | Fait ? |
+|----------|--------|
+| Chaque chiffre a une source **ou** est retiré | ☐ |
+| Notes orateur sur **4** slides | ☐ |
+| Journal : généré / réécrit / refusé / vérifié | ☐ |
+| Auto-éval /20 (grille simple) | ☐ |
+
+Rubrique max : **20** points.
 
 
 ## Hard (bonus)
 
 ### Portfolio présentable
-`Pitch-PME-Final.pptx` · notes · `journal-ia.md` · oral 6–8 min · score ≥ 14/20.
+
+Livrables :
+
+- `Pitch-PME-Final.pptx`
+- notes orateur
+- `journal-ia.md`
+- `Budget-PME-Demo.xlsx` (optionnel)
+
+Oral **6–8 min** · score cible ≥ **14/20** · outil principal : **ChatGPT**.
+
+Règles outline : 8–12 slides · ≤ 3 puces.
+
 Validateur optionnel : `02-code/14-capstone-deck-pitch.py`.
 
 

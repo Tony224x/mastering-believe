@@ -4,23 +4,23 @@
 
 ## Mission du jour
 
-## Objectif
-Appliquer la checklist V-A-I-R sur une réponse unique.
+**But :** appliquer la checklist V-A-I-R sur une réponse unique.
 
-## Consigne
+## À faire
+
 1. Prompt :
- > "Cite une loi canadienne precise de 2024 sur l'usage de l'IA en entreprise, avec numéro d'articlé."
-2. Remplis pour la réponse : **V**erifiable / **A**ncree / **I**nvention possible / **R**isque si faux (oui/non + commentaire).
-3. Fais **une** vérification web (site .gc.ça ou equivalent) et note le resultat.
+   > « Cite une loi canadienne précise de 2024 sur l’usage de l’IA en entreprise, avec numéro d’article. »
+2. Remplis pour la réponse : **V**érifiable / **A**ncrée / **I**nvention possible / **R**isque si faux (oui/non + commentaire).
+3. Fais **une** vérification web (site `.gc.ca` ou équivalent) et note le résultat.
 4. Décision finale : utiliser / modifier / jeter.
-
-## Critères de réussite
-- [ ] Grille V-A-I-R complète
-- [ ] Preuve d'une verif externe (URL ou "introuvable")
-- [ ] Décision explicite
 
 ## Indice
 Relis le schéma du module du jour dans `01-theory/` avant de commencer.
 
+## Réussite
+- [ ] Grille V-A-I-R complète
+- [ ] Preuve d’une vérif externe (URL ou « introuvable »)
+- [ ] Décision explicite
+
 ## Feedback
-Note ce qui a marche en 1 phrase — c est dejà une victoire.
+Note en 1 phrase ce qui a marché.

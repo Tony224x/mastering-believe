@@ -38,7 +38,7 @@ Public type : débutant·e en IA, profil Office (Excel / PowerPoint), ~45 min/jo
 - Savoir ouvrir Excel, PowerPoint, un navigateur.
 - Un compte **ChatGPT** (gratuit suffit pour démarrer ; Plus aide pour les fichiers).
 - Français lu/écrit confortable.
-- Aucun pré-requis d'un autre domaine du repo.
+- Aucun prérequis d'un autre domaine du repo.
 
 ## Planning (2 semaines)
 

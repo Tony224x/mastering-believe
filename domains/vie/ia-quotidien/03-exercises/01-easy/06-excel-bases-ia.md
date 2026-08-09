@@ -26,17 +26,17 @@
 ## À faire
 
 1. Colle le tableau.
-2. Demande à ChatGPT la formule FR pour totaliser les entrées (precise les colonnes).
+2. Demande à ChatGPT la formule FR pour totaliser les entrées (précise les colonnes).
 3. Colle la formule, compare au 600.
-4. Si ça differe : copie le message d erreur ou le mauvais total dans ChatGPT et corrige.
+4. Si ça diffère : copie le message d’erreur ou le mauvais total dans ChatGPT et corrige.
 
 ## Indice
-Cherche `SOMME.SI` (ou equivalent). Attention aux guillemets et à la plage.
+Cherche `SOMME.SI` (ou équivalent). Attention aux guillemets et à la plage.
 
 ## Réussite
 - [ ] Formule visible
 - [ ] Total = 600
-- [ ] Solde calcule = 450 (bonus facile)
+- [ ] Solde calculé = 450 (bonus facile)
 
 ## Feedback
-**Badge Formule qui matche** si total = 600 du premier ou second essai. Pas de stress si le 2e essai a suffi.
+**Badge Formule qui matche** si total = 600 au premier ou second essai. Pas de stress si le 2e essai a suffi.

@@ -6,22 +6,67 @@ Les fichiers `.py` du même nom sont des **clés techniques optionnelles** (smok
 
 ## Easy (chemin principal)
 
-### Livrable minimum `Budget-PME-Demo.xlsx` (fictif)
-Onglets suggérés : Transactions · Résumé · (option) Scénarios.
-Résumé 5 lignes en français pour un non-financier.
-**Jamais** de données employeur réelles.
+Voici un exemple qui marche pour le livrable `Budget-PME-Demo.xlsx` (100 % fictif).
+
+### Schéma CSV / Excel
+
+En-tête :
+
+```text
+date,libelle,categorie,montant,type
+```
+
+Minimum **15** transactions. Mix entrées / sorties · catégories stables · **aucun** vrai nom de personne ni donnée employeur.
+
+### Onglets suggérés
+
+| Onglet | Rôle |
+|--------|------|
+| Transactions | lignes brutes |
+| Résumé | totaux + solde en français clair |
+| (option) Scénarios | plus tard |
+
+### Prompt type (café mobile fictif, janv. 2026)
+
+```
+Rôle : assistant tableur pour non-financier.
+Contexte : café mobile en ville, janvier 2026, données 100 % fictives.
+Tâche : génère 15 lignes CSV colonnes date,libelle,categorie,montant,type.
+Contraintes : pas de vrais noms ; montants réalistes ; mix entrées/sorties.
+Format : CSV prêt à coller dans Excel.
+```
+
+Résumé en **5 lignes** pour un non-financier (quoi est entré, quoi est sorti, solde, 1 alerte, 1 prochaine action).
 
 
 ## Medium (bonus)
 
-### 3 scénarios + notes d'hypothèses
-Base / optimiste / pessimiste avec écarts explicités.
+### 20+ lignes · 3 onglets
+
+Onglets : **Transactions** · **Resume** · **Readme**
+
+Formules Résumé :
+
+- `SOMME.SI` entrées  
+- `SOMME.SI` sorties  
+- solde  
+
+Notes d’hypothèses sous le résumé (1–3 phrases).
 
 
 ## Hard (bonus)
 
-### Classeur réutilisable + README
-Checklist J9 cochée · noms d'onglets clairs · formules documentées.
+### Classeur réutilisable + scénarios
+
+| Scénario | Coeff. entrées | Coeff. sorties | Exemple (base 10 000 / 8 000) |
+|----------|----------------|----------------|--------------------------------|
+| base | 1.0 | 1.0 | solde **2 000** |
+| optimiste | 1.1 | 1.0 | entrées 11 000 · solde 3 000 |
+| pessimiste | 0.9 | 1.05 | 9 000 / 8 400 → solde **600** |
+
+Checklist : noms d’onglets clairs · formules documentées dans Readme · jamais de données réelles.
+
+Helper optionnel (code) : `domains/vie/ia-quotidien/02-code/09-projet-tresorerie.py`
 
 
 ## Clés structurées (rappel)

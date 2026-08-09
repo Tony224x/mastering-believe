@@ -4,22 +4,22 @@
 
 ## Mission du jour
 
-## Objectif
-Figer l'idée fictive finale + structure 10 titrès dans PowerPoint (slides presque vides OK).
+**But :** figer l’idée fictive finale + structure 10 titres dans PowerPoint (slides presque vides OK).
 
-## Consigne
-1. 1 phrase idée finale.
-2. 10 slides creees dans PPT avec titrès seulement.
-3. Mode diaporama : raconte l'histoire en 60 secondes (chrono).
-4. Note 3 trous de recit.
+## À faire
 
-## Critères de réussite
-- [ ] PPT 10 titres
-- [ ] Histoire 60 s possible
-- [ ] 3 trous listes
+1. 1 phrase d’idée finale.
+2. 10 slides créées dans PPT avec titres seulement.
+3. Mode diaporama : raconte l’histoire en 60 secondes (chrono).
+4. Note 3 trous de récit.
 
 ## Indice
 Relis le schéma du module du jour dans `01-theory/` avant de commencer.
 
+## Réussite
+- [ ] PPT 10 titres
+- [ ] Histoire 60 s possible
+- [ ] 3 trous listés
+
 ## Feedback
-Note ce qui a marche en 1 phrase — c est dejà une victoire.
+Note en 1 phrase ce qui a marché.

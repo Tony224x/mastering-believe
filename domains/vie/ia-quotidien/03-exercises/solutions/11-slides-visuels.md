@@ -6,21 +6,52 @@ Les fichiers `.py` du même nom sont des **clés techniques optionnelles** (smok
 
 ## Easy (chemin principal)
 
-### 4 slides modèles
-Chaque slide : **1 idée** · ≤ 3 puces · titre = conclusion · note « visuel : … ».
+Voici un exemple qui marche — une idée par slide, pas un mur de texte.
+
+### Règle d’or
+
+Chaque slide : **1 idée** · ≤ **3** puces · titre = **conclusion** · note « visuel : … ».
+
 Référence visuelle : `assets/screens/screen-powerpoint-slide-sobre.png`
+
+### Avant / après (exemple)
+
+| | Avant | Après |
+|---|-------|-------|
+| Titre | Solution | Un solde clair chaque lundi en 10 minutes |
+| Puces | 8 lignes de jargon | • Tableau unique entrées/sorties<br>• 3 formules seulement<br>• Routine IA pour expliquer les écarts |
+| Visuel | aucun | schéma 3 blocs : Lundi → Tableau → Décision |
+
+### 4 slides modèles (sujets)
+
+1. Accroche problème  
+2. Solution en une phrase  
+3. Comment ça marche  
+4. Demande / prochain pas  
 
 
 ## Medium (bonus)
 
-### Avant / après
-Prends 2 slides denses, raccourcis à 3 puces, documente le delta.
+### 4 slides peaufinées
+
+- max **3** puces par slide  
+- ≥ **1** itération avant/après documentée (capture ou tableau)  
+- titres uniformes (même style, même longueur approximative)
 
 
 ## Hard (bonus)
 
-### Kit design sobre
-Palette limitée · hiérarchie titres · anti-mur de texte sur 6+ slides.
+### Kit design sobre (≥ 6 slides)
+
+| Règle | Exemple |
+|-------|---------|
+| Palette limitée | 2 couleurs + gris |
+| Hiérarchie | titre > sous-titre > puces |
+| Anti-mur | jamais plus de 3 puces |
+| Une idée | 1 message par slide |
+| Marge | aérer, ne pas coller au bord |
+
+Documente ≥ **3** corrections concrètes (ex. : « slide 4 : 7 puces → 3 »).
 
 
 ## Clés structurées (rappel)

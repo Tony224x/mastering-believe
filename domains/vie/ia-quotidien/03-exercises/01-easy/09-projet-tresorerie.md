@@ -4,22 +4,22 @@
 
 ## Mission du jour
 
-## Objectif
-Generer un CSV fictif de 15 transactions pour une PME demo.
+**But :** générer un CSV fictif de 15 transactions pour une PME démo.
 
-## Consigne
-1. Prompt ChatGPT pour un cafe mobile en ville (janv 2026), colonnes date,libellé,catégorie,montant,type.
+## À faire
+
+1. Prompt ChatGPT pour un café mobile en ville (janv. 2026), colonnes date, libellé, catégorie, montant, type.
 2. Importe dans Excel.
-3. Verifie à la main : pas de vrais noms de personnes, montants realistes, mix entrées/sorties.
-4. Corrige au moins 2 lignes "bizarres" si besoin.
-
-## Critères de réussite
-- [ ] 15 lignes importees
-- [ ] Audit anonymat OK
-- [ ] ≥2 corrections si nécessaire (ou justification "rien a corriger")
+3. Vérifie à la main : pas de vrais noms de personnes, montants réalistes, mix entrées/sorties.
+4. Corrige au moins 2 lignes « bizarres » si besoin.
 
 ## Indice
 Relis le schéma du module du jour dans `01-theory/` avant de commencer.
 
+## Réussite
+- [ ] 15 lignes importées
+- [ ] Audit anonymat OK
+- [ ] ≥2 corrections si nécessaire (ou justification « rien à corriger »)
+
 ## Feedback
-Note ce qui a marche en 1 phrase — c est dejà une victoire.
+Note en 1 phrase ce qui a marché.

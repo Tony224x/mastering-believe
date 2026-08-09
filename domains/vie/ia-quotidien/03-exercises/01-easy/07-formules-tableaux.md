@@ -4,22 +4,22 @@
 
 ## Mission du jour
 
-## Objectif
-Ajouter une colonne calculee Sens (+montant / -montant) vià l'IA.
+**But :** ajouter une colonne calculée Sens (+montant / −montant) via l’IA.
 
-## Consigne
+## À faire
+
 1. Reprends un tableau Transactions (min 8 lignes).
-2. Demande à ChatGPT une formule SI pour colonne Sens.
-3. Implemente et vérifie que somme(Sens) = solde.
-4. Documente formule + 1 capture de totaux.
-
-## Critères de réussite
-- [ ] Colonne Sens presente
-- [ ] Somme(Sens) = entrées - sorties
-- [ ] Formule expliquee en 1 phrase (par toi)
+2. Demande à ChatGPT une formule SI pour la colonne Sens.
+3. Implémente et vérifie que somme(Sens) = solde.
+4. Documente formule + 1 capture des totaux.
 
 ## Indice
 Relis le schéma du module du jour dans `01-theory/` avant de commencer.
 
+## Réussite
+- [ ] Colonne Sens présente
+- [ ] Somme(Sens) = entrées − sorties
+- [ ] Formule expliquée en 1 phrase (par toi)
+
 ## Feedback
-Note ce qui a marche en 1 phrase — c est dejà une victoire.
+Note en 1 phrase ce qui a marché.

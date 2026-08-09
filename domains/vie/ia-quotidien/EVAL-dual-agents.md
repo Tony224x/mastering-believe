@@ -151,3 +151,29 @@ P0 croisés : **7/7 traités** (structure + packaging). Dette restante = **P1 po
 | 5 Ce soir 3 puces | `README.md` L7–13 |
 | 6 Medium/hard mission/bonus | 28/28 via `verify_p0.py` |
 | 7 Solutions MD non-tech | 14× `03-exercises/solutions/*.md` |
+
+---
+
+## Re-score post-P1 narration (2026-08-09, polish multi-agents)
+
+> Passe **accents complets + prose formateur humaine** (4 agents : théorie J1–J7 · J8–J14+entrée · 42 exercices · 14 solutions MD). Objectif anti-slop : phrases courtes, scènes, zéro marketing.
+
+### Synthèse
+
+| Vue | Post-P0 | Post-P1 | Δ | Verdict |
+|-----|--------:|--------:|---|---------|
+| **Alex** | 47 / 50 | **48 / 50 (96 %)** | +1 | Corps de texte lisible ; mermaid = seul frein soft |
+| **Expert** | 49 / 60 | **52 / 60 (87 %)** | +3 | **SHIP** — E9 production **4/5** (Coursera-proche, pas parfait) |
+
+Mouvements clés : N2 4→**4** (stable) · frein typos levé · **E9 3→4** · E2 4→**4** · E5 4→**4**.
+
+### Ce qui a changé pour le lecteur
+- « Scène concrète », apostrophes (`n'as`, `n'es`, `C'est`), conjugaisons correctes
+- Consignes d’exercices à l’impératif, feedback « Bravo. » sobre
+- Solutions MD en exemples collables (« Voici un exemple qui marche »)
+- Chemins assets **sans accent fichier** (régression agents corrigée : `donnees` / `apres`)
+
+### Dette restante (P2 optionnel)
+- Fallback texte pour blocs mermaid
+- Enrichir medium solutions si besoin portfolio formateur
+- `04-projects/` toujours vide

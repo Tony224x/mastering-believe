@@ -6,7 +6,10 @@ Les fichiers `.py` du même nom sont des **clés techniques optionnelles** (smok
 
 ## Easy (chemin principal)
 
-### Structure RCCFC (modèle)
+Voici un exemple qui marche : même intention, mais le modèle reçoit un schéma + un format de sortie.
+
+### Structure RCCFC (modèle à garder)
+
 ```
 Rôle : …
 Contexte : …
@@ -15,7 +18,8 @@ Format : …
 Critères de succès : …
 ```
 
-### Prompt 3 blocs minimal (exemple)
+### Prompt 3 blocs minimal (exemple Excel)
+
 ```
 Rôle : coach Excel pour débutant non-tech.
 Contexte : tableau fictif Date | Libellé | Montant | Type (entrée/sortie).
@@ -24,21 +28,35 @@ Format : formule + explication + 1 cas de test.
 Contraintes : français Excel ; pas de VBA ; données fictives seulement.
 ```
 
+### Pourquoi c’est mieux qu’« Améliore mon Excel »
+
+Le modèle sait **quoi** produire, **dans quelle forme**, et **ce qu’il ne doit pas faire**. Tu gagnes une itération.
+
 
 ## Medium (bonus)
 
-### 3 prompts modèles à garder
-1. **Réflexion** — rôle tuteur socratique, 5 questions max, pas de réponse toute faite
-2. **Excel** — colonnes nommées + formule FR + test
-3. **Slides** — outline 8 titres, une idée par slide, ton pitch PME fictif
+### 3 prompts modèles à coller dans un carnet
 
-Teste chacun **une fois** et note ce que tu as dû corriger à la main.
+1. **Réflexion** — rôle tuteur socratique, 5 questions max, pas de réponse toute faite
+2. **Excel** — colonnes nommées + formule FR + cas de test numérique
+3. **Slides** — outline 8–10 titres, une idée par slide, ton pitch PME fictif
+
+Teste chacun **une fois** et note ce que tu as dû corriger à la main (raccourcir, retirer le jargon, ajouter un test).
 
 
 ## Hard (bonus)
 
-### Bibliothèque 6 prompts
-Classe : 2 réflexion · 2 Excel · 2 slides. Chaque entrée a : titre, usage, texte RCCFC, exemple de sortie attendue, piège.
+### Bibliothèque de 6 prompts
+
+Classe : 2 réflexion · 2 Excel · 2 slides.  
+Chaque fiche a : **titre**, **usage**, **texte RCCFC**, **exemple de sortie attendue**, **piège**.
+
+Anti-patterns à coller en bas de ta fiche :
+
+- prompt d’un seul mot
+- coller des données réelles
+- demander un devoir entier sans réécriture
+- accepter des stats sans source ouvrable
 
 
 ## Clés structurées (rappel)
@@ -70,7 +88,7 @@ Contraintes: pas de VBA ; donnees fictives ; Excel FR-CA.
 - **library_min** : 6
 - **few_shot_min** : 2
 - **anti_patterns** :
-  - Prompt d'un seul mot
+  - Prompt d’un seul mot
   - Coller des donnees reelles
   - Demander un devoir entier sans reecriture
   - Accepter stats sans source ouvrable

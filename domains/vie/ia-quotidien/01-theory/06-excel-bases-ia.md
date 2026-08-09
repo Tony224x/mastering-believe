@@ -6,13 +6,13 @@
 
 ---
 
-![Bouclé Excel + ChatGPT : décrire, formule, coller, tester, corriger](../assets/06-excel-flow.svg)
+![Boucle Excel + ChatGPT : décrire, formule, coller, tester, corriger](../assets/06-excel-flow.svg)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
 ### Écran exemple — mission J6 dans Excel
 
-![Capture pedagogique : Excel avec SOMME.SI et total 600](../assets/screens/screen-excel-somme-si.png)
+![Capture pédagogique : Excel avec SOMME.SI et total 600](../assets/screens/screen-excel-somme-si.png)
 
 > Classeur fictif `Budget-PME-Demo` — total entrées **600**. Compare avec ta feuille.
 
@@ -23,33 +23,33 @@
 
 ```mermaid
 flowchart TD
-  D[Decrire colonnes] --> F[Demander formule FR]
+  D[Décrire colonnes] --> F[Demander formule FR]
   F --> C[Coller dans Excel]
   C --> T{Test OK ?}
   T -->|oui| OK[Garder]
-  T -->|non| E[Copier message d erreur]
+  T -->|non| E[Copier message d'erreur]
   E --> F
 ```
 
 
-## 1. Scène concrete : "fais-moi le total"
+## 1. Scène concrète : « fais-moi le total »
 
-Sans IA : tu cherches dans Google "somme si excel".
-Avec IA : tu **decris ton tableau** et tu demandes la formule **dans ta langue Excel** (FR-CA ou EN selon ta version).
+Sans IA : tu cherches dans Google « somme si excel ».
+Avec IA : tu **décris ton tableau** et tu demandes la formule **dans ta langue Excel** (FR-CA ou EN selon ta version).
 
 Exemple de description efficace :
 
 ```
 Mon tableau est en A1:E20.
-A = Date, B = Libelle, C = Categorie, D = Montant, E = Type (entree ou sortie).
-Ligne 1 = en-tetes.
-Donne la formule FR pour totaliser les montants ou Type = "entree".
+A = Date, B = Libellé, C = Catégorie, D = Montant, E = Type (entrée ou sortie).
+Ligne 1 = en-têtes.
+Donne la formule FR pour totaliser les montants où Type = "entrée".
 Explique chaque partie de la formule en 1 phrase.
 ```
 
-La doc Microsoft rappelle la structure des formules (`=`, operateurs, références). [Microsoft formulas overview]
+La doc Microsoft rappelle la structure des formules (`=`, opérateurs, références). [Microsoft formulas overview]
 
-> **À retenir :** ChatGPT ne "voit" pas ton fichier (sauf si tu utilises une fonction fichiers / Copilot). Il raisonne sur **ta description**. Sois precise.
+> **À retenir :** ChatGPT ne « voit » pas ton fichier (sauf si tu utilises une fonction fichiers / Copilot). Il raisonne sur **ta description**. Sois précise.
 
 ---
 
@@ -57,7 +57,7 @@ La doc Microsoft rappelle la structure des formules (`=`, operateurs, référenc
 
 1. **Nomme les colonnes** et la plage.
 2. **Dis la locale** : formules FR (`SOMME`, `SI`) ou EN (`SUM`, `IF`).
-3. **Demande un test** : "donne un mini-exemple numérique attendu".
+3. **Demande un test** : « donne un mini-exemple numérique attendu ».
 4. **Colle dans Excel** sur une copie du fichier.
 5. **Si erreur** (`#NOM?`, `#DIV/0!`, `#REF!`) : copie le message d'erreur dans le chat.
 
@@ -65,34 +65,34 @@ La doc Microsoft rappelle la structure des formules (`=`, operateurs, référenc
 
 ## 3. Erreurs classiques (et quoi renvoyer à l'IA)
 
-| Erreur | Cause frequente | Message au chat |
+| Erreur | Cause fréquente | Message au chat |
 |--------|-----------------|-----------------|
-| `#NOM?` | Fonction EN dans Excel FR | "Traduis en formules françaises Excel" |
-| `#DIV/0!` | Division par zero | "Ajoute une garde SI" |
-| `#REF!` | Colonne supprimee | "Reecris avec colonnes A–E ci-dessus" |
-| Resultat faux | Mauvaise plage | "Inclus la ligne 2 a 20 seulement" |
+| `#NOM?` | Fonction EN dans Excel FR | « Traduis en formules françaises Excel » |
+| `#DIV/0!` | Division par zéro | « Ajoute une garde SI » |
+| `#REF!` | Colonne supprimée | « Réécris avec colonnes A–E ci-dessus » |
+| Résultat faux | Mauvaise plage | « Inclus la ligne 2 à 20 seulement » |
 
 ---
 
-## 4. Prompt modèle "3 formules"
+## 4. Prompt modèle « 3 formules »
 
 Utilise la grille RCCFC (J2). [OpenAI Prompting Guide]
 
 ```
-Role : formateur Excel Microsoft 365, public non-tech.
+Rôle : formateur Excel Microsoft 365, public non-tech.
 Contexte : [description colonnes].
-Tache : 3 formules — total entrees, total sorties, solde (entrees - sorties).
+Tâche : 3 formules — total entrées, total sorties, solde (entrées - sorties).
 Format : tableau | Objectif | Formule | Explication | Test manuel |
 Contraintes : formules FR ; pas de VBA ; pas de Power Query.
 ```
 
 ---
 
-## 5. Hygiene
+## 5. Hygiène
 
 - Travaille sur **fichier fictif** ou anonymisé.
-- Garde une version "avant formules IA".
-- Ne demande jamais à l'IA de "deviner" des montants réels manquants : fournis des **exemples inventes**.
+- Garde une version « avant formules IA ».
+- Ne demande jamais à l'IA de « deviner » des montants réels manquants : fournis des **exemples inventés**.
 
 ---
 
@@ -110,5 +110,5 @@ Contraintes : formules FR ; pas de VBA ; pas de Power Query.
 **Q4.** Quelle est la 1re étape de sécurité ?
 **R4.** Travailler sur une copie / données fictives.
 
-**Q5.** Ou trouver la référence officielle sur les formules Excel ?
-**R5.** Documentation Microsoft "Overview of formulas in Excel". [Microsoft formulas overview]
+**Q5.** Où trouver la référence officielle sur les formules Excel ?
+**R5.** Documentation Microsoft « Overview of formulas in Excel ». [Microsoft formulas overview]

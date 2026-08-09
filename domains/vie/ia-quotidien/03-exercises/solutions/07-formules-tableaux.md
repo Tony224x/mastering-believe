@@ -6,20 +6,60 @@ Les fichiers `.py` du même nom sont des **clés techniques optionnelles** (smok
 
 ## Easy (chemin principal)
 
-### Mini-modèle
-Onglet Transactions + formules solde. Vérifie : `SOMME(Sens) == total entrées − total sorties`.
+Voici un exemple qui marche pour un mini-modèle trésorerie.
+
+### Onglet Transactions
+
+Colonnes type : Date · Libellé · Catégorie · Montant · Type · **Sens**
+
+Formule **Sens** (signe +/− selon entrée/sortie), ligne 2 :
+
+```excel
+=SI(E2="entree";D2;-D2)
+```
+
+(Adapte la lettre de colonne si ton Type n’est pas en E.)
+
+### Contrôle d’intégrité
+
+```
+SOMME(Sens)  ==  total entrées − total sorties
+```
+
+Si les deux côtés diffèrent : une ligne a un Type mal orthographié ou un montant texte.
 
 
 ## Medium (bonus)
 
 ### Onglet Résumé séparé
-Total entrées, sorties, solde, % sorties/entrées (si entrées > 0). Références stables (pas de plages fragiles).
+
+| Cellule | Contenu |
+|---------|---------|
+| B2 | total entrées (`SOMME.SI`) |
+| B3 | total sorties |
+| B4 | solde (= B2 − B3) |
+| B5 | ratio sorties / entrées |
+
+Garde-fou division par zéro :
+
+```excel
+=SI(B2=0;"n/a";B3/B2)
+```
+
+Références **stables** (plages nommées ou colonnes de tableau Excel), pas de plages fragiles copiées à la main.
+
+Erreurs de copie fréquentes : mauvaise plage · formule EN · en-têtes inclus dans `SOMME`.
 
 
 ## Hard (bonus)
 
 ### Scénarios base / optimiste / pessimiste
-3 colonnes d'hypothèses + résumé qui bascule (ou 3 blocs clairs).
+
+3 colonnes d’hypothèses (ou 3 blocs clairs) + résumé qui bascule.
+
+Catégories mini (4) : loyer · salaires · marketing · fournitures.
+
+Validation : recalcul manuel d’**une** catégorie complète (ligne par ligne) pour coller au total affiché.
 
 
 ## Clés structurées (rappel)

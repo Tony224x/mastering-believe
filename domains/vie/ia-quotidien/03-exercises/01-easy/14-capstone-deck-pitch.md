@@ -26,11 +26,11 @@ Prévois **plusieurs soirs** si besoin. Seul le **contrat minimum** est exigé.
 
 1. Choisis les 5 slides les plus chargées.
 2. Avec ChatGPT : « raccourcis à 3 puces max, garde mon sens ».
-3. Uniformise les titrès (même style).
+3. Uniformise les titres (même style).
 4. Avant/après sur **2** slides (copie texte).
 
 ## Indice
-Si tout est important, rien n est important : coupe 20 %.
+Si tout est important, rien n’est important : coupe 20 %.
 
 ## Réussite
 - [ ] 5 slides allégées
@@ -38,4 +38,4 @@ Si tout est important, rien n est important : coupe 20 %.
 - [ ] Au moins 8 slides restantes dans le deck
 
 ## Feedback
-**Badge Deck présentable** des que le minimum 8 slides se lit en mode diaporama sans mur de texte.
+**Badge Deck présentable** dès que le minimum 8 slides se lit en mode diaporama sans mur de texte.

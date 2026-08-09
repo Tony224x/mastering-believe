@@ -1,6 +1,6 @@
 # Mission — Capstone brouillon — niveau hard
 
-> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **hard** · module J13.
+> **Bonus** — optionnel tant que la mission easy du jour est faite. Niveau **hard** · module J13.
 
 ## But
 
@@ -16,7 +16,7 @@ Brouillon complet + critique prof + plan de polish J14.
 ## Réussite
 
 - [ ] Deck complet v1
-- [ ] Critique documentee
+- [ ] Critique documentée
 - [ ] Plan polish
 - [ ] Journal IA
 

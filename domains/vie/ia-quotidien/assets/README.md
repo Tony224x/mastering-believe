@@ -24,15 +24,15 @@ Chaque SVG : **1200×680**, ombre système, barre laterale teal, `title`+`desc`,
 | `01-llm-vs-knowledge.svg` | J1 | OK — deux colonnes contraste fort |
 | `02-rccfc-prompt.svg` | J2 | OK — RCCFC + version simple 3 blocs |
 | `03-vair-checklist.svg` | J3 | OK — 4 cartes V-A-I-R |
-| `03b-données-feu.svg` | J3 | OK — labels VERT/ORANGE/ROUGE + avant/après |
+| `03b-donnees-feu.svg` | J3 | OK — labels VERT/ORANGE/ROUGE + avant/après |
 | `04-socratique.svg` | J4 | OK — cyclé 1-2-3 |
 | `05-avant-apres-texte.svg` | J5 | OK — pipeline notes→plan→final |
-| `06-excel-flow.svg` | J6 | OK — 5 étapes + resultat 600 |
+| `06-excel-flow.svg` | J6 | OK — 5 étapes + résultat 600 |
 | `07-formule-expliquee.svg` | J7 | OK — SOMME.SI en 3 morceaux |
-| `08-nettoyage-données.svg` | J8 | OK — sale→propre→graphique |
+| `08-nettoyage-donnees.svg` | J8 | OK — sale→propre→graphique |
 | `09-classeur-onglets.svg` | J9 | OK — 4 onglets |
 | `10-pitch-story.svg` | J10 | OK — arc 5 temps |
-| `11-slide-avant-après.svg` | J11 | OK — mur vs slide |
+| `11-slide-avant-apres.svg` | J11 | OK — mur vs slide |
 | `12-chrono-oral.svg` | J12 | OK — 4 blocs notes |
 | `13-deck-8-slides.svg` | J13 | OK — grille 8 slides |
 | `14-check-final.svg` | J14 | OK — vérifier/repérer/livrer |

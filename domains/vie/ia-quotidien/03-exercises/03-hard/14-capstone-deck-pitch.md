@@ -1,6 +1,6 @@
 # Mission — Capstone final : deck pitch — niveau hard
 
-> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **hard** · module J14.
+> **Bonus** — optionnel tant que la mission easy du jour est faite. Niveau **hard** · module J14.
 
 ## Contrat minimum vs bonus
 
@@ -23,21 +23,21 @@ Livrable final portfolio présentable en 6–8 minutes.
 ## À faire
 
 1. Fichiers :
- - `Pitch-PME-Final.pptx` (8–12 slides)
- - notes orateur (intégrées ou doc annexe)
- - `journal-ia.md`
- - optionnel `Budget-PME-Demo.xlsx`
+   - `Pitch-PME-Final.pptx` (8–12 slides)
+   - notes orateur (intégrées ou doc annexe)
+   - `journal-ia.md`
+   - optionnel `Budget-PME-Demo.xlsx`
 2. Oral chrono 6–8 min + 5 questions pièges préparées.
 3. Rubrique ≥ 14/20.
-4. Utilise le validateur d'outline si tu veux (script `02-code/14-capstone-deck-pitch.py`) en exportant titres/bullets.
+4. Utilise le validateur d’outline si tu veux (script `02-code/14-capstone-deck-pitch.py`) en exportant titres/bullets.
 
 ## Réussite
 
 - [ ] PPTX final 8–12 slides
 - [ ] Journal IA
-- [ ] Oral prépare (chrono + questions)
+- [ ] Oral préparé (chrono + questions)
 - [ ] Score ≥ 14/20
-- [ ] Outil principal documente : ChatGPT
+- [ ] Outil principal documenté : ChatGPT
 
 ## Indice
 

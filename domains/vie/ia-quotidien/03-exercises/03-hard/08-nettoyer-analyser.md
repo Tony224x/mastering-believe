@@ -1,6 +1,6 @@
 # Mission — Nettoyer, analyser, visualiser — niveau hard
 
-> **Bonus** — optionnel tant que l'easy du jour est fait. Niveau **hard** · module J8.
+> **Bonus** — optionnel tant que la mission easy du jour est faite. Niveau **hard** · module J8.
 
 ## But
 
@@ -8,17 +8,17 @@
 
 ## À faire
 
-1. A partir du tableau propre, cree un graphique en barres des sorties par catégorie.
-2. Demande à ChatGPT un avis Présentation/Few sur ton choix de graphique, puis ajuste si besoin.
-3. Ecris 3 insights (pas generes tels quels — tu peux te faire challenger).
-4. Titre du graphique = conclusion (pas "Graphique 1").
+1. À partir du tableau propre, crée un graphique en barres des sorties par catégorie.
+2. Demande à ChatGPT un avis Présentation Zen sur ton choix de graphique, puis ajuste si besoin.
+3. Écris 3 insights (pas générés tels quels — tu peux te faire challenger).
+4. Titre du graphique = conclusion (pas « Graphique 1 »).
 
 ## Réussite
 
 - [ ] Graphique barres
 - [ ] Titre conclusif
 - [ ] 3 insights humains
-- [ ] Trace d'iteration design
+- [ ] Trace d’itération design
 
 ## Indice
 
