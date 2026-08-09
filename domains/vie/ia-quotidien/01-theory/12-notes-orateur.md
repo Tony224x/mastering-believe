@@ -56,7 +56,7 @@ L'IA comme partenaire de répétition rejoint l'idée de rôles assignes (coach)
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** A quoi servent les notes orateur ?
 **R1.** Porter le discours hors du slide ; éviter la lecture.

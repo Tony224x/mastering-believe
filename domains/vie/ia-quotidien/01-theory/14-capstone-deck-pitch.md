@@ -111,7 +111,7 @@ Codex / outils dev : uniquement si un jour tu en as besoin — **hors scope de m
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Quels livrables minimum du capstone ?
 **R1.** PPTX 8–12 slides + notes clés + journal IA.

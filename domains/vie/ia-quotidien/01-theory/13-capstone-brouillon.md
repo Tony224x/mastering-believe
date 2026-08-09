@@ -72,7 +72,7 @@ N'invente pas de nouveaux chiffres.
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Différence J13 vs J14 ?
 **R1.** J13 = brouillon complet ; J14 = polish + vérification + oral.

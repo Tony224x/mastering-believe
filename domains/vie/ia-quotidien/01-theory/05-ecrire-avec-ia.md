@@ -66,7 +66,7 @@ Contraintes :
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Quelle est l'étape non négociable après un brouillon IA ?
 **R1.** Réécriture humaine substantielle + vérification des faits.

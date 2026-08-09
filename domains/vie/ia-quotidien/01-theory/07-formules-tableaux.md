@@ -73,7 +73,7 @@ J9 = ce modèle + scénarios + résumé 5 lignes pour un **Budget PME Demo** 100
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Quelle formule pour totaliser sous condition ?
 **R1.** `SOMME.SI` ou `SOMME.SI.ENS` (FR).

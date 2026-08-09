@@ -57,7 +57,7 @@ Prends 4 slides de ton outline J10 et produis la version slide-ready. Colle dans
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Combien d'idées max par slide ?
 **R1.** Une.

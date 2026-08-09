@@ -84,7 +84,7 @@ Utilise uniquement les chiffres que je fournis : [coller chiffres fictifs].
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Qu'est-ce qu'une hallucination LLM ?
 **R1.** Une affirmation confiante fausse ou non fondee generee par le modèle.

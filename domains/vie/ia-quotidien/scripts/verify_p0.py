@@ -5,6 +5,7 @@
 Run from repo root:
   python domains/vie/ia-quotidien/scripts/verify_p0.py
 """
+
 from __future__ import annotations
 
 import re
@@ -86,12 +87,16 @@ def main() -> None:
             fail(f"README ce soir expected 3 bullets, got {len(nums)}")
 
     # 4) capstone min/bonus multi-soir wording
-    j14 = (DOMAIN / "01-theory" / "14-capstone-deck-pitch.md").read_text(encoding="utf-8")
+    j14 = (DOMAIN / "01-theory" / "14-capstone-deck-pitch.md").read_text(
+        encoding="utf-8"
+    )
     if not re.search(r"minimum|Minimum", j14):
         fail("J14 theory missing minimum wording")
     if not re.search(r"bonus|Bonus", j14):
         fail("J14 theory missing bonus wording")
-    if not re.search(r"soir|multi-soir|plusieurs soirs|1 à 2 soirs|1–2 soirs", j14, re.I):
+    if not re.search(
+        r"soir|multi-soir|plusieurs soirs|1 à 2 soirs|1–2 soirs", j14, re.I
+    ):
         fail("J14 theory missing multi-soir wording")
 
     # 5) medium/hard mission or bonus
@@ -122,8 +127,12 @@ def main() -> None:
     if "Key takeaway" in readme:
         fail("Key takeaway still in README")
     for needle in ("maîtriser", "réflexion", "critères", "À retenir"):
-        blob = readme + (DOMAIN / "01-theory" / "01-ia-sans-panique.md").read_text(encoding="utf-8")
-        blob += (DOMAIN / "01-theory" / "04-partenaire-reflexion.md").read_text(encoding="utf-8")
+        blob = readme + (DOMAIN / "01-theory" / "01-ia-sans-panique.md").read_text(
+            encoding="utf-8"
+        )
+        blob += (DOMAIN / "01-theory" / "04-partenaire-reflexion.md").read_text(
+            encoding="utf-8"
+        )
         if needle not in blob:
             # allow if peer form present
             peers = {
@@ -135,12 +144,19 @@ def main() -> None:
             if not any(x in blob for x in peers.get(needle, [])):
                 fail(f"expected accented form missing: {needle}")
 
-    # confance typo
+    # confance typo + polish regressions (HTML / hybrid labels / grammar)
     for p in DOMAIN.rglob("*.md"):
         if p.name == "EVAL-dual-agents.md":
             continue
-        if "confance" in p.read_text(encoding="utf-8", errors="replace"):
+        text = p.read_text(encoding="utf-8", errors="replace")
+        if "confance" in text:
             fail(f"typo confance in {p}")
+        if "<détails>" in text or "</détails>" in text:
+            fail(f"mangled HTML details tag in {p} (must be <details>)")
+        if "Spaced répétition" in text:
+            fail(f"hybrid heading « Spaced répétition » in {p} — use Spaced repetition")
+        if "je refusé de coller" in text:
+            fail(f"grammar « je refusé » in {p} — use « je refuse »")
 
     print("OK verify_p0 — all structural P0 checks passed")
     return None

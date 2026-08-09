@@ -56,7 +56,7 @@ Dunlosky et al. (2013) rappellent que se tester et elaborer bat la relecture pas
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Pourquoi demander des questions plutot qu'un plan tout fait ?
 **R1.** Pour forcer ta propre clarté ; le plan tout fait est generique et passif.

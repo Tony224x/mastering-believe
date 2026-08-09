@@ -96,7 +96,7 @@ Contraintes : formules FR ; pas de VBA ; pas de Power Query.
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Pourquoi décrire les colonnes est obligatoire ?
 **R1.** Sans schéma, le modèle invente une structure qui ne matche pas ton fichier.

@@ -67,7 +67,7 @@ Contraintes : narrative probleme→solution ; pas de jargon vide ; signale les s
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Que faire avant d'ouvrir PowerPoint ?
 **R1.** Valider l'histoire et l'outline (titrès + intentions).

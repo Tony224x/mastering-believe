@@ -129,7 +129,7 @@ Contraintes : une idee par slide ; pas de mur de texte.
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Que signifie RCCFC ?
 **R1.** Rôle, Contexte, Tâche, Format, Contraintes.

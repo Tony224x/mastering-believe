@@ -75,7 +75,7 @@ J'ai categories en A et totaux en B. Quel type de graphique recommander et pourq
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Pourquoi ne pas laisser l'IA "compléter" les trous de montants ?
 **R1.** Risque d'invention ; les trous doivent rester visibles.

@@ -41,7 +41,7 @@ La réponse arrive en 10 secondes : catégories, pourcentages, ton confiant. Ça
 
 ## 2. C'est quoi, concretement, ChatGPT ?
 
-<détails>
+<details>
 <summary>Pour aller plus loin (optionnel) — mots techniques</summary>
 
 
@@ -63,7 +63,7 @@ Le *GPT-4 System Card* (OpenAI, 2023) documente explicitement les risques d'**ha
 
 ---
 
-</détails>
+</details>
 
 ## 3. Ce que l'IA fait bien / mal pour un profil non-tech
 
@@ -101,12 +101,12 @@ Outil principal : **ChatGPT**. Codex = bonus optionnel, hors chemin critique.
 Complète sans l'IA :
 
 1. Une chose que je veux que l'IA m'aide à faire d'ici 2 semaines : ________
-2. Une chose que je refusé de coller dans un chat : ________
+2. Une chose que je refuse de coller dans un chat : ________
 3. Mon critère de succès personnel (observable) : ________
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Un LLM "sait"-il des faits comme une base de données ?
 **R1.** Non. Il prédit du texte plausible ; les faits doivent être vérifiés.

@@ -86,7 +86,7 @@ Tu ecris 5 lignes **sans** IA, puis tu demandes une relecture de clarté seuleme
 
 ---
 
-## Spaced répétition
+## Spaced repetition
 
 **Q1.** Pourquoi imposer le fictif ici ?
 **R1.** Confidentialite + éthique + apprentissage transferable. [CNIL IA]
