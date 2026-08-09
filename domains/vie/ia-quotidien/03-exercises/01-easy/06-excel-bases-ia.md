@@ -21,22 +21,25 @@
 
 ## Écran de référence
 
-![Écran exemple](../../assets/screens/screen-excel-somme-si.png)
+![Capture d'Excel montrant une formule SOMME.SI et un total d'entrées de 600](../../assets/screens/screen-excel-somme-si.png)
 
 ## À faire
 
-1. Colle le tableau.
-2. Demande à ChatGPT la formule FR pour totaliser les entrées (précise les colonnes).
-3. Colle la formule, compare au 600.
-4. Si ça diffère : copie le message d’erreur ou le mauvais total dans ChatGPT et corrige.
+1. Colle le tableau. **Données fictives de la mission uniquement** — ne colle pas de fichier réel.
+2. Demande à ChatGPT une formule pour totaliser les entrées (précise les colonnes **et** la langue de ton Excel : FR, FR-CA ou EN).
+3. Vérifie les trois résultats : entrées = **600**, sorties = **150**, solde = **450**.
+4. Si Excel affiche `#NOM?`, note la langue des fonctions de ta version et demande une formule adaptée. Ne remplace pas la formule au hasard.
+5. Si un total diffère : copie le message d’erreur ou le total obtenu dans ChatGPT et corrige.
 
 ## Indice
-Cherche `SOMME.SI` (ou équivalent). Attention aux guillemets et à la plage.
+Cherche `SOMME.SI` (ou `SUMIF` en anglais). Attention aux guillemets et à la plage. Le solde (entrées − sorties) est un **contrôle indépendant**, pas un bonus.
 
 ## Réussite
 - [ ] Formule visible
-- [ ] Total = 600
-- [ ] Solde calculé = 450 (bonus facile)
+- [ ] Total entrées = 600
+- [ ] Total sorties = 150
+- [ ] Solde = 450
+- [ ] Je peux expliquer quelles colonnes la formule utilise
 
 ## Feedback
-**Badge Formule qui matche** si total = 600 au premier ou second essai. Pas de stress si le 2e essai a suffi.
+**Badge Formule qui matche** si les trois totaux collent au premier ou second essai. Pas de stress si le 2e essai a suffi.

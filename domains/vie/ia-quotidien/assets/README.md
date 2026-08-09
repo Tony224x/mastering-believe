@@ -17,6 +17,18 @@ Références croisées : skill `imagine` (code vs image), skill `pptx` (palette 
 
 Chaque SVG : **1200×680**, ombre système, barre latérale teal, `title`+`desc`, accents FR, 1 idée.
 
+
+## Affichage dans GitHub / apps (PNG)
+
+Les **schémas pédagogiques** sont fournis en double :
+
+| Rôle | Format | Usage |
+|------|--------|-------|
+| Source éditable | `*.svg` | édition, qualité vectorielle |
+| **Affichage cours** | `*.png` (1200×680) | Markdown des modules — compatible GitHub, mobile, previews |
+
+Les fichiers `01-theory/*.md` et le README pointent vers les **PNG** pour éviter les images « cassées » (SVG mal supporté dans plusieurs apps). Les SVG restent la source de vérité visuelle.
+
 ## Inventaire + revue visuelle (2026-08-09)
 
 | Fichier | Module | Revue |

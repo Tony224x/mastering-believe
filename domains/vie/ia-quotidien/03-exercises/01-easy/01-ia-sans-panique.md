@@ -26,7 +26,7 @@
 3. Écris 2 phrases : ce que ça change pour toi.
 
 ## Indice
-Une source au titre trop parfait + un % rond = signal d’alerte.
+Un titre inhabituel ou un pourcentage « trop rond » peut **donner envie** de vérifier — ce n’est pas une preuve. Ouvre la source citée et vérifie qu’elle soutient **exactement** l’affirmation avant de l’utiliser.
 
 ## Réussite
 - [ ] 3 lignes de tableau

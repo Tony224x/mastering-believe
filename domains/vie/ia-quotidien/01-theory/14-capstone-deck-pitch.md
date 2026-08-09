@@ -8,11 +8,11 @@
 
 ![Illustration : deck pitch et portfolio](../assets/hero-pitch-slides.jpg)
 
-![Check final : vérifier, répéter, livrer](../assets/14-check-final.svg)
+![Check final : vérifier, répéter, livrer](../assets/14-check-final.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
-### Écran exemple — cible visuelle du deck
+### Capture de référence — cible visuelle de la présentation
 
 ![Capture pédagogique : PowerPoint pitch PME slide sobre](../assets/screens/screen-powerpoint-slide-sobre.png)
 
@@ -21,13 +21,14 @@
 
 ```mermaid
 flowchart LR
-  B[Brouillon J13] --> P[Polish texte]
+  B[Brouillon J13] --> P[Mise au propre]
   P --> V[Verifier faits]
   V --> N[Notes orateur]
   N --> O[Oral 6-8 min]
   O --> L[Livrable final]
 ```
 
+**Version texte :** brouillon J13 → mise au propre du texte → vérification des faits → notes orateur → oral de 6 à 8 minutes → livrable final.
 
 ## Contrat Minimum / Bonus
 
@@ -36,7 +37,7 @@ flowchart LR
 | Slides | **8** slides d'histoire | 10–12 slides |
 | Notes orateur | 3 slides clés | 4 slides |
 | Journal IA | 5 puces | 1/2–1 page |
-| Oral | 6 min chrono | 6–8 min + questions pièges |
+| Oral | **6 min** chrono (avec notes si besoin) | 6–8 min + questions difficiles |
 | Excel | optionnel | annexe Budget-PME-Demo |
 
 
@@ -46,9 +47,9 @@ Ne tente pas de tout finir en une seule session de 60–90 min. Découpe :
 
 | Soir | Focus | Minimum |
 |------|-------|---------|
-| Soir A | Polish texte + couper 20 % | 8 slides lisibles |
+| Soir A | Mise au propre + couper 20 % | 8 slides lisibles |
 | Soir B | Vérifier faits + notes orateur (3 slides) | journal 5 puces |
-| Soir C *(bonus)* | Oral chrono + questions pièges + slides 9–12 | présentation fluide |
+| Soir C *(bonus)* | Oral chrono + questions difficiles + slides 9–12 | présentation fluide |
 
 **Barre de validation du parcours = contrat Minimum uniquement.** Le bonus est pour le portfolio, pas pour « réussir le cours ».
 
@@ -67,7 +68,7 @@ Critère or : *tu peux présenter en 6–8 minutes sans lire les puces.*
 
 ---
 
-## 2. Boucle polish (J14)
+## 2. Boucle de mise au propre (J14)
 
 | Étape | Action | IA ? |
 |-------|--------|------|
@@ -76,7 +77,7 @@ Critère or : *tu peux présenter en 6–8 minutes sans lire les puces.*
 | 3 | Vérifier chaque fait/chiffre | Toi + web |
 | 4 | Ajouter mentions fictif si besoin | Toi |
 | 5 | Oral chronométré | Toi |
-| 6 | 5 questions pièges | IA coach puis toi |
+| 6 | 5 questions difficiles d'un public attentif | IA coach puis toi |
 
 Design : restraint Présentation Zen. [Reynolds, Présentation Zen]
 Récit : Resonate. [Duarte, Resonate]
@@ -102,11 +103,11 @@ Vise **≥ 14/20** avant de considérer le parcours réussi.
 
 ## 4. Après le cours (maintenance 30 min/semaine)
 
-- 1 usage Excel+IA au travail **sur données fictives ou autorisées**
-- 1 session réflexion carrière socratique
+- 1 usage Excel+IA **sur données fictives** (dans ce parcours : jamais de fichier réel). Dans un autre contexte pro, suis d'abord la politique de ton organisation
+- 1 session réflexion carrière en mode questions/réponses
 - Mettre à jour 3 prompts modèles dans une note téléphone
 
-Codex / outils dev : uniquement si un jour tu en as besoin — **hors scope de maîtrise minimale**.
+Outils développeur : uniquement si un jour tu en as besoin — **hors scope de maîtrise minimale**.
 
 ---
 
@@ -126,3 +127,10 @@ Codex / outils dev : uniquement si un jour tu en as besoin — **hors scope de m
 
 **Q5.** Que faire si une slide cite un chiffre ?
 **R5.** Tracer l'origine (Excel fictif / source vérifiée) ou retirer.
+
+<!-- NAV:START -->
+---
+
+← [Module 13 — Capstone brouillon : deck pitch v1](./13-capstone-brouillon.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/14-capstone-deck-pitch.md) · [Progression](../PROGRESS.md) · *(capstone — bravo)* →
+
+<!-- NAV:END -->

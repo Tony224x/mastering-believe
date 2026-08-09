@@ -2,15 +2,15 @@
 
 > **Temps estimé** : 45 min | **Prérequis** : Module 10
 >
-> **Objectif** : Transformer l'outline en contenu slide-ready (peu de texte, hiérarchie claire) avec l'aide de ChatGPT.
+> **Objectif** : Transformer le plan (*outline*) en contenu **prêt pour une diapositive** (peu de texte, hiérarchie claire) avec l'aide de ChatGPT.
 
 ---
 
-![Schéma du module : Une idée, trois puces, titre = conclusion.](../assets/11-slide-avant-apres.svg)
+![Schéma du module : Une idée, trois puces, titre = conclusion.](../assets/11-slide-avant-apres.png)
 
 > **En une phrase :** Une idée, trois puces, titre = conclusion.
 
-### Écran exemple — slide sobre
+### Capture de référence — slide sobre
 
 ![Capture pédagogique : PowerPoint slide Solution 3 puces](../assets/screens/screen-powerpoint-slide-sobre.png)
 
@@ -19,8 +19,8 @@
 
 ## 1. Scène concrète : le mur de texte
 
-Slide typique ratée : 12 puces, police 14, logo en coin, fond chargé.
-L'orateur lit. L'audience lit. Personne n'écoute.
+Slide trop chargée : 12 puces, police 14, logo en coin, fond chargé.
+L'orateur lit. Le public lit. Personne n'écoute.
 
 Reynolds (*Présentation Zen*) : restraint, simplicité, naturalité — **une idée dominante par slide**. [Reynolds, Présentation Zen]
 
@@ -38,11 +38,11 @@ Reynolds (*Présentation Zen*) : restraint, simplicité, naturalité — **une i
 
 ---
 
-## 3. Prompt « slide-ready »
+## 3. Prompt « prêt pour une diapositive »
 
 ```
 Rôle : éditeur Presentation Zen.
-Entrée : [ma slide outline + bullets trop longs].
+Entrée : [ma slide du plan + bullets trop longs].
 Tâche : réécris titre + max 3 bullets courts. Propose 1 idée de visuel simple (description, pas d'image générée obligatoire).
 Contraintes : français clair ; zéro anglicisme inutile ; garde mon sens.
 ```
@@ -53,7 +53,7 @@ Duarte rappelle que le slide soutient le récit, il ne le remplace pas. [Duarte,
 
 ## 4. Atelier du jour
 
-Prends 4 slides de ton outline J10 et produis la version slide-ready. Colle dans PowerPoint. Regarde en mode diaporama : lisibles à 2 mètres ?
+Prends 4 slides de ton plan J10 et produis la version prête pour diapositive. Colle dans PowerPoint. Regarde en mode diaporama : lisibles à 2 mètres ?
 
 ---
 
@@ -73,3 +73,10 @@ Prends 4 slides de ton outline J10 et produis la version slide-ready. Colle dans
 
 **Q5.** Référence design de présentation ?
 **R5.** Reynolds, Présentation Zen. [Reynolds, Présentation Zen]
+
+<!-- NAV:START -->
+---
+
+← [Module 10 — Structure d'un pitch qui tient](./10-structure-pitch.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/11-slides-visuels.md) · [Progression](../PROGRESS.md) · [Module 12 — Notes orateur & répétition](./12-notes-orateur.md) →
+
+<!-- NAV:END -->

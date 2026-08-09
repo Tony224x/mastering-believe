@@ -1,12 +1,14 @@
 # Module 10 — Structure d'un pitch qui tient
 
-> **Temps estimé** : 45 min | **Prérequis** : Modules 01–05
+> **Temps estimé** : 45 min | **Prérequis** : Modules 01–09
+>
+> J9 fournit les chiffres fictifs que tu peux réutiliser dans le pitch.
 >
 > **Objectif** : Figer l'ossature 8–12 slides du capstone pitch (titres + intention), avant le design.
 
 ---
 
-![Récit du pitch : problème, enjeu, solution, preuve, demande](../assets/10-pitch-story.svg)
+![Récit du pitch : problème, enjeu, solution, preuve, demande](../assets/10-pitch-story.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -44,7 +46,7 @@ Structure recommandée (adaptable 8–12) :
 
 ---
 
-## 3. Prompt pour générer l'outline (puis éditer)
+## 3. Prompt pour générer le plan (*outline*), puis éditer
 
 ```
 Rôle : coach pitch entrepreneuriat.
@@ -57,7 +59,7 @@ Contraintes : narrative problème→solution ; pas de jargon vide ; signale les 
 
 ---
 
-## 4. Critère « outline validée »
+## 4. Critère « plan validé »
 
 - [ ] On comprend le problème en 20 secondes
 - [ ] La solution tient en une phrase
@@ -70,7 +72,7 @@ Contraintes : narrative problème→solution ; pas de jargon vide ; signale les 
 ## Spaced repetition
 
 **Q1.** Que faire avant d'ouvrir PowerPoint ?
-**R1.** Valider l'histoire et l'outline (titres + intentions).
+**R1.** Valider l'histoire et le plan (titres + intentions).
 
 **Q2.** Idée centrale de Duarte sur le récit ?
 **R2.** Alterner / tendre entre présent et futur désirable. [Duarte, Resonate]
@@ -83,3 +85,10 @@ Contraintes : narrative problème→solution ; pas de jargon vide ; signale les 
 
 **Q5.** Peut-on utiliser les chiffres du projet Excel ?
 **R5.** Oui s'ils sont fictifs et assumés comme démo.
+
+<!-- NAV:START -->
+---
+
+← [Module 09 — Projet fil rouge : trésorerie / budget PME (fictif)](./09-projet-tresorerie.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/10-structure-pitch.md) · [Progression](../PROGRESS.md) · [Module 11 — Slides & design sobre](./11-slides-visuels.md) →
+
+<!-- NAV:END -->

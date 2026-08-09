@@ -6,7 +6,7 @@
 
 ---
 
-![LLM : plausible n'est pas vrai — ce que l'IA fait bien vs ce qu'elle ne garantit pas](../assets/01-llm-vs-knowledge.svg)
+![LLM : plausible n'est pas vrai — ce que l'IA fait bien vs ce qu'elle ne garantit pas](../assets/01-llm-vs-knowledge.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -122,3 +122,10 @@ Complète sans l'IA :
 
 **Q5.** Pourquoi « je suis en retard » est souvent un piège ?
 **R5.** Le hype médiatise l'extrême ; la maîtrise utile = petits usages répétables.
+
+<!-- NAV:START -->
+---
+
+← *(début du parcours)* · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/01-ia-sans-panique.md) · [Progression](../PROGRESS.md) · [Module 02 — Prompts qui marchent](./02-prompts-qui-marchent.md) →
+
+<!-- NAV:END -->

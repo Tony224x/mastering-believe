@@ -6,7 +6,7 @@
 
 ---
 
-![Checklist V-A-I-R : Vérifiable, Ancrée, Invention, Risque](../assets/03-vair-checklist.svg)
+![Checklist V-A-I-R : Vérifiable, Ancrée, Invention, Risque](../assets/03-vair-checklist.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -40,7 +40,7 @@ Avant d'utiliser une réponse pour l'école ou le travail :
 ---
 
 
-![Feu tricolore des données : vert fictif, orange anonymisé, rouge ne pas coller](../assets/03b-donnees-feu.svg)
+![Feu tricolore des données : vert fictif, orange anonymisé, rouge ne pas coller](../assets/03b-donnees-feu.png)
 
 > **En une phrase :** si tu ne mettrais pas l'info sur un écran de bus, ne la mets pas dans le chat.
 
@@ -75,12 +75,19 @@ Utilise uniquement les chiffres que je fournis : [coller chiffres fictifs].
 
 ---
 
-## 5. Mini-protocole 60 secondes
+## 5. Mini-protocole 60 secondes (entraînement)
 
-1. Surligne dans la réponse tout chiffre / nom propre / loi.
-2. Pour chaque : V-A-I-R.
-3. Vérifie 1 item critique sur le web officiel.
-4. Réécris la phrase finale **avec tes mots**.
+1. Surligne dans la réponse tout chiffre, nom propre, citation, loi ou conseil.
+2. Pour chaque élément que tu **conserves** :
+   - retrouve une source que tu peux ouvrir ;
+   - vérifie qu'elle soutient **exactement** la phrase ;
+   - note son titre et son lien ;
+   - retire l'élément si tu ne peux pas le confirmer.
+3. **Pour cet exercice de 60 secondes** : vérifier **1 item critique** suffit.
+4. **Pour un livrable scolaire ou professionnel** : vérifie **tous** les faits conservés.
+5. Réécris la phrase finale **avec tes mots**.
+
+> Un pourcentage « trop rond » ou un titre parfait peut **donner envie** de vérifier — ce n'est pas une preuve. Seule la source ouvrable tranche.
 
 ---
 
@@ -100,3 +107,10 @@ Utilise uniquement les chiffres que je fournis : [coller chiffres fictifs].
 
 **Q5.** Cite un cadre institutionnel mentionné pour le risque IA.
 **R5.** NIST AI RMF et/ou guides CNIL. [NIST AI RMF] [CNIL IA]
+
+<!-- NAV:START -->
+---
+
+← [Module 02 — Prompts qui marchent](./02-prompts-qui-marchent.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/03-hallucinations-verification.md) · [Progression](../PROGRESS.md) · [Module 04 — Partenaire de réflexion](./04-partenaire-reflexion.md) →
+
+<!-- NAV:END -->

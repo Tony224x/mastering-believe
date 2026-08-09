@@ -1,12 +1,12 @@
-# Module 09 — Projet secondaire : trésorerie / budget PME (fictif)
+# Module 09 — Projet fil rouge : trésorerie / budget PME (fictif)
 
 > **Temps estimé** : 60 min | **Prérequis** : Modules 06–08
 >
-> **Objectif** : Livrer un classeur **Budget PME Demo** réutilisable (transactions, résumé, 3 scénarios), 100 % fictif, documenté.
+> **Objectif** : Livrer un classeur **Budget PME Demo** réutilisable (transactions, résumé, 3 scénarios), 100 % fictif, documenté. Ces chiffres fictifs pourront alimenter le pitch (J10–J14).
 
 ---
 
-![Schéma du module : Quatre onglets, zéro donnée réelle d'employeur.](../assets/09-classeur-onglets.svg)
+![Schéma du module : Quatre onglets, zéro donnée réelle d'employeur.](../assets/09-classeur-onglets.png)
 
 > **En une phrase :** Quatre onglets, zéro donnée réelle d'employeur.
 
@@ -23,6 +23,8 @@ flowchart TB
   R --> S
   T -.-> M
 ```
+
+**Version texte :** Transactions alimentent Résumé ; Résumé alimente Scénarios ; Transactions sont documentées dans Readme.
 
 > **Visuel mental** : 4 onglets, zéro donnée réelle d'employeur.
 
@@ -102,3 +104,10 @@ Tu écris 5 lignes **sans** IA, puis tu demandes une relecture de clarté seulem
 
 **Q5.** Lien avec le capstone PPT ?
 **R5.** Les insights du budget peuvent illustrer 1–2 slides du pitch formation (toujours fictif).
+
+<!-- NAV:START -->
+---
+
+← [Module 08 — Nettoyer, analyser, visualiser](./08-nettoyer-analyser.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/09-projet-tresorerie.md) · [Progression](../PROGRESS.md) · [Module 10 — Structure d'un pitch qui tient](./10-structure-pitch.md) →
+
+<!-- NAV:END -->

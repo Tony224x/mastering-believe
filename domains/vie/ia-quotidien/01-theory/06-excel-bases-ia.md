@@ -6,11 +6,11 @@
 
 ---
 
-![Boucle Excel + ChatGPT : décrire, formule, coller, tester, corriger](../assets/06-excel-flow.svg)
+![Boucle Excel + ChatGPT : décrire, formule, coller, tester, corriger](../assets/06-excel-flow.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
-### Écran exemple — mission J6 dans Excel
+### Capture de référence — mission J6 dans Excel
 
 ![Capture pédagogique : Excel avec SOMME.SI et total 600](../assets/screens/screen-excel-somme-si.png)
 
@@ -31,6 +31,7 @@ flowchart TD
   E --> F
 ```
 
+**Version texte :** décrire les colonnes → demander la formule (selon ta langue Excel) → coller → tester → si erreur, copier le message et redemander.
 
 ## 1. Scène concrète : « fais-moi le total »
 
@@ -112,3 +113,10 @@ Contraintes : formules FR ; pas de VBA ; pas de Power Query.
 
 **Q5.** Où trouver la référence officielle sur les formules Excel ?
 **R5.** Documentation Microsoft « Overview of formulas in Excel ». [Microsoft formulas overview]
+
+<!-- NAV:START -->
+---
+
+← [Module 05 — Écrire avec l'IA (Word / rapports)](./05-ecrire-avec-ia.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/06-excel-bases-ia.md) · [Progression](../PROGRESS.md) · [Module 07 — Formules, tableaux croisés & modèles](./07-formules-tableaux.md) →
+
+<!-- NAV:END -->

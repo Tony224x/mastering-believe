@@ -6,7 +6,7 @@
 
 ---
 
-![Schéma du module : L'IA pose des questions ; toi tu réponds et tu tranches.](../assets/04-socratique.svg)
+![Schéma du module : L'IA pose des questions ; toi tu réponds et tu tranches.](../assets/04-socratique.png)
 
 > **En une phrase :** L'IA pose des questions ; toi tu réponds et tu tranches.
 
@@ -72,3 +72,10 @@ Dunlosky et al. (2013) rappellent que se tester et élaborer bat la relecture pa
 
 **Q5.** Dernière étape du protocole 15 min ?
 **R5.** Faire valider/corriger à la main le résumé de *tes* réponses.
+
+<!-- NAV:START -->
+---
+
+← [Module 03 — Hallucinations & vérification](./03-hallucinations-verification.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/04-partenaire-reflexion.md) · [Progression](../PROGRESS.md) · [Module 05 — Écrire avec l'IA (Word / rapports)](./05-ecrire-avec-ia.md) →
+
+<!-- NAV:END -->
