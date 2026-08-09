@@ -1,9 +1,9 @@
 # Assets visuels — ia-quotidien
 
 **Standard qualité** (SSOT skill) :  
-[`.claude/skills/mastering-domain-creator/références/svg-pedagogique.md`](../../../.claude/skills/mastering-domain-creator/références/svg-pedagogique.md)
+[`.claude/skills/mastering-domain-creator/references/svg-pedagogique.md`](../../../../.claude/skills/mastering-domain-creator/references/svg-pedagogique.md)
 
-Références croisees : skill `imagine` (code vs image), skill `pptx` (palette / QA visuelle), skill `diagram` (SVG net).
+Références croisées : skill `imagine` (code vs image), skill `pptx` (palette / QA visuelle), skill `diagram` (SVG net).
 
 ## Design system (Teal Trust)
 
@@ -15,7 +15,7 @@ Références croisees : skill `imagine` (code vs image), skill `pptx` (palette /
 | Surface | `#F8FAFC` |
 | Ink | `#0F172A` |
 
-Chaque SVG : **1200×680**, ombre système, barre laterale teal, `title`+`desc`, accents FR, 1 idée.
+Chaque SVG : **1200×680**, ombre système, barre latérale teal, `title`+`desc`, accents FR, 1 idée.
 
 ## Inventaire + revue visuelle (2026-08-09)
 
@@ -35,12 +35,12 @@ Chaque SVG : **1200×680**, ombre système, barre laterale teal, `title`+`desc`,
 | `11-slide-avant-apres.svg` | J11 | OK — mur vs slide |
 | `12-chrono-oral.svg` | J12 | OK — 4 blocs notes |
 | `13-deck-8-slides.svg` | J13 | OK — grille 8 slides |
-| `14-check-final.svg` | J14 | OK — vérifier/repérer/livrer |
+| `14-check-final.svg` | J14 | OK — vérifier / répéter / livrer |
 | `parcours-14j.svg` | README | OK — 4 blocs + 2 livrables |
 
 Pipeline QA : raster `assets/preview/*.png` (gitignore) → inspection → fix.
 
-## Captures d écran
+## Captures d'écran
 
 Voir [`screens/README.md`](./screens/README.md).
 
