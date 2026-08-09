@@ -6,7 +6,7 @@
 
 ---
 
-![Schéma du module : Les notes portent le discours ; la slide ne se lit pas.](../assets/12-chrono-oral.svg)
+![Schéma du module : Les notes portent le discours ; la slide ne se lit pas.](../assets/12-chrono-oral.png)
 
 > **En une phrase :** Les notes portent le discours ; la slide ne se lit pas.
 
@@ -72,3 +72,10 @@ L'IA comme partenaire de répétition rejoint l'idée de rôles assignés (coach
 
 **Q5.** Rôle IA le plus utile ce jour ?
 **R5.** Coach d'oral / générateur de questions pièges. [Mollick, 2023]
+
+<!-- NAV:START -->
+---
+
+← [Module 11 — Slides & design sobre](./11-slides-visuels.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/12-notes-orateur.md) · [Progression](../PROGRESS.md) · [Module 13 — Capstone brouillon : deck pitch v1](./13-capstone-brouillon.md) →
+
+<!-- NAV:END -->

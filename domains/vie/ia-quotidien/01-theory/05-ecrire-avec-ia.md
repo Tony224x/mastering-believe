@@ -6,7 +6,7 @@
 
 ---
 
-![Schéma du module : L'IA aide au brouillon ; la version finale est la tienne.](../assets/05-avant-apres-texte.svg)
+![Schéma du module : L'IA aide au brouillon ; la version finale est la tienne.](../assets/05-avant-apres-texte.png)
 
 > **En une phrase :** L'IA aide au brouillon ; la version finale est la tienne.
 
@@ -82,3 +82,10 @@ Contraintes :
 
 **Q5.** Référence utile sur les rôles IA en éducation ?
 **R5.** Mollick & Mollick, Assigning AI (2023). [Mollick, 2023]
+
+<!-- NAV:START -->
+---
+
+← [Module 04 — Partenaire de réflexion](./04-partenaire-reflexion.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/05-ecrire-avec-ia.md) · [Progression](../PROGRESS.md) · [Module 06 — Excel + IA : les bases](./06-excel-bases-ia.md) →
+
+<!-- NAV:END -->

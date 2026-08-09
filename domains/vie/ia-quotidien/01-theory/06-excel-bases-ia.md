@@ -6,7 +6,7 @@
 
 ---
 
-![Boucle Excel + ChatGPT : décrire, formule, coller, tester, corriger](../assets/06-excel-flow.svg)
+![Boucle Excel + ChatGPT : décrire, formule, coller, tester, corriger](../assets/06-excel-flow.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -112,3 +112,10 @@ Contraintes : formules FR ; pas de VBA ; pas de Power Query.
 
 **Q5.** Où trouver la référence officielle sur les formules Excel ?
 **R5.** Documentation Microsoft « Overview of formulas in Excel ». [Microsoft formulas overview]
+
+<!-- NAV:START -->
+---
+
+← [Module 05 — Écrire avec l'IA (Word / rapports)](./05-ecrire-avec-ia.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/06-excel-bases-ia.md) · [Progression](../PROGRESS.md) · [Module 07 — Formules, tableaux croisés & modèles](./07-formules-tableaux.md) →
+
+<!-- NAV:END -->

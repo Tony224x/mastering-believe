@@ -2,7 +2,7 @@
 
 ![Apprendre l'IA au quotidien — illustration](assets/hero-apprendre-ia.jpg)
 
-![Parcours 14 jours — carte visuelle](assets/parcours-14j.svg)
+![Parcours 14 jours — carte visuelle](assets/parcours-14j.png)
 
 ## Ce soir, fais seulement ça
 
@@ -40,28 +40,45 @@ Public type : débutant·e en IA, profil Office (Excel / PowerPoint), ~45 min/jo
 - Français lu/écrit confortable.
 - Aucun prérequis d'un autre domaine du repo.
 
-## Planning (2 semaines)
+## Index des chapitres (cliquable)
 
-| Jour | Module | Temps estimé |
-|------|--------|-------------|
-| J1 | IA sans panique | 45 min |
-| J2 | Prompts qui marchent | 45 min |
-| J3 | Hallucinations & vérification | 45 min |
-| J4 | Partenaire de réflexion | 45 min |
-| J5 | Écrire avec l'IA | 45 min |
-| J6 | Excel + IA : les bases | 45 min |
-| J7 | Formules & tableaux | 45–60 min |
-| J8 | Nettoyer, analyser, visualiser | 45 min |
-| J9 | **Projet Excel** : trésorerie / budget PME fictif | 60 min |
-| J10 | Structure d'un pitch | 45 min |
-| J11 | Slides & design sobre | 45 min |
-| J12 | Notes orateur & répétition | 45 min |
-| J13 | Capstone brouillon deck pitch | 1–2 soirs |
-| J14 | **Capstone final** deck pitch (minimum 8 slides) | 1–2 soirs |
+Un jour = **1 théorie** + **1 mission easy**. Clique le jour pour ouvrir le cours.
 
-Voir `PLAN.md` pour le contrat détaillé par jour et `REFERENCES.md` pour les sources.
+| Jour | Cours (théorie) | Mission easy | Temps |
+|------|-----------------|--------------|-------|
+| J1 | [IA sans panique](./01-theory/01-ia-sans-panique.md) | [mission](./03-exercises/01-easy/01-ia-sans-panique.md) | 45 min |
+| J2 | [Prompts qui marchent](./01-theory/02-prompts-qui-marchent.md) | [mission](./03-exercises/01-easy/02-prompts-qui-marchent.md) | 45 min |
+| J3 | [Hallucinations & vérification](./01-theory/03-hallucinations-verification.md) | [mission](./03-exercises/01-easy/03-hallucinations-verification.md) | 45 min |
+| J4 | [Partenaire de réflexion](./01-theory/04-partenaire-reflexion.md) | [mission](./03-exercises/01-easy/04-partenaire-reflexion.md) | 45 min |
+| J5 | [Écrire avec l'IA](./01-theory/05-ecrire-avec-ia.md) | [mission](./03-exercises/01-easy/05-ecrire-avec-ia.md) | 45 min |
+| J6 | [Excel + IA : les bases](./01-theory/06-excel-bases-ia.md) | [mission](./03-exercises/01-easy/06-excel-bases-ia.md) | 45 min |
+| J7 | [Formules & tableaux](./01-theory/07-formules-tableaux.md) | [mission](./03-exercises/01-easy/07-formules-tableaux.md) | 45–60 min |
+| J8 | [Nettoyer, analyser, visualiser](./01-theory/08-nettoyer-analyser.md) | [mission](./03-exercises/01-easy/08-nettoyer-analyser.md) | 45 min |
+| J9 | [**Projet Excel** trésorerie PME fictif](./01-theory/09-projet-tresorerie.md) | [mission](./03-exercises/01-easy/09-projet-tresorerie.md) | 60 min |
+| J10 | [Structure d'un pitch](./01-theory/10-structure-pitch.md) | [mission](./03-exercises/01-easy/10-structure-pitch.md) | 45 min |
+| J11 | [Slides & design sobre](./01-theory/11-slides-visuels.md) | [mission](./03-exercises/01-easy/11-slides-visuels.md) | 45 min |
+| J12 | [Notes orateur & répétition](./01-theory/12-notes-orateur.md) | [mission](./03-exercises/01-easy/12-notes-orateur.md) | 45 min |
+| J13 | [Capstone brouillon deck pitch](./01-theory/13-capstone-brouillon.md) | [mission](./03-exercises/01-easy/13-capstone-brouillon.md) | 1–2 soirs |
+| J14 | [**Capstone final** deck pitch](./01-theory/14-capstone-deck-pitch.md) | [mission](./03-exercises/01-easy/14-capstone-deck-pitch.md) | 1–2 soirs |
+
+Progression badges : [`PROGRESS.md`](./PROGRESS.md) · Contrat détaillé : [`PLAN.md`](./PLAN.md) · Sources : [`REFERENCES.md`](./REFERENCES.md).
 
 **Capstone (J13–J14)** : le **minimum** suffit pour valider le parcours (8 slides + notes sur 3 slides + journal court). Le reste est **bonus**. Prévois **plusieurs soirs** plutôt qu'un rush de 90 min.
+
+### Comment se repérer dans les dossiers
+
+```
+ia-quotidien/
+├── README.md          ← tu es ici (point d'entrée)
+├── PROGRESS.md        ← coches + badges
+├── 01-theory/         ← cours du jour (lis ça d'abord)
+├── 03-exercises/
+│   ├── 01-easy/       ← mission du soir (obligatoire)
+│   ├── 02-medium/     ← bonus
+│   ├── 03-hard/       ← bonus
+│   └── solutions/     ← corrige après avoir essayé
+└── assets/            ← schémas + captures d'écran
+```
 
 ## Critères de réussite
 
@@ -111,7 +128,7 @@ Ce domaine est **pensé pour un apprentissage visuel** (chaque module de théori
 
 | Type | Où | Rôle |
 |------|-----|------|
-| Illustrations / SVG | [`assets/`](./assets/) | Cartes mentales, grilles, parcours |
+| Illustrations (PNG d'affichage + SVG source) | [`assets/`](./assets/) | Cartes mentales, grilles, parcours |
 | Diagrammes Mermaid | dans certains modules `01-theory/` | Flux (prompts, Excel, capstone) |
 | Tes propres captures | `03-exercises/workspace/` | Excel, PowerPoint, écrans ChatGPT |
 

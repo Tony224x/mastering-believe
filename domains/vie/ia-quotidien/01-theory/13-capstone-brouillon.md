@@ -6,7 +6,7 @@
 
 ---
 
-![Schéma du module : Brouillon complet : minimum 8 slides d'histoire.](../assets/13-deck-8-slides.svg)
+![Schéma du module : Brouillon complet : minimum 8 slides d'histoire.](../assets/13-deck-8-slides.png)
 
 > **En une phrase :** Brouillon complet : minimum 8 slides d'histoire.
 
@@ -88,3 +88,10 @@ N'invente pas de nouveaux chiffres.
 
 **Q5.** Que demander à l'IA en fin de v1 ?
 **R5.** Une critique type prof + options d'accroche, sans nouveaux chiffres inventés.
+
+<!-- NAV:START -->
+---
+
+← [Module 12 — Notes orateur & répétition](./12-notes-orateur.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/13-capstone-brouillon.md) · [Progression](../PROGRESS.md) · [Module 14 — Capstone final : deck pitch livrable](./14-capstone-deck-pitch.md) →
+
+<!-- NAV:END -->

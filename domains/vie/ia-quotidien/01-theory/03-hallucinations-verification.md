@@ -6,7 +6,7 @@
 
 ---
 
-![Checklist V-A-I-R : Vérifiable, Ancrée, Invention, Risque](../assets/03-vair-checklist.svg)
+![Checklist V-A-I-R : Vérifiable, Ancrée, Invention, Risque](../assets/03-vair-checklist.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -40,7 +40,7 @@ Avant d'utiliser une réponse pour l'école ou le travail :
 ---
 
 
-![Feu tricolore des données : vert fictif, orange anonymisé, rouge ne pas coller](../assets/03b-donnees-feu.svg)
+![Feu tricolore des données : vert fictif, orange anonymisé, rouge ne pas coller](../assets/03b-donnees-feu.png)
 
 > **En une phrase :** si tu ne mettrais pas l'info sur un écran de bus, ne la mets pas dans le chat.
 
@@ -100,3 +100,10 @@ Utilise uniquement les chiffres que je fournis : [coller chiffres fictifs].
 
 **Q5.** Cite un cadre institutionnel mentionné pour le risque IA.
 **R5.** NIST AI RMF et/ou guides CNIL. [NIST AI RMF] [CNIL IA]
+
+<!-- NAV:START -->
+---
+
+← [Module 02 — Prompts qui marchent](./02-prompts-qui-marchent.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/03-hallucinations-verification.md) · [Progression](../PROGRESS.md) · [Module 04 — Partenaire de réflexion](./04-partenaire-reflexion.md) →
+
+<!-- NAV:END -->

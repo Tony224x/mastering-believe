@@ -6,7 +6,7 @@
 
 ---
 
-![Récit du pitch : problème, enjeu, solution, preuve, demande](../assets/10-pitch-story.svg)
+![Récit du pitch : problème, enjeu, solution, preuve, demande](../assets/10-pitch-story.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -83,3 +83,10 @@ Contraintes : narrative problème→solution ; pas de jargon vide ; signale les 
 
 **Q5.** Peut-on utiliser les chiffres du projet Excel ?
 **R5.** Oui s'ils sont fictifs et assumés comme démo.
+
+<!-- NAV:START -->
+---
+
+← [Module 09 — Projet secondaire : trésorerie / budget PME (fictif)](./09-projet-tresorerie.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/10-structure-pitch.md) · [Progression](../PROGRESS.md) · [Module 11 — Slides & design sobre](./11-slides-visuels.md) →
+
+<!-- NAV:END -->

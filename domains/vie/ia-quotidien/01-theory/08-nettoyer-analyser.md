@@ -6,7 +6,7 @@
 
 ---
 
-![Schéma du module : On nettoie avant d'analyser et de dessiner.](../assets/08-nettoyage-donnees.svg)
+![Schéma du module : On nettoie avant d'analyser et de dessiner.](../assets/08-nettoyage-donnees.png)
 
 > **En une phrase :** On nettoie avant d'analyser et de dessiner.
 
@@ -91,3 +91,10 @@ J'ai catégories en A et totaux en B. Quel type de graphique recommander et pour
 
 **Q5.** Référence design de données citée ?
 **R5.** Stephen Few, Show Me the Numbers. [Few, 2012]
+
+<!-- NAV:START -->
+---
+
+← [Module 07 — Formules, tableaux croisés & modèles](./07-formules-tableaux.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/08-nettoyer-analyser.md) · [Progression](../PROGRESS.md) · [Module 09 — Projet secondaire : trésorerie / budget PME (fictif)](./09-projet-tresorerie.md) →
+
+<!-- NAV:END -->

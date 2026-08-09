@@ -6,7 +6,7 @@
 
 ---
 
-![Schéma du module : Chaque formule se découpe en morceaux compréhensibles.](../assets/07-formule-expliquee.svg)
+![Schéma du module : Chaque formule se découpe en morceaux compréhensibles.](../assets/07-formule-expliquee.png)
 
 > **En une phrase :** Chaque formule se découpe en morceaux compréhensibles.
 
@@ -89,3 +89,10 @@ J9 = ce modèle + scénarios + résumé 5 lignes pour un **Budget PME Demo** 100
 
 **Q5.** À quoi sert un Tableau Excel structuré ?
 **R5.** Références stables et colonnes calculées qui tiennent quand tu ajoutes des lignes.
+
+<!-- NAV:START -->
+---
+
+← [Module 06 — Excel + IA : les bases](./06-excel-bases-ia.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/07-formules-tableaux.md) · [Progression](../PROGRESS.md) · [Module 08 — Nettoyer, analyser, visualiser](./08-nettoyer-analyser.md) →
+
+<!-- NAV:END -->

@@ -6,7 +6,7 @@
 
 ---
 
-![Grille RCCFC : Rôle, Contexte, Tâche, Format, Contraintes](../assets/02-rccfc-prompt.svg)
+![Grille RCCFC : Rôle, Contexte, Tâche, Format, Contraintes](../assets/02-rccfc-prompt.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -145,3 +145,10 @@ Contraintes : une idée par slide ; pas de mur de texte.
 
 **Q5.** Où trouver des patterns officiels de prompting ?
 **R5.** [OpenAI Prompting Guide]
+
+<!-- NAV:START -->
+---
+
+← [Module 01 — IA sans panique](./01-ia-sans-panique.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/02-prompts-qui-marchent.md) · [Progression](../PROGRESS.md) · [Module 03 — Hallucinations & vérification](./03-hallucinations-verification.md) →
+
+<!-- NAV:END -->

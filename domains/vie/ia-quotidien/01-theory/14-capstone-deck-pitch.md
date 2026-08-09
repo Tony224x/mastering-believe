@@ -8,7 +8,7 @@
 
 ![Illustration : deck pitch et portfolio](../assets/hero-pitch-slides.jpg)
 
-![Check final : vérifier, répéter, livrer](../assets/14-check-final.svg)
+![Check final : vérifier, répéter, livrer](../assets/14-check-final.png)
 
 > **En une phrase :** regarde ce schéma avant de lire le reste.
 
@@ -126,3 +126,10 @@ Codex / outils dev : uniquement si un jour tu en as besoin — **hors scope de m
 
 **Q5.** Que faire si une slide cite un chiffre ?
 **R5.** Tracer l'origine (Excel fictif / source vérifiée) ou retirer.
+
+<!-- NAV:START -->
+---
+
+← [Module 13 — Capstone brouillon : deck pitch v1](./13-capstone-brouillon.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/14-capstone-deck-pitch.md) · [Progression](../PROGRESS.md) · *(capstone — bravo)* →
+
+<!-- NAV:END -->

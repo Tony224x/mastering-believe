@@ -6,7 +6,7 @@
 
 ---
 
-![Schéma du module : Une idée, trois puces, titre = conclusion.](../assets/11-slide-avant-apres.svg)
+![Schéma du module : Une idée, trois puces, titre = conclusion.](../assets/11-slide-avant-apres.png)
 
 > **En une phrase :** Une idée, trois puces, titre = conclusion.
 
@@ -73,3 +73,10 @@ Prends 4 slides de ton outline J10 et produis la version slide-ready. Colle dans
 
 **Q5.** Référence design de présentation ?
 **R5.** Reynolds, Présentation Zen. [Reynolds, Présentation Zen]
+
+<!-- NAV:START -->
+---
+
+← [Module 10 — Structure d'un pitch qui tient](./10-structure-pitch.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/11-slides-visuels.md) · [Progression](../PROGRESS.md) · [Module 12 — Notes orateur & répétition](./12-notes-orateur.md) →
+
+<!-- NAV:END -->
