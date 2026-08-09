@@ -149,6 +149,6 @@ Contraintes : une idée par slide ; pas de mur de texte.
 <!-- NAV:START -->
 ---
 
-← [Module 01 — IA sans panique](./01-ia-sans-panique.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/02-prompts-qui-marchent.md) · [Progression](../PROGRESS.md) · [Module 03 — Hallucinations & vérification](./03-hallucinations-verification.md) →
+← [Module 01 — IA : premiers pas](./01-ia-sans-panique.md) · [Index des chapitres](../README.md#index-des-chapitres-cliquable) · [Mission easy](../03-exercises/01-easy/02-prompts-qui-marchent.md) · [Progression](../PROGRESS.md) · [Module 03 — Hallucinations & vérification](./03-hallucinations-verification.md) →
 
 <!-- NAV:END -->

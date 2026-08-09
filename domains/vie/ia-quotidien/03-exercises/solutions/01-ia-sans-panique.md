@@ -1,4 +1,4 @@
-# Solution — IA sans panique
+# Solution — IA : premiers pas
 
 > Module `01-ia-sans-panique` · Badge : **Détecteur de confiance** · Lisible **sans coder**.
 

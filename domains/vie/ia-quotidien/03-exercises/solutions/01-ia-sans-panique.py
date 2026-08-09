@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Answer key — 01-ia-sans-panique (IA sans panique).
+"""Answer key — 01-ia-sans-panique (IA : premiers pas).
 
 Per-level keys for the day-specific exercises. Runnable smoke tests encode
 the critical constraints of each level (not a generic shell).
@@ -12,7 +12,7 @@ import json
 from typing import Any
 
 MODULE = "01-ia-sans-panique"
-TITLE = 'IA sans panique'
+TITLE = 'IA : premiers pas'
 SOL: dict[str, Any] = json.loads(r'''{
   "easy_key": {
     "what_to_expect": "L'IA invente souvent des % et des titres de rapports. Aucune source ne doit etre citee sans ouverture reelle.",
