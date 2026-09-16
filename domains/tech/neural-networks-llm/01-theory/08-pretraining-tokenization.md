@@ -483,7 +483,7 @@ Les scaling laws classiques supposent des tokens de qualite egale. En pratique :
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 1 (Tokenization), Lec. 13-14 (Data)** — pipeline pretraining bout-en-bout, focus tokenizer + qualite data.
 - **CMU 11-711 (Neubig) — Lec. 5 (Pre-training)** — vision NLP du pretraining, objectifs et data.

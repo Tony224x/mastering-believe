@@ -317,7 +317,7 @@ R: 50-80% sur les tokens repetes (system prompt long). Standard pour les agents 
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 5 (GPUs)** — modele d'execution GPU, memoire, debit. Fondation pour comprendre tout le reste.
 - **Stanford CS336 — Lec. 6 (Kernels & Triton)** — comment ecrire des kernels custom et pourquoi ca change le cout d'inference.

@@ -483,7 +483,7 @@ Donc FFN/bloc ≈ 2M et Attention/bloc ≈ 1M → FFN represente 2/3 des paramet
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS336 — Lec. 1-3 (Tokenization, PyTorch, Architectures)** — bloc Transformer construit a la main.
 - **Stanford CS25 V6 — Lec. 3 (Overview of Transformers)** — etat de l'art 2025 sur les variantes d'architectures.

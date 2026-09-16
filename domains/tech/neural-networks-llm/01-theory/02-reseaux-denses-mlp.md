@@ -683,7 +683,7 @@ On divise par (1-p) = **inverted dropout** : si on desactive 50% des neurones, l
 
 ## Pour aller plus loin
 
-Lectures couvrant MLP, regularisation et optimisation (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant MLP, regularisation et optimisation (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS230 — Lec. 3 (Full Cycle of a DL project)** — Adam, batch norm, dropout en contexte projet.
 - **Stanford CS231N — Lec. 3 (Regularization & Optimization)** — couverture exhaustive optims modernes.

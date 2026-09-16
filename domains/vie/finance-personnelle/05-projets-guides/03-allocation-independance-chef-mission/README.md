@@ -5,7 +5,7 @@
 > illustratifs et non garantis ; tout investissement comporte un risque de
 > perte en capital. La « règle des 4 % » est une heuristique historique
 > américaine (étude Trinity), **pas** une garantie. Contexte métier :
-> [`shared/logistics-context.md`](../../../logistics-context.md).
+> [`shared/logistics-context.md`](../../../../../shared/logistics-context.md).
 
 **Niveau** : difficile (intégrateur) · **Modules mobilisés** : 04 (investir long
 terme), 05 (frais), 06 (indépendance financière), 01 (intérêts composés).

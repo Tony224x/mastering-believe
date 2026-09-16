@@ -32,8 +32,8 @@ README = REPO / "README.md"
 
 # Ordre d'affichage des tracks + libelles
 TRACKS = [
-    ("tech", "Track Tech — maitrise d'ingenierie"),
-    ("vie", "Track Vie — l'ecole de la vie"),
+    ("tech", "Track Tech — maîtrise d'ingénierie"),
+    ("vie", "Track Vie — l'école de la vie"),
     ("exploratoire", "Exploratoire — ajouts sous cadrage adverse"),
 ]
 
@@ -132,8 +132,17 @@ def _md_escape(text: str) -> str:
     return str(text).replace("|", "\\|")
 
 
-def _link(d: dict) -> str:
-    return f"[{_md_escape(d['title'])}](./{d['_path']}/)"
+def _link(d: dict, depth: int = 0) -> str:
+    """Lien vers un domaine, relatif au FICHIER qui le contient.
+
+    `depth` = nombre de niveaux entre la racine du repo et le fichier ecrit :
+    CATALOG.md vit dans domains/ (depth=1), le README racine a la racine (depth=0).
+    Un chemin ecrit depuis la racine (`./domains/...`) est faux dans CATALOG.md :
+    il resout vers domains/domains/... — c'est ce qui cassait les 12 liens du
+    catalogue. Le prefixe est donc derive, jamais code en dur.
+    """
+    prefix = "../" * depth
+    return f"[{_md_escape(d['title'])}]({prefix}{d['_path']}/)"
 
 
 def _slug_title_map(domains: list[dict]) -> dict[str, str]:
@@ -141,6 +150,7 @@ def _slug_title_map(domains: list[dict]) -> dict[str, str]:
 
 
 def render_catalog(domains: list[dict]) -> str:
+    """Inventaire riche ecrit dans domains/CATALOG.md (depth=1 : le fichier vit dans domains/)."""
     titles = _slug_title_map(domains)
     lines: list[str] = []
     lines.append("# Catalogue des domaines")
@@ -172,7 +182,7 @@ def render_catalog(domains: list[dict]) -> str:
         for d in sorted(ds, key=lambda x: x["slug"]):
             stack = ", ".join(d["stack"]) if d["stack"] else "—"
             sf = f"{stack} · {_md_escape(d['focus'])}" if d["stack"] else _md_escape(d["focus"])
-            row = [_link(d)]
+            row = [_link(d, depth=1)]
             if is_vie:
                 row.append(_md_escape(d.get("pillar") or "—"))
             row += [
@@ -219,7 +229,7 @@ def render_readme_block(domains: list[dict]) -> str:
         lines.append("|" + "|".join(["---"] * len(head)) + "|")
         for d in sorted(ds, key=lambda x: x["slug"]):
             col2 = (d.get("pillar") or "—") if is_vie else (", ".join(d["stack"]) if d["stack"] else "—")
-            row = [_link(d), _md_escape(col2), _md_escape(d["focus"]), _md_escape(d["duration"])]
+            row = [_link(d, depth=0), _md_escape(col2), _md_escape(d["focus"]), _md_escape(d["duration"])]
             lines.append("| " + " | ".join(row) + " |")
         lines.append("")
     lines.append("> Inventaire complet (modules, prerequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).")

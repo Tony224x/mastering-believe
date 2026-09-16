@@ -4,7 +4,7 @@
 > financier ou en crédit personnalisé. Les taux sont illustratifs ; tout crédit
 > engage l'emprunteur. Vérifiez le TAEG réel, l'assurance et les frais avant de
 > signer quoi que ce soit. Contexte métier partagé :
-> [`shared/logistics-context.md`](../../../logistics-context.md).
+> [`shared/logistics-context.md`](../../../../../shared/logistics-context.md).
 
 **Niveau** : moyen · **Modules mobilisés** : 03 (dette et crédit), 01 (coût d'opportunité).
 

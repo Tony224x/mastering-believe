@@ -2,7 +2,7 @@
 
 > **Difficulte : hard.** C'est le **cœur operationnel** de la gouvernance agentique : le seul point ou l'on peut arreter une action sensible *au moment exact ou elle se produit*. Tous les autres modules (identite, audit, autonomie, policy-as-code) convergent ici.
 >
-> **Contexte metier complet** : [`shared/logistics-context.md`](../../../../shared/logistics-context.md) · **Solution commentee** : [`solution/policy_gate.py`](solution/policy_gate.py)
+> **Contexte metier complet** : [`shared/logistics-context.md`](../../../../../shared/logistics-context.md) · **Solution commentee** : [`solution/policy_gate.py`](solution/policy_gate.py)
 
 ## Contexte metier
 
