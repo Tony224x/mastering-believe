@@ -137,7 +137,8 @@ Le repo embarque un skill Claude Code (dans `.claude/skills/mastering-domain-cre
 
 ## License
 
-MIT — voir [LICENSE](./LICENSE).
+[MIT](./LICENSE) — Copyright (c) 2026 VON BIELER Anthony. Utilisation, fork, modification et
+redistribution libres, y compris commerciales ; la notice de copyright est à conserver.
 
 ## Contributions
 
