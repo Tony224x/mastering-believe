@@ -549,7 +549,7 @@ Cout : une reponse o3 high-compute peut couter **plusieurs milliers de dollars**
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Berkeley CS294-280 — Lec. 11 (Learning to Reason — Weston), Lec. 12 (Inference-Time Techniques — Chen)** — vision research la plus actuelle sur reasoning.
 - **Berkeley CS294-196 (Fa24) — Lec. 12 (LLM Reasoning — Denny Zhou)** — CoT et reasoning par le lead Google DeepMind.

@@ -376,7 +376,7 @@ Aussi pour preserver les capacites. Si on fine-tune trop le LLM dans LLaVA, on d
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS231N — Lec. 16 (Vision and Language)** — fondamentaux ViT, CLIP, captioning.
 - **CMU 11-711 (Welleck) — Lec. 20 (Multimodal Modeling I), Lec. 22 (Multimodal Modeling II)** — VLM modernes (LLaVA, Flamingo, Fuyu, fusion native) en 2025.

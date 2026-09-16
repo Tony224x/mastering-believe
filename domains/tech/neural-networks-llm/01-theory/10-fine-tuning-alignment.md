@@ -559,7 +559,7 @@ Le resultat final : ChatGPT (2022), les premiers Claude et GPT-4 (2023). DPO a r
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **Stanford CS329H — toute la serie** — RLHF, DPO et apprentissage par preferences, cours dedie.
 - **Stanford CS336 — Lec. 15-17 (Alignment SFT/RLHF/RL)** — pipeline alignment de bout en bout.

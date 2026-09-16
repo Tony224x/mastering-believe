@@ -430,7 +430,7 @@ Resultat : 100x plus rapide a entrainer, et capable de dependances de 10 000+ to
 
 ## Pour aller plus loin
 
-Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../shared/external-courses.md)) :
+Lectures couvrant ce sujet (playlists dans [`shared/external-courses.md`](../../../../shared/external-courses.md)) :
 
 - **CMU 11-711 (Welleck, Sp25) — Lec. 4 (RNN)** — recurrence, vanishing gradients, LSTM/GRU vus en 2025.
 - **Stanford CS231N — Lec. 7 (RNN)** — perspective vision/sequence avec backprop through time detaille.

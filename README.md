@@ -23,23 +23,23 @@ Les domaines sont ranges par **track** dans `domains/<track>/<domaine>/` (`tech`
 
 | Domaine | Stack | Focus | Duree |
 |---|---|---|---|
-| [Systemes IA Agentiques](./domains/tech/agentic-ai/) | Python, LangGraph, MCP, Claude/OpenAI APIs | Concevoir des agents autonomes du single-agent au multi-agent en production, jusqu'aux patterns frontier 2025-2026. | 4 semaines (J1-J28) |
-| [Algorithmie & Data Structures — Live Coding Python](./domains/tech/algorithmie-python/) | Python, stdlib | Structures de donnees et algorithmes pour le live coding : patterns LeetCode, complexite, entretiens tech FAANG. | ~45h sur 2 semaines (14 modules) |
-| [Gouvernance de l'IA](./domains/tech/gouvernance-ia/) | Python, stdlib | Gouverner une flotte d'agents : EU AI Act, NIST RMF, ISO 42001, RGPD + 4 piliers (identite, owner, permissions, audit). | 15 modules (~45-60 min chacun) |
-| [Réseaux de Neurones & LLMs](./domains/tech/neural-networks-llm/) | Python, numpy, PyTorch | Mécanismes internes des LLMs from scratch, du neurone au Transformer puis frontière NN 2026. | 3 semaines (core J1-J14 ≈ 75-80h + bloc frontière J15-J22 ≈ 38h optionnel) |
-| [Robotics & AI](./domains/tech/robotics-ai/) | Python, PyTorch, MuJoCo, Gymnasium, NumPy, LeRobot | Robotique moderne : fondations classiques (SE(3), FK/IK, contrôle), RL/IL, diffusion policies, VLA frontier, capstone Diffusion Policy from scratch. | 28 jours |
-| [System Design — Architecture Backend & IA](./domains/tech/system-design/) | Python, Kafka, RabbitMQ, Redis, gRPC, GraphQL, TorchServe, Triton, vLLM, Langfuse | Architectures scalables backend et IA (RAG, agents) pour entretiens senior/staff et ML en production. | 2 semaines (14 modules / ~43h complet, 12-15h express) |
+| [Systemes IA Agentiques](domains/tech/agentic-ai/) | Python, LangGraph, MCP, Claude/OpenAI APIs | Concevoir des agents autonomes du single-agent au multi-agent en production, jusqu'aux patterns frontier 2025-2026. | 4 semaines (J1-J28) |
+| [Algorithmie & Data Structures — Live Coding Python](domains/tech/algorithmie-python/) | Python, stdlib | Structures de donnees et algorithmes pour le live coding : patterns LeetCode, complexite, entretiens tech FAANG. | ~45h sur 2 semaines (14 modules) |
+| [Gouvernance de l'IA](domains/tech/gouvernance-ia/) | Python, stdlib | Gouverner une flotte d'agents : EU AI Act, NIST RMF, ISO 42001, RGPD + 4 piliers (identite, owner, permissions, audit). | 15 modules (~45-60 min chacun) |
+| [Réseaux de Neurones & LLMs](domains/tech/neural-networks-llm/) | Python, numpy, PyTorch | Mécanismes internes des LLMs from scratch, du neurone au Transformer puis frontière NN 2026. | 3 semaines (core J1-J14 ≈ 75-80h + bloc frontière J15-J22 ≈ 38h optionnel) |
+| [Robotics & AI](domains/tech/robotics-ai/) | Python, PyTorch, MuJoCo, Gymnasium, NumPy, LeRobot | Robotique moderne : fondations classiques (SE(3), FK/IK, contrôle), RL/IL, diffusion policies, VLA frontier, capstone Diffusion Policy from scratch. | 28 jours |
+| [System Design — Architecture Backend & IA](domains/tech/system-design/) | Python, Kafka, RabbitMQ, Redis, gRPC, GraphQL, TorchServe, Triton, vLLM, Langfuse | Architectures scalables backend et IA (RAG, agents) pour entretiens senior/staff et ML en production. | 2 semaines (14 modules / ~43h complet, 12-15h express) |
 
 **Track Vie — l'ecole de la vie** :
 
 | Domaine | Pilier | Focus | Duree |
 |---|---|---|---|
-| [Apprendre a apprendre](./domains/vie/apprendre-a-apprendre/) | Esprit | Meta-competence fondatrice : retrieval practice, spaced repetition, deep work, metacognition, apprendre avec l'IA. | 14 modules x ~45 min (~10 h 30) |
-| [Communication, persuasion & influence](./domains/vie/communication-persuasion/) | Relations | Communiquer clairement et persuader honnetement : ecoute, clarte, recit, negociation, feedback, prise de parole, influence ethique. | 14 modules (~45 min chacun), sur 2 semaines |
-| [Finance personnelle & investissement](./domains/vie/finance-personnelle/) | Argent | Fondamentaux Pareto-first de la finance perso : interets composes, budget, dette, fonds indiciels, psychologie, independance financiere. | 14 modules (~45 min chacun), ~11 h |
-| [IA au quotidien (non-tech)](./domains/vie/ia-quotidien/) | Esprit | Utiliser l'IA pour reflechir, ecrire, automatiser Excel et produire un deck pitch — sans code ni data science. | 14 modules x ~45 min (~10 h 30) |
-| [Pensee critique, rationalite & decision](./domains/vie/rationalite-decision/) | Jugement | Methode de raisonnement neutre : probas/Bayes, biais, decision sous incertitude, calibration (Brier), verification (SIFT). | 14 modules (~45 min chacun) |
-| [Sante, nutrition & longevite](./domains/vie/sante-longevite/) | Corps | Fondations evidence-based: sommeil, activite physique, nutrition, sante metabolique, stress & lien social, plan sante personnel. | 7 modules (~45 min chacun), ~8-10h sur 2-3 semaines |
+| [Apprendre a apprendre](domains/vie/apprendre-a-apprendre/) | Esprit | Meta-competence fondatrice : retrieval practice, spaced repetition, deep work, metacognition, apprendre avec l'IA. | 14 modules x ~45 min (~10 h 30) |
+| [Communication, persuasion & influence](domains/vie/communication-persuasion/) | Relations | Communiquer clairement et persuader honnetement : ecoute, clarte, recit, negociation, feedback, prise de parole, influence ethique. | 14 modules (~45 min chacun), sur 2 semaines |
+| [Finance personnelle & investissement](domains/vie/finance-personnelle/) | Argent | Fondamentaux Pareto-first de la finance perso : interets composes, budget, dette, fonds indiciels, psychologie, independance financiere. | 14 modules (~45 min chacun), ~11 h |
+| [IA au quotidien (non-tech)](domains/vie/ia-quotidien/) | Esprit | Utiliser l'IA pour reflechir, ecrire, automatiser Excel et produire un deck pitch — sans code ni data science. | 14 modules x ~45 min (~10 h 30) |
+| [Pensee critique, rationalite & decision](domains/vie/rationalite-decision/) | Jugement | Methode de raisonnement neutre : probas/Bayes, biais, decision sous incertitude, calibration (Brier), verification (SIFT). | 14 modules (~45 min chacun) |
+| [Sante, nutrition & longevite](domains/vie/sante-longevite/) | Corps | Fondations evidence-based: sommeil, activite physique, nutrition, sante metabolique, stress & lien social, plan sante personnel. | 7 modules (~45 min chacun), ~8-10h sur 2-3 semaines |
 
 > Inventaire complet (modules, prerequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).
 <!-- CATALOG:END -->
