@@ -1,25 +1,30 @@
 # Mastering Believe
 
-> Parcours d'apprentissage communautaires sur des sujets a creuser en profondeur. Repo public et ouvert — utilisation, fork et contributions bienvenus.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Domaines](https://img.shields.io/badge/domaines-12-blue.svg)](domains/CATALOG.md)
+[![Python](https://img.shields.io/badge/python-3.11%2B-3776ab.svg)](shared/tools/build_catalog.py)
+[![Contributions](https://img.shields.io/badge/contributions-bienvenues-2ea44f.svg)](CONTRIBUTING.md)
 
-Theorie + (quand pertinent) code applique runnable + exercices progressifs avec solutions. Le format s'adapte au domaine : tech, sciences, langues, sciences humaines, autre. La duree d'un domaine n'est pas figee — quelques jours a plusieurs semaines selon le sujet.
+> Parcours d'apprentissage communautaires sur des sujets à creuser en profondeur. Repo public et ouvert — utilisation, fork et contributions bienvenus.
+
+Théorie + (quand pertinent) code appliqué runnable + exercices progressifs avec solutions. Le format s'adapte au domaine : tech, sciences, langues, sciences humaines, autre. La durée d'un domaine n'est pas figée — quelques jours à plusieurs semaines selon le sujet.
 
 ## Philosophie
 
-Chaque domaine est concu autour de techniques d'apprentissage prouvees :
+Chaque domaine est conçu autour de techniques d'apprentissage prouvées :
 
-- **Pareto first** — les 20% qui donnent 80% des resultats, en premier
+- **Pareto first** — les 20 % qui donnent 80 % des résultats, en premier
 - **Concret avant abstrait** — toujours un exemple, puis le principe
-- **Deliberate practice** — exercices cibles, gradues, chronometrables
-- **Active recall** — flash cards Q&A a la fin de chaque module de theorie
-- **Capstone reel** — chaque domaine se conclut par un projet qui pourrait shipper
+- **Deliberate practice** — exercices ciblés, gradués, chronométrables
+- **Active recall** — flash cards Q&A à la fin de chaque module de théorie
+- **Capstone réel** — chaque domaine se conclut par un projet qui pourrait shipper
 
 ## Domaines disponibles
 
-Les domaines sont ranges par **track** dans `domains/<track>/<domaine>/` (`tech`, `vie`, `exploratoire`). Le tableau ci-dessous est **genere** depuis les `meta.toml` ; inventaire complet (modules, prerequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).
+Les domaines sont rangés par **track** dans `domains/<track>/<domaine>/` (`tech`, `vie`, `exploratoire`). Le tableau ci-dessous est **généré** depuis les `meta.toml` ; inventaire complet (modules, prérequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).
 
 <!-- CATALOG:START -->
-**Track Tech — maitrise d'ingenierie** :
+**Track Tech — maîtrise d'ingénierie** :
 
 | Domaine | Stack | Focus | Duree |
 |---|---|---|---|
@@ -30,7 +35,7 @@ Les domaines sont ranges par **track** dans `domains/<track>/<domaine>/` (`tech`
 | [Robotics & AI](domains/tech/robotics-ai/) | Python, PyTorch, MuJoCo, Gymnasium, NumPy, LeRobot | Robotique moderne : fondations classiques (SE(3), FK/IK, contrôle), RL/IL, diffusion policies, VLA frontier, capstone Diffusion Policy from scratch. | 28 jours |
 | [System Design — Architecture Backend & IA](domains/tech/system-design/) | Python, Kafka, RabbitMQ, Redis, gRPC, GraphQL, TorchServe, Triton, vLLM, Langfuse | Architectures scalables backend et IA (RAG, agents) pour entretiens senior/staff et ML en production. | 2 semaines (14 modules / ~43h complet, 12-15h express) |
 
-**Track Vie — l'ecole de la vie** :
+**Track Vie — l'école de la vie** :
 
 | Domaine | Pilier | Focus | Duree |
 |---|---|---|---|
@@ -44,15 +49,15 @@ Les domaines sont ranges par **track** dans `domains/<track>/<domaine>/` (`tech`
 > Inventaire complet (modules, prerequis, garde-fous, statuts) : [`domains/CATALOG.md`](./domains/CATALOG.md).
 <!-- CATALOG:END -->
 
-Le format de duree reste indicatif — un domaine peut etre plus court ou plus long selon le sujet.
+Le format de durée reste indicatif — un domaine peut être plus court ou plus long selon le sujet.
 
 ## Structure d'un domaine
 
 ```
 domains/<track>/<domain>/    # track = tech | vie | exploratoire
-├── README.md                # Scope, planning (duree libre), criteres de reussite
-├── meta.toml                # Metadonnees (track, statut, niveau, stack, focus, prerequis...) -> CATALOG.md
-├── 01-theory/               # Theorie progressive (Markdown)
+├── README.md                # Scope, planning (durée libre), critères de réussite
+├── meta.toml                # Métadonnées (track, statut, niveau, stack, focus, prérequis…) -> CATALOG.md
+├── 01-theory/               # Théorie progressive (Markdown)
 ├── 02-code/                 # Exemples runnable, commentes ligne a ligne
 ├── 03-exercises/
 │   ├── 01-easy/             # Enonces faciles
@@ -70,15 +75,15 @@ domains/<track>/<domain>/    # track = tech | vie | exploratoire
 
 ### Pour suivre un domaine
 
-1. Lire le `README.md` du domaine — planning, prerequis, criteres de reussite
-2. Pour chaque jour : lire la theorie (`01-theory/0X-...md`), puis faire tourner le code applique (`02-code/0X-...py`)
+1. Lire le `README.md` du domaine — planning, prérequis, critères de réussite
+2. Pour chaque jour : lire la theorie (`01-theory/0X-...md`), puis faire tourner le code appliqué (`02-code/0X-...py`)
 3. Faire les exercices (`03-exercises/01-easy/0X-...md`) dans le **workspace** : `03-exercises/workspace/01-easy/0X-...py`
 4. Comparer la solution avec celle de `03-exercises/solutions/`
 5. A la fin du domaine, faire le capstone
 
 ### Pour les exercices
 
-Le dossier `domains/<domain>/03-exercises/workspace/` est **ignore par git** : solutions, notes, notebooks peuvent y etre stockes sans risque de polluer le repo en cas de fork.
+Le dossier `domains/<domain>/03-exercises/workspace/` est **ignore par git** : solutions, notes, notebooks peuvent y être stockés sans risque de polluer le repo en cas de fork.
 
 ```bash
 # Exemple : faire le premier exercice d'algorithmie

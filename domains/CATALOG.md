@@ -4,7 +4,7 @@
 
 **12 domaines** — tech : 6 · vie : 6 · exploratoire : 0.
 
-## Track Tech — maitrise d'ingenierie
+## Track Tech — maîtrise d'ingénierie
 
 | Domaine | Niveau | Duree | Modules | Code | Stack / Focus | Statut |
 |---|---|---|---|---|---|---|
@@ -18,7 +18,7 @@
 - **Gouvernance de l'IA** — prerequis : Algorithmie & Data Structures — Live Coding Python
 - **Robotics & AI** — prerequis : Réseaux de Neurones & LLMs
 
-## Track Vie — l'ecole de la vie
+## Track Vie — l'école de la vie
 
 | Domaine | Pilier | Niveau | Duree | Modules | Code | Stack / Focus | Statut |
 |---|---|---|---|---|---|---|---|

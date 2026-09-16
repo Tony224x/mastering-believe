@@ -32,8 +32,8 @@ README = REPO / "README.md"
 
 # Ordre d'affichage des tracks + libelles
 TRACKS = [
-    ("tech", "Track Tech — maitrise d'ingenierie"),
-    ("vie", "Track Vie — l'ecole de la vie"),
+    ("tech", "Track Tech — maîtrise d'ingénierie"),
+    ("vie", "Track Vie — l'école de la vie"),
     ("exploratoire", "Exploratoire — ajouts sous cadrage adverse"),
 ]
 
